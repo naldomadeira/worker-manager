@@ -13,7 +13,7 @@ import { SchedulersIcon } from '../../components/Icons/Schedulers';
 import { JobCard } from '../../components/JobCard/JobCard';
 import { Loader } from '../../components/Loader/Loader';
 import { Pagination } from '../../components/Pagination/Pagination';
-import { QueueActions } from '../../components/QueueActions/QueueActions';
+import { QueueActions, isStatusActionable } from '../../components/QueueActions/QueueActions';
 import { QueueDropdownActions } from '../../components/QueueDropdownActions/QueueDropdownActions';
 import { RateLimitBadge } from '../../components/RateLimitBadge/RateLimitBadge';
 import { StatusMenu } from '../../components/StatusMenu/StatusMenu';
@@ -96,14 +96,18 @@ export const QueuePage = () => {
   const rangeStart = (queue.pagination.range?.start ?? 0) + 1;
   const rangeEnd = rangeStart + queue.jobs.length - 1;
 
+  const showQueueActions = hasJobs && !queue.readOnlyMode && isStatusActionable(status);
+  const showRange = hasJobs && total > 0;
+  // "Latest" has neither bulk actions nor a count of its own, so on a single page the toolbar
+  // would render as an empty bar.
   const toolbar =
-    hasJobs || pageCount > 1 ? (
+    showQueueActions || showRange || pageCount > 1 ? (
       <div
         data-slot="queue-toolbar"
         className="flex w-full flex-wrap items-center justify-between gap-2 rounded-xl border bg-card/80 px-2 py-1.5 shadow-xs backdrop-blur-sm"
       >
         <div className="flex min-w-0 flex-wrap items-center gap-2">
-          {hasJobs && !queue.readOnlyMode && (
+          {showQueueActions && (
             <QueueActions
               queue={queue}
               actions={actions}
@@ -114,7 +118,7 @@ export const QueuePage = () => {
               }
             />
           )}
-          {hasJobs && total > 0 && (
+          {showRange && (
             <span className="px-1.5 text-xs text-muted-foreground tabular-nums">
               {t('QUEUE.RANGE', {
                 start: rangeStart,

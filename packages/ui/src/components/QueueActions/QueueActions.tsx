@@ -19,7 +19,7 @@ interface QueueActionProps {
 
 const ACTIONABLE_STATUSES = [STATUSES.failed, STATUSES.delayed, STATUSES.completed] as const;
 
-const isStatusActionable = (status: any): boolean => ACTIONABLE_STATUSES.includes(status);
+export const isStatusActionable = (status: any): boolean => ACTIONABLE_STATUSES.includes(status);
 
 function isCleanAllStatus(status: any): status is JobCleanStatus {
   return [STATUSES.failed, STATUSES.delayed, STATUSES.completed].includes(status);

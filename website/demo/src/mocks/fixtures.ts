@@ -765,6 +765,63 @@ function seedRichLogs(state: DemoState): void {
   }
 }
 
+// BullMQ's per-job diagnostics (stalls, starts, deduplication, deferred failures) and a flow
+// whose failed children are split between unfinished and ignored. Seeded last so every job
+// generated before it keeps the ids and data it had.
+function seedDiagnostics(state: DemoState): void {
+  const charges = state.queues.find((q) => q.name === 'billing:charges');
+  const refunds = state.queues.find((q) => q.name === 'billing:refunds');
+  if (!charges || !refunds) return;
+
+  const build = (jobState: JobState, name: string) => {
+    const job = buildJob(
+      charges.name,
+      [name],
+      jobState,
+      queueSpecs.find((spec) => spec.name === charges.name)!.buildData
+    );
+    job.externalUrl = undefined;
+    charges.jobs.unshift(job);
+    return job;
+  };
+
+  // A worker died mid-job once, the job was picked up again and completed: stalled 1, 2 starts.
+  const recovered = build('completed', 'settle');
+  recovered.attempts = 1;
+  recovered.stalledCounter = 1;
+  recovered.attemptsStarted = 2;
+  recovered.returnValue = { ok: true, recovered: true };
+
+  // Stalled past the limit while waiting: BullMQ fails it the next time a worker takes it.
+  const doomed = build('waiting', 'capture');
+  doomed.stalledCounter = 2;
+  doomed.attemptsStarted = 2;
+  doomed.deferredFailure = 'job stalled more than allowable limit';
+
+  // A delayed capture that later duplicates collapse into.
+  const deduped = build('delayed', 'capture');
+  deduped.deduplicationId = `capture:${(deduped.data as { customerId: string }).customerId}`;
+  deduped.delay = 25 * 60_000;
+  deduped.opts = {
+    ...deduped.opts,
+    delay: deduped.delay,
+    deduplication: { id: deduped.deduplicationId },
+  };
+
+  // Flow: a parent with two failed children, one left unfinished and one ignored.
+  const parent = buildJob(refunds.name, ['batch-refund'], 'waiting-children', () => ({
+    batch: 'refunds-2026-09',
+    refunds: 2,
+  }));
+  const unfinished = buildJob(refunds.name, ['refund-chunk'], 'failed', () => ({ chunk: 1 }));
+  unfinished.opts = { ...unfinished.opts, failParentOnFailure: false };
+  const ignored = buildJob(refunds.name, ['refund-chunk'], 'failed', () => ({ chunk: 2 }));
+  ignored.opts = { ...ignored.opts, ignoreDependencyOnFailure: true };
+  refunds.jobs.unshift(ignored, unfinished, parent);
+  linkFlow(parent, unfinished, refunds.name);
+  linkFlow(parent, ignored, refunds.name);
+}
+
 export function seedFixtures(target: DemoState): void {
   target.queues.length = 0;
   for (const spec of queueSpecs) {
@@ -774,4 +831,5 @@ export function seedFixtures(target: DemoState): void {
   seedCronJobs(target);
   buildFlows(target);
   seedRichLogs(target);
+  seedDiagnostics(target);
 }

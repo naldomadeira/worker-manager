@@ -142,11 +142,11 @@ export class MockMetricsHistoryProvider implements MetricsHistoryProvider {
     to,
     granularity,
   }: MetricsHistoryQuery): Promise<MetricsHistoryPoint[]> {
-    // Only the two counter metrics are synthesised. Queue age is a gauge the recorder samples
-    // from a live queue, which the demo has no equivalent of, so it answers empty rather than
-    // inventing a shape the real provider would not produce.
-    const series =
-      metric === 'queueage' ? undefined : this.store.get(queue ?? GLOBAL_QUEUE)?.[metric];
+    if (metric === 'queueage') {
+      return this.queueAge(queue ?? GLOBAL_QUEUE, from, to, granularity);
+    }
+
+    const series = this.store.get(queue ?? GLOBAL_QUEUE)?.[metric];
     if (!series) {
       return [];
     }
@@ -168,6 +168,31 @@ export class MockMetricsHistoryProvider implements MetricsHistoryProvider {
       .filter(([, value]) => value > 0)
       .map(([ts, value]) => ({ ts, value }))
       .sort((a, b) => a.ts - b.ts);
+  }
+
+  /**
+   * Queue age is a gauge the recorder samples from the live queue: the age, in ms, of the oldest
+   * job still waiting, kept as the highest reading in each bucket. The demo has no live queue to
+   * sample, so it draws one from the same afternoon load curve, sitting above the wait-time p99
+   * the way a backlog's oldest job does, with the odd hour where the queue backed up.
+   */
+  private queueAge(
+    queue: string,
+    from: number,
+    to: number,
+    granularity: MetricsHistoryQuery['granularity']
+  ): MetricsHistoryPoint[] {
+    const bucketMs = granularity === 'hour' ? HOUR_MS : DAY_MS;
+    const align = granularity === 'hour' ? alignHour : alignDay;
+    const points: MetricsHistoryPoint[] = [];
+
+    for (let bucket = align(from); bucket <= to; bucket += bucketMs) {
+      const rand = mulberry32(hashStr(`${queue}:queueage:${bucket}`));
+      const load = 1 + 0.45 * Math.sin(((new Date(bucket).getUTCHours() - 4) / 24) * TAU);
+      const backedUp = rand() > 0.93 ? 4 + rand() * 6 : 1;
+      points.push({ ts: bucket, value: Math.round(2600 * load * backedUp * (0.8 + rand() * 0.4)) });
+    }
+    return points;
   }
 
   /**

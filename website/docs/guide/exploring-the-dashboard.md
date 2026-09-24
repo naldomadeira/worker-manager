@@ -125,9 +125,9 @@ Like the schedulers view, these are operational changes rather than configuratio
 
 ## Settings
 
-The gear in the header opens per-browser preferences, split into General, Queues and Jobs. Polling interval, language and dark mode live in the first; grouping and sort order in the second; which job tab opens by default, how deep JSON starts collapsed and how many jobs a page shows in the third. Everything is stored in your own browser, so nothing here changes what anyone else sees.
+The gear in the header opens per-browser preferences, split into General, Queues and Jobs. Polling interval, language, theme and the environment badge live in the first; grouping and sort order in the second; which job tab opens by default, how deep JSON starts collapsed and how many jobs a page shows in the third. Everything is stored in your own browser, so nothing here changes what anyone else sees.
 
-![The settings modal with its collapsible sections](/screenshots/settings-sections.png)
+![The settings modal with its General, Queues and Jobs tabs](/screenshots/settings-sections.png)
 
 Some of these can be fixed or hidden for everyone from [UIConfig](../configuration/ui-config.md), which is how you stop people picking a two second polling interval against a large Redis.
 

@@ -2,13 +2,14 @@
   "name": "@worker-manager/demo",
   "version": "9.10.1",
   "private": true,
-  "description": "Interactive demo of the bull-board dashboard, powered by MSW and in-memory fixtures.",
+  "description": "Interactive demo of the Worker Manager dashboard, powered by MSW and in-memory fixtures.",
   "type": "module",
   "scripts": {
     "prepare:ui": "node scripts/prepare-ui.mjs",
     "dev": "npm run prepare:ui && rsbuild dev",
     "build": "npm run prepare:ui && rsbuild build",
-    "preview": "rsbuild preview"
+    "preview": "rsbuild preview",
+    "screenshots": "node scripts/screenshots.mjs"
   },
   "dependencies": {
     "@worker-manager/api": "workspace:*",
@@ -21,6 +22,7 @@
     "@types/redis-info": "^3.0.3",
     "date-fns": "^4.4.0",
     "msw": "^2.15.0",
+    "playwright": "^1.63.0",
     "redis-info": "^3.1.0",
     "typescript": "^5.9.3"
   },

@@ -23,6 +23,11 @@ export interface DemoJob extends AppJob {
   logs: string[];
   parentKey?: string;
   childRefs?: Array<{ queueName: string; jobId: string }>;
+  /** BullMQ's own job diagnostics, surfaced as pills on the job card when set. */
+  attemptsStarted?: number;
+  stalledCounter?: number;
+  deduplicationId?: string;
+  deferredFailure?: string;
 }
 
 // Demo-side shape of a queue: the same fields the UI reads off `AppQueue`, minus everything

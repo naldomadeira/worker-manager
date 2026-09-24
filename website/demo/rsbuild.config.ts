@@ -10,11 +10,11 @@ export default defineConfig({
     template: './index.ejs',
     templateParameters: {
       basePath: '/worker-manager/demo/',
-      title: 'Bull-Board Demo',
+      title: 'Worker Manager Demo',
       favIconDefault: 'favicon.ico',
       favIconAlternative: 'favicon-32x32.png',
       uiConfig: JSON.stringify({
-        boardTitle: 'Bull-Board Demo',
+        boardTitle: 'Worker Manager Demo',
         boardLogo: { path: 'logo.svg', width: 32, height: 32 },
         environment: { label: 'Demo', color: '#f59f00', textColor: '#000' },
         showMetrics: true,

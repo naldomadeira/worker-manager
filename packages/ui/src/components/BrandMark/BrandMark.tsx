@@ -36,7 +36,7 @@ export const BrandMark = ({ className }: { className?: string }) => {
       aria-hidden="true"
       className={cn(
         'relative flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-lg',
-        'bg-linear-to-br from-primary via-chart-2 to-chart-4 text-[0.7rem] font-bold tracking-tight text-primary-foreground',
+        'bg-linear-to-br from-primary to-violet-500 text-[0.7rem] font-bold tracking-tight text-white',
         'shadow-sm ring-1 ring-primary/30 ring-inset',
         'before:absolute before:inset-0 before:bg-linear-to-b before:from-white/25 before:to-transparent',
         className

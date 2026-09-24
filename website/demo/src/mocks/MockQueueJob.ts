@@ -59,6 +59,10 @@ export class MockQueueJob implements QueueJob {
       returnvalue: this.demo.returnValue,
       opts: this.demo.opts,
       parentKey: this.demo.parentKey,
+      attemptsStarted: this.demo.attemptsStarted,
+      stalledCounter: this.demo.stalledCounter,
+      deduplicationId: this.demo.deduplicationId,
+      deferredFailure: this.demo.deferredFailure,
     };
   }
 

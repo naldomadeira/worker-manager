@@ -14,15 +14,37 @@ seedFixtures(state);
 
 // ---- local mock for the flow endpoint (avoids pulling in bullmq) ----
 
+// Mirrors how BullMQ files a child that failed: `ignoreDependencyOnFailure` moves it to the
+// parent's ignored set (with its reason), `failParentOnFailure: false` leaves it unfinished, and
+// anything else lands in the failed set.
+function isIgnored(child: DemoJob) {
+  return child.state === 'failed' && !!child.opts?.ignoreDependencyOnFailure;
+}
+
+function isUnfinished(child: DemoJob) {
+  if (child.state === 'failed') return child.opts?.failParentOnFailure === false;
+  return child.state !== 'completed';
+}
+
 function countDependencies(children: DemoJob[]) {
   const dependencies = {
     processed: children.filter((c) => c.state === 'completed').length,
-    unprocessed: children.filter((c) => c.state !== 'completed' && c.state !== 'failed').length,
-    ignored: 0,
-    failed: children.filter((c) => c.state === 'failed').length,
+    unprocessed: children.filter(isUnfinished).length,
+    ignored: children.filter(isIgnored).length,
+    failed: children.filter((c) => c.state === 'failed' && !isIgnored(c) && !isUnfinished(c))
+      .length,
   };
 
-  return Object.values(dependencies).some(Boolean) ? { dependencies } : {};
+  const ignoredChildFailureReasons = Object.fromEntries(
+    children.filter(isIgnored).map((c) => [`bull:${c.queueName}:${c.id}`, c.failedReason])
+  );
+
+  return Object.values(dependencies).some(Boolean)
+    ? {
+        dependencies,
+        ...(dependencies.ignored > 0 ? { ignoredChildFailureReasons } : {}),
+      }
+    : {};
 }
 
 function buildFlowNode(job: DemoJob): any {
@@ -114,7 +136,7 @@ createBullBoard({
     // turns on the Metrics history page and the longer ranges on each queue's chart.
     historyProvider: new MockMetricsHistoryProvider(),
     uiConfig: {
-      boardTitle: 'bull-board demo',
+      boardTitle: 'Worker Manager Demo',
       boardLogo: { path: '/worker-manager/demo/logo.svg', width: 32, height: 32 },
       environment: { label: 'demo', color: '#f59f00', textColor: '#000' },
       showMetrics: true,

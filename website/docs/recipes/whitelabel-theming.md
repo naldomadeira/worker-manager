@@ -75,7 +75,7 @@ Most of that list is derived rather than set independently. `ring`, `sidebar-pri
 `primary`.
 
 Every derived name is still individually overridable, and an override wins, because `uiConfig.theme`
-writes into `:root` and `body.dark-mode` and both outrank the derivation. Set `ring` when you want a
+writes into `:root` and `html.dark` and both outrank the derivation. Set `ring` when you want a
 focus ring that is not your brand colour, and leave it out when you don't.
 
 ## The rest of the chrome
