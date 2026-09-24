@@ -15,7 +15,7 @@ export function ApiReference() {
       <header className="api-topbar">
         <a className="api-topbar__brand" href={withBase('/')}>
           <img src={withBase('/logo.svg')} alt="" width={24} height={24} />
-          <span>Bull-Board</span>
+          <span>Worker Manager</span>
         </a>
 
         <nav className="api-topbar__nav">

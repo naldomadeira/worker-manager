@@ -103,19 +103,19 @@ const mockAdapters = state.queues.map((q) => {
 });
 
 const serverAdapter = new MSWServerAdapter();
-serverAdapter.setBasePath('/bull-board/demo');
+serverAdapter.setBasePath('/worker-manager/demo');
 
 createBullBoard({
   queues: mockAdapters,
   serverAdapter,
   options: {
-    uiBasePath: '/bull-board/demo',
+    uiBasePath: '/worker-manager/demo',
     // Stands in for @worker-manager/metrics, which needs Redis and a running recorder. It
     // turns on the Metrics history page and the longer ranges on each queue's chart.
     historyProvider: new MockMetricsHistoryProvider(),
     uiConfig: {
       boardTitle: 'bull-board demo',
-      boardLogo: { path: '/bull-board/demo/logo.svg', width: 32, height: 32 },
+      boardLogo: { path: '/worker-manager/demo/logo.svg', width: 32, height: 32 },
       environment: { label: 'demo', color: '#f59f00', textColor: '#000' },
       showMetrics: true,
       pollingInterval: { showSetting: true },

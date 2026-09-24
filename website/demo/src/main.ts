@@ -6,7 +6,7 @@ async function main() {
     .textContent?.replace(/&quot;/g, '"');
   await worker.start({
     onUnhandledRequest: 'bypass',
-    serviceWorker: { url: '/bull-board/demo/mockServiceWorker.js' },
+    serviceWorker: { url: '/worker-manager/demo/mockServiceWorker.js' },
     quiet: true,
   });
 }

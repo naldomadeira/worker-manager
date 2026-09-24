@@ -1,5 +1,5 @@
 ---
-description: Run the bull-board dashboard in a container with the official ghcr.io/naldomadeira/worker-manager image. Docker Compose, environment variables, config files and basic auth.
+description: Run the Worker Manager dashboard in a container with the official ghcr.io/naldomadeira/worker-manager image. Docker Compose, environment variables, config files and basic auth.
 ---
 
 # Run with Docker
@@ -148,4 +148,4 @@ The CLI also runs from npm inside a stock Node container. That re-resolves the p
       - redis
 ```
 
-`--host 0.0.0.0` and `--no-open` are spelled out here, since only the bull-board image presets them.
+`--host 0.0.0.0` and `--no-open` are spelled out here, since only the Worker Manager image presets them.

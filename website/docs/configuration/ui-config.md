@@ -93,7 +93,7 @@ With `showMetrics` on, each queue view gains a throughput chart of completed and
 
 ![Header with the amber demo environment badge](/screenshots/environment-badge.png)
 
-The demo site uses this exact configuration, `{ label: 'demo', color: '#f59f00', textColor: '#000' }`. <a href="/bull-board/demo/" target="_blank" rel="noopener">See it live</a>.
+The demo site uses this exact configuration, `{ label: 'demo', color: '#f59f00', textColor: '#000' }`. <a href="/worker-manager/demo/" target="_blank" rel="noopener">See it live</a>.
 
 ## Theming
 

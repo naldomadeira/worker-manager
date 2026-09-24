@@ -67,7 +67,7 @@ A row can also be run on demand. That adds one job built from the scheduler's te
 
 Most applications register their schedulers on start, and `upsertJobScheduler` overrides whatever is stored. So a schedule you edit here lasts until the next deploy or restart, at which point your application's own definition wins again, and a scheduler you remove comes back the same way. That makes the view a good place to stop a misbehaving cron or move it a few hours while you fix the job, and a poor place to make a change you expect to keep. Change the code for that.
 
-The exception is a scheduler your application created dynamically and never re-registers, for a single tenant say. Nothing brings that one back, so removing it is permanent. bull-board cannot tell the two apart, which is why the confirmation says the runs stop until the application registers the scheduler again rather than promising either outcome.
+The exception is a scheduler your application created dynamically and never re-registers, for a single tenant say. Nothing brings that one back, so removing it is permanent. Worker Manager cannot tell the two apart, which is why the confirmation says the runs stop until the application registers the scheduler again rather than promising either outcome.
 
 Removing a scheduler takes its pending run with it. Completed and failed runs from the past stay where they are, and a run already being processed finishes normally.
 

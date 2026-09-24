@@ -1,17 +1,48 @@
-# bull-board
+# Worker Manager
+
+Fork of bull-board, published under the `@worker-manager/*` npm scope. Public API names
+(`createBullBoard`, `BullBoardModule`, the adapter classes, the CLI's `bull-board` binary, its
+`BULL_BOARD_*` env vars and `bull-board.config.*` files, the `bull-board:metrics` Redis namespace)
+are kept on purpose so existing integrations only rename the scope. Upstream issue/PR links
+(`github.com/felixmosh/bull-board/issues/N`) are history and stay as they are.
 
 ## Monorepo layout
 
-Yarn 4 workspaces under `packages/*`. Key packages:
+Yarn 4 workspaces under `packages/*`, plus `playground` (see "Playground"). Key packages:
 
 | Package | Description |
 |---|---|
 | `api` | Core library -- BullMQ/Bull adapters, queue handlers, server-adapter base |
-| `ui` | React UI, built to `dist/` |
+| `ui` | React UI (Tailwind CSS v4 + shadcn/ui), built to `dist/` |
+| `auth` | Framework-agnostic Basic / Keycloak (OIDC) middleware, used by `nestjs` and `cli` |
 | `express`, `fastify`, `hono`, `koa`, `h3`, `hapi`, `nestjs`, `elysia`, `bun` | Server adapters |
 | `cli` | Standalone `bull-board` executable, also what the Docker image installs |
 | `metrics` | Opt-in Redis-backed recorder behind the core's `historyProvider` seam |
 | `test-utils` | Private (unpublished) in-repo test kit for adapter contract tests |
+
+## UI conventions
+
+- Styling is Tailwind CSS v4 only (`src/styles/tailwind.css` is the single CSS entry, imported by
+  `index.tsx`). No CSS Modules. Design tokens live in `src/theme.css` (light on `:root`, dark on
+  `.dark`) and are mapped onto Tailwind colours in `@theme inline`, so `bg-card`,
+  `text-status-failed` etc. follow `uiConfig.theme` overrides at runtime.
+- Components come from shadcn/ui (`radix-nova` style, `components.json`) under
+  `src/components/ui/*`; `cn()` is in `src/lib/utils.ts`; `@/` aliases `src/`. Add new ones with
+  `npx shadcn@latest add <name>` from `packages/ui`, then check the import of `cn` points at
+  `@/lib/utils` (the CLI has been seen resolving it to a bogus `cn` npm package).
+- Dark mode is the `.dark` class on `<html>`, resolved before first paint by an inline script
+  in `src/index.ejs` from the persisted `board-settings` store.
+- Animation: `motion/react` and tw-animate-css; keep `prefers-reduced-motion` working.
+- Radix menus open on pointerdown, so tests fire `pointerDown` before `click`.
+
+## Playground
+
+`playground/` is a NestJS app that validates the library end to end: BullMQ queues on Redis and on
+PostgreSQL (BullMQ v6), Basic and Keycloak auth selected by `WM_AUTH`, and synthetic traffic.
+`yarn playground:infra` starts Redis (:6390), PostgreSQL (:5440) and Keycloak (:8090, realm
+imported from `playground/keycloak/`); `yarn playground` serves http://localhost:3100/queues;
+`yarn workspace @worker-manager/playground smoke` asserts the active auth mode. It is excluded from
+the root `build`/`clean` foreach and needs `yarn build` first because it links the local packages.
 
 ## Dev prerequisites
 

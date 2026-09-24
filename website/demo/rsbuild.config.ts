@@ -9,7 +9,7 @@ export default defineConfig({
   html: {
     template: './index.ejs',
     templateParameters: {
-      basePath: '/bull-board/demo/',
+      basePath: '/worker-manager/demo/',
       title: 'Bull-Board Demo',
       favIconDefault: 'favicon.ico',
       favIconAlternative: 'favicon-32x32.png',
@@ -42,7 +42,7 @@ export default defineConfig({
   },
   server: {
     port: 5174,
-    base: '/bull-board/demo/',
+    base: '/worker-manager/demo/',
   },
   dev: {
     writeToDisk: true,

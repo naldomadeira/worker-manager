@@ -1,9 +1,11 @@
-# <img alt="Worker Manager" src="https://raw.githubusercontent.com/naldomadeira/worker-manager/main/packages/ui/src/static/images/logo.svg" width="35px" /> @worker-manager
+# <img alt="Worker Manager" src="https://raw.githubusercontent.com/naldomadeira/worker-manager/main/packages/ui/src/static/images/logo.svg" width="35px" /> Worker Manager
 
-Dashboard UI for [Bull](https://github.com/OptimalBits/bull) and [BullMQ](https://github.com/taskforcesh/bullmq) job queues. Plug it into your server, see your queues.
+A modern dashboard for [BullMQ](https://github.com/taskforcesh/bullmq) and [Bull](https://github.com/OptimalBits/bull) job queues, on **Redis or PostgreSQL**, with **Basic and Keycloak auth built in**. Plug it into your server, see your queues.
+
+> Worker Manager is a fork of [bull-board](https://github.com/felixmosh/bull-board) by Felix Mosheev and contributors, rebuilt with a shadcn/ui + Tailwind CSS interface, first-class authentication and a richer NestJS module. Public APIs (`createBullBoard`, `BullBoardModule`, the adapters) keep their names, so migrating is a scope rename: `@bull-board/*` → `@worker-manager/*`.
 
 <p align="center">
-  <a href="https://www.npmjs.com/org/bull-board">
+  <a href="https://www.npmjs.com/org/worker-manager">
     <img alt="npm downloads" src="https://img.shields.io/npm/dw/@worker-manager/api">
   </a>
   <a href="https://github.com/naldomadeira/worker-manager/blob/main/LICENSE">
@@ -22,14 +24,22 @@ Dashboard UI for [Bull](https://github.com/OptimalBits/bull) and [BullMQ](https:
     srcset="https://raw.githubusercontent.com/naldomadeira/worker-manager/main/website/docs/public/screenshots/dashboard-overview.png"
   />
   <img
-    alt="bull-board dashboard"
+    alt="Worker Manager dashboard"
     src="https://raw.githubusercontent.com/naldomadeira/worker-manager/main/website/docs/public/screenshots/dashboard-overview.png"
   />
 </picture>
 
 <sub>Light and dark ship together, and this picks whichever you are reading in.</sub>
 
-[Documentation](#documentation) · [What you get](#what-you-get) · [Install](#install) · [Minimal Express example](#minimal-express-example) · [Historical metrics](#historical-metrics) · [Packages](#packages) · [Contributing](#contributing)
+[Highlights](#highlights) · [Try it](#try-it) · [NestJS](#nestjs-in-one-import) · [Authentication](#authentication) · [PostgreSQL](#postgresql) · [Playground](#playground) · [Packages](#packages) · [Contributing](#contributing)
+
+## Highlights
+
+- **A new interface**: shadcn/ui components on Tailwind CSS v4, a collapsible sidebar, a `Ctrl/⌘ K` command palette, KPI tiles, animated status bars and transitions (reduced motion respected), light, dark and system themes, and whitelabel design tokens.
+- **Authentication built in**: `@worker-manager/auth` protects any adapter with HTTP Basic or Keycloak (OpenID Connect with PKCE, encrypted session cookie, bearer tokens, required roles). The signed-in user shows up in the header.
+- **Redis and PostgreSQL**: BullMQ `>= 5.56` and all of v6, including v6 queues stored in PostgreSQL, from the libraries, the NestJS module and the CLI.
+- **A NestJS module that does more for you**: adapter auto-detection, `auth`, `readOnly`, `enabled`, root-level `queues`, `title`/`logo`/`theme` shortcuts and `forRootAsync` with `useFactory`, `useClass` or `useExisting`.
+- **Validated end to end**: a playground app with Redis, PostgreSQL and Keycloak in Docker, synthetic traffic and a smoke test for every auth mode.
 
 ## Try it
 
@@ -109,6 +119,85 @@ See the [docs](https://naldomadeira.github.io/worker-manager/) for queue adapter
 
 BullMQ `>= 5.56.0` and all of v6 are supported, including [v6 queues stored in PostgreSQL](https://naldomadeira.github.io/worker-manager/recipes/postgres-backend). The adapter detects which it has, so there is nothing to configure. See [supported versions](https://naldomadeira.github.io/worker-manager/queue-adapters/bullmq#supported-versions) for what CI tests and when the floor moves.
 
+## NestJS in one import
+
+```ts
+import { BullBoardModule } from '@worker-manager/nestjs';
+import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
+
+@Module({
+  imports: [
+    BullBoardModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        route: '/queues', // Express or Fastify is detected, no adapter needed
+        enabled: config.get('NODE_ENV') !== 'test',
+        readOnly: config.get('BOARD_READ_ONLY') === 'true',
+        title: 'Acme workers',
+        auth: {
+          strategy: 'keycloak',
+          url: config.getOrThrow('KEYCLOAK_URL'),
+          realm: config.getOrThrow('KEYCLOAK_REALM'),
+          clientId: config.getOrThrow('KEYCLOAK_CLIENT_ID'),
+          clientSecret: config.getOrThrow('KEYCLOAK_CLIENT_SECRET'),
+          requiredRoles: ['ops'],
+          cookie: { secret: config.getOrThrow('BOARD_COOKIE_SECRET') },
+        },
+      }),
+    }),
+    BullBoardModule.forFeature({ name: 'emails', adapter: BullMQAdapter }),
+  ],
+})
+export class AppModule {}
+```
+
+Every option is documented in the [NestJS guide](https://naldomadeira.github.io/worker-manager/server-adapters/nestjs).
+
+## Authentication
+
+`@worker-manager/auth` is a framework-agnostic middleware. The NestJS module and the CLI use it for you; with any other adapter, mount it in front of the board:
+
+```ts
+import { createAuthMiddleware } from '@worker-manager/auth';
+
+app.use(
+  '/admin/queues',
+  createAuthMiddleware(
+    { strategy: 'basic', users: [{ username: 'ops', password: process.env.BOARD_PASSWORD! }] },
+    { basePath: '/admin/queues' }
+  ),
+  serverAdapter.getRouter()
+);
+```
+
+Keycloak gives you single sign-on with PKCE, an AES-GCM encrypted session cookie, silent refresh, bearer tokens for scripts and `requiredRoles`. See the [Basic auth](https://naldomadeira.github.io/worker-manager/recipes/basic-auth) and [Keycloak](https://naldomadeira.github.io/worker-manager/recipes/keycloak-auth) recipes.
+
+## PostgreSQL
+
+BullMQ v6 can store queues in PostgreSQL. Hand those queues to the board like any other; the stats panel reports the Postgres datastore instead of Redis:
+
+```ts
+import { Queue, createPostgresBackend } from 'bullmq';
+
+const invoices = new Queue('invoices', { connection: { connectionString: process.env.POSTGRES_URL, migrate: true } }, createPostgresBackend);
+createBullBoard({ queues: [new BullMQAdapter(invoices)], serverAdapter });
+```
+
+The CLI discovers them for you: `npx @worker-manager/cli --postgres postgres://user:pass@host/db`. See the [PostgreSQL recipe](https://naldomadeira.github.io/worker-manager/recipes/postgres-backend).
+
+## Playground
+
+```sh
+yarn install && yarn build
+yarn playground:infra          # Redis, PostgreSQL and Keycloak in Docker
+cp playground/.env.example playground/.env
+yarn playground                # http://localhost:3100/queues
+yarn workspace @worker-manager/playground smoke
+```
+
+Switch `WM_AUTH` between `none`, `basic` and `keycloak` in `playground/.env`. See the [playground guide](https://naldomadeira.github.io/worker-manager/guide/playground).
+
 ## Historical metrics
 
 BullMQ keeps only a short ring buffer of per-minute metrics, so the throughput chart can't look back further than an hour or so. The optional `@worker-manager/metrics` package (beta) snapshots those metrics into long-retention Redis buckets and feeds them back to the board, which adds a Metrics history page and 7/30/90 day ranges on every queue chart. It is entirely opt-in: without it the core stays stateless and writes nothing.
@@ -131,6 +220,7 @@ See the [historical metrics recipe](https://naldomadeira.github.io/worker-manage
 | ------------------------------------------------------------------------ | -------------------------------------------------------- | --------------------------------------------------------------------------------- |
 | [@worker-manager/api](https://www.npmjs.com/package/@worker-manager/api)         | ![npm](https://img.shields.io/npm/v/@worker-manager/api)     | <img alt="npm downloads" src="https://img.shields.io/npm/dw/@worker-manager/api">     |
 | [@worker-manager/ui](https://www.npmjs.com/package/@worker-manager/ui)           | ![npm](https://img.shields.io/npm/v/@worker-manager/ui)      | <img alt="npm downloads" src="https://img.shields.io/npm/dw/@worker-manager/ui">      |
+| [@worker-manager/auth](https://www.npmjs.com/package/@worker-manager/auth)           | ![npm](https://img.shields.io/npm/v/@worker-manager/auth)      | <img alt="npm downloads" src="https://img.shields.io/npm/dw/@worker-manager/auth">      |
 | [@worker-manager/metrics](https://www.npmjs.com/package/@worker-manager/metrics) | ![npm](https://img.shields.io/npm/v/@worker-manager/metrics) | <img alt="npm downloads" src="https://img.shields.io/npm/dw/@worker-manager/metrics"> |
 | [@worker-manager/cli](https://www.npmjs.com/package/@worker-manager/cli)         | ![npm](https://img.shields.io/npm/v/@worker-manager/cli)     | <img alt="npm downloads" src="https://img.shields.io/npm/dw/@worker-manager/cli">     |
 | [@worker-manager/express](https://www.npmjs.com/package/@worker-manager/express) | ![npm](https://img.shields.io/npm/v/@worker-manager/express) | <img alt="npm downloads" src="https://img.shields.io/npm/dw/@worker-manager/express"> |
@@ -145,13 +235,13 @@ See the [historical metrics recipe](https://naldomadeira.github.io/worker-manage
 
 ## Contributing
 
-Issues and PRs welcome. Check the [issues page](https://github.com/naldomadeira/worker-manager/issues) before opening a new one. When reporting a bug, include versions (Node, Redis, Bull/BullMQ, bull-board) and a minimal reproduction.
+Issues and PRs welcome. Check the [issues page](https://github.com/naldomadeira/worker-manager/issues) before opening a new one. When reporting a bug, include versions (Node, Redis or PostgreSQL, Bull/BullMQ, Worker Manager) and a minimal reproduction.
 
 To develop locally:
 
 ```sh
 git clone git@github.com:naldomadeira/worker-manager.git
-cd bull-board
+cd worker-manager
 yarn && yarn dev:docker && yarn build && yarn dev
 ```
 
@@ -159,6 +249,7 @@ This starts Redis, builds the packages, and opens the dev server at `http://loca
 
 ## Acknowledgements
 
+- [Felix Mosheev](https://github.com/felixmosh) and the [bull-board](https://github.com/felixmosh/bull-board) contributors, whose work this fork builds on.
 - [Juan](https://github.com/joaomilho) for building the first version of this library.
 
 ## License

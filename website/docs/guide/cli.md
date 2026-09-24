@@ -1,12 +1,12 @@
 # Standalone CLI
 
-Sometimes you don't want to wire bull-board into an app at all, you just want to look at a Redis instance. `@worker-manager/cli` does that: point it at a Redis URL and it finds the Bull and BullMQ queues stored there, then serves the same dashboard UI you'd get from any server adapter.
+Sometimes you don't want to wire Worker Manager into an app at all, you just want to look at a Redis instance (or a PostgreSQL database holding BullMQ v6 queues). `@worker-manager/cli` does that: point it at a Redis URL and it finds the Bull and BullMQ queues stored there, then serves the same dashboard UI you'd get from any server adapter. See [PostgreSQL queues](#postgresql-queues) for the database side.
 
 ```sh
 npx @worker-manager/cli -r redis://localhost:6379
 ```
 
-It needs Node.js 20 or newer. That starts the dashboard on `http://127.0.0.1:3000` and opens it in a browser. This is a tool for local development, evaluating bull-board before wiring it into your app, or looking at a queue on infrastructure you've tunnelled to. It is not a replacement for mounting the adapter in your own server: there's no auto-login, no framework-level auth to inherit, and every option has to be passed on the command line, an env var, or a config file instead of code.
+It needs Node.js 20 or newer. That starts the dashboard on `http://127.0.0.1:3000` and opens it in a browser. This is a tool for local development, evaluating Worker Manager before wiring it into your app, or looking at a queue on infrastructure you've tunnelled to. It is not a replacement for mounting the adapter in your own server: there's no framework-level auth to inherit (though it has [Basic](#basic-auth) and [Keycloak](#keycloak-auth) auth built in), and every option has to be passed on the command line, an env var, or a config file instead of code.
 
 ## Discovery
 
@@ -57,6 +57,28 @@ Options:
       --read-only         Disable every destructive action
       --user <name>       Basic auth user (requires --password)
       --password <pass>   Basic auth password (requires --user)
+      --keycloak-url <url>
+                          Log in through Keycloak (OIDC) instead, e.g.
+                          https://sso.example.com
+      --keycloak-realm <realm>
+                          Keycloak realm, required with --keycloak-url
+      --keycloak-client-id <id>
+                          Client id, required with --keycloak-url
+      --keycloak-client-secret <secret>
+                          Client secret, for confidential clients
+      --keycloak-roles <list>
+                          Comma separated realm/client roles, any grants access
+      --keycloak-bearer-only
+                          Accept only Authorization: Bearer tokens, no login page
+      --public-url <url>  External URL of the board, base path included, used
+                          for the OIDC redirect URI     [derived from the request]
+      --session-secret <s>
+                          Key the session cookie is encrypted with
+                                                        [--keycloak-client-secret]
+      --postgres <url>    Also serve BullMQ v6 queues stored in PostgreSQL
+                          (postgres://user:pass@host:5432/db)
+      --postgres-schema <name>
+                          Schema the BullMQ tables live in       [bullmq]
       --board-title <s>   Dashboard title
       --history           Record and serve long-retention metrics history
       --history-retention-days <n>
@@ -92,6 +114,16 @@ Every flag has an environment variable equivalent, so you can configure the CLI 
 | `--read-only` | `BULL_BOARD_READ_ONLY` |
 | `--user` | `BULL_BOARD_USER` |
 | `--password` | `BULL_BOARD_PASSWORD` |
+| `--keycloak-url` | `BULL_BOARD_KEYCLOAK_URL` |
+| `--keycloak-realm` | `BULL_BOARD_KEYCLOAK_REALM` |
+| `--keycloak-client-id` | `BULL_BOARD_KEYCLOAK_CLIENT_ID` |
+| `--keycloak-client-secret` | `BULL_BOARD_KEYCLOAK_CLIENT_SECRET` |
+| `--keycloak-roles` | `BULL_BOARD_KEYCLOAK_ROLES` |
+| `--keycloak-bearer-only` | `BULL_BOARD_KEYCLOAK_BEARER_ONLY` |
+| `--public-url` | `BULL_BOARD_PUBLIC_URL` |
+| `--session-secret` | `BULL_BOARD_SESSION_SECRET` |
+| `--postgres` | `BULL_BOARD_POSTGRES_URL` |
+| `--postgres-schema` | `BULL_BOARD_POSTGRES_SCHEMA` |
 | `--board-title` | `BULL_BOARD_BOARD_TITLE` |
 | `--history` | `BULL_BOARD_HISTORY` |
 | `--history-retention-days` | `BULL_BOARD_HISTORY_RETENTION_DAYS` |
@@ -221,6 +253,57 @@ npx @worker-manager/cli -r redis://localhost:6379 --user admin --password secret
 
 This is enough for a queue you've tunnelled to or a small internal box. It is not the layered, session-aware auth described in [Add basic auth](/recipes/basic-auth), which covers login flows and framework-integrated auth for an app you're embedding the dashboard into.
 
+## Keycloak auth
+
+Instead of Basic auth, the CLI can put a Keycloak (OpenID Connect) login in front of the dashboard, through [`@worker-manager/auth`](/recipes/keycloak-auth):
+
+```sh
+npx @worker-manager/cli -r redis://localhost:6379 --host 0.0.0.0 \
+  --keycloak-url https://sso.example.com --keycloak-realm ops \
+  --keycloak-client-id worker-manager --keycloak-client-secret "$KEYCLOAK_SECRET" \
+  --keycloak-roles wm-admin \
+  --public-url https://queues.example.com --session-secret "$SESSION_SECRET"
+```
+
+Browsers are redirected to the Keycloak login page (authorization code flow with PKCE) and come back with an encrypted, `HttpOnly` session cookie that is refreshed silently while the refresh token lasts. Scripts can skip the browser and send `Authorization: Bearer <access token>` instead; `--keycloak-bearer-only` turns the login page off entirely. A user without one of `--keycloak-roles` (realm roles or client roles) gets a 403.
+
+Register `<public url>/auth/callback` as a valid redirect URI on the Keycloak client and `<public url>/` as a valid post logout redirect URI. Without `--public-url` the URL is derived from the request's `Host` and `X-Forwarded-*` headers. Set `--session-secret` whenever more than one CLI process serves the same board, or sessions will not survive a restart. `--user`/`--password` and `--keycloak-url` are mutually exclusive.
+
+In a config file, the same settings live under `keycloak`, with the option names of [`@worker-manager/auth`](/recipes/keycloak-auth):
+
+```js
+module.exports = {
+  keycloak: {
+    url: 'https://sso.example.com',
+    realm: 'ops',
+    clientId: 'worker-manager',
+    clientSecret: process.env.KEYCLOAK_SECRET,
+    requiredRoles: ['wm-admin'],
+    cookie: { secret: process.env.SESSION_SECRET },
+  },
+};
+```
+
+## PostgreSQL queues
+
+BullMQ v6 can store queues in PostgreSQL. `--postgres` serves them:
+
+```sh
+npx @worker-manager/cli --postgres postgres://bullmq:bullmq@localhost:5432/bullmq
+```
+
+Queue names are discovered from the tables of BullMQ's PostgreSQL schema (`bullmq` by default, `--postgres-schema` to change it), on the same `--scan-interval` as Redis discovery, or taken from `--queues`. The CLI bundles its own BullMQ v6 and `pg` for this, whatever BullMQ version your workers run.
+
+With no Redis source configured (no `--redis`, `--sentinel`, `--cluster`, their environment variables, or a `redis` entry in the config file), the board serves PostgreSQL only and never connects to Redis. With one, it serves both on the same board; a PostgreSQL outage then keeps the last known PostgreSQL queues on the board instead of taking the Redis ones down. `--history` records into Redis, so it is ignored on a PostgreSQL-only board.
+
+In a config file, `postgres` takes the URL, or a [node-postgres pool config](https://node-postgres.com/apis/pool) with an optional `schema`:
+
+```js
+module.exports = {
+  postgres: { host: 'db', user: 'bullmq', password: process.env.PGPASSWORD, database: 'jobs', schema: 'bullmq' },
+};
+```
+
 ## Historical metrics
 
 BullMQ's own metrics are a per-minute ring buffer capped at `maxDataPoints`, so the throughput chart can't look back further than that buffer reaches. `--history` turns on the long-retention path from the [historical metrics recipe](/recipes/historical-metrics) without wiring `@worker-manager/metrics` into an app of your own:
@@ -286,7 +369,7 @@ The entrypoint is the CLI, so every flag and variable on this page works there t
 
 ## Queues written by something other than Node
 
-BullMQ has an official [Python package](https://python-bullmq.readthedocs.io/), and gets written to from Go, Ruby, and other languages over the raw Redis protocol, since the job format is just a set of Redis keys, not a Node API. Those teams have never had a way to use bull-board, because every server adapter assumes a Node HTTP app to mount into. The CLI doesn't have that assumption: it scans Redis for the same keys regardless of what wrote them, and builds a `Queue` instance the same way whether the producer was `bullmq` or `python-bullmq`.
+BullMQ has an official [Python package](https://python-bullmq.readthedocs.io/), and gets written to from Go, Ruby, and other languages over the raw Redis protocol, since the job format is just a set of Redis keys, not a Node API. Those teams have never had a way to use Worker Manager, because every server adapter assumes a Node HTTP app to mount into. The CLI doesn't have that assumption: it scans Redis for the same keys regardless of what wrote them, and builds a `Queue` instance the same way whether the producer was `bullmq` or `python-bullmq`.
 
 The caveat is the same one that applies everywhere else in bull-board: the dashboard can only show what Bull and BullMQ store in Redis. A producer that doesn't write jobs in the format either library expects may show up incompletely, or not render some fields at all.
 
@@ -319,8 +402,6 @@ curl -s http://127.0.0.1:3000/api/queues | jq '.queues[] | {name, counts, isPaus
 `--no-open` skips the browser launch, which matters in a script or a headless agent session where there's nothing to open a browser on. `--port` pins the port so the caller knows where to send the request instead of parsing it out of stdout.
 
 ## What it doesn't do yet
-
-Discovery only reads Redis. BullMQ v6 queues backed by PostgreSQL aren't found or servable through the CLI; use a server adapter in your own app for those, see the [PostgreSQL backend recipe](/recipes/postgres-backend).
 
 Bull 3 queues aren't servable on a Redis Cluster, since Bull builds its keys without a hash tag. They're skipped with a warning; BullMQ queues on the same cluster work normally.
 

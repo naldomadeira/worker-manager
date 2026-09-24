@@ -27,8 +27,8 @@ function copyDemoPlugin() {
 
 export default defineConfig({
   root: 'docs',
-  title: 'Bull-Board',
-  logoText: 'Bull-Board',
+  title: 'Worker Manager',
+  logoText: 'Worker Manager',
   logo: '/logo.svg',
   description: 'Dashboard for Bull and BullMQ job queues.',
   base: '/worker-manager/',
@@ -63,6 +63,7 @@ export default defineConfig({
             { text: 'Set up with an AI agent', link: '/guide/ai-agent-setup' },
             { text: 'Standalone CLI', link: '/guide/cli' },
             { text: 'Run with Docker', link: '/guide/docker' },
+            { text: 'Playground', link: '/guide/playground' },
           ],
         },
         {
@@ -96,6 +97,7 @@ export default defineConfig({
           items: [
             { text: 'Overview', link: '/recipes/' },
             { text: 'Add basic auth', link: '/recipes/basic-auth' },
+            { text: 'Keycloak auth', link: '/recipes/keycloak-auth' },
             { text: 'CSRF protection', link: '/recipes/csrf-protection' },
             { text: 'Read-only mode', link: '/recipes/read-only-mode' },
             { text: 'Visibility guard', link: '/recipes/visibility-guard' },

@@ -1,6 +1,6 @@
 # NestJS
 
-[NestJS](https://nestjs.com/). bull-board ships a NestJS module plus a plain adapter you can wire manually.
+[NestJS](https://nestjs.com/). Worker Manager ships a NestJS module plus a plain adapter you can wire manually.
 
 ## Install
 
@@ -43,8 +43,8 @@ import { FeatureModule } from './feature/feature.module';
       connection: { host: 'localhost', port: 6379 },
     }),
     BullBoardModule.forRoot({
-      route: '/queues',
-      adapter: ExpressAdapter, // or FastifyAdapter from '@worker-manager/fastify'
+      route: '/queues', // the default
+      adapter: ExpressAdapter, // optional: detected from the Nest platform when left out
     }),
     FeatureModule,
   ],
@@ -71,12 +71,29 @@ import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 export class FeatureModule {}
 ```
 
-`forRoot()` options:
+`forRoot()` options, all optional:
 
-- `route`: base path where the dashboard is mounted.
-- `adapter`: server adapter class (`ExpressAdapter` or `FastifyAdapter`).
-- `boardOptions`: forwarded to `createBullBoard` (e.g. `uiConfig`, `uiBasePath`).
-- `middleware`: optional Express/Fastify middleware (basic auth, etc.).
+| Option | Default | |
+|---|---|---|
+| `route` | `'/queues'` | Base path where the dashboard is mounted, relative to the Nest global prefix. |
+| `adapter` | auto-detected | Server adapter class (`ExpressAdapter` or `FastifyAdapter`). When left out, the module asks `HttpAdapterHost` which platform the app runs on and loads `@worker-manager/express` or `@worker-manager/fastify`, failing with an install hint if the package is missing. |
+| `auth` | none | Built-in authentication (Basic or Keycloak). See [Authentication](#authentication). |
+| `enabled` | `true` | `false` registers nothing: no routes, no middleware, `forFeature()` becomes a no-op and `@InjectBullBoard()` resolves `null`. Handy to switch the board off per environment. |
+| `readOnly` | `false` | Read-only mode for every queue registered through `queues` or `forFeature()`, unless the queue sets `options.readOnlyMode` itself. |
+| `queues` | `[]` | Queues to register at the root without a separate `forFeature()` import. Same shape as `forFeature()` entries. |
+| `uiConfig` | | Merged into `boardOptions.uiConfig`, taking precedence. |
+| `title`, `logo`, `theme` | | Shortcuts for `uiConfig.boardTitle`, `uiConfig.boardLogo` and `uiConfig.theme`. |
+| `boardOptions` | | Forwarded to `createBullBoard` (e.g. `uiConfig`, `uiBasePath`). |
+| `middleware` | | Optional Nest middleware on the board route. On Express it runs after `auth`; on Fastify it is Nest middleware on the exact `route`. |
+
+```ts
+BullBoardModule.forRoot({
+  title: 'Ops queues',
+  readOnly: process.env.NODE_ENV === 'production',
+  enabled: process.env.QUEUE_BOARD !== 'off',
+  queues: [{ name: 'emails', adapter: BullMQAdapter }],
+});
+```
 
 `forFeature()` options (pass either `name` or `queue`):
 
@@ -114,7 +131,111 @@ export class FeatureModule {}
 
 The board keys entries by `prefix` + name, so the two show up as `tenant-a:emails` and `tenant-b:emails`. Set each adapter's `prefix` to match the queue's own prefix so the labels line up.
 
-There's also `BullBoardModule.forRootAsync()` which accepts `useFactory`, `imports`, `inject` for dynamic config.
+### Async configuration
+
+`BullBoardModule.forRootAsync()` takes `imports` plus one of `useFactory` (with `inject`),
+`useClass` or `useExisting`. The latter two name a provider implementing
+`BullBoardOptionsFactory`:
+
+```ts
+import { Injectable, Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import {
+  BullBoardModule,
+  type BullBoardModuleOptions,
+  type BullBoardOptionsFactory,
+} from '@worker-manager/nestjs';
+
+@Injectable()
+class BoardConfig implements BullBoardOptionsFactory {
+  constructor(private readonly config: ConfigService) {}
+
+  createBullBoardOptions(): BullBoardModuleOptions {
+    return {
+      enabled: this.config.get('QUEUE_BOARD_ENABLED') !== 'false',
+      readOnly: this.config.get('NODE_ENV') === 'production',
+    };
+  }
+}
+
+@Module({
+  imports: [BullBoardModule.forRootAsync({ imports: [ConfigModule], useClass: BoardConfig })],
+})
+export class AppModule {}
+```
+
+## Authentication
+
+`auth` puts [`@worker-manager/auth`](/recipes/keycloak-auth) in front of every board route: the
+page, the API and the static assets. It works the same on Express and Fastify, and the mount path
+includes the Nest global prefix.
+
+### Basic
+
+```ts
+BullBoardModule.forRoot({
+  auth: {
+    strategy: 'basic',
+    users: [{ username: 'admin', password: process.env.BOARD_PASSWORD!, roles: ['admin'] }],
+  },
+});
+```
+
+Unauthenticated requests get `401` with a `WWW-Authenticate: Basic` challenge and
+`{ "error": { "key": "ERRORS.UNAUTHORIZED" } }`. Credentials are compared in constant time.
+
+### Keycloak, configured from `ConfigService`
+
+```ts
+BullBoardModule.forRootAsync({
+  imports: [ConfigModule],
+  inject: [ConfigService],
+  useFactory: (config: ConfigService) => ({
+    route: '/queues',
+    auth: {
+      strategy: 'keycloak',
+      url: config.getOrThrow('KEYCLOAK_URL'), // https://sso.example.com
+      realm: config.getOrThrow('KEYCLOAK_REALM'),
+      clientId: config.getOrThrow('KEYCLOAK_CLIENT_ID'),
+      clientSecret: config.get('KEYCLOAK_CLIENT_SECRET'),
+      publicUrl: config.get('BOARD_PUBLIC_URL'), // e.g. https://api.example.com/queues
+      requiredRoles: ['wm-admin'],
+      cookie: { secret: config.getOrThrow('BOARD_SESSION_SECRET') },
+    },
+  }),
+});
+```
+
+Browsers go through the OIDC authorization code flow with PKCE and get an encrypted session
+cookie; API clients may send `Authorization: Bearer <access token>` instead. A user without one of
+`requiredRoles` gets `403` with `ERRORS.FORBIDDEN`. The module also serves `GET /queues/auth/me`
+and `GET /queues/auth/logout`. See [Keycloak auth](/recipes/keycloak-auth) for the Keycloak client
+settings.
+
+## PostgreSQL-backed queues
+
+BullMQ v6 can store queues in PostgreSQL (see [PostgreSQL backend](/recipes/postgres-backend)).
+Such a queue has no Redis connection and usually no DI token, so pass the instance:
+
+```ts
+import { Queue, createPostgresBackend } from 'bullmq'; // bullmq@6, plus the `pg` package
+import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
+
+const invoices = new Queue('invoices', { connection: process.env.POSTGRES_URL }, createPostgresBackend);
+
+@Module({
+  imports: [
+    BullBoardModule.forRoot({
+      queues: [{ queue: invoices, adapter: BullMQAdapter }],
+    }),
+  ],
+})
+export class AppModule {}
+```
+
+If the queue is created inside a provider instead, inject the board with `@InjectBullBoard()` and
+call `board.addQueue(new BullMQAdapter(queue))` from `onModuleInit`. Redis and PostgreSQL queues can share one board; the datastore panel reports
+Postgres stats for the Postgres queue.
 
 You can inject the board instance anywhere:
 

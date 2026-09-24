@@ -1,0 +1,32 @@
+{
+  "name": "@worker-manager/playground",
+  "version": "0.0.0",
+  "private": true,
+  "description": "A NestJS app that exercises Worker Manager end to end: Redis and PostgreSQL queues, basic and Keycloak auth, live traffic.",
+  "license": "MIT",
+  "scripts": {
+    "infra:up": "docker compose up -d --wait",
+    "infra:down": "docker compose down -v",
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/main.js",
+    "dev": "ts-node-dev --respawn --transpile-only src/main.ts",
+    "smoke": "node scripts/smoke.mjs"
+  },
+  "dependencies": {
+    "@nestjs/common": "^11.2.3",
+    "@nestjs/core": "^11.2.3",
+    "@nestjs/platform-express": "^11.2.3",
+    "@worker-manager/api": "workspace:*",
+    "@worker-manager/auth": "workspace:*",
+    "@worker-manager/express": "workspace:*",
+    "@worker-manager/nestjs": "workspace:*",
+    "bullmq": "^6.0.0",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.1",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.9.3"
+  }
+}

@@ -2,7 +2,7 @@
 pageType: home
 
 hero:
-  name: Bull-Board
+  name: Worker Manager
   text: Dashboard for BullMQ, BullMQ Pro & Bull
   tagline: Point it at a Redis URL, or mount it in your own server. See queues, jobs, schedulers and logs. Pause, retry, clean and reschedule from one UI.
   image:

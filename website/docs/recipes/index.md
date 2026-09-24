@@ -2,13 +2,14 @@
 
 Short, code-first walkthroughs for common setups. Each recipe is a page; each page ties back to a runnable example in the repo.
 
-Most recipes link into the <a href="/bull-board/demo/" target="_blank" rel="noopener">live demo</a> so you can see the shape before porting it.
+Most recipes link into the <a href="/worker-manager/demo/" target="_blank" rel="noopener">live demo</a> so you can see the shape before porting it.
 
 ## Recipes
 
 | Task | Recipe | Adapters shown |
 |------|--------|----------------|
 | Protect the dashboard with basic auth | [Add basic auth](/recipes/basic-auth) | Express, Fastify, Hapi, NestJS |
+| Sign in through Keycloak (OIDC), or accept bearer tokens | [Keycloak auth](/recipes/keycloak-auth) | Express, Fastify, NestJS, CLI |
 | Defend against CSRF on destructive actions | [CSRF protection](/recipes/csrf-protection) | Express |
 | Run several dashboards in one app | [Multiple dashboards](/recipes/multiple-dashboards) | Express |
 | Add or remove queues after startup | [Manage queues at runtime](/recipes/manage-queues-at-runtime) | All |

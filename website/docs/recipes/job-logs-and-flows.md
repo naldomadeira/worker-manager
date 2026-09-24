@@ -22,7 +22,7 @@ Open the job in the dashboard, switch to the Logs tab.
 
 ![Job detail with Logs tab, showing timestamped worker output](/screenshots/job-logs.png)
 
-Live example: <a href="/bull-board/demo/" target="_blank" rel="noopener">open the demo</a> and drill into a worker-processed job in `emails:welcome`.
+Live example: <a href="/worker-manager/demo/" target="_blank" rel="noopener">open the demo</a> and drill into a worker-processed job in `emails:welcome`.
 
 ## Job flows
 
@@ -49,7 +49,7 @@ Bull-board draws the whole flow as a graph on the job's detail view, whichever j
 
 Clicking a node fills the panel beside the canvas with that job's state and data rather than navigating away, so your position in the graph survives. Use `Open this job` in the panel when you do want its own page. The button in the card header expands the canvas to fullscreen, and `Escape` leaves it.
 
-Live example: <a href="/bull-board/demo/" target="_blank" rel="noopener">open the demo</a> and scroll to `reports:nightly` for a parent job with children.
+Live example: <a href="/worker-manager/demo/" target="_blank" rel="noopener">open the demo</a> and scroll to `reports:nightly` for a parent job with children.
 
 ### Large flows
 

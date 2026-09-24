@@ -38,7 +38,7 @@ export default function HomeExtras() {
           />
           <img
             src={withBase('/screenshots/dashboard-overview.png')}
-            alt="bull-board dashboard showing queues grouped by emails, billing, reports and notifications with per-state counts"
+            alt="Worker Manager dashboard showing queues grouped by emails, billing, reports and notifications with per-state counts"
           />
         </picture>
         <figcaption>Queues, jobs, metrics, logs.</figcaption>

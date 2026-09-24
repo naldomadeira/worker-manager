@@ -1,8 +1,61 @@
 # Add basic auth
 
-The dashboard has no built-in auth. Don't expose it on the open internet without one. Here's the minimum per framework.
+Don't expose the dashboard on the open internet without auth. The quickest route is the built-in
+middleware from `@worker-manager/auth`, which works on every Node framework. The framework-native
+approaches further down remain valid alternatives when you already have a login in your app.
 
-## Express + Passport
+## Built-in middleware
+
+```sh
+npm install @worker-manager/auth
+```
+
+```ts
+import { createAuthMiddleware } from '@worker-manager/auth';
+
+const auth = createAuthMiddleware(
+  {
+    strategy: 'basic',
+    users: [{ username: 'admin', password: process.env.BOARD_PASSWORD!, roles: ['admin'] }],
+    // Optional: checked when no static user matches, e.g. against your user table.
+    validate: async (username, password) => (await checkUser(username, password)) ?? false,
+  },
+  { basePath: '/ui' }
+);
+
+// Express
+app.use('/ui', auth, serverAdapter.getRouter());
+```
+
+On Fastify, wrap the board plugin so the hook only covers the board:
+
+```ts
+import { createAuthMiddleware, createFastifyAuthPlugin } from '@worker-manager/auth';
+
+app.register(createFastifyAuthPlugin(serverAdapter.registerPlugin(), auth), { prefix: '/ui' });
+```
+
+On NestJS, pass the same object as the module's `auth` option:
+
+```ts
+BullBoardModule.forRoot({
+  auth: { strategy: 'basic', users: [{ username: 'admin', password: process.env.BOARD_PASSWORD! }] },
+});
+```
+
+Credentials are compared in constant time (both sides hashed, then `crypto.timingSafeEqual`).
+A failure answers `401` with a `WWW-Authenticate: Basic` challenge and
+`{ "error": { "key": "ERRORS.UNAUTHORIZED" } }`, so the page, the API and the assets are all
+covered. `GET /ui/auth/me` returns the signed-in user. For single sign-on, the same package does
+[Keycloak](/recipes/keycloak-auth).
+
+The standalone [CLI](/guide/cli#basic-auth) uses the same middleware behind `--user`/`--password`.
+
+## Alternatives per framework
+
+Here's the minimum per framework if you would rather use its own auth tooling.
+
+### Express + Passport
 
 From [`examples/with-express-auth`](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-express-auth).
 
@@ -43,7 +96,7 @@ npm install && npm start
 # http://localhost:3000/ui (login: bull / board)
 ```
 
-## Fastify + @fastify/basic-auth
+### Fastify + @fastify/basic-auth
 
 From [`examples/with-fastify-auth`](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-fastify-auth).
 
@@ -53,7 +106,7 @@ await app.register(require('@fastify/basic-auth'), {
     if (username === 'bull' && password === 'board') return done();
     done(new Error('Unauthorized'));
   },
-  authenticate: { realm: 'Bull-Board' },
+  authenticate: { realm: 'Worker Manager' },
 });
 
 app.after(() => {
@@ -70,7 +123,7 @@ app.after(() => {
 
 The `onRequest` hook covers every route registered after it. Scope the auth plugin inside a child context if you want it to cover only the dashboard.
 
-## Hapi + strategy
+### Hapi + strategy
 
 From [`examples/with-hapi-auth`](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-hapi-auth).
 
@@ -95,7 +148,7 @@ await app.register(
 
 The plugin options pass straight to Hapi's route config, so the auth strategy applies to every bull-board route.
 
-## NestJS + guards
+### NestJS + guards
 
 From [`examples/with-nestjs-fastify-auth`](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-nestjs-fastify-auth).
 

@@ -2227,6 +2227,7 @@
                   "ERRORS.REDIS_STATS_UNAVAILABLE",
                   "ERRORS.REDIS_UNAVAILABLE",
                   "ERRORS.STATUS_NOT_RETRIABLE",
+                  "ERRORS.UNAUTHORIZED",
                   "ERRORS.WORKERS_DISABLED"
                 ],
                 "type": "string"
@@ -2996,6 +2997,7 @@
               "ERRORS.REDIS_STATS_UNAVAILABLE",
               "ERRORS.REDIS_UNAVAILABLE",
               "ERRORS.STATUS_NOT_RETRIABLE",
+              "ERRORS.UNAUTHORIZED",
               "ERRORS.WORKERS_DISABLED"
             ],
             "type": "string"

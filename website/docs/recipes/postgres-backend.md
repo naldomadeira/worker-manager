@@ -1,6 +1,6 @@
 # PostgreSQL backend
 
-BullMQ v6 can store queues in PostgreSQL instead of Redis. bull-board reads those queues the same way it reads Redis ones, so there is nothing extra to configure on the board.
+BullMQ v6 can store queues in PostgreSQL instead of Redis. Worker Manager reads those queues the same way it reads Redis ones, so there is nothing extra to configure on the board.
 
 ## Setup
 

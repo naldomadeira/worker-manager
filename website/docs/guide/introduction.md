@@ -1,8 +1,8 @@
 # Introduction
 
-Bull-Board is a dashboard for [BullMQ](https://docs.bullmq.io/) and [Bull](https://github.com/OptimalBits/bull). It shows you what is in your queues and lets you act on it. You still use Bull or BullMQ to enqueue and process jobs, bull-board only visualises them.
+Worker Manager is a dashboard for [BullMQ](https://docs.bullmq.io/) and [Bull](https://github.com/OptimalBits/bull). It shows you what is in your queues and lets you act on it. You still use Bull or BullMQ to enqueue and process jobs, bull-board only visualises them.
 
-Want to see it before installing? <a href="/bull-board/demo/" target="_blank" rel="noopener">Open the live demo</a>.
+Want to see it before installing? <a href="/worker-manager/demo/" target="_blank" rel="noopener">Open the live demo</a>.
 
 ## Two ways to run it
 
@@ -27,6 +27,6 @@ Quicker when you only want to look at a queue, and the only option when the work
 
 ## Next steps
 
-- [Install bull-board](/guide/getting-started) and wire it into your framework.
+- [Install Worker Manager](/guide/getting-started) and wire it into your framework.
 - [Build your first dashboard](/guide/your-first-dashboard) for an end-to-end walkthrough.
 - [Explore the dashboard](/guide/exploring-the-dashboard) for a tour of what the UI actually does.

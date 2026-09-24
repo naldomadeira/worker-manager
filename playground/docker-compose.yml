@@ -1,0 +1,45 @@
+# Everything the playground needs to exercise the board end to end: a Redis for the classic
+# BullMQ queues, a PostgreSQL for the BullMQ v6 Postgres backend, and a Keycloak with a realm
+# imported on start (users, roles and the confidential client the board logs in with).
+#
+# Host ports are offset from the defaults so the stack can run next to a developer's own
+# Redis/Postgres/Keycloak. Override them in `.env` if they clash.
+name: worker-manager-playground
+
+services:
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports:
+      - '${PLAYGROUND_REDIS_PORT:-6390}:6379'
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      retries: 10
+
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: bullmq
+      POSTGRES_PASSWORD: bullmq
+      POSTGRES_DB: bullmq
+    ports:
+      - '${PLAYGROUND_POSTGRES_PORT:-5440}:5432'
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U bullmq']
+      interval: 5s
+      retries: 10
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.3
+    restart: unless-stopped
+    command: ['start-dev', '--import-realm', '--http-port=8080']
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+      KC_HEALTH_ENABLED: 'true'
+    ports:
+      - '${PLAYGROUND_KEYCLOAK_PORT:-8090}:8080'
+    volumes:
+      - ./keycloak:/opt/keycloak/data/import:ro

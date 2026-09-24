@@ -2,9 +2,9 @@
 
 > Applies to: all adapters.
 
-bull-board is a viewer, not a monitor. It shows the state of your queues while you have the tab open. It doesn't watch them for you and it sends nothing anywhere, so "how do I get alerted when a job fails?" isn't a question the dashboard answers. That part is on you, and it belongs in your worker code, not the board.
+Worker Manager is a viewer, not a monitor. It shows the state of your queues while you have the tab open. It doesn't watch them for you and it sends nothing anywhere, so "how do I get alerted when a job fails?" isn't a question the dashboard answers. That part is on you, and it belongs in your worker code, not the board.
 
-BullMQ already emits the events you need. Wire your alerting to those, and use bull-board to investigate once an alert fires.
+BullMQ already emits the events you need. Wire your alerting to those, and use Worker Manager to investigate once an alert fires.
 
 ## Alert from the worker (same process)
 

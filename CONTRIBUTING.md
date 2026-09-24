@@ -1,4 +1,4 @@
-# Contributing to bull-board
+# Contributing to Worker Manager
 
 Thanks for your interest in improving bull-board! Issues and pull requests are welcome.
 
@@ -6,7 +6,7 @@ Before opening a new issue, please check the [issues page](https://github.com/na
 
 ## Monorepo layout
 
-bull-board is a Yarn 4 workspaces monorepo. The packages live under `packages/*`:
+Worker Manager is a Yarn 4 workspaces monorepo. The packages live under `packages/*`:
 
 | Package | Description |
 | --- | --- |
