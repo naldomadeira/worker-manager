@@ -2,7 +2,7 @@
 
 A modern dashboard for [BullMQ](https://github.com/taskforcesh/bullmq) and [Bull](https://github.com/OptimalBits/bull) job queues, on **Redis or PostgreSQL**, with **Basic and Keycloak auth built in**. Plug it into your server, see your queues.
 
-> Worker Manager is a fork of [bull-board](https://github.com/felixmosh/bull-board) by Felix Mosheev and contributors, rebuilt with a shadcn/ui + Tailwind CSS interface, first-class authentication and a richer NestJS module. Public APIs (`createBullBoard`, `BullBoardModule`, the adapters) keep their names, so migrating is a scope rename: `@bull-board/*` → `@worker-manager/*`.
+> Worker Manager is a fork of the open-source bull-board project (MIT), rebuilt with a shadcn/ui + Tailwind CSS interface, first-class authentication and a richer NestJS module. Public APIs (`createBullBoard`, `BullBoardModule`, the adapters) keep their names, so migrating is a scope rename: `@bull-board/*` → `@worker-manager/*`.
 
 <p align="center">
   <a href="https://www.npmjs.com/org/worker-manager">
@@ -246,11 +246,6 @@ yarn && yarn dev:docker && yarn build && yarn dev
 ```
 
 This starts Redis, builds the packages, and opens the dev server at `http://localhost:3000/ui`. See [CONTRIBUTING.md](./CONTRIBUTING.md) for the monorepo layout, running tests and examples, and adding a new server adapter.
-
-## Acknowledgements
-
-- [Felix Mosheev](https://github.com/felixmosh) and the [bull-board](https://github.com/felixmosh/bull-board) contributors, whose work this fork builds on.
-- [Juan](https://github.com/joaomilho) for building the first version of this library.
 
 ## License
 
