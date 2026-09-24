@@ -64,7 +64,7 @@
   --sidebar-border: oklch(0.92 0.008 258);
 
   /* Job statuses: the board's domain vocabulary. Hues are long-established
-     bull-board semantics, only recalibrated per theme. */
+     Worker Manager semantics, only recalibrated per theme. */
   --status-failed: #ef4444;
   --status-completed: #16a34a;
   --status-waiting: #d97706;

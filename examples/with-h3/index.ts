@@ -1,4 +1,4 @@
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 import { H3Adapter } from '@worker-manager/h3';
 import { Queue as QueueMQ, RedisOptions, Worker } from 'bullmq';
@@ -42,7 +42,7 @@ async function setupBullMQProcessor(queueName: string) {
 const exampleBullMq = createQueueMQ('BullMQ');
 setupBullMQProcessor(exampleBullMq.name);
 
-createBullBoard({
+createWorkerManagerBoard({
   queues: [new BullMQAdapter(exampleBullMq)],
   serverAdapter,
 });

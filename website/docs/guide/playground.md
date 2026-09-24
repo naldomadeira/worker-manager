@@ -53,7 +53,7 @@ The whole integration is one module import. The adapter is detected from the run
 queues are registered at the root, and auth is a plain option:
 
 ```ts
-BullBoardModule.forRoot({
+WorkerManagerModule.forRoot({
   route: '/queues',
   auth: {
     strategy: 'keycloak',

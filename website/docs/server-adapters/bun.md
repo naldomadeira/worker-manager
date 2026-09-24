@@ -9,7 +9,7 @@ bun add @worker-manager/api @worker-manager/bun
 ```
 
 ```ts
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 import { BunAdapter } from '@worker-manager/bun';
 import { Queue } from 'bullmq';
@@ -21,18 +21,18 @@ const queue = new Queue('my-queue', {
 const serverAdapter = new BunAdapter();
 serverAdapter.setBasePath('/ui');
 
-createBullBoard({
+createWorkerManagerBoard({
   queues: [new BullMQAdapter(queue)],
   serverAdapter,
 });
 
-const bullBoardRoutes = serverAdapter.getRoutes();
+const workerManagerRoutes = serverAdapter.getRoutes();
 
 Bun.serve({
   port: 3000,
   routes: {
     '/health': { GET: () => Response.json({ status: 'ok' }) },
-    ...bullBoardRoutes,
+    ...workerManagerRoutes,
   },
 });
 ```

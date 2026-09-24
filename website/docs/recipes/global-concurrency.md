@@ -6,7 +6,7 @@ BullMQ supports a global cap on concurrent jobs across all workers for a queue. 
 
 Open the queue's actions dropdown, pick **Set concurrency**, enter a number. The current value is shown in the queue info panel, under **Global concurrency**.
 
-Bull-board calls `Queue.setGlobalConcurrency(n)` on your behalf. Workers respect the new cap on their next job pickup. Setting it to 0 removes the limit.
+Worker Manager calls `Queue.setGlobalConcurrency(n)` on your behalf. Workers respect the new cap on their next job pickup. Setting it to 0 removes the limit.
 
 ## Set in code
 

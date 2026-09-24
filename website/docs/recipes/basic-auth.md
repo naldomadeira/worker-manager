@@ -38,7 +38,7 @@ app.register(createFastifyAuthPlugin(serverAdapter.registerPlugin(), auth), { pr
 On NestJS, pass the same object as the module's `auth` option:
 
 ```ts
-BullBoardModule.forRoot({
+WorkerManagerModule.forRoot({
   auth: { strategy: 'basic', users: [{ username: 'admin', password: process.env.BOARD_PASSWORD! }] },
 });
 ```
@@ -67,7 +67,7 @@ const session = require('express-session');
 
 passport.use(new LocalStrategy((username, password, cb) => {
   if (username === 'bull' && password === 'board') {
-    return cb(null, { user: 'bull-board' });
+    return cb(null, { user: 'worker-manager' });
   }
   return cb(null, false);
 }));
@@ -91,7 +91,7 @@ Run it:
 
 ```sh
 git clone https://github.com/naldomadeira/worker-manager
-cd bull-board/examples/with-express-auth
+cd worker-manager/examples/with-express-auth
 npm install && npm start
 # http://localhost:3000/ui (login: bull / board)
 ```
@@ -111,7 +111,7 @@ await app.register(require('@fastify/basic-auth'), {
 
 app.after(() => {
   const serverAdapter = new FastifyAdapter();
-  createBullBoard({ queues: [new BullMQAdapter(queue)], serverAdapter });
+  createWorkerManagerBoard({ queues: [new BullMQAdapter(queue)], serverAdapter });
   serverAdapter.setBasePath('/ui');
   app.register(serverAdapter.registerPlugin(), { prefix: '/ui' });
 
@@ -137,7 +137,7 @@ app.auth.strategy('simple', 'basic', {
 });
 
 const serverAdapter = new HapiAdapter();
-createBullBoard({ queues: [new BullMQAdapter(queue)], serverAdapter });
+createWorkerManagerBoard({ queues: [new BullMQAdapter(queue)], serverAdapter });
 serverAdapter.setBasePath('/ui');
 
 await app.register(
@@ -146,7 +146,7 @@ await app.register(
 );
 ```
 
-The plugin options pass straight to Hapi's route config, so the auth strategy applies to every bull-board route.
+The plugin options pass straight to Hapi's route config, so the auth strategy applies to every Worker Manager route.
 
 ### NestJS + guards
 

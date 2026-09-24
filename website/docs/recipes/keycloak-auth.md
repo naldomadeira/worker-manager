@@ -26,14 +26,14 @@ Client roles on the `worker-manager` client work too.
 
 ```ts
 import express from 'express';
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 import { ExpressAdapter } from '@worker-manager/express';
 import { createAuthMiddleware } from '@worker-manager/auth';
 
 const serverAdapter = new ExpressAdapter();
 serverAdapter.setBasePath('/queues');
-createBullBoard({ queues: [new BullMQAdapter(emails)], serverAdapter });
+createWorkerManagerBoard({ queues: [new BullMQAdapter(emails)], serverAdapter });
 
 const auth = createAuthMiddleware(
   {
@@ -60,7 +60,7 @@ import { createAuthMiddleware, createFastifyAuthPlugin } from '@worker-manager/a
 
 const serverAdapter = new FastifyAdapter();
 serverAdapter.setBasePath('/queues');
-createBullBoard({ queues: [new BullMQAdapter(emails)], serverAdapter });
+createWorkerManagerBoard({ queues: [new BullMQAdapter(emails)], serverAdapter });
 
 const auth = createAuthMiddleware(keycloakOptions, { basePath: '/queues' });
 app.register(createFastifyAuthPlugin(serverAdapter.registerPlugin(), auth), { prefix: '/queues' });
@@ -74,7 +74,7 @@ nothing else in your app.
 Pass the same options as `auth`, typically from `ConfigService`:
 
 ```ts
-BullBoardModule.forRootAsync({
+WorkerManagerModule.forRootAsync({
   imports: [ConfigModule],
   inject: [ConfigService],
   useFactory: (config: ConfigService) => ({

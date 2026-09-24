@@ -13,7 +13,7 @@ const { BullAdapter } = require('@worker-manager/api/bullAdapter');
 ## Usage
 
 ```ts
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import { BullAdapter } from '@worker-manager/api/bullAdapter';
 import { ExpressAdapter } from '@worker-manager/express';
 import Queue from 'bull';
@@ -25,7 +25,7 @@ const myQueue = new Queue('my-queue', {
 const serverAdapter = new ExpressAdapter();
 serverAdapter.setBasePath('/admin/queues');
 
-createBullBoard({
+createWorkerManagerBoard({
   queues: [new BullAdapter(myQueue)],
   serverAdapter,
 });

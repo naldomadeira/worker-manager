@@ -1,5 +1,5 @@
 const { Queue: QueueMQ, Worker } = require('bullmq');
-const { createBullBoard } = require('@worker-manager/api');
+const { createWorkerManagerBoard } = require('@worker-manager/api');
 const { BullMQAdapter } = require('@worker-manager/api/bullMQAdapter');
 const { ExpressAdapter } = require('@worker-manager/express');
 
@@ -35,26 +35,26 @@ function setupBullMQProcessor(queueName) {
 module.exports = function (sails) {
   return {
     configure: function () {
-      const BULL_BOARD_MIDDLEWARE = 'bullboard';
-      sails.config.http.middleware[BULL_BOARD_MIDDLEWARE] = (function _testMiddleware() {
+      const WORKER_MANAGER_MIDDLEWARE = 'workermanager';
+      sails.config.http.middleware[WORKER_MANAGER_MIDDLEWARE] = (function _testMiddleware() {
         let express = require('express');
 
         const exampleBullMq = createQueueMQ('BullMQ');
         setupBullMQProcessor(exampleBullMq.name);
 
-        let bullboard = express();
+        let workerManager = express();
 
         const serverAdapter = new ExpressAdapter();
         serverAdapter.setBasePath('/ui');
 
-        createBullBoard({
+        createWorkerManagerBoard({
           queues: [new BullMQAdapter(exampleBullMq)],
           serverAdapter,
         })
 
-        bullboard.use('/ui', serverAdapter.getRouter());
+        workerManager.use('/ui', serverAdapter.getRouter());
 
-        bullboard.use('/add', (req, res) => {
+        workerManager.use('/add', (req, res) => {
           const opts = req.query.opts || {};
 
           if (opts.delay) {
@@ -70,7 +70,7 @@ module.exports = function (sails) {
 
         const basePath = `http://127.0.0.1:${sails.config.port||1337}/`;
 
-        sails.log.info(`Bull Board running on: ${basePath}`)
+        sails.log.info(`Worker Manager running on: ${basePath}`)
         sails.log.info(`For the UI, open ${basePath}ui`);
         sails.log.info('Make sure Redis is running on port 6379 by default');
         sails.log.info('To populate the queue, run:');
@@ -78,9 +78,9 @@ module.exports = function (sails) {
         sails.log.info('To populate the queue with custom options (opts), run:');
         sails.log.info(`  curl ${basePath}add?title=Test&opts[delay]=9`);
 
-        return bullboard;
+        return workerManager;
       })();
-      sails.config.http.middleware.order.splice(0, 0, BULL_BOARD_MIDDLEWARE);
+      sails.config.http.middleware.order.splice(0, 0, WORKER_MANAGER_MIDDLEWARE);
     },
   };
 };

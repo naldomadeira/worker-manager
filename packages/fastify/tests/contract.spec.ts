@@ -13,7 +13,7 @@
  * demonstrated on the Express adapter (Task 5) where no version-locked plugins are bundled.
  */
 
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import {
   runServerAdapterContract,
   uiFixtureBasePath,
@@ -26,7 +26,7 @@ import { FastifyAdapter } from '../src';
 runServerAdapterContract('Fastify', async ({ basePath, queue }) => {
   const serverAdapter = new FastifyAdapter();
   serverAdapter.setBasePath(basePath);
-  createBullBoard({
+  createWorkerManagerBoard({
     queues: [queue.adapter],
     serverAdapter,
     options: { uiBasePath: uiFixtureBasePath },

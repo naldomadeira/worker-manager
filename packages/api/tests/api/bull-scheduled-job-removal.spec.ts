@@ -1,4 +1,4 @@
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import { BullAdapter } from '@worker-manager/api/bullAdapter';
 import { ExpressAdapter } from '@worker-manager/express';
 import Queue from 'bull';
@@ -23,7 +23,7 @@ describe('Bull scheduled job removal', () => {
 
     await testQueue.obliterate({ force: true });
 
-    createBullBoard({
+    createWorkerManagerBoard({
       queues: [new BullAdapter(testQueue)],
       serverAdapter,
     });

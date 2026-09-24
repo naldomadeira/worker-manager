@@ -1,4 +1,4 @@
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 import type { MetricsHistoryProvider, MetricsHistoryQuery } from '@worker-manager/api/typings/app';
 import { ExpressAdapter } from '@worker-manager/express';
@@ -34,7 +34,7 @@ describe('metrics history endpoint', () => {
 
   it('returns 404 when no historyProvider is configured', async () => {
     const queue = makeQueue('NoHistoryQueue');
-    createBullBoard({ queues: [new BullMQAdapter(queue)], serverAdapter });
+    createWorkerManagerBoard({ queues: [new BullMQAdapter(queue)], serverAdapter });
 
     await request(serverAdapter.getRouter()).get('/api/metrics/history').expect(404);
   });
@@ -49,7 +49,7 @@ describe('metrics history endpoint', () => {
       },
     };
 
-    createBullBoard({
+    createWorkerManagerBoard({
       queues: [new BullMQAdapter(queue)],
       serverAdapter,
       options: { historyProvider: provider },
@@ -92,7 +92,7 @@ describe('metrics history endpoint', () => {
       },
     };
 
-    createBullBoard({
+    createWorkerManagerBoard({
       queues: [new BullMQAdapter(queue)],
       serverAdapter,
       options: { historyProvider: provider },
@@ -123,7 +123,7 @@ describe('metrics history endpoint', () => {
       },
     };
 
-    createBullBoard({
+    createWorkerManagerBoard({
       queues: [new BullMQAdapter(queue)],
       serverAdapter,
       options: { historyProvider: provider },
@@ -149,7 +149,7 @@ describe('metrics history endpoint', () => {
       },
     };
 
-    createBullBoard({
+    createWorkerManagerBoard({
       queues: [new BullMQAdapter(queue)],
       serverAdapter,
       options: { historyProvider: provider },
@@ -175,7 +175,7 @@ describe('metrics history endpoint', () => {
       },
     };
 
-    createBullBoard({
+    createWorkerManagerBoard({
       queues: [new BullMQAdapter(queue)],
       serverAdapter,
       options: { historyProvider: provider },
@@ -203,7 +203,7 @@ describe('metrics history endpoint', () => {
         return [];
       },
     };
-    createBullBoard({
+    createWorkerManagerBoard({
       queues: [new BullMQAdapter(queue)],
       serverAdapter,
       options: { historyProvider: provider },
@@ -228,7 +228,7 @@ describe('metrics history endpoint', () => {
       },
     };
 
-    createBullBoard({
+    createWorkerManagerBoard({
       queues: [new BullMQAdapter(queue)],
       serverAdapter,
       options: { historyProvider: provider },
@@ -247,7 +247,7 @@ describe('metrics history endpoint', () => {
   it('returns 400 for an invalid granularity', async () => {
     const queue = makeQueue('BadGranularityQueue');
     const provider: MetricsHistoryProvider = { getHistory: async () => [] };
-    createBullBoard({
+    createWorkerManagerBoard({
       queues: [new BullMQAdapter(queue)],
       serverAdapter,
       options: { historyProvider: provider },
@@ -268,7 +268,7 @@ describe('metrics history endpoint', () => {
         return [];
       },
     };
-    createBullBoard({
+    createWorkerManagerBoard({
       queues: [new BullMQAdapter(queue)],
       serverAdapter,
       options: { historyProvider: provider },
@@ -298,7 +298,7 @@ describe('metrics history endpoint', () => {
         return [];
       },
     };
-    createBullBoard({
+    createWorkerManagerBoard({
       queues: [new BullMQAdapter(queue)],
       serverAdapter,
       options: { historyProvider: provider },
@@ -338,7 +338,7 @@ describe('hasHistoryProvider uiConfig flag', () => {
   it('injects hasHistoryProvider: true into the entry HTML when a provider is set', async () => {
     const queue = makeQueue('FlagOnQueue');
     const provider: MetricsHistoryProvider = { getHistory: async () => [] };
-    createBullBoard({
+    createWorkerManagerBoard({
       queues: [new BullMQAdapter(queue)],
       serverAdapter,
       options: { historyProvider: provider },
@@ -354,7 +354,7 @@ describe('hasHistoryProvider uiConfig flag', () => {
 
   it('injects hasHistoryProvider: false into the entry HTML when no provider is set', async () => {
     const queue = makeQueue('FlagOffQueue');
-    createBullBoard({ queues: [new BullMQAdapter(queue)], serverAdapter });
+    createWorkerManagerBoard({ queues: [new BullMQAdapter(queue)], serverAdapter });
 
     await request(serverAdapter.getRouter())
       .get('/')
@@ -366,7 +366,7 @@ describe('hasHistoryProvider uiConfig flag', () => {
 
   it('does not let caller uiConfig force hasHistoryProvider true without a provider', async () => {
     const queue = makeQueue('FlagForcedQueue');
-    createBullBoard({
+    createWorkerManagerBoard({
       queues: [new BullMQAdapter(queue)],
       serverAdapter,
       options: { uiConfig: { hasHistoryProvider: true } },

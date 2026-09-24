@@ -1,4 +1,4 @@
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import { BullAdapter } from '@worker-manager/api/bullAdapter';
 import { ExpressAdapter } from '@worker-manager/express';
 import Bull from 'bull';
@@ -34,7 +34,7 @@ describe('BullAdapter (legacy Bull)', () => {
   });
 
   function setupBoard(options: Partial<{ readOnlyMode: boolean }> = {}) {
-    createBullBoard({
+    createWorkerManagerBoard({
       queues: [new BullAdapter(queue, options)],
       serverAdapter,
     });

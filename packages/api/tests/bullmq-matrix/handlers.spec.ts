@@ -1,4 +1,4 @@
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 import { ExpressAdapter } from '@worker-manager/express';
 import { Queue } from 'bullmq';
@@ -21,7 +21,7 @@ describe(`Handlers on bullmq@${EXPECTED_MAJOR}`, () => {
 
   function setupBoard() {
     const serverAdapter = new ExpressAdapter();
-    createBullBoard({ queues: [new BullMQAdapter(queue)], serverAdapter });
+    createWorkerManagerBoard({ queues: [new BullMQAdapter(queue)], serverAdapter });
     return request(serverAdapter.getRouter());
   }
 

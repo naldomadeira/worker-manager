@@ -4,16 +4,16 @@ import { NestFactory } from '@nestjs/core';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import { FastifyAdapter } from '@nestjs/platform-fastify';
 import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
-import { ExpressAdapter as BullBoardExpressAdapter } from '@worker-manager/express';
-import { FastifyAdapter as BullBoardFastifyAdapter } from '@worker-manager/fastify';
+import { ExpressAdapter as WorkerManagerExpressAdapter } from '@worker-manager/express';
+import { FastifyAdapter as WorkerManagerFastifyAdapter } from '@worker-manager/fastify';
 import { uiFixtureBasePath } from '@worker-manager/test-utils';
 import { Queue } from 'bullmq';
 import request from 'supertest';
 import {
-  BULL_BOARD_INSTANCE,
-  BullBoardModule,
-  type BullBoardModuleOptions,
-  type BullBoardOptionsFactory,
+  WORKER_MANAGER_INSTANCE,
+  WorkerManagerModule,
+  type WorkerManagerModuleOptions,
+  type WorkerManagerOptionsFactory,
 } from '../src';
 
 const connection = {
@@ -27,8 +27,8 @@ const basic = (user: string, password: string) =>
 type Platform = 'express' | 'fastify';
 
 const platforms: Array<[Platform, any]> = [
-  ['express', BullBoardExpressAdapter],
-  ['fastify', BullBoardFastifyAdapter],
+  ['express', WorkerManagerExpressAdapter],
+  ['fastify', WorkerManagerFastifyAdapter],
 ];
 
 let counter = 0;
@@ -46,7 +46,7 @@ async function boot(platform: Platform, AppModule: any): Promise<INestApplicatio
   return app;
 }
 
-describe.each(platforms)('BullBoardModule options on %s', (platform, BoardAdapter) => {
+describe.each(platforms)('WorkerManagerModule options on %s', (platform, BoardAdapter) => {
   const queues: Queue[] = [];
   let app: INestApplication | undefined;
 
@@ -58,8 +58,8 @@ describe.each(platforms)('BullBoardModule options on %s', (platform, BoardAdapte
     return queue;
   };
 
-  const rootModule = (options: BullBoardModuleOptions) => {
-    @Module({ imports: [BullBoardModule.forRoot(options)] })
+  const rootModule = (options: WorkerManagerModuleOptions) => {
+    @Module({ imports: [WorkerManagerModule.forRoot(options)] })
     class AppModule {}
     return AppModule;
   };
@@ -175,8 +175,8 @@ describe.each(platforms)('BullBoardModule options on %s', (platform, BoardAdapte
 
     @Module({
       imports: [
-        BullBoardModule.forRoot({ enabled: false, adapter: BoardAdapter }),
-        BullBoardModule.forFeature({ queue, adapter: BullMQAdapter }),
+        WorkerManagerModule.forRoot({ enabled: false, adapter: BoardAdapter }),
+        WorkerManagerModule.forFeature({ queue, adapter: BullMQAdapter }),
       ],
     })
     class AppModule {}
@@ -184,7 +184,7 @@ describe.each(platforms)('BullBoardModule options on %s', (platform, BoardAdapte
     app = await boot(platform, AppModule);
 
     expect((await request(app.getHttpServer()).get('/queues/api/queues')).status).toBe(404);
-    expect(app.get(BULL_BOARD_INSTANCE)).toBeNull();
+    expect(app.get(WORKER_MANAGER_INSTANCE)).toBeNull();
   });
 
   it('applies readOnly to every queue unless the queue overrides it', async () => {
@@ -194,7 +194,7 @@ describe.each(platforms)('BullBoardModule options on %s', (platform, BoardAdapte
 
     @Module({
       imports: [
-        BullBoardModule.forRoot({
+        WorkerManagerModule.forRoot({
           adapter: BoardAdapter,
           readOnly: true,
           boardOptions: { uiBasePath: uiFixtureBasePath },
@@ -203,7 +203,7 @@ describe.each(platforms)('BullBoardModule options on %s', (platform, BoardAdapte
             { queue: writable, adapter: BullMQAdapter, options: { readOnlyMode: false } },
           ],
         }),
-        BullBoardModule.forFeature({ queue: fromFeature, adapter: BullMQAdapter }),
+        WorkerManagerModule.forFeature({ queue: fromFeature, adapter: BullMQAdapter }),
       ],
     })
     class AppModule {}
@@ -245,8 +245,8 @@ describe.each(platforms)('BullBoardModule options on %s', (platform, BoardAdapte
 
   it('builds its options from a useClass factory in forRootAsync', async () => {
     @Injectable()
-    class BoardConfig implements BullBoardOptionsFactory {
-      createBullBoardOptions(): BullBoardModuleOptions {
+    class BoardConfig implements WorkerManagerOptionsFactory {
+      createWorkerManagerOptions(): WorkerManagerModuleOptions {
         return {
           adapter: BoardAdapter,
           boardOptions: { uiBasePath: uiFixtureBasePath },
@@ -255,7 +255,7 @@ describe.each(platforms)('BullBoardModule options on %s', (platform, BoardAdapte
       }
     }
 
-    @Module({ imports: [BullBoardModule.forRootAsync({ useClass: BoardConfig })] })
+    @Module({ imports: [WorkerManagerModule.forRootAsync({ useClass: BoardConfig })] })
     class AppModule {}
 
     app = await boot(platform, AppModule);
@@ -270,8 +270,8 @@ describe.each(platforms)('BullBoardModule options on %s', (platform, BoardAdapte
 
   it('builds its options from a useExisting provider in forRootAsync', async () => {
     @Injectable()
-    class SharedConfig implements BullBoardOptionsFactory {
-      createBullBoardOptions(): BullBoardModuleOptions {
+    class SharedConfig implements WorkerManagerOptionsFactory {
+      createWorkerManagerOptions(): WorkerManagerModuleOptions {
         return { boardOptions: { uiBasePath: uiFixtureBasePath }, route: '/ops' };
       }
     }
@@ -281,7 +281,7 @@ describe.each(platforms)('BullBoardModule options on %s', (platform, BoardAdapte
 
     @Module({
       imports: [
-        BullBoardModule.forRootAsync({ imports: [ConfigModule], useExisting: SharedConfig }),
+        WorkerManagerModule.forRootAsync({ imports: [ConfigModule], useExisting: SharedConfig }),
       ],
     })
     class AppModule {}

@@ -1,4 +1,4 @@
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 import { entryPoint } from '@worker-manager/api/dist/handlers/entryPoint';
 import { ExpressAdapter } from '@worker-manager/express';
@@ -87,7 +87,7 @@ describe('entry point routes', () => {
     const queue = new Queue('EntryPointRouteQueue', { connection });
     queueList.push(queue);
 
-    createBullBoard({ queues: [new BullMQAdapter(queue)], serverAdapter });
+    createWorkerManagerBoard({ queues: [new BullMQAdapter(queue)], serverAdapter });
 
     const res = await request(serverAdapter.getRouter()).get('/').expect(200);
     assertServesShell(res);
@@ -97,7 +97,7 @@ describe('entry point routes', () => {
     const queue = new Queue('EntryPointRouteQueue', { connection });
     queueList.push(queue);
 
-    createBullBoard({ queues: [new BullMQAdapter(queue)], serverAdapter });
+    createWorkerManagerBoard({ queues: [new BullMQAdapter(queue)], serverAdapter });
 
     const res = await request(serverAdapter.getRouter()).get('/metrics-history').expect(200);
     assertServesShell(res);
@@ -107,7 +107,7 @@ describe('entry point routes', () => {
     const queue = new Queue('EntryPointRouteQueue', { connection });
     queueList.push(queue);
 
-    createBullBoard({ queues: [new BullMQAdapter(queue)], serverAdapter });
+    createWorkerManagerBoard({ queues: [new BullMQAdapter(queue)], serverAdapter });
 
     const res = await request(serverAdapter.getRouter()).get(`/queue/${queue.name}`).expect(200);
     assertServesShell(res);

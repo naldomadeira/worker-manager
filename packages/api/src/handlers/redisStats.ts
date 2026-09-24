@@ -3,7 +3,7 @@ import { DATASTORES } from '../constants/datastores';
 import { errorResponse } from '../errors';
 import { BaseAdapter } from '../queueAdapters/base';
 import { GetRedisStatsResponse } from '../schemas/responses';
-import { BullBoardRequest, ControllerHandlerReturnType, RedisStats } from '../types';
+import { WorkerManagerRequest, ControllerHandlerReturnType, RedisStats } from '../types';
 
 async function getStats(queue: BaseAdapter): Promise<RedisStats | null> {
   const redisInfoRaw = await queue.getRedisInfo();
@@ -37,14 +37,14 @@ async function getStats(queue: BaseAdapter): Promise<RedisStats | null> {
 }
 
 export async function redisStatsHandler({
-  queues: bullBoardQueues,
+  queues: workerManagerQueues,
   uiConfig,
-}: BullBoardRequest): Promise<ControllerHandlerReturnType<GetRedisStatsResponse>> {
+}: WorkerManagerRequest): Promise<ControllerHandlerReturnType<GetRedisStatsResponse>> {
   if (uiConfig.hideRedisDetails) {
     return errorResponse(403, 'ERRORS.FORBIDDEN');
   }
 
-  const pairs = [...bullBoardQueues.values()];
+  const pairs = [...workerManagerQueues.values()];
 
   if (pairs.length === 0) {
     return { body: {} };

@@ -2,7 +2,7 @@ import { errorResponse } from '../errors';
 import { queueProvider } from '../providers/queue';
 import { BaseAdapter } from '../queueAdapters/base';
 import { RunJobSchedulerResponse } from '../schemas/responses';
-import { BullBoardRequest, ControllerHandlerReturnType } from '../types';
+import { WorkerManagerRequest, ControllerHandlerReturnType } from '../types';
 import { formatJob } from './queues';
 
 /**
@@ -11,7 +11,7 @@ import { formatJob } from './queues';
  * where it was.
  */
 async function runJobScheduler(
-  req: BullBoardRequest,
+  req: WorkerManagerRequest,
   queue: BaseAdapter
 ): Promise<ControllerHandlerReturnType<RunJobSchedulerResponse>> {
   const { schedulerId } = req.params;

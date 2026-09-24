@@ -12,7 +12,7 @@ npm install @worker-manager/api @worker-manager/express
 
 ```js
 const { QueuePro } = require('@taskforcesh/bullmq-pro');
-const { createBullBoard } = require('@worker-manager/api');
+const { createWorkerManagerBoard } = require('@worker-manager/api');
 const { BullMQProAdapter } = require('@worker-manager/api/bullMQProAdapter');
 const { ExpressAdapter } = require('@worker-manager/express');
 
@@ -20,7 +20,7 @@ const queuePro = new QueuePro('queueProName');
 const serverAdapter = new ExpressAdapter();
 serverAdapter.setBasePath('/admin/queues');
 
-createBullBoard({
+createWorkerManagerBoard({
   queues: [new BullMQProAdapter(queuePro)],
   serverAdapter,
 });

@@ -1,6 +1,6 @@
 import type {
   AppControllerRoute,
-  BullBoardQueues,
+  WorkerManagerQueues,
   ControllerHandlerReturnType,
   HTTPMethod,
   IServerAdapter,
@@ -9,7 +9,7 @@ import type {
 import { http, HttpResponse, type HttpHandler } from 'msw';
 
 export class MSWServerAdapter implements IServerAdapter {
-  private bullBoardQueues: BullBoardQueues | undefined;
+  private workerManagerQueues: WorkerManagerQueues | undefined;
   private errorHandler: ((error: Error) => ControllerHandlerReturnType) | undefined;
   private uiConfig: UIConfig = {};
   private _handlers: HttpHandler[] = [];
@@ -21,8 +21,8 @@ export class MSWServerAdapter implements IServerAdapter {
     return this;
   }
 
-  setQueues(queues: BullBoardQueues): this {
-    this.bullBoardQueues = queues;
+  setQueues(queues: WorkerManagerQueues): this {
+    this.workerManagerQueues = queues;
     return this;
   }
 
@@ -57,7 +57,7 @@ export class MSWServerAdapter implements IServerAdapter {
   }
 
   /**
-   * Rewrites routes that `createBullBoard` already registered, keeping the ones it added
+   * Rewrites routes that `createWorkerManagerBoard` already registered, keeping the ones it added
    * conditionally (the metrics history endpoints) instead of replacing the whole set.
    */
   mapApiRoutes(map: (route: AppControllerRoute) => AppControllerRoute): this {
@@ -92,7 +92,7 @@ export class MSWServerAdapter implements IServerAdapter {
 
       try {
         const response = await handler({
-          queues: this.bullBoardQueues!,
+          queues: this.workerManagerQueues!,
           uiConfig: this.uiConfig,
           params: mswParams as Record<string, string>,
           query: Object.fromEntries(url.searchParams.entries()),

@@ -1,7 +1,7 @@
 import { BullModule } from '@nestjs/bullmq';
 import { DynamicModule, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 import { ExpressAdapter } from '@worker-manager/express';
 import { Queue } from 'bullmq';
@@ -50,7 +50,7 @@ export class QueuesModule implements NestModule {
     const serverAdapter = new ExpressAdapter();
     serverAdapter.setBasePath('/queues');
 
-    createBullBoard({
+    createWorkerManagerBoard({
       queues: [new BullMQAdapter(this.testQueue)],
       serverAdapter,
     });

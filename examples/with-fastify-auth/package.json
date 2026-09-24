@@ -1,7 +1,7 @@
 {
-  "name": "bull-board-with-fastify",
-  "version": "1.2.0",
-  "description": "Example of how to use Fastify server with bull-board",
+  "name": "worker-manager-with-fastify",
+  "version": "2.0.0",
+  "description": "Example of how to use Fastify server with Worker Manager",
   "main": "index.js",
   "scripts": {
     "start": "nodemon index.js",
@@ -10,8 +10,8 @@
   "author": "naldomadeira",
   "license": "ISC",
   "dependencies": {
-    "@worker-manager/api": "^1.2.0",
-    "@worker-manager/fastify": "^1.2.0",
+    "@worker-manager/api": "^2.0.0",
+    "@worker-manager/fastify": "^2.0.0",
     "@fastify/basic-auth": "^6.2.0",
     "@fastify/cookie": "^11.1.2",
     "@fastify/jwt": "^10.2.0",

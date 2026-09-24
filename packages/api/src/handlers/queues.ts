@@ -4,7 +4,7 @@ import { GetQueuesResponse } from '../schemas/responses';
 import {
   AppJob,
   AppQueue,
-  BullBoardRequest,
+  WorkerManagerRequest,
   ControllerHandlerReturnType,
   JobCounts,
   JobStatus,
@@ -153,7 +153,7 @@ async function getAppQueues(
 }
 
 export async function queuesHandler(
-  req: BullBoardRequest<GetQueuesQuery>
+  req: WorkerManagerRequest<GetQueuesQuery>
 ): Promise<ControllerHandlerReturnType<GetQueuesResponse>> {
   const pairs: [string, BaseAdapter][] = [];
 

@@ -1,4 +1,4 @@
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 import { ExpressAdapter } from '@worker-manager/express';
 import { FlowProducer, Queue } from 'bullmq';
@@ -32,7 +32,7 @@ describe(`Job flow on bullmq@${EXPECTED_MAJOR}`, () => {
 
   function setupBoard() {
     const serverAdapter = new ExpressAdapter();
-    createBullBoard({
+    createWorkerManagerBoard({
       queues: [new BullMQAdapter(parentQueue), new BullMQAdapter(childQueue)],
       serverAdapter,
     });
@@ -139,7 +139,7 @@ describe(`Job flow on bullmq@${EXPECTED_MAJOR}`, () => {
     const tree = await addFlow();
     const boardPrefix = 'Category.';
     const serverAdapter = new ExpressAdapter();
-    createBullBoard({
+    createWorkerManagerBoard({
       queues: [
         new BullMQAdapter(parentQueue, { prefix: boardPrefix }),
         new BullMQAdapter(childQueue, { prefix: boardPrefix }),

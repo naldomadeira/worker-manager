@@ -1,5 +1,5 @@
 // oxlint-disable no-console
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import { BullAdapter } from '@worker-manager/api/bullAdapter';
 import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 import { ExpressAdapter } from '@worker-manager/express';
@@ -302,7 +302,7 @@ const groupedQueueDefs: Array<[string, JobsOptions?]> = [
 // MetricsRecorder only ever writes what it observes going forward, so a fresh Redis shows
 // completely empty Metrics history and latency charts until the recorder has genuinely been
 // running for weeks. That's fine for a real deployment, but useless for anyone evaluating
-// bull-board or reviewing the latency-histogram feature: they see nothing. This backfill
+// Worker Manager or reviewing the latency-histogram feature: they see nothing. This backfill
 // fabricates 30 days of plausible-looking history directly in Redis on startup so the charts
 // have something to show immediately.
 //
@@ -317,9 +317,9 @@ const groupedQueueDefs: Array<[string, JobsOptions?]> = [
 // nonexistent public writer.
 // ---------------------------------------------------------------------------------------
 
-const DEMO_METRICS_NAMESPACE = 'bull-board:metrics'; // mirrors NAMESPACE in packages/metrics/src/keys.ts (not exported)
+const DEMO_METRICS_NAMESPACE = 'worker-manager:metrics'; // mirrors NAMESPACE in packages/metrics/src/keys.ts (not exported)
 const DEMO_GLOBAL_QUEUE = '__global__'; // mirrors GLOBAL_QUEUE in packages/metrics/src/keys.ts (not exported)
-const DEMO_BACKFILL_MARKER_KEY = 'bull-board:demo:backfill:v1';
+const DEMO_BACKFILL_MARKER_KEY = 'worker-manager:demo:backfill:v1';
 const DEMO_BACKFILL_DAYS = 30;
 // Mirrors MetricsRecorder's DEFAULT_RETENTION (packages/metrics/src/MetricsRecorder.ts),
 // which is not exported. Used so the seeded latency/queue-age keys expire the same way real
@@ -973,7 +973,7 @@ const run = async () => {
   const recorder = new MetricsRecorder({ queues: bullMQAdapters, connection: redisOptions });
   recorder.start();
 
-  createBullBoard({
+  createWorkerManagerBoard({
     queues: [
       ...bullMQAdapters,
       new BullAdapter(reportsExport, {

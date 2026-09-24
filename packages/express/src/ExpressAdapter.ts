@@ -1,7 +1,7 @@
 import type {
   AppControllerRoute,
   AppViewRoute,
-  BullBoardQueues,
+  WorkerManagerQueues,
   ControllerHandlerReturnType,
   HTTPMethod,
   IServerAdapter,
@@ -14,7 +14,7 @@ import { wrapAsync } from './helpers/wrapAsync';
 export class ExpressAdapter implements IServerAdapter {
   protected readonly app: Express;
   protected basePath = '';
-  protected bullBoardQueues: BullBoardQueues | undefined;
+  protected workerManagerQueues: WorkerManagerQueues | undefined;
   protected errorHandler: ((error: Error) => ControllerHandlerReturnType) | undefined;
   protected uiConfig: UIConfig = {};
 
@@ -48,7 +48,7 @@ export class ExpressAdapter implements IServerAdapter {
   public setApiRoutes(routes: AppControllerRoute[]): ExpressAdapter {
     if (!this.errorHandler) {
       throw new Error(`Please call 'setErrorHandler' before using 'registerPlugin'`);
-    } else if (!this.bullBoardQueues) {
+    } else if (!this.workerManagerQueues) {
       throw new Error(`Please call 'setQueues' before using 'registerPlugin'`);
     }
     const router = Router();
@@ -61,7 +61,7 @@ export class ExpressAdapter implements IServerAdapter {
             route.route,
             wrapAsync(async (req: Request, res: Response) => {
               const response = await route.handler({
-                queues: this.bullBoardQueues!,
+                queues: this.workerManagerQueues!,
                 uiConfig: this.uiConfig || {},
                 query: req.query,
                 params: req.params,
@@ -103,8 +103,8 @@ export class ExpressAdapter implements IServerAdapter {
     return this;
   }
 
-  public setQueues(bullBoardQueues: BullBoardQueues): ExpressAdapter {
-    this.bullBoardQueues = bullBoardQueues;
+  public setQueues(workerManagerQueues: WorkerManagerQueues): ExpressAdapter {
+    this.workerManagerQueues = workerManagerQueues;
     return this;
   }
 

@@ -1,4 +1,4 @@
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 import { ExpressAdapter } from '@worker-manager/express';
 import { Queue } from 'bullmq';
@@ -28,7 +28,7 @@ describe('Pause/Resume Queue', () => {
   });
 
   function setupBoard(options: Partial<{ readOnlyMode: boolean }> = {}) {
-    createBullBoard({
+    createWorkerManagerBoard({
       queues: [new BullMQAdapter(testQueue, options)],
       serverAdapter,
     });

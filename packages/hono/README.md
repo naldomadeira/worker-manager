@@ -1,13 +1,13 @@
 # <img alt="Worker Manager" src="https://raw.githubusercontent.com/naldomadeira/worker-manager/main/packages/ui/src/static/images/logo.svg" width="35px" /> @worker-manager/hono
 
-[Hono](https://hono.dev) server adapter for `bull-board`.
+[Hono](https://hono.dev) server adapter for Worker Manager.
 
 <p align="center">
   <a href="https://www.npmjs.com/package/@worker-manager/hono">
     <img alt="npm version" src="https://img.shields.io/npm/v/@worker-manager/hono">
   </a>
-  <a href="https://www.npmjs.com/package/bull-board">
-    <img alt="npm downloads" src="https://img.shields.io/npm/dw/bull-board">
+  <a href="https://www.npmjs.com/package/@worker-manager/hono">
+    <img alt="npm downloads" src="https://img.shields.io/npm/dw/@worker-manager/hono">
   </a>
   <a href="https://github.com/naldomadeira/worker-manager/blob/main/LICENSE">
     <img alt="licence" src="https://img.shields.io/github/license/naldomadeira/worker-manager">

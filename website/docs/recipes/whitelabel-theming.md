@@ -14,7 +14,7 @@ active entry, the selected status tab, the selected page in the pagination, and 
 selection washes all resolve to it.
 
 ```ts
-createBullBoard({
+createWorkerManagerBoard({
   queues,
   serverAdapter,
   options: {

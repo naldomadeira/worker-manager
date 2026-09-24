@@ -1,10 +1,10 @@
 import { existsSync } from 'node:fs';
 import path from 'node:path';
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import type { IServerAdapter } from '../../typings/app';
 
 // Guards the UI-path resolution the Next.js/Vercel integration depends on (#444).
-// createBullBoard doesn't return the path, so capture what it passes the adapter.
+// createWorkerManagerBoard doesn't return the path, so capture what it passes the adapter.
 function createCapturingAdapter() {
   const captured: { viewsPath?: string; staticRoute?: string; staticPath?: string } = {};
 
@@ -32,7 +32,7 @@ describe('UI base path resolution', () => {
   it('resolves the bundled @worker-manager/ui assets by default', () => {
     const { adapter, captured } = createCapturingAdapter();
 
-    createBullBoard({ queues: [], serverAdapter: adapter });
+    createWorkerManagerBoard({ queues: [], serverAdapter: adapter });
 
     expect(captured.viewsPath).toMatch(/dist$/);
     expect(captured.staticPath).toMatch(/dist[\\/]static$/);
@@ -46,7 +46,7 @@ describe('UI base path resolution', () => {
     const { adapter, captured } = createCapturingAdapter();
     const uiBasePath = path.join('custom', 'ui', 'base');
 
-    createBullBoard({ queues: [], serverAdapter: adapter, options: { uiBasePath } });
+    createWorkerManagerBoard({ queues: [], serverAdapter: adapter, options: { uiBasePath } });
 
     expect(captured.viewsPath).toBe(path.join(uiBasePath, 'dist'));
     expect(captured.staticPath).toBe(path.join(uiBasePath, 'dist/static'));

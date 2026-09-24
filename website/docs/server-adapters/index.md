@@ -26,14 +26,14 @@ No dedicated Sails adapter. Sails runs on Express, so use `@worker-manager/expre
 
 ## Next.js
 
-No dedicated Next.js adapter. Mount bull-board inside a Next.js API route using the Hono adapter (App Router) or the Express adapter (Pages Router). The Vercel deployment needs a small bit of `next.config.js`, see [Next.js & Vercel](/recipes/nextjs) and the [`with-nextjs-app`](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-nextjs-app) / [`with-nextjs-pages`](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-nextjs-pages) examples.
+No dedicated Next.js adapter. Mount Worker Manager inside a Next.js API route using the Hono adapter (App Router) or the Express adapter (Pages Router). The Vercel deployment needs a small bit of `next.config.js`, see [Next.js & Vercel](/recipes/nextjs) and the [`with-nextjs-app`](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-nextjs-app) / [`with-nextjs-pages`](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-nextjs-pages) examples.
 
 ## Shape
 
 Most adapters follow the same three steps:
 
 1. Create a server adapter and set its base path (`setBasePath()`, or constructor options for Elysia).
-2. Call `createBullBoard({ queues, serverAdapter })` with your queue adapters.
+2. Call `createWorkerManagerBoard({ queues, serverAdapter })` with your queue adapters.
 3. Register the adapter with your app (Express `app.use`, Fastify `app.register`, Bun spreads `getRoutes()` into `Bun.serve`, etc.).
 
 Elysia and Bun are a bit different, the adapter pages show exactly what goes where.

@@ -23,7 +23,7 @@ This is not a replacement for mounting an adapter in your own server: there's no
 
 ```
 Usage:
-  bull-board [options]
+  worker-manager [options]
   npx @worker-manager/cli [options]
 
 Options:
@@ -80,12 +80,12 @@ Options:
   -v, --version           Show the version
 ```
 
-Every flag also has an environment variable equivalent (`BULL_BOARD_REDIS_URL`, `BULL_BOARD_PORT`, `BULL_BOARD_READ_ONLY`, `BULL_BOARD_KEYCLOAK_URL`, `BULL_BOARD_POSTGRES_URL`, and so on), and a `bull-board.config.{mjs,js,cjs,json}` file for anything that doesn't fit on a command line. Flags win over environment variables, which win over the config file, which wins over the built-in default.
+Every flag also has an environment variable equivalent (`WORKER_MANAGER_REDIS_URL`, `WORKER_MANAGER_PORT`, `WORKER_MANAGER_READ_ONLY`, `WORKER_MANAGER_KEYCLOAK_URL`, `WORKER_MANAGER_POSTGRES_URL`, and so on), and a `worker-manager.config.{mjs,js,cjs,json}` file for anything that doesn't fit on a command line. Flags win over environment variables, which win over the config file, which wins over the built-in default.
 
 If Redis is unreachable when the CLI starts, it still opens: it serves a diagnostic page explaining why (the URL it dialled, the underlying error, and the likely causes), keeps retrying every 3 seconds, and switches to the real dashboard on its own the moment Redis answers, no restart needed. That only covers startup, though: once the dashboard is live it stays live, even if Redis later goes away. The diagnostic page does not come back; API requests just stop returning until Redis is reachable again, and Ctrl-C still works. Pass `--no-retry` for the old behaviour instead: print the error and exit 1 immediately, without ever opening a port, which is what a script or CI checking the exit code wants.
 
 ```js
-// bull-board.config.js
+// worker-manager.config.js
 module.exports = {
   redis: 'redis://localhost:6379',
   prefix: ['bull', 'tenant-a'],
@@ -139,7 +139,7 @@ npx @worker-manager/cli --postgres postgres://bullmq:bullmq@localhost:5432/bullm
 
 Queue names are discovered from the tables of BullMQ's PostgreSQL schema (`bullmq` by default, `--postgres-schema` to change it), on the same `--scan-interval` as Redis discovery, or taken from `--queues`. The CLI bundles its own BullMQ v6 and `pg` for this, whatever BullMQ version your workers run.
 
-With no Redis source configured (no `--redis`, `--sentinel`, `--cluster`, their environment variables, or a `redis` entry in the config file), the board serves PostgreSQL only and never connects to Redis. With one, it serves both on the same board; a PostgreSQL outage then keeps the last known PostgreSQL queues on the board instead of taking the Redis ones down. `--history` records into Redis when there is one; on a PostgreSQL-only board it records into PostgreSQL instead, in `bull_board_metrics_*` tables in the `--postgres-schema` schema, which it creates on start unless the board is `--read-only`. A read-only board serves what another process recorded.
+With no Redis source configured (no `--redis`, `--sentinel`, `--cluster`, their environment variables, or a `redis` entry in the config file), the board serves PostgreSQL only and never connects to Redis. With one, it serves both on the same board; a PostgreSQL outage then keeps the last known PostgreSQL queues on the board instead of taking the Redis ones down. `--history` records into Redis when there is one; on a PostgreSQL-only board it records into PostgreSQL instead, in `worker_manager_metrics_*` tables in the `--postgres-schema` schema, which it creates on start unless the board is `--read-only`. A read-only board serves what another process recorded.
 
 In a config file, `postgres` takes the URL, or a [node-postgres pool config](https://node-postgres.com/apis/pool) with an optional `schema`:
 
@@ -166,7 +166,7 @@ Credentials in sentinel mode come from their own flags, since there is no URL to
 For anything beyond that, including TLS to the sentinel nodes, the config file's `redis` key accepts a full [ioredis options object](https://github.com/redis/ioredis#connect-to-redis) and is passed through untouched:
 
 ```js
-// bull-board.config.js
+// worker-manager.config.js
 module.exports = {
   redis: {
     sentinels: [
@@ -188,7 +188,7 @@ module.exports = {
 npx @worker-manager/cli -r redis://localhost:6379 --history
 ```
 
-Every queue chart gains a 60m / 7d / 30d / 90d range selector, and a cross-queue Metrics history page shows up in the sidebar. The CLI process does the recording itself, copying throughput, wait time, run time and queue age into Redis once a minute under the `bull-board:metrics:` namespace, never over a key Bull or BullMQ owns. Recording follows discovery, so a queue that appears between rescans is picked up on the next tick.
+Every queue chart gains a 60m / 7d / 30d / 90d range selector, and a cross-queue Metrics history page shows up in the sidebar. The CLI process does the recording itself, copying throughput, wait time, run time and queue age into Redis once a minute under the `worker-manager:metrics:` namespace, never over a key Bull or BullMQ owns. Recording follows discovery, so a queue that appears between rescans is picked up on the next tick.
 
 `--history-retention-days` sets the window, 90 days by default. Per-tier retention, the snapshot interval and `latency: false` go in the config file under a `history` key. `--read-only` keeps the reading and stops the writing, for a board that only displays what another process records.
 
@@ -198,11 +198,11 @@ Completed and failed history comes out of BullMQ's own metrics buffer, so it sta
 
 ```sh
 docker run --rm -p 127.0.0.1:3000:3000 \
-  -e BULL_BOARD_USER=admin -e BULL_BOARD_PASSWORD=secret \
+  -e WORKER_MANAGER_USER=admin -e WORKER_MANAGER_PASSWORD=secret \
   ghcr.io/naldomadeira/worker-manager --redis redis://host.docker.internal:6379
 ```
 
-`ghcr.io/naldomadeira/worker-manager` is this package as an image, built for amd64 and arm64 on every release and tagged with the exact version, the major, and `latest`. The entrypoint is the CLI, so flags and `BULL_BOARD_*` variables work exactly as they do above. The only things the image decides for you are `BULL_BOARD_HOST=0.0.0.0` and `BULL_BOARD_OPEN=false`, the two defaults that make no sense in a container, and you can override both. [Run with Docker](https://naldomadeira.github.io/worker-manager/guide/docker) covers Compose, tags and mounting a config file.
+`ghcr.io/naldomadeira/worker-manager` is this package as an image, built for amd64 and arm64 on every release and tagged with the exact version, the major, and `latest`. The entrypoint is the CLI, so flags and `WORKER_MANAGER_*` variables work exactly as they do above. The only things the image decides for you are `WORKER_MANAGER_HOST=0.0.0.0` and `WORKER_MANAGER_OPEN=false`, the two defaults that make no sense in a container, and you can override both. [Run with Docker](https://naldomadeira.github.io/worker-manager/guide/docker) covers Compose, tags and mounting a config file.
 
 Discovery only reads Redis, so BullMQ v6 queues backed by PostgreSQL aren't found here; use a server adapter in your own app for those. `--prefix` doesn't take wildcards either, list the prefixes you need explicitly.
 

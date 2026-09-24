@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { NestFactory } from '@nestjs/core';
 import { ExpressAdapter } from '@nestjs/platform-express';
-import { ExpressAdapter as BullBoardExpressAdapter } from '@worker-manager/express';
+import { ExpressAdapter as WorkerManagerExpressAdapter } from '@worker-manager/express';
 import {
   runServerAdapterContract,
   uiFixtureBasePath,
@@ -10,18 +10,18 @@ import {
 } from '@worker-manager/test-utils';
 import { json } from 'express';
 import request from 'supertest';
-import { BullBoardModule } from '../src';
-import { BULL_BOARD_INSTANCE } from '../src/bull-board.constants';
-import type { BullBoardInstance } from '../src/bull-board.types';
+import { WorkerManagerModule } from '../src';
+import { WORKER_MANAGER_INSTANCE } from '../src/worker-manager.constants';
+import type { WorkerManagerBoard } from '../src/worker-manager.types';
 
 runServerAdapterContract('NestJS', async ({ basePath, queue }) => {
   const nestExpressAdapter = new ExpressAdapter();
 
   const route = basePath || '/';
 
-  const appModule = BullBoardModule.forRoot({
+  const appModule = WorkerManagerModule.forRoot({
     route,
-    adapter: BullBoardExpressAdapter,
+    adapter: WorkerManagerExpressAdapter,
     boardOptions: { uiBasePath: uiFixtureBasePath },
     middleware: json(),
   });
@@ -29,7 +29,7 @@ runServerAdapterContract('NestJS', async ({ basePath, queue }) => {
   const app = await NestFactory.create(appModule, nestExpressAdapter, { logger: false });
   await app.init();
 
-  const board = app.get<BullBoardInstance>(BULL_BOARD_INSTANCE);
+  const board = app.get<WorkerManagerBoard>(WORKER_MANAGER_INSTANCE);
   board.addQueue(queue.adapter);
 
   const send = async (req: ContractRequest): Promise<NormalizedResponse> => {

@@ -1,4 +1,4 @@
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import { BullAdapter } from '@worker-manager/api/bullAdapter';
 import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 import { ExpressAdapter } from '@worker-manager/express';
@@ -23,7 +23,7 @@ describe('queue rate limit', () => {
     queue = new Queue('RateLimitQueue', { connection });
     await queue.obliterate({ force: true });
     serverAdapter = new ExpressAdapter();
-    createBullBoard({ queues: [new BullMQAdapter(queue)], serverAdapter });
+    createWorkerManagerBoard({ queues: [new BullMQAdapter(queue)], serverAdapter });
   });
 
   afterEach(async () => {
@@ -105,7 +105,10 @@ describe('queue rate limit', () => {
   it('advertises no support on Bull, and refuses to set one', async () => {
     const bullQueue = new Bull('BullRateLimitQueue', { redis: connection });
     const bullServerAdapter = new ExpressAdapter();
-    createBullBoard({ queues: [new BullAdapter(bullQueue)], serverAdapter: bullServerAdapter });
+    createWorkerManagerBoard({
+      queues: [new BullAdapter(bullQueue)],
+      serverAdapter: bullServerAdapter,
+    });
 
     const agent = request(bullServerAdapter.getRouter());
 

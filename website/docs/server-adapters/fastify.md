@@ -13,7 +13,7 @@ The adapter bundles `@fastify/static` and `@fastify/view`, both of which target 
 :::
 
 ```ts
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 import { FastifyAdapter } from '@worker-manager/fastify';
 import { Queue } from 'bullmq';
@@ -27,7 +27,7 @@ const app = Fastify();
 
 const serverAdapter = new FastifyAdapter();
 
-createBullBoard({
+createWorkerManagerBoard({
   queues: [new BullMQAdapter(queue)],
   serverAdapter,
 });

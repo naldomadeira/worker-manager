@@ -1,6 +1,6 @@
 # Next.js (App Router) example
 
-bull-board in a Next.js App Router app using the `@worker-manager/hono` adapter, deployable to Vercel. The dashboard is one optional catch-all route handler: `app/api/queues/[[...path]]/route.ts`.
+Worker Manager in a Next.js App Router app using the `@worker-manager/hono` adapter, deployable to Vercel. The dashboard is one optional catch-all route handler: `app/api/queues/[[...path]]/route.ts`.
 
 ## Run it
 

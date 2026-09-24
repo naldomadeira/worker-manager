@@ -1,4 +1,4 @@
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import { BullAdapter } from '@worker-manager/api/bullAdapter';
 import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 import { ExpressAdapter } from '@worker-manager/express';
@@ -25,7 +25,7 @@ describe('Job schedulers', () => {
     await firstQueue.obliterate({ force: true });
     await secondQueue.obliterate({ force: true });
 
-    createBullBoard({
+    createWorkerManagerBoard({
       queues: [new BullMQAdapter(firstQueue), new BullMQAdapter(secondQueue)],
       serverAdapter,
     });
@@ -371,7 +371,7 @@ describe('Job schedulers', () => {
 
     it('is rejected on a read only queue', async () => {
       const readOnlyServerAdapter = new ExpressAdapter();
-      createBullBoard({
+      createWorkerManagerBoard({
         queues: [new BullMQAdapter(firstQueue, { readOnlyMode: true })],
         serverAdapter: readOnlyServerAdapter,
       });
@@ -441,7 +441,7 @@ describe('Job schedulers', () => {
 
     it('is rejected on a read only queue', async () => {
       const readOnlyServerAdapter = new ExpressAdapter();
-      createBullBoard({
+      createWorkerManagerBoard({
         queues: [new BullMQAdapter(firstQueue, { readOnlyMode: true })],
         serverAdapter: readOnlyServerAdapter,
       });
@@ -465,7 +465,7 @@ describe('Job schedulers', () => {
       await bullQueue.obliterate({ force: true });
 
       bullServerAdapter = new ExpressAdapter();
-      createBullBoard({
+      createWorkerManagerBoard({
         queues: [new BullAdapter(bullQueue)],
         serverAdapter: bullServerAdapter,
       });

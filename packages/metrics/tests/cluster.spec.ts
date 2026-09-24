@@ -33,7 +33,7 @@ if (!clusterNodes) {
     });
 
     beforeEach(async () => {
-      prefix = `bull-board:metrics:test:${Math.random().toString(36).slice(2, 10)}`;
+      prefix = `worker-manager:metrics:test:${Math.random().toString(36).slice(2, 10)}`;
       namespace = resolveNamespace(prefix, true);
       minute = Math.floor(Date.now() / MS_PER_MINUTE);
       day = minuteToDay(minute);

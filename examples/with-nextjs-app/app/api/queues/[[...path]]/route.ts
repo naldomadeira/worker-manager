@@ -1,12 +1,12 @@
 import { serveStatic } from '@hono/node-server/serve-static';
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 import { HonoAdapter } from '@worker-manager/hono';
 import { Hono } from 'hono';
 import { handle } from 'hono/vercel';
 import { queue } from '@/lib/queue';
 
-// bull-board reads UI assets from disk, so it can't run on the edge runtime.
+// Worker Manager reads UI assets from disk, so it can't run on the edge runtime.
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
@@ -15,7 +15,7 @@ const basePath = '/api/queues';
 const serverAdapter = new HonoAdapter(serveStatic);
 serverAdapter.setBasePath(basePath);
 
-createBullBoard({
+createWorkerManagerBoard({
   queues: [new BullMQAdapter(queue)],
   serverAdapter,
 });

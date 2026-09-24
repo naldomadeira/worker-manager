@@ -45,7 +45,7 @@ import type { ResponseSchemas } from './schemas/responses';
 import type {
   AppControllerRoute,
   AppRouteDefs,
-  BullBoardRequest,
+  WorkerManagerRequest,
   ControllerHandlerReturnType,
   HTTPMethod,
   MetricsHistoryProvider,
@@ -69,7 +69,7 @@ function defineRoute<
   route: string | string[];
   spec: Omit<RouteSpec<TResponse>, 'query' | 'body'> & { query?: TQuery; body?: TBody };
   handler: (
-    request: BullBoardRequest<RequestPart<TQuery>, RequestPart<TBody>>
+    request: WorkerManagerRequest<RequestPart<TQuery>, RequestPart<TBody>>
   ) => Promisify<ControllerHandlerReturnType<ResponseSchemas[TResponse]>>;
 }): AppControllerRoute<TResponse> {
   return definition as AppControllerRoute<TResponse>;

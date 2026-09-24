@@ -4,10 +4,10 @@ import { pathToFileURL } from 'node:url';
 import type { FileConfig } from './types';
 
 const CANDIDATES = [
-  'bull-board.config.mjs',
-  'bull-board.config.js',
-  'bull-board.config.cjs',
-  'bull-board.config.json',
+  'worker-manager.config.mjs',
+  'worker-manager.config.js',
+  'worker-manager.config.cjs',
+  'worker-manager.config.json',
 ];
 
 export type ImportModule = (specifier: string) => Promise<{ default?: unknown }>;

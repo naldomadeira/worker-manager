@@ -1,10 +1,10 @@
 import { queueProvider } from '../providers/queue';
 import { BaseAdapter } from '../queueAdapters/base';
 import { EmptyResponse } from '../schemas/responses';
-import { BullBoardRequest, ControllerHandlerReturnType } from '../types';
+import { WorkerManagerRequest, ControllerHandlerReturnType } from '../types';
 
 async function promoteAll(
-  _req: BullBoardRequest,
+  _req: WorkerManagerRequest,
   queue: BaseAdapter
 ): Promise<ControllerHandlerReturnType<EmptyResponse>> {
   await queue.promoteAll();

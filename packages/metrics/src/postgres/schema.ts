@@ -1,8 +1,8 @@
 import { quoteIdentifier, type PgPool } from './connection';
 
 export const DEFAULT_SCHEMA = 'public';
-/** The SQL twin of the Redis namespace `bull-board:metrics`. */
-export const DEFAULT_TABLE_PREFIX = 'bull_board_metrics_';
+/** The SQL twin of the Redis namespace `worker-manager:metrics`. */
+export const DEFAULT_TABLE_PREFIX = 'worker_manager_metrics_';
 /** Keeps the longest derived name, an index, inside PostgreSQL's 63-character limit. */
 const MAX_PREFIX_LENGTH = 32;
 

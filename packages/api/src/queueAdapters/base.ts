@@ -1,6 +1,6 @@
 import {
   AppJobScheduler,
-  BullBoardRequest,
+  WorkerManagerRequest,
   FormatterField,
   JobCleanStatus,
   JobCounts,
@@ -35,7 +35,8 @@ export abstract class BaseAdapter {
   public readonly type: QueueType;
   public readonly externalJobUrl: QueueAdapterOptions['externalJobUrl'];
   private formatters = new Map<FormatterField, (data: any) => any>();
-  private _visibilityGuard: (request: BullBoardRequest) => Promise<boolean> | boolean = () => true;
+  private _visibilityGuard: (request: WorkerManagerRequest) => Promise<boolean> | boolean = () =>
+    true;
 
   protected constructor(
     type: QueueType,
@@ -77,11 +78,11 @@ export abstract class BaseAdapter {
     return typeof fieldFormatter === 'function' ? fieldFormatter(data) : defaultValue;
   }
 
-  public setVisibilityGuard(guard: (request: BullBoardRequest) => Promise<boolean> | boolean) {
+  public setVisibilityGuard(guard: (request: WorkerManagerRequest) => Promise<boolean> | boolean) {
     this._visibilityGuard = guard;
   }
 
-  public isVisible(request: BullBoardRequest) {
+  public isVisible(request: WorkerManagerRequest) {
     return this._visibilityGuard(request);
   }
 

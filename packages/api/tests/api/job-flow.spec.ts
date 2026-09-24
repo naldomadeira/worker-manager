@@ -1,4 +1,4 @@
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import { BullAdapter } from '@worker-manager/api/bullAdapter';
 import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 import { ExpressAdapter } from '@worker-manager/express';
@@ -43,7 +43,7 @@ describe('Job flow', () => {
   });
 
   function setupBoard() {
-    createBullBoard({
+    createWorkerManagerBoard({
       queues: [new BullMQAdapter(parentQueue), new BullMQAdapter(childQueue)],
       serverAdapter,
     });
@@ -114,7 +114,7 @@ describe('Job flow', () => {
       children: [{ name: 'leaf', queueName: childQueue.name, data: {} }],
     });
 
-    createBullBoard({
+    createWorkerManagerBoard({
       queues: [new BullMQAdapter(parentQueue), new BullMQAdapter(childQueue)],
       serverAdapter,
     });
@@ -437,7 +437,7 @@ describe('Job flow', () => {
     });
     const childJobId = tree.children![0].job.id;
 
-    createBullBoard({ queues: [new BullMQAdapter(childQueue)], serverAdapter });
+    createWorkerManagerBoard({ queues: [new BullMQAdapter(childQueue)], serverAdapter });
     const agent = request(serverAdapter.getRouter());
 
     const res = await agent.get(`/api/queues/${childQueue.name}/${childJobId}/flow`).expect(200);
@@ -449,7 +449,7 @@ describe('Job flow', () => {
     const boardPrefix = 'Category.';
 
     function setupPrefixedBoard() {
-      createBullBoard({
+      createWorkerManagerBoard({
         queues: [
           new BullMQAdapter(parentQueue, { prefix: boardPrefix }),
           new BullMQAdapter(childQueue, { prefix: boardPrefix }),
@@ -508,7 +508,7 @@ describe('Job flow', () => {
         children: [{ name: 'leaf', queueName: sharedName, data: {} }],
       });
 
-      createBullBoard({
+      createWorkerManagerBoard({
         queues: [
           new BullMQAdapter(tenantA, { prefix: 'tenant-a:' }),
           new BullMQAdapter(tenantB, { prefix: 'tenant-b:' }),
@@ -538,7 +538,7 @@ describe('Job flow', () => {
 
     try {
       const job = await bullQueue.add('solo', {});
-      createBullBoard({ queues: [new BullAdapter(bullQueue)], serverAdapter });
+      createWorkerManagerBoard({ queues: [new BullAdapter(bullQueue)], serverAdapter });
 
       const res = await request(serverAdapter.getRouter())
         .get(`/api/queues/FlowBull/${job.id}/flow`)

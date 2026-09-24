@@ -17,7 +17,7 @@ export default defineConfig({
     },
     define: {
       'process.env.APP_VERSION': JSON.stringify(pkgJson.version),
-      'process.env.BULL_BOARD_REPO': JSON.stringify(
+      'process.env.WORKER_MANAGER_REPO': JSON.stringify(
         'https://github.com/naldomadeira/worker-manager/releases'
       ),
     },

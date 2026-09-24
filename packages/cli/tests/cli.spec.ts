@@ -24,7 +24,7 @@ const PKG_VERSION = (
   JSON.parse(readFileSync(join(CLI_ROOT, 'package.json'), 'utf8')) as { version: string }
 ).version;
 
-const BANNER_RE = /bull-board listening on (http:\/\/\S+)/;
+const BANNER_RE = /Worker Manager listening on (http:\/\/\S+)/;
 const DEFAULT_BANNER_TIMEOUT_MS = 10000;
 // Shutdown runs up to four sequential SHUTDOWN_GRACE_MS graces, so this has to clear 12000ms.
 const STOP_TIMEOUT_MS = 15000;
@@ -38,7 +38,7 @@ function unique(label: string): string {
 function childEnv(): NodeJS.ProcessEnv {
   const env = { ...process.env };
   for (const key of Object.keys(env)) {
-    if (key.startsWith('BULL_BOARD_')) delete env[key];
+    if (key.startsWith('WORKER_MANAGER_')) delete env[key];
   }
 
   return env;
@@ -87,7 +87,7 @@ async function startCli(
 
     const timer = setTimeout(() => {
       child.kill('SIGKILL');
-      fail(`Timed out after ${timeoutMs}ms waiting for the bull-board banner.`);
+      fail(`Timed out after ${timeoutMs}ms waiting for the Worker Manager banner.`);
     }, timeoutMs);
 
     child.stdout.on('data', () => {
@@ -99,7 +99,7 @@ async function startCli(
     });
 
     child.once('exit', (code, signal) => {
-      fail(`bull-board exited before printing its banner (code=${code}, signal=${signal}).`);
+      fail(`Worker Manager exited before printing its banner (code=${code}, signal=${signal}).`);
     });
   });
 
@@ -398,7 +398,7 @@ describe('cli', () => {
         await queue.close();
         await Promise.all(
           cluster.nodes('master').map(async (node) => {
-            const keys = await node.keys('{bull-board:metrics}:*');
+            const keys = await node.keys('{worker-manager:metrics}:*');
 
             return keys.length > 0 ? node.unlink(...keys) : 0;
           })
@@ -755,10 +755,10 @@ describe('cli', () => {
     }
   });
 
-  it('honours a real bull-board.config.mjs, loaded through a real dynamic import', async () => {
+  it('honours a real worker-manager.config.mjs, loaded through a real dynamic import', async () => {
     const prefix = unique('config-file');
-    const cwd = mkdtempSync(join(tmpdir(), 'bull-board-cli-e2e-'));
-    const configPath = join(cwd, 'bull-board.config.mjs');
+    const cwd = mkdtempSync(join(tmpdir(), 'worker-manager-cli-e2e-'));
+    const configPath = join(cwd, 'worker-manager.config.mjs');
     const title = `E2E Custom Title ${unique('title')}`;
     writeFileSync(
       configPath,
@@ -932,7 +932,7 @@ describe('cli', () => {
       const cli = await startCli(['--redis', url, '--port', '0']);
 
       try {
-        const response = await fetch(`${cli.url}/__bull-board-cli/status`);
+        const response = await fetch(`${cli.url}/__worker-manager-cli/status`);
         const body = (await response.json()) as {
           status: string;
           redis: string;
@@ -960,7 +960,7 @@ describe('cli', () => {
       ]);
 
       try {
-        const response = await fetch(`${cli.url}/__bull-board-cli/status`);
+        const response = await fetch(`${cli.url}/__worker-manager-cli/status`);
         const body = (await response.json()) as { status: string; redis: string };
 
         expect(response.status).toBe(200);
@@ -991,7 +991,7 @@ describe('cli', () => {
         expect(unauthed.status).toBe(401);
         expect(await unauthed.text()).not.toContain(url);
 
-        const unauthedStatus = await fetch(`${cli.url}/__bull-board-cli/status`);
+        const unauthedStatus = await fetch(`${cli.url}/__worker-manager-cli/status`);
         expect(unauthedStatus.status).toBe(401);
 
         const authed = await fetch(`${cli.url}/`, {
@@ -1000,7 +1000,7 @@ describe('cli', () => {
         expect(authed.status).toBe(503);
         expect(await authed.text()).toContain(url);
 
-        const authedStatus = await fetch(`${cli.url}/__bull-board-cli/status`, {
+        const authedStatus = await fetch(`${cli.url}/__worker-manager-cli/status`, {
           headers: { Authorization: authHeader(user, password) },
         });
         expect(authedStatus.status).toBe(200);
@@ -1217,7 +1217,7 @@ describe('cli', () => {
           expect(html).toContain('"hasHistoryProvider":true');
           expect(html).toContain('"showMetrics":true');
 
-          expect(await waitForKeys(`bull-board:metrics:${name}:*`)).not.toEqual([]);
+          expect(await waitForKeys(`worker-manager:metrics:${name}:*`)).not.toEqual([]);
         } finally {
           await cli.stop();
         }
@@ -1225,7 +1225,7 @@ describe('cli', () => {
         await queue.obliterate({ force: true }).catch(() => {});
         await queue.close().catch(() => {});
         await deleteKeysUnder(client, `bull:${name}:*`).catch(() => {});
-        await deleteKeysUnder(client, `bull-board:metrics:${name}:*`).catch(() => {});
+        await deleteKeysUnder(client, `worker-manager:metrics:${name}:*`).catch(() => {});
       }
     });
 
@@ -1255,7 +1255,7 @@ describe('cli', () => {
           expect(response.status).toBe(200);
 
           await new Promise((resolve) => setTimeout(resolve, 1000));
-          expect(await keysUnder(client, `bull-board:metrics:${name}:*`)).toEqual([]);
+          expect(await keysUnder(client, `worker-manager:metrics:${name}:*`)).toEqual([]);
           expect(cli.stdout() + cli.stderr()).toContain('read-only');
         } finally {
           await cli.stop();
@@ -1264,7 +1264,7 @@ describe('cli', () => {
         await queue.obliterate({ force: true }).catch(() => {});
         await queue.close().catch(() => {});
         await deleteKeysUnder(client, `bull:${name}:*`).catch(() => {});
-        await deleteKeysUnder(client, `bull-board:metrics:${name}:*`).catch(() => {});
+        await deleteKeysUnder(client, `worker-manager:metrics:${name}:*`).catch(() => {});
       }
     });
 
@@ -1294,7 +1294,7 @@ describe('cli', () => {
           const html = await (await fetch(cli.url)).text();
           expect(html).not.toContain('"hasHistoryProvider":true');
 
-          expect(await keysUnder(client, `bull-board:metrics:${name}:*`)).toEqual([]);
+          expect(await keysUnder(client, `worker-manager:metrics:${name}:*`)).toEqual([]);
         } finally {
           await cli.stop();
         }

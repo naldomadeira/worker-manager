@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 const REPO = 'naldomadeira/worker-manager';
-const CACHE_KEY = 'bull-board:gh-stars';
+const CACHE_KEY = 'worker-manager:gh-stars';
 const CACHE_TTL_MS = 60 * 60 * 1000;
 
 function formatCompact(n: number): string {

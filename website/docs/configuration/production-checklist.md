@@ -51,7 +51,7 @@ while developing a custom server adapter, a `historyProvider`, or a `handlerHook
 reshapes bodies, where a mismatch would otherwise reach the dashboard as a rendering bug.
 
 ```ts
-createBullBoard({
+createWorkerManagerBoard({
   queues,
   serverAdapter,
   options: { validateResponses: process.env.NODE_ENV !== 'production' },
@@ -64,4 +64,4 @@ Workers that call `job.log()` will have their lines visible in the dashboard und
 
 ## Alerting
 
-The dashboard won't page you. It only shows state while a tab is open. Wire failure alerts to BullMQ's own events, not to bull-board. See [Alerting on failed jobs](/recipes/alerting).
+The dashboard won't page you. It only shows state while a tab is open. Wire failure alerts to BullMQ's own events, not to Worker Manager. See [Alerting on failed jobs](/recipes/alerting).

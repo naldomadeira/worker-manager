@@ -1,8 +1,8 @@
 import type { Job, JobNode } from 'bullmq';
 import { BullMQAdapter } from '../queueAdapters/bullMQ';
-import { BullBoardQueues } from '../types';
+import { WorkerManagerQueues } from '../types';
 
-function findBullMQAdapter(queues: BullBoardQueues): BullMQAdapter | null {
+function findBullMQAdapter(queues: WorkerManagerQueues): BullMQAdapter | null {
   for (const adapter of queues.values()) {
     if (adapter.type === 'bullmq') {
       return adapter as unknown as BullMQAdapter;
@@ -11,14 +11,17 @@ function findBullMQAdapter(queues: BullBoardQueues): BullMQAdapter | null {
   return null;
 }
 
-function findBoardAdapter(queues: BullBoardQueues, boardQueueName: string): BullMQAdapter | null {
+function findBoardAdapter(
+  queues: WorkerManagerQueues,
+  boardQueueName: string
+): BullMQAdapter | null {
   const adapter = queues.get(boardQueueName);
   return adapter?.type === 'bullmq' ? (adapter as unknown as BullMQAdapter) : null;
 }
 
 // Keyed by the qualified `prefix:name`, which is what a job's `opts.parent.queue` carries and the
 // only form that tells two board entries running one queue name under two prefixes apart.
-function buildQueueLookup(queues: BullBoardQueues): Map<string, BullMQAdapter> {
+function buildQueueLookup(queues: WorkerManagerQueues): Map<string, BullMQAdapter> {
   const lookup = new Map<string, BullMQAdapter>();
 
   for (const adapter of queues.values()) {
@@ -38,7 +41,7 @@ export interface FlowWindow {
 
 // A queue is registered on the board under `prefix` + the name BullMQ knows it by, and job URLs
 // and every other route are keyed by that rather than by the name a job reports.
-export function buildBoardQueueNameResolver(queues: BullBoardQueues): (job: Job) => string {
+export function buildBoardQueueNameResolver(queues: WorkerManagerQueues): (job: Job) => string {
   const lookup = buildQueueLookup(queues);
   return (job) => lookup.get(job.queueQualifiedName)?.getName() ?? job.queueName;
 }
@@ -47,7 +50,7 @@ export function buildBoardQueueNameResolver(queues: BullBoardQueues): (job: Job)
 // connections the tree is read from the datastore it lives in. The first bullmq adapter is
 // only a fallback for a root whose queue is not registered on the board.
 export async function getFlowTree(
-  queues: BullBoardQueues,
+  queues: WorkerManagerQueues,
   boardQueueName: string,
   jobId: string,
   window: FlowWindow
@@ -72,7 +75,7 @@ export async function getFlowTree(
  * no flow root can be determined.
  */
 export async function findFlowRoot(
-  queues: BullBoardQueues,
+  queues: WorkerManagerQueues,
   job: Job
 ): Promise<{ queueName: string; jobId: string } | null> {
   const lookup = buildQueueLookup(queues);

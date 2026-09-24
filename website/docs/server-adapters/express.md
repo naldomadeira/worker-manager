@@ -9,7 +9,7 @@ npm install @worker-manager/api @worker-manager/express
 ```
 
 ```ts
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 import { ExpressAdapter } from '@worker-manager/express';
 import { Queue } from 'bullmq';
@@ -22,7 +22,7 @@ const queue = new Queue('my-queue', {
 const serverAdapter = new ExpressAdapter();
 serverAdapter.setBasePath('/admin/queues');
 
-createBullBoard({
+createWorkerManagerBoard({
   queues: [new BullMQAdapter(queue)],
   serverAdapter,
 });

@@ -1,9 +1,9 @@
 const { FastifyAdapter } = require('@worker-manager/fastify');
-const { createBullBoard } = require('@worker-manager/api');
+const { createWorkerManagerBoard } = require('@worker-manager/api');
 const { BullMQAdapter } = require('@worker-manager/api/bullMQAdapter');
 
 module.exports.basicAuth = function basicAuth(fastify, { queue }, next) {
-  const authenticate = { realm: 'Bull-Board' };
+  const authenticate = { realm: 'Worker Manager' };
   function validate(username, password, req, reply, done) {
     if (username === 'bull' && password === 'board') {
       done();
@@ -17,7 +17,7 @@ module.exports.basicAuth = function basicAuth(fastify, { queue }, next) {
   fastify.after(() => {
     const serverAdapter = new FastifyAdapter();
 
-    createBullBoard({
+    createWorkerManagerBoard({
       queues: [new BullMQAdapter(queue)],
       serverAdapter,
     });

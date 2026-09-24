@@ -1,4 +1,4 @@
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import {
   runServerAdapterContract,
   uiFixtureBasePath,
@@ -16,7 +16,7 @@ const hasFetch = (app: unknown): app is WebApp => typeof (app as WebApp).fetch =
 runServerAdapterContract('H3', async ({ basePath, queue }) => {
   const serverAdapter = new H3Adapter();
   serverAdapter.setBasePath(basePath);
-  createBullBoard({
+  createWorkerManagerBoard({
     queues: [queue.adapter],
     serverAdapter,
     options: { uiBasePath: uiFixtureBasePath },

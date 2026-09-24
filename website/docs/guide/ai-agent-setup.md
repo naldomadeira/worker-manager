@@ -2,12 +2,12 @@
 
 If you only want to look at a queue rather than integrate the dashboard into your app, skip all of this: the [standalone CLI](/guide/cli) does that in one command.
 
-If you work with a coding agent (Claude Code, Cursor, Copilot, Windsurf, whatever), you don't have to hand-wire bull-board. Paste the prompt below and let the agent do the mechanical part: install the packages, mount the adapter, match the base path. Then read the diff.
+If you work with a coding agent (Claude Code, Cursor, Copilot, Windsurf, whatever), you don't have to hand-wire Worker Manager. Paste the prompt below and let the agent do the mechanical part: install the packages, mount the adapter, match the base path. Then read the diff.
 
 ## Copy this prompt
 
 ```text
-Add bull-board to my app so I can inspect my Bull/BullMQ queues in a browser.
+Add Worker Manager to my app so I can inspect my Bull/BullMQ queues in a browser.
 
 Use the current docs at https://naldomadeira.github.io/worker-manager/llms.txt as the
 source of truth. Don't rely on memory, the API has changed across versions.
@@ -19,7 +19,7 @@ Requirements:
   queue adapter (BullMQAdapter or BullAdapter). Reuse my existing queue
   instances and Redis connection, don't create new ones.
 - Create the server adapter, call setBasePath('/admin/queues'), pass my queues to
-  createBullBoard, and mount the router at the SAME path ('/admin/queues'). The
+  createWorkerManagerBoard, and mount the router at the SAME path ('/admin/queues'). The
   base path and the mount path must match exactly or the assets 404.
 - Do not expose it unauthenticated. If I have auth middleware, put the dashboard
   behind it; if I don't, add a TODO and tell me, don't invent credentials.

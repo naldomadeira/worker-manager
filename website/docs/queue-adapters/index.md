@@ -78,7 +78,7 @@ adapter.setVisibilityGuard((request) => {
 You can mix Bull and BullMQ queues in the same board:
 
 ```ts
-createBullBoard({
+createWorkerManagerBoard({
   queues: [
     new BullAdapter(bullQueue),
     new BullMQAdapter(bullmqQueue),

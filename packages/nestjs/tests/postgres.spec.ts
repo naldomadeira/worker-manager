@@ -5,7 +5,7 @@ import { ExpressAdapter } from '@nestjs/platform-express';
 import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 import { uiFixtureBasePath } from '@worker-manager/test-utils';
 import request from 'supertest';
-import { BullBoardModule } from '../src';
+import { WorkerManagerModule } from '../src';
 
 /**
  * A BullMQ v6 queue backed by PostgreSQL has no Redis client and no DI token, so it reaches
@@ -15,11 +15,11 @@ import { BullBoardModule } from '../src';
 const POSTGRES_URL = process.env.POSTGRES_URL;
 
 if (!POSTGRES_URL) {
-  describe.skip('BullBoardModule with a PostgreSQL-backed queue (skipped: POSTGRES_URL is not set)', () => {
+  describe.skip('WorkerManagerModule with a PostgreSQL-backed queue (skipped: POSTGRES_URL is not set)', () => {
     it('needs POSTGRES_URL', () => undefined);
   });
 } else {
-  describe('BullBoardModule with a PostgreSQL-backed queue (bullmq@6)', () => {
+  describe('WorkerManagerModule with a PostgreSQL-backed queue (bullmq@6)', () => {
     let app: INestApplication | undefined;
     let queue: any;
 
@@ -46,7 +46,7 @@ if (!POSTGRES_URL) {
 
       @Module({
         imports: [
-          BullBoardModule.forRoot({
+          WorkerManagerModule.forRoot({
             boardOptions: { uiBasePath: uiFixtureBasePath },
             queues: [{ queue, adapter: BullMQAdapter }],
           }),

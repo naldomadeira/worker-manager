@@ -1,6 +1,6 @@
 # <img alt="Worker Manager" src="https://raw.githubusercontent.com/naldomadeira/worker-manager/main/packages/ui/src/static/images/logo.svg" width="35px" /> @worker-manager/api 
 
-Core server APIs of `bull-board`.
+Core server APIs of Worker Manager.
 
 <p align="center">
   <a href="https://www.npmjs.com/package/@worker-manager/api">

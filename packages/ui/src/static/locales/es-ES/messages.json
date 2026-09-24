@@ -452,7 +452,7 @@
     "QUEUE_READ_ONLY": "Método no permitido en una cola de solo lectura",
     "RATE_LIMIT_NOT_SUPPORTED": "Esta biblioteca de colas no puede establecer un límite de tasa para toda la cola.",
     "REDIS_STATS_UNAVAILABLE": "Los detalles de Redis no están disponibles para el backend de esta cola",
-    "REDIS_UNAVAILABLE": "bull-board no puede conectarse a Redis. Abre el panel para ver los detalles.",
+    "REDIS_UNAVAILABLE": "Worker Manager no puede conectarse a Redis. Abre el panel para ver los detalles.",
     "STATUS_NOT_RETRIABLE": "\"{{status}}\" no es un estado reintentable",
     "UNAUTHORIZED": "Debes iniciar sesión para acceder a este panel",
     "WORKERS_DISABLED": "El informe de workers está desactivado",

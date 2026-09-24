@@ -62,8 +62,8 @@ describe('resolveConnection', () => {
 
   it('reads sentinels from the environment', () => {
     const connection = resolve([], {
-      BULL_BOARD_SENTINELS: 'a.example',
-      BULL_BOARD_SENTINEL_NAME: 'mymaster',
+      WORKER_MANAGER_SENTINELS: 'a.example',
+      WORKER_MANAGER_SENTINEL_NAME: 'mymaster',
     } as NodeJS.ProcessEnv);
 
     expect(connection).toMatchObject({ mode: 'sentinel' });
@@ -125,7 +125,7 @@ describe('resolveConnection', () => {
 
   it('reads cluster nodes from the environment', () => {
     const connection = resolve([], {
-      BULL_BOARD_CLUSTER_NODES: 'a.example:7001,b.example:7002',
+      WORKER_MANAGER_CLUSTER_NODES: 'a.example:7001,b.example:7002',
     } as NodeJS.ProcessEnv);
 
     expect(connection).toMatchObject({ mode: 'cluster' });

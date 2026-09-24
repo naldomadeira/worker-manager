@@ -1,8 +1,8 @@
 import { errorResponse } from '../errors';
 import { BaseAdapter } from '../queueAdapters/base';
-import { BullBoardRequest, ControllerHandlerReturnType } from '../types';
+import { WorkerManagerRequest, ControllerHandlerReturnType } from '../types';
 
-export function queueProvider<TBody, TRequest extends BullBoardRequest<any, any>>(
+export function queueProvider<TBody, TRequest extends WorkerManagerRequest<any, any>>(
   next: (req: TRequest, queue: BaseAdapter) => Promise<ControllerHandlerReturnType<TBody>>,
   {
     skipReadOnlyModeCheck = false,

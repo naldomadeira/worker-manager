@@ -3,31 +3,31 @@ import type { HttpAdapterHost } from '@nestjs/core';
 import { ModuleRef } from '@nestjs/core';
 import type { BoardOptions } from '@worker-manager/api/typings/app';
 import {
-  BullBoardExpressAdapter,
-  BullBoardFastifyAdapter,
-  BullBoardInstance,
-  BullBoardModuleOptions,
-  BullBoardQueueOptions,
-  BullBoardServerAdapter,
-} from './bull-board.types';
+  WorkerManagerExpressAdapter,
+  WorkerManagerFastifyAdapter,
+  WorkerManagerBoard,
+  WorkerManagerModuleOptions,
+  WorkerManagerQueueOptions,
+  WorkerManagerServerAdapter,
+} from './worker-manager.types';
 
 export const isFastifyAdapter = (
-  adapter: BullBoardServerAdapter
-): adapter is BullBoardFastifyAdapter => {
+  adapter: WorkerManagerServerAdapter
+): adapter is WorkerManagerFastifyAdapter => {
   return 'registerPlugin' in adapter;
 };
 
 export const isExpressAdapter = (
-  adapter: BullBoardServerAdapter
-): adapter is BullBoardExpressAdapter => {
+  adapter: WorkerManagerServerAdapter
+): adapter is WorkerManagerExpressAdapter => {
   return 'getRouter' in adapter;
 };
 
-export const isEnabled = (options: BullBoardModuleOptions | undefined | null): boolean =>
+export const isEnabled = (options: WorkerManagerModuleOptions | undefined | null): boolean =>
   options?.enabled !== false;
 
 /** `boardOptions` with the `uiConfig`, `title`, `logo` and `theme` shortcuts folded in. */
-export function resolveBoardOptions(options: BullBoardModuleOptions): BoardOptions | undefined {
+export function resolveBoardOptions(options: WorkerManagerModuleOptions): BoardOptions | undefined {
   const shortcuts = {
     ...options.uiConfig,
     ...(options.title !== undefined ? { boardTitle: options.title } : {}),
@@ -53,16 +53,16 @@ const PLATFORM_PACKAGES = {
  * module itself runs as ESM (Nest 12).
  */
 export async function resolveServerAdapter(
-  options: BullBoardModuleOptions,
+  options: WorkerManagerModuleOptions,
   adapterHost: HttpAdapterHost
-): Promise<BullBoardServerAdapter> {
+): Promise<WorkerManagerServerAdapter> {
   if (options.adapter) return new options.adapter();
 
   const platform = adapterHost?.httpAdapter?.getType?.();
   const target = PLATFORM_PACKAGES[platform as keyof typeof PLATFORM_PACKAGES];
   if (!target) {
     throw new Error(
-      `BullBoardModule could not pick a server adapter for the "${platform ?? 'unknown'}" HTTP ` +
+      `WorkerManagerModule could not pick a server adapter for the "${platform ?? 'unknown'}" HTTP ` +
         'platform. Pass `adapter` explicitly (ExpressAdapter from @worker-manager/express or ' +
         'FastifyAdapter from @worker-manager/fastify).'
     );
@@ -73,7 +73,7 @@ export async function resolveServerAdapter(
     loaded = await import(target.pkg);
   } catch (error) {
     throw new Error(
-      `BullBoardModule detected a ${platform} application but could not load ${target.pkg}. ` +
+      `WorkerManagerModule detected a ${platform} application but could not load ${target.pkg}. ` +
         `Install it (npm install ${target.pkg}) or pass \`adapter\` explicitly. ` +
         `Cause: ${(error as Error).message}`
     );
@@ -88,9 +88,9 @@ export async function resolveServerAdapter(
 
 /** Resolves each queue (instance or DI name) and adds it to the board. */
 export function registerQueues(
-  board: BullBoardInstance,
+  board: WorkerManagerBoard,
   moduleRef: ModuleRef,
-  queues: BullBoardQueueOptions[],
+  queues: WorkerManagerQueueOptions[],
   readOnly: boolean | undefined
 ): void {
   for (const queueOption of queues) {

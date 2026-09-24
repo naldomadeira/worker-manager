@@ -1,9 +1,14 @@
 # Worker Manager
 
-Fork of bull-board, published under the `@worker-manager/*` npm scope. Public API names
-(`createBullBoard`, `BullBoardModule`, the adapter classes, the CLI's `bull-board` binary, its
-`BULL_BOARD_*` env vars and `bull-board.config.*` files, the `bull-board:metrics` Redis namespace)
-are kept on purpose so existing integrations only rename the scope. Upstream issue/PR links
+Fork of bull-board, published under the `@worker-manager/*` npm scope. v2.0 renamed every
+BullBoard product name, with no aliases left behind: `createWorkerManagerBoard`,
+`WorkerManagerBoard`, `WorkerManagerModule` / `WorkerManagerModuleOptions` /
+`@InjectWorkerManager()`, the `WORKER_MANAGER_*` DI tokens, `WorkerManagerRequest` and the other
+`WorkerManager*` types, the CLI's `worker-manager` binary, its `WORKER_MANAGER_*` env vars and
+`worker-manager.config.*` files, the `worker-manager:metrics` Redis namespace and the
+`worker_manager_metrics_` Postgres tables. Do not reintroduce `BullBoard*` / `bull-board` names.
+`BullMQAdapter`, `BullAdapter`, `BullMQProAdapter` and BullMQ's own key prefixes (`bull:`) name
+the queue libraries and are not part of that rename. Upstream issue/PR links
 (`github.com/felixmosh/bull-board/issues/N`) are history and stay as they are.
 
 ## Monorepo layout
@@ -16,7 +21,7 @@ Yarn 4 workspaces under `packages/*`, plus `playground` (see "Playground"). Key 
 | `ui` | React UI (Tailwind CSS v4 + shadcn/ui), built to `dist/` |
 | `auth` | Framework-agnostic Basic / Keycloak (OIDC) middleware, used by `nestjs` and `cli` |
 | `express`, `fastify`, `hono`, `koa`, `h3`, `hapi`, `nestjs`, `elysia`, `bun` | Server adapters |
-| `cli` | Standalone `bull-board` executable, also what the Docker image installs |
+| `cli` | Standalone `worker-manager` executable, also what the Docker image installs |
 | `metrics` | Opt-in Redis-backed recorder behind the core's `historyProvider` seam |
 | `test-utils` | Private (unpublished) in-repo test kit for adapter contract tests |
 
@@ -227,7 +232,7 @@ compile.
 
 1. Add or edit the schema in `src/schemas/{requests,responses,domain}.ts` and register it in the
    `requestSchemas` / `responseSchemas` / `domainSchemas` map so the generator can name it.
-2. Name it in the route's `spec` and type the handler's `BullBoardRequest<TQuery, TBody>`.
+2. Name it in the route's `spec` and type the handler's `WorkerManagerRequest<TQuery, TBody>`.
 3. Attach translation keys to the validations that need a specific error, with `key()` from
    `src/schemas/support.ts`. `key('ERRORS.INVALID_PRIORITY', { max })` carries interpolation
    options through the valibot message and back out in the error body. Validations with no key
@@ -290,13 +295,13 @@ module.exports = {
 
 ```ts
 import { runServerAdapterContract, uiFixtureBasePath } from '@worker-manager/test-utils';
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import { MyAdapter } from '../src';
 
 runServerAdapterContract('MyAdapter', async ({ basePath, queue }) => {
   const serverAdapter = new MyAdapter();
   serverAdapter.setBasePath(basePath);
-  createBullBoard({ queues: [queue.adapter], serverAdapter, options: { uiBasePath: uiFixtureBasePath } });
+  createWorkerManagerBoard({ queues: [queue.adapter], serverAdapter, options: { uiBasePath: uiFixtureBasePath } });
 
   // ... mount the adapter, build a request function ...
 

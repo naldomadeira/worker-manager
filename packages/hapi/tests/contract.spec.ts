@@ -1,5 +1,5 @@
 import Hapi from '@hapi/hapi';
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import {
   runServerAdapterContract,
   uiFixtureBasePath,
@@ -11,7 +11,7 @@ import { HapiAdapter } from '../src';
 runServerAdapterContract('Hapi', async ({ basePath, queue }) => {
   const serverAdapter = new HapiAdapter();
   serverAdapter.setBasePath(basePath);
-  createBullBoard({
+  createWorkerManagerBoard({
     queues: [queue.adapter],
     serverAdapter,
     options: { uiBasePath: uiFixtureBasePath },

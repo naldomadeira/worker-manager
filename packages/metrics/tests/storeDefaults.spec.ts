@@ -8,6 +8,6 @@ describe('LatencyStore defaults', () => {
       redis: {} as any,
       retention: { minutes: 1, hours: 1, days: 1 },
     });
-    expect((store as any).keys.namespace).toBe('bull-board:metrics');
+    expect((store as any).keys.namespace).toBe('worker-manager:metrics');
   });
 });

@@ -1,4 +1,4 @@
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import {
   runServerAdapterContract,
   uiFixtureBasePath,
@@ -10,7 +10,7 @@ import { ElysiaAdapter } from '../src';
 
 runServerAdapterContract('Elysia', async ({ basePath, queue }) => {
   const serverAdapter = new ElysiaAdapter({ prefix: basePath || '', basePath: basePath || '/' });
-  createBullBoard({
+  createWorkerManagerBoard({
     queues: [queue.adapter],
     serverAdapter,
     options: { uiBasePath: uiFixtureBasePath },

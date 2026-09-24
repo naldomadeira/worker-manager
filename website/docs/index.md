@@ -7,7 +7,7 @@ hero:
   tagline: Point it at a Redis URL, or mount it in your own server. See queues, jobs, schedulers and logs. Pause, retry, clean and reschedule from one UI.
   image:
     src: /logo.svg
-    alt: bull-board
+    alt: Worker Manager
   actions:
     - theme: brand
       text: Get Started

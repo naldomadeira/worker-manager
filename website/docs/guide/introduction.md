@@ -1,6 +1,6 @@
 # Introduction
 
-Worker Manager is a dashboard for [BullMQ](https://docs.bullmq.io/) and [Bull](https://github.com/OptimalBits/bull). It shows you what is in your queues and lets you act on it. You still use Bull or BullMQ to enqueue and process jobs, bull-board only visualises them.
+Worker Manager is a dashboard for [BullMQ](https://docs.bullmq.io/) and [Bull](https://github.com/OptimalBits/bull). It shows you what is in your queues and lets you act on it. You still use Bull or BullMQ to enqueue and process jobs, Worker Manager only visualises them.
 
 Want to see it before installing? <a href="/worker-manager/demo/" target="_blank" rel="noopener">Open the live demo</a>.
 

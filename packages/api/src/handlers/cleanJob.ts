@@ -3,7 +3,7 @@ import { jobProvider } from '../providers/job';
 import { queueProvider } from '../providers/queue';
 import { BaseAdapter } from '../queueAdapters/base';
 import { EmptyResponse } from '../schemas/responses';
-import { BullBoardRequest, ControllerHandlerReturnType, QueueJob } from '../types';
+import { WorkerManagerRequest, ControllerHandlerReturnType, QueueJob } from '../types';
 
 /**
  * BullMQ's `ErrorCode.JobBelongsToJobScheduler`. It is raised only for the run a scheduler is
@@ -18,7 +18,7 @@ function isJobSchedulerRun(error: unknown): boolean {
 }
 
 async function cleanJob(
-  _req: BullBoardRequest,
+  _req: WorkerManagerRequest,
   job: QueueJob,
   queue: BaseAdapter
 ): Promise<ControllerHandlerReturnType<EmptyResponse>> {

@@ -28,7 +28,7 @@ describe('postgres flags', () => {
   it('serves both when a Redis source is configured too', () => {
     const config = resolveConfig({
       flags: parseFlags(['--postgres', 'postgres://db/app', '--redis', 'redis://cache:6379']),
-      env: { BULL_BOARD_POSTGRES_SCHEMA: 'jobs' } as NodeJS.ProcessEnv,
+      env: { WORKER_MANAGER_POSTGRES_SCHEMA: 'jobs' } as NodeJS.ProcessEnv,
       file: {},
     });
 

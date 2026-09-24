@@ -35,5 +35,5 @@ export function createCollapseStore(persistKey: string) {
   );
 }
 
-export const useMenuState = createCollapseStore('bull-board:menu-state');
-export const useOverviewState = createCollapseStore('bull-board:overview-state');
+export const useMenuState = createCollapseStore('worker-manager:menu-state');
+export const useOverviewState = createCollapseStore('worker-manager:overview-state');

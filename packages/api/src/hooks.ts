@@ -3,7 +3,7 @@ import type { ResponseSchemas } from './schemas/responses';
 import type {
   AppControllerRoute,
   BoardHooks,
-  BullBoardRequest,
+  WorkerManagerRequest,
   ControllerHandlerReturnType,
 } from './types';
 import { validateRequest, validateResponse } from './validation';
@@ -17,9 +17,9 @@ export function wrapHandler<TResponse extends keyof ResponseSchemas>(
   const routePath = Array.isArray(route.route) ? route.route[0] : route.route;
 
   return async (
-    request?: BullBoardRequest
+    request?: WorkerManagerRequest
   ): Promise<ControllerHandlerReturnType<ResponseSchemas[TResponse]>> => {
-    const context = { method, route: routePath, request: request as BullBoardRequest };
+    const context = { method, route: routePath, request: request as WorkerManagerRequest };
 
     if (hooks?.before) {
       let beforeResult;

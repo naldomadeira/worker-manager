@@ -2,7 +2,7 @@
 
 A modern dashboard for [BullMQ](https://github.com/taskforcesh/bullmq) and [Bull](https://github.com/OptimalBits/bull) job queues, on **Redis or PostgreSQL**, with **Basic and Keycloak auth built in**. Plug it into your server, see your queues.
 
-> Worker Manager is a fork of the open-source bull-board project (MIT), rebuilt with a shadcn/ui + Tailwind CSS interface, first-class authentication and a richer NestJS module. Public APIs (`createBullBoard`, `BullBoardModule`, the adapters) keep their names, so migrating is a scope rename: `@bull-board/*` → `@worker-manager/*`.
+> Worker Manager is a fork of the open-source bull-board project (MIT), rebuilt with a shadcn/ui + Tailwind CSS interface, first-class authentication and a richer NestJS module. Migrating means a scope rename, `@bull-board/*` → `@worker-manager/*`, plus the v2.0 product rename (`createBullBoard` → `createWorkerManagerBoard`, `BullBoardModule` → `WorkerManagerModule`, the `worker-manager` CLI binary and `WORKER_MANAGER_*` env vars); see the [v2.0.0 changelog](./CHANGELOG.md) for the full list.
 
 <p align="center">
   <a href="https://www.npmjs.com/org/worker-manager">
@@ -86,7 +86,7 @@ Just want to look at a queue without wiring anything into your app? See the [CLI
 ```js
 const express = require('express');
 const { Queue } = require('bullmq');
-const { createBullBoard } = require('@worker-manager/api');
+const { createWorkerManagerBoard } = require('@worker-manager/api');
 const { BullMQAdapter } = require('@worker-manager/api/bullMQAdapter');
 const { ExpressAdapter } = require('@worker-manager/express');
 
@@ -95,7 +95,7 @@ const emailQueue = new Queue('emails', { connection: { host: 'localhost', port: 
 const serverAdapter = new ExpressAdapter();
 serverAdapter.setBasePath('/admin/queues');
 
-createBullBoard({
+createWorkerManagerBoard({
   queues: [new BullMQAdapter(emailQueue)],
   serverAdapter,
 });
@@ -122,12 +122,12 @@ BullMQ `>= 5.56.0` and all of v6 are supported, including [v6 queues stored in P
 ## NestJS in one import
 
 ```ts
-import { BullBoardModule } from '@worker-manager/nestjs';
+import { WorkerManagerModule } from '@worker-manager/nestjs';
 import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 
 @Module({
   imports: [
-    BullBoardModule.forRootAsync({
+    WorkerManagerModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
@@ -146,7 +146,7 @@ import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
         },
       }),
     }),
-    BullBoardModule.forFeature({ name: 'emails', adapter: BullMQAdapter }),
+    WorkerManagerModule.forFeature({ name: 'emails', adapter: BullMQAdapter }),
   ],
 })
 export class AppModule {}
@@ -181,7 +181,7 @@ BullMQ v6 can store queues in PostgreSQL. Hand those queues to the board like an
 import { Queue, createPostgresBackend } from 'bullmq';
 
 const invoices = new Queue('invoices', { connection: { connectionString: process.env.POSTGRES_URL, migrate: true } }, createPostgresBackend);
-createBullBoard({ queues: [new BullMQAdapter(invoices)], serverAdapter });
+createWorkerManagerBoard({ queues: [new BullMQAdapter(invoices)], serverAdapter });
 ```
 
 The CLI discovers them for you: `npx @worker-manager/cli --postgres postgres://user:pass@host/db`. See the [PostgreSQL recipe](https://naldomadeira.github.io/worker-manager/recipes/postgres-backend).

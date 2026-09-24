@@ -4,11 +4,11 @@ import { INestApplication, Module } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
-import { ExpressAdapter as BullBoardExpressAdapter } from '@worker-manager/express';
+import { ExpressAdapter as WorkerManagerExpressAdapter } from '@worker-manager/express';
 import { uiFixtureBasePath } from '@worker-manager/test-utils';
 import { Queue } from 'bullmq';
 import request from 'supertest';
-import { BullBoardModule } from '../src';
+import { WorkerManagerModule } from '../src';
 
 const connection = {
   host: process.env.REDIS_HOST || 'localhost',
@@ -35,12 +35,12 @@ describe('forFeature with queue instances (same name, different prefix)', () => 
 
     @Module({
       imports: [
-        BullBoardModule.forRoot({
+        WorkerManagerModule.forRoot({
           route: '/queues',
-          adapter: BullBoardExpressAdapter,
+          adapter: WorkerManagerExpressAdapter,
           boardOptions: { uiBasePath: uiFixtureBasePath },
         }),
-        BullBoardModule.forFeature(
+        WorkerManagerModule.forFeature(
           { queue: emailsA, adapter: BullMQAdapter, options: { prefix: 'tenant-a:' } },
           { queue: emailsB, adapter: BullMQAdapter, options: { prefix: 'tenant-b:' } }
         ),
@@ -64,12 +64,12 @@ describe('forFeature with queue instances (same name, different prefix)', () => 
       imports: [
         BullModule.forRoot({ connection }),
         BullModule.registerQueue({ name: 'reports' }),
-        BullBoardModule.forRoot({
+        WorkerManagerModule.forRoot({
           route: '/queues',
-          adapter: BullBoardExpressAdapter,
+          adapter: WorkerManagerExpressAdapter,
           boardOptions: { uiBasePath: uiFixtureBasePath },
         }),
-        BullBoardModule.forFeature({ name: 'reports', adapter: BullMQAdapter }),
+        WorkerManagerModule.forFeature({ name: 'reports', adapter: BullMQAdapter }),
       ],
     })
     class AppModule {}

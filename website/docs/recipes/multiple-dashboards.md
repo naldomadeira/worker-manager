@@ -8,12 +8,12 @@ From [`examples/with-multiple-instances`](https://github.com/naldomadeira/worker
 const serverAdapter1 = new ExpressAdapter();
 const serverAdapter2 = new ExpressAdapter();
 
-createBullBoard({
+createWorkerManagerBoard({
   queues: [new BullMQAdapter(queueA)],
   serverAdapter: serverAdapter1,
 });
 
-createBullBoard({
+createWorkerManagerBoard({
   queues: [new BullMQAdapter(queueB)],
   serverAdapter: serverAdapter2,
 });

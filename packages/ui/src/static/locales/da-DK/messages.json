@@ -449,7 +449,7 @@
     "QUEUE_READ_ONLY": "Metoden er ikke tilladt på en skrivebeskyttet kø",
     "RATE_LIMIT_NOT_SUPPORTED": "Dette kø-bibliotek kan ikke sætte en kø-dækkende hastighedsgrænse.",
     "REDIS_STATS_UNAVAILABLE": "Redis-oplysninger er ikke tilgængelige for denne køs backend",
-    "REDIS_UNAVAILABLE": "bull-board kan ikke få forbindelse til Redis. Åbn dashboardet for at se detaljer.",
+    "REDIS_UNAVAILABLE": "Worker Manager kan ikke få forbindelse til Redis. Åbn dashboardet for at se detaljer.",
     "STATUS_NOT_RETRIABLE": "\"{{status}}\" er ikke en status, der kan prøves igen",
     "UNAUTHORIZED": "Du skal logge ind for at få adgang til dette board",
     "WORKERS_DISABLED": "Worker-rapportering er deaktiveret",

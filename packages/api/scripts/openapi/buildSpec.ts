@@ -287,7 +287,7 @@ export function buildSpec(): JsonSchema {
   return {
     openapi: '3.1.0',
     info: {
-      title: 'bull-board HTTP API',
+      title: 'Worker Manager HTTP API',
       version: API_CONTRACT_VERSION,
       description: readOverview().replace(/\]\(\/(?!\/)/g, `](${DOCS_ORIGIN}/`),
     },

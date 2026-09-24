@@ -1,6 +1,6 @@
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import type {
-  BullBoardRequest,
+  WorkerManagerRequest,
   ControllerHandlerReturnType,
 } from '@worker-manager/api/typings/app';
 import { seedFixtures } from './fixtures';
@@ -82,7 +82,7 @@ function findFlowRoot(job: DemoJob): DemoJob {
   return current;
 }
 
-async function mockJobFlowHandler(req: BullBoardRequest): Promise<ControllerHandlerReturnType> {
+async function mockJobFlowHandler(req: WorkerManagerRequest): Promise<ControllerHandlerReturnType> {
   const { queueName, jobId } = req.params;
   const job = findJob(queueName, jobId);
   if (!job) return { status: 404, body: { error: 'Job not found' } };
@@ -105,7 +105,7 @@ async function mockJobFlowHandler(req: BullBoardRequest): Promise<ControllerHand
   };
 }
 
-// ---- wire it up via the real createBullBoard ----
+// ---- wire it up via the real createWorkerManagerBoard ----
 
 const mockAdapters = state.queues.map((q) => {
   const adapter = new MockAdapter(q);
@@ -127,7 +127,7 @@ const mockAdapters = state.queues.map((q) => {
 const serverAdapter = new MSWServerAdapter();
 serverAdapter.setBasePath('/worker-manager/demo');
 
-createBullBoard({
+createWorkerManagerBoard({
   queues: mockAdapters,
   serverAdapter,
   options: {

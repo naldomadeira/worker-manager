@@ -5,7 +5,7 @@ import views from '@ladjs/koa-views';
 import type {
   AppControllerRoute,
   AppViewRoute,
-  BullBoardQueues,
+  WorkerManagerQueues,
   ControllerHandlerReturnType,
   IServerAdapter,
   UIConfig,
@@ -16,7 +16,7 @@ import serve from 'koa-static';
 
 export class KoaAdapter implements IServerAdapter {
   private basePath = '';
-  private bullBoardQueues: BullBoardQueues | undefined;
+  private workerManagerQueues: WorkerManagerQueues | undefined;
   private errorHandler: ((error: Error) => ControllerHandlerReturnType) | undefined;
   private statics: { path: string; route: string } | undefined;
   private viewPath: string | undefined;
@@ -57,8 +57,8 @@ export class KoaAdapter implements IServerAdapter {
     return this;
   }
 
-  public setQueues(bullBoardQueues: BullBoardQueues): KoaAdapter {
-    this.bullBoardQueues = bullBoardQueues;
+  public setQueues(workerManagerQueues: WorkerManagerQueues): KoaAdapter {
+    this.workerManagerQueues = workerManagerQueues;
     return this;
   }
 
@@ -76,7 +76,7 @@ export class KoaAdapter implements IServerAdapter {
       throw new Error(`Please call 'setViewsPath' before using 'registerPlugin'`);
     } else if (!this.apiRoutes) {
       throw new Error(`Please call 'setApiRoutes' before using 'registerPlugin'`);
-    } else if (!this.bullBoardQueues) {
+    } else if (!this.workerManagerQueues) {
       throw new Error(`Please call 'setQueues' before using 'registerPlugin'`);
     } else if (!this.errorHandler) {
       throw new Error(`Please call 'setErrorHandler' before using 'registerPlugin'`);
@@ -133,7 +133,7 @@ export class KoaAdapter implements IServerAdapter {
       methods.forEach((method) => {
         router[method](route.route, async (ctx) => {
           const response = await route.handler({
-            queues: this.bullBoardQueues!,
+            queues: this.workerManagerQueues!,
             uiConfig: this.uiConfig || {},
             params: ctx.params,
             query: ctx.query,

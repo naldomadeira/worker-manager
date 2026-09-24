@@ -1,10 +1,10 @@
 import { jobProvider } from '../providers/job';
 import { queueProvider } from '../providers/queue';
 import { EmptyResponse } from '../schemas/responses';
-import { BullBoardRequest, ControllerHandlerReturnType, QueueJob } from '../types';
+import { WorkerManagerRequest, ControllerHandlerReturnType, QueueJob } from '../types';
 
 async function promoteJob(
-  _req: BullBoardRequest,
+  _req: WorkerManagerRequest,
   job: QueueJob
 ): Promise<ControllerHandlerReturnType<EmptyResponse>> {
   await job.promote();

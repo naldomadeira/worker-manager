@@ -1,4 +1,4 @@
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 import { ExpressAdapter } from '@worker-manager/express';
 import { Queue } from 'bullmq';
@@ -26,9 +26,11 @@ describe('response validation', () => {
     await queue.close();
   });
 
-  function board(options: Parameters<typeof createBullBoard>[0]['options'] = { uiConfig: {} }) {
+  function board(
+    options: Parameters<typeof createWorkerManagerBoard>[0]['options'] = { uiConfig: {} }
+  ) {
     const serverAdapter = new ExpressAdapter();
-    createBullBoard({ queues: [new BullMQAdapter(queue)], serverAdapter, options });
+    createWorkerManagerBoard({ queues: [new BullMQAdapter(queue)], serverAdapter, options });
     return request(serverAdapter.getRouter());
   }
 

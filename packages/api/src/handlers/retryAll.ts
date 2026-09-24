@@ -2,7 +2,7 @@ import { errorResponse } from '../errors';
 import { queueProvider } from '../providers/queue';
 import { BaseAdapter } from '../queueAdapters/base';
 import { RetryAllResponse } from '../schemas/responses';
-import { BullBoardRequest, ControllerHandlerReturnType, JobRetryStatus } from '../types';
+import { WorkerManagerRequest, ControllerHandlerReturnType, JobRetryStatus } from '../types';
 
 const RETRY_PAGE_SIZE = 100;
 
@@ -11,7 +11,7 @@ function isRetriableState(state: string): state is JobRetryStatus {
 }
 
 async function retryAll(
-  req: BullBoardRequest,
+  req: WorkerManagerRequest,
   queue: BaseAdapter
 ): Promise<ControllerHandlerReturnType<RetryAllResponse>> {
   const { queueStatus } = req.params;

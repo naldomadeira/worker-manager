@@ -1,5 +1,5 @@
 import { serveStatic } from '@hono/node-server/serve-static';
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import {
   runServerAdapterContract,
   uiFixtureBasePath,
@@ -12,7 +12,7 @@ import { HonoAdapter } from '../src';
 runServerAdapterContract('Hono', async ({ basePath, queue }) => {
   const serverAdapter = new HonoAdapter(serveStatic);
   serverAdapter.setBasePath(basePath || '/');
-  createBullBoard({
+  createWorkerManagerBoard({
     queues: [queue.adapter],
     serverAdapter,
     options: { uiBasePath: uiFixtureBasePath },

@@ -1,4 +1,4 @@
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 import { ExpressAdapter } from '@worker-manager/express';
 import { Queue } from 'bullmq';
@@ -17,7 +17,7 @@ describe('request validation', () => {
     queue = new Queue('ValidationQueue', { connection });
     await queue.obliterate({ force: true }).catch(() => {});
     serverAdapter = new ExpressAdapter();
-    createBullBoard({ queues: [new BullMQAdapter(queue)], serverAdapter });
+    createWorkerManagerBoard({ queues: [new BullMQAdapter(queue)], serverAdapter });
   });
 
   afterEach(async () => {
@@ -110,7 +110,7 @@ describe('request validation', () => {
   describe('ordering against the before hook', () => {
     it('lets a hook refuse a hidden route before a schema can reveal it exists', async () => {
       const hooked = new ExpressAdapter();
-      createBullBoard({
+      createWorkerManagerBoard({
         queues: [new BullMQAdapter(queue)],
         serverAdapter: hooked,
         options: {

@@ -1,4 +1,4 @@
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import { BullAdapter } from '@worker-manager/api/bullAdapter';
 import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 import { BaseAdapter } from '@worker-manager/api/dist/queueAdapters/base';
@@ -43,7 +43,7 @@ describe('Default job options', () => {
           removeOnComplete: 100,
         },
       });
-      createBullBoard({ queues: [new BullMQAdapter(queue)], serverAdapter });
+      createWorkerManagerBoard({ queues: [new BullMQAdapter(queue)], serverAdapter });
 
       const defaultJobOptions = await fetchDefaultJobOptions(serverAdapter, 'DefaultsBullMQ');
       expect(defaultJobOptions).toMatchObject({
@@ -55,7 +55,7 @@ describe('Default job options', () => {
 
     it('returns an empty object when none are configured', async () => {
       queue = new Queue('NoDefaultsBullMQ', { connection });
-      createBullBoard({ queues: [new BullMQAdapter(queue)], serverAdapter });
+      createWorkerManagerBoard({ queues: [new BullMQAdapter(queue)], serverAdapter });
 
       const defaultJobOptions = await fetchDefaultJobOptions(serverAdapter, 'NoDefaultsBullMQ');
       expect(defaultJobOptions).toEqual({});
@@ -83,7 +83,7 @@ describe('Default job options', () => {
         defaultJobOptions: { attempts: 5, delay: 1000 },
       });
       queue.on('error', () => {});
-      createBullBoard({ queues: [new BullAdapter(queue)], serverAdapter });
+      createWorkerManagerBoard({ queues: [new BullAdapter(queue)], serverAdapter });
 
       const defaultJobOptions = await fetchDefaultJobOptions(serverAdapter, 'DefaultsBull');
       expect(defaultJobOptions).toMatchObject({ attempts: 5, delay: 1000 });
@@ -92,7 +92,7 @@ describe('Default job options', () => {
     it('returns an empty object when none are configured', async () => {
       queue = new Bull('NoDefaultsBull', { redis: connection });
       queue.on('error', () => {});
-      createBullBoard({ queues: [new BullAdapter(queue)], serverAdapter });
+      createWorkerManagerBoard({ queues: [new BullAdapter(queue)], serverAdapter });
 
       const defaultJobOptions = await fetchDefaultJobOptions(serverAdapter, 'NoDefaultsBull');
       expect(defaultJobOptions).toEqual({});

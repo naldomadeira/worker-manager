@@ -22,7 +22,7 @@ interface RedisOptions {
   /** Redis. Shorthand for `store: new RedisMetricsStore({ connection, prefix })`. */
   connection: MetricsConnection;
   /**
-   * Redis key namespace, defaulting to `bull-board:metrics`. Set it to separate two boards
+   * Redis key namespace, defaulting to `worker-manager:metrics`. Set it to separate two boards
    * sharing one Redis, and give the reading `RedisMetricsHistoryProvider` the same value.
    *
    * On a Redis Cluster the namespace has to sit in one hash slot, since the rollup scripts

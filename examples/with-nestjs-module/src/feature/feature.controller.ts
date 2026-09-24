@@ -1,11 +1,11 @@
 import { Controller, Get } from '@nestjs/common';
-import { BullBoardInstance, InjectBullBoard } from '@worker-manager/nestjs';
+import { WorkerManagerBoard, InjectWorkerManager } from '@worker-manager/nestjs';
 
 @Controller('my-feature')
 export class FeatureController {
   constructor(
-    //inject the bull-board instance using the provided decorator
-    @InjectBullBoard() private readonly boardInstance: BullBoardInstance
+    //inject the Worker Manager instance using the provided decorator
+    @InjectWorkerManager() private readonly boardInstance: WorkerManagerBoard
   ) {}
 
   @Get()

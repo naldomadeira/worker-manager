@@ -6,7 +6,7 @@ import { responseSchemas } from './schemas/responses';
 import { decodeKey } from './schemas/support';
 import type {
   AppControllerRoute,
-  BullBoardRequest,
+  WorkerManagerRequest,
   ControllerHandlerReturnType,
   ErrorResponseBody,
 } from './types';
@@ -59,7 +59,7 @@ function rejection(
 
 export function validateRequest(
   route: Pick<AppControllerRoute, 'spec'>,
-  request: BullBoardRequest
+  request: WorkerManagerRequest
 ): ControllerHandlerReturnType<never> | undefined {
   const { query, body } = route.spec;
 

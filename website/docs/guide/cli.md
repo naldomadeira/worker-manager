@@ -32,7 +32,7 @@ For scripts and CI, retrying forever is the wrong default: they want a non-zero 
 
 ```
 Usage:
-  bull-board [options]
+  worker-manager [options]
   npx @worker-manager/cli [options]
 
 Options:
@@ -97,44 +97,44 @@ Every flag has an environment variable equivalent, so you can configure the CLI 
 
 | Flag | Environment variable |
 |---|---|
-| `--redis` | `BULL_BOARD_REDIS_URL` |
-| `--sentinel` | `BULL_BOARD_SENTINELS` |
-| `--sentinel-name` | `BULL_BOARD_SENTINEL_NAME` |
-| `--sentinel-password` | `BULL_BOARD_SENTINEL_PASSWORD` |
-| `--cluster` | `BULL_BOARD_CLUSTER_NODES` |
-| `--redis-username` | `BULL_BOARD_REDIS_USERNAME` |
-| `--redis-password` | `BULL_BOARD_REDIS_PASSWORD` |
-| `--redis-db` | `BULL_BOARD_REDIS_DB` |
-| `--port` | `BULL_BOARD_PORT` |
-| `--host` | `BULL_BOARD_HOST` |
-| `--prefix` | `BULL_BOARD_PREFIX` |
-| `--queues` | `BULL_BOARD_QUEUES` |
-| `--scan-interval` | `BULL_BOARD_SCAN_INTERVAL` |
-| `--base-path` | `BULL_BOARD_BASE_PATH` |
-| `--read-only` | `BULL_BOARD_READ_ONLY` |
-| `--user` | `BULL_BOARD_USER` |
-| `--password` | `BULL_BOARD_PASSWORD` |
-| `--keycloak-url` | `BULL_BOARD_KEYCLOAK_URL` |
-| `--keycloak-realm` | `BULL_BOARD_KEYCLOAK_REALM` |
-| `--keycloak-client-id` | `BULL_BOARD_KEYCLOAK_CLIENT_ID` |
-| `--keycloak-client-secret` | `BULL_BOARD_KEYCLOAK_CLIENT_SECRET` |
-| `--keycloak-roles` | `BULL_BOARD_KEYCLOAK_ROLES` |
-| `--keycloak-bearer-only` | `BULL_BOARD_KEYCLOAK_BEARER_ONLY` |
-| `--public-url` | `BULL_BOARD_PUBLIC_URL` |
-| `--session-secret` | `BULL_BOARD_SESSION_SECRET` |
-| `--postgres` | `BULL_BOARD_POSTGRES_URL` |
-| `--postgres-schema` | `BULL_BOARD_POSTGRES_SCHEMA` |
-| `--board-title` | `BULL_BOARD_BOARD_TITLE` |
-| `--history` | `BULL_BOARD_HISTORY` |
-| `--history-retention-days` | `BULL_BOARD_HISTORY_RETENTION_DAYS` |
-| `--no-open` | `BULL_BOARD_OPEN` (set to `false` to skip the browser; `--no-open` always wins) |
-| `--no-retry` | `BULL_BOARD_NO_RETRY` |
-| `--browser` | `BULL_BOARD_BROWSER`, then `BROWSER` |
-| `--config` | `BULL_BOARD_CONFIG` |
+| `--redis` | `WORKER_MANAGER_REDIS_URL` |
+| `--sentinel` | `WORKER_MANAGER_SENTINELS` |
+| `--sentinel-name` | `WORKER_MANAGER_SENTINEL_NAME` |
+| `--sentinel-password` | `WORKER_MANAGER_SENTINEL_PASSWORD` |
+| `--cluster` | `WORKER_MANAGER_CLUSTER_NODES` |
+| `--redis-username` | `WORKER_MANAGER_REDIS_USERNAME` |
+| `--redis-password` | `WORKER_MANAGER_REDIS_PASSWORD` |
+| `--redis-db` | `WORKER_MANAGER_REDIS_DB` |
+| `--port` | `WORKER_MANAGER_PORT` |
+| `--host` | `WORKER_MANAGER_HOST` |
+| `--prefix` | `WORKER_MANAGER_PREFIX` |
+| `--queues` | `WORKER_MANAGER_QUEUES` |
+| `--scan-interval` | `WORKER_MANAGER_SCAN_INTERVAL` |
+| `--base-path` | `WORKER_MANAGER_BASE_PATH` |
+| `--read-only` | `WORKER_MANAGER_READ_ONLY` |
+| `--user` | `WORKER_MANAGER_USER` |
+| `--password` | `WORKER_MANAGER_PASSWORD` |
+| `--keycloak-url` | `WORKER_MANAGER_KEYCLOAK_URL` |
+| `--keycloak-realm` | `WORKER_MANAGER_KEYCLOAK_REALM` |
+| `--keycloak-client-id` | `WORKER_MANAGER_KEYCLOAK_CLIENT_ID` |
+| `--keycloak-client-secret` | `WORKER_MANAGER_KEYCLOAK_CLIENT_SECRET` |
+| `--keycloak-roles` | `WORKER_MANAGER_KEYCLOAK_ROLES` |
+| `--keycloak-bearer-only` | `WORKER_MANAGER_KEYCLOAK_BEARER_ONLY` |
+| `--public-url` | `WORKER_MANAGER_PUBLIC_URL` |
+| `--session-secret` | `WORKER_MANAGER_SESSION_SECRET` |
+| `--postgres` | `WORKER_MANAGER_POSTGRES_URL` |
+| `--postgres-schema` | `WORKER_MANAGER_POSTGRES_SCHEMA` |
+| `--board-title` | `WORKER_MANAGER_BOARD_TITLE` |
+| `--history` | `WORKER_MANAGER_HISTORY` |
+| `--history-retention-days` | `WORKER_MANAGER_HISTORY_RETENTION_DAYS` |
+| `--no-open` | `WORKER_MANAGER_OPEN` (set to `false` to skip the browser; `--no-open` always wins) |
+| `--no-retry` | `WORKER_MANAGER_NO_RETRY` |
+| `--browser` | `WORKER_MANAGER_BROWSER`, then `BROWSER` |
+| `--config` | `WORKER_MANAGER_CONFIG` |
 
 Settings resolve in this order: a command line flag wins, then the matching environment variable, then the config file, then the built-in default. That applies field by field, so you can set a Redis URL in the environment and still override just the port with a flag on one particular run.
 
-`--browser` picks the command used to open the dashboard. Three things can name it, and they win in this order: `--browser` on the command line, then `BULL_BOARD_BROWSER`, then a plain exported `$BROWSER`. `BULL_BOARD_BROWSER` exists so you can set one for the CLI without touching `$BROWSER` globally. With none of them set, the CLI falls back to the platform opener: `open` on macOS, `start` on Windows, `xdg-open` elsewhere.
+`--browser` picks the command used to open the dashboard. Three things can name it, and they win in this order: `--browser` on the command line, then `WORKER_MANAGER_BROWSER`, then a plain exported `$BROWSER`. `WORKER_MANAGER_BROWSER` exists so you can set one for the CLI without touching `$BROWSER` globally. With none of them set, the CLI falls back to the platform opener: `open` on macOS, `start` on Windows, `xdg-open` elsewhere.
 
 A `browser` key in the config file sits below all three, because the config file is the last step in the resolution order above. That is worth knowing: an exported `$BROWSER` left over from another tool silently overrides a `browser` you set in the config file.
 
@@ -146,10 +146,10 @@ Because the split is on whitespace, a single path that contains spaces does not 
 
 ## Config file
 
-For anything more than a couple of flags, use a config file. Without `--config`, the CLI looks for `bull-board.config.mjs`, `.js`, `.cjs`, or `.json` in the current directory, in that order. `.cjs` and `.json` are always read as CommonJS/JSON; a plain `.js` file is read as CommonJS first and retried as ESM if that fails, so either `module.exports` or `export default` works there.
+For anything more than a couple of flags, use a config file. Without `--config`, the CLI looks for `worker-manager.config.mjs`, `.js`, `.cjs`, or `.json` in the current directory, in that order. `.cjs` and `.json` are always read as CommonJS/JSON; a plain `.js` file is read as CommonJS first and retried as ESM if that fails, so either `module.exports` or `export default` works there.
 
 ```js
-// bull-board.config.js
+// worker-manager.config.js
 module.exports = {
   redis: 'redis://localhost:6379',
   prefix: ['bull', 'tenant-a'],
@@ -166,7 +166,7 @@ module.exports = {
 
 `redis` takes a connection URL as above, or a full [ioredis options object](https://github.com/redis/ioredis#connect-to-redis) when a URL can't express the connection, which is what [Redis Sentinel](#redis-sentinel) needs.
 
-`uiConfig` is the same object you'd pass to `createBullBoard({ options: { uiConfig } })` in code, see the [UIConfig reference](/configuration/ui-config) for the full set of fields. Board-wide title, logo, locale, and so on all live there, not at the top level of the config file.
+`uiConfig` is the same object you'd pass to `createWorkerManagerBoard({ options: { uiConfig } })` in code, see the [UIConfig reference](/configuration/ui-config) for the full set of fields. Board-wide title, logo, locale, and so on all live there, not at the top level of the config file.
 
 `queues` is dual purpose: an array (`queues: ['emails', 'webhooks']`) is equivalent to `--queues`, a comma-free explicit list that skips discovery. An object, as above, instead sets per-queue [`QueueAdapterOptions`](/queue-adapters/bullmq) overrides keyed by queue name, the same options you'd pass to `new BullMQAdapter(queue, options)` directly. A queue's own `readOnlyMode: true` always wins even when the board as a whole isn't read-only, but it can't turn read-only mode back off for a single queue once `--read-only` is set globally. A field can't do both jobs in the same file: pick the array form to restrict which queues are served, or the object form to configure the ones discovery finds.
 
@@ -180,7 +180,7 @@ npx @worker-manager/cli --sentinel s1.internal:26379,s2.internal:26379 --sentine
 
 Each entry is a `host` or `host:port`, with the port defaulting to 26379. An IPv6 literal is all colons, so it needs brackets to carry a port: `[2001:db8::1]:26379`. Without them the whole entry is read as a host and gets the default port. `--sentinel-name` is the master group name from your sentinel configuration, the same string you would pass as `name` to ioredis, and it is required: sentinels can monitor more than one group, so there is nothing sensible to guess.
 
-`--sentinel` and `--redis` are mutually exclusive. Setting both is an error rather than a quiet precedence rule, so a leftover `BULL_BOARD_REDIS_URL` in a container's environment cannot silently send the dashboard to the wrong Redis.
+`--sentinel` and `--redis` are mutually exclusive. Setting both is an error rather than a quiet precedence rule, so a leftover `WORKER_MANAGER_REDIS_URL` in a container's environment cannot silently send the dashboard to the wrong Redis.
 
 The CLI holds one ioredis connection and hands it to everything else it builds, so failover handling is not a separate feature: the queue instances, Bull's second subscriber connection, and the `--history` recorder all follow the master through a failover because they share that connection. During the failover window the dashboard's own API requests fail the way they do for any dropped connection, and recover once ioredis has re-resolved the master.
 
@@ -204,7 +204,7 @@ These four are rejected alongside a Redis URL rather than merged into it. ioredi
 The flags cover the common deployment. For anything past it, the config file's `redis` key also accepts a full [ioredis options object](https://github.com/redis/ioredis#connect-to-redis), passed through to the client untouched:
 
 ```js
-// bull-board.config.js
+// worker-manager.config.js
 module.exports = {
   redis: {
     sentinels: [
@@ -294,7 +294,7 @@ npx @worker-manager/cli --postgres postgres://bullmq:bullmq@localhost:5432/bullm
 
 Queue names are discovered from the tables of BullMQ's PostgreSQL schema (`bullmq` by default, `--postgres-schema` to change it), on the same `--scan-interval` as Redis discovery, or taken from `--queues`. The CLI bundles its own BullMQ v6 and `pg` for this, whatever BullMQ version your workers run.
 
-With no Redis source configured (no `--redis`, `--sentinel`, `--cluster`, their environment variables, or a `redis` entry in the config file), the board serves PostgreSQL only and never connects to Redis. With one, it serves both on the same board; a PostgreSQL outage then keeps the last known PostgreSQL queues on the board instead of taking the Redis ones down. `--history` records into Redis when there is one; on a PostgreSQL-only board it records into PostgreSQL instead, in `bull_board_metrics_*` tables in the `--postgres-schema` schema, which it creates on start unless the board is `--read-only`. A read-only board serves what another process recorded.
+With no Redis source configured (no `--redis`, `--sentinel`, `--cluster`, their environment variables, or a `redis` entry in the config file), the board serves PostgreSQL only and never connects to Redis. With one, it serves both on the same board; a PostgreSQL outage then keeps the last known PostgreSQL queues on the board instead of taking the Redis ones down. `--history` records into Redis when there is one; on a PostgreSQL-only board it records into PostgreSQL instead, in `worker_manager_metrics_*` tables in the `--postgres-schema` schema, which it creates on start unless the board is `--read-only`. A read-only board serves what another process recorded.
 
 In a config file, `postgres` takes the URL, or a [node-postgres pool config](https://node-postgres.com/apis/pool) with an optional `schema`:
 
@@ -319,12 +319,12 @@ It also writes. A `MetricsRecorder` runs in the CLI process and once a minute co
 `--history-retention-days` sets how long history is kept, 90 days by default. It moves the hourly and daily windows only and leaves minute-level detail at 7 days, since that tier holds essentially all the bytes. Per-tier retention, the key namespace, the snapshot interval and turning latency sampling off go in the config file under a `history` key:
 
 ```js
-// bull-board.config.js
+// worker-manager.config.js
 module.exports = {
   redis: 'redis://localhost:6379',
   history: {
     enabled: true,
-    prefix: 'bull-board:metrics',
+    prefix: 'worker-manager:metrics',
     retention: { minutes: 7, hours: 90, days: 90 },
     latency: false,
     snapshotIntervalMs: 60000,
@@ -334,7 +334,7 @@ module.exports = {
 
 ### What it writes
 
-Recording writes to the same Redis your queues live in, under the `bull-board:metrics:` namespace, and never touches a key Bull or BullMQ owns. Set `history.prefix` in the config file to move that namespace, which is what keeps two boards on one Redis from sharing a history. Redis TTLs enforce retention, so there's nothing to prune by hand. [Storage footprint](/recipes/historical-metrics#storage-footprint) has the measured numbers; the short version is roughly 1.1 MB per queue for the counters at the default retention plus about 250 KB for latency, and an idle queue costs nothing.
+Recording writes to the same Redis your queues live in, under the `worker-manager:metrics:` namespace, and never touches a key Bull or BullMQ owns. Set `history.prefix` in the config file to move that namespace, which is what keeps two boards on one Redis from sharing a history. Redis TTLs enforce retention, so there's nothing to prune by hand. [Storage footprint](/recipes/historical-metrics#storage-footprint) has the measured numbers; the short version is roughly 1.1 MB per queue for the counters at the default retention plus about 250 KB for latency, and an idle queue costs nothing.
 
 `--read-only` stops the writing and keeps the reading, so the board serves whatever another process has recorded. That's what you want when your workers already run a `MetricsRecorder` of their own and the CLI is only there to look at the result. The config file can ask for the opposite with `history: { record: true }` alongside `--read-only`, for a board that mustn't touch your queues but does own its history.
 
@@ -361,7 +361,7 @@ The CLI also ships as an image, `ghcr.io/naldomadeira/worker-manager`, so a cont
 
 ```sh
 docker run --rm -p 127.0.0.1:3000:3000 \
-  -e BULL_BOARD_USER=admin -e BULL_BOARD_PASSWORD=secret \
+  -e WORKER_MANAGER_USER=admin -e WORKER_MANAGER_PASSWORD=secret \
   ghcr.io/naldomadeira/worker-manager --redis redis://host.docker.internal:6379
 ```
 
@@ -371,7 +371,7 @@ The entrypoint is the CLI, so every flag and variable on this page works there t
 
 BullMQ has an official [Python package](https://python-bullmq.readthedocs.io/), and gets written to from Go, Ruby, and other languages over the raw Redis protocol, since the job format is just a set of Redis keys, not a Node API. Those teams have never had a way to use Worker Manager, because every server adapter assumes a Node HTTP app to mount into. The CLI doesn't have that assumption: it scans Redis for the same keys regardless of what wrote them, and builds a `Queue` instance the same way whether the producer was `bullmq` or `python-bullmq`.
 
-The caveat is the same one that applies everywhere else in bull-board: the dashboard can only show what Bull and BullMQ store in Redis. A producer that doesn't write jobs in the format either library expects may show up incompletely, or not render some fields at all.
+The caveat is the same one that applies everywhere else in worker-manager: the dashboard can only show what Bull and BullMQ store in Redis. A producer that doesn't write jobs in the format either library expects may show up incompletely, or not render some fields at all.
 
 ## Driving it from a script or an agent
 

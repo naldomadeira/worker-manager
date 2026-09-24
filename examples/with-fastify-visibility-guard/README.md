@@ -1,6 +1,6 @@
 # Fastify example with queue visibility per user (visibilityGuard)
 
-This example shows how to use [Fastify.js](https://www.fastify.io/) as a server for bull-board.
+This example shows how to use [Fastify.js](https://www.fastify.io/) as a server for Worker Manager.
 And how to control queue visibility per user using the `visibilityGuard` feature.
 
 ### Notes
@@ -13,7 +13,7 @@ And how to control queue visibility per user using the `visibilityGuard` feature
 
 ### Usage with Cookie Auth
 1. Navigate to `/cookie/login`
-2. Fill in username: `user1` / `user2` & password: `bullboard`
+2. Fill in username: `user1` / `user2` & password: `workermanager`
    - `user1` can see `BullMQ1`
    - `user2` can see `BullMQ2`
 

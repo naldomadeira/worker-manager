@@ -1,8 +1,8 @@
 import { EmptyResponse } from '../schemas/responses';
-import { BullBoardRequest, ControllerHandlerReturnType } from '../types';
+import { WorkerManagerRequest, ControllerHandlerReturnType } from '../types';
 
 async function resumeAll(
-  req: BullBoardRequest
+  req: WorkerManagerRequest
 ): Promise<ControllerHandlerReturnType<EmptyResponse>> {
   const relevantQueues = Array.from(req.queues.values()).filter((queue) => !queue.readOnlyMode);
 

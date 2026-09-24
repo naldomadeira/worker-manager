@@ -1,5 +1,5 @@
 ---
-description: Gate individual bull-board API calls with before and after hooks, for per-role or per-action access control beyond read-only mode and visibility guards.
+description: Gate individual Worker Manager API calls with before and after hooks, for per-role or per-action access control beyond read-only mode and visibility guards.
 ---
 
 # Access control hooks
@@ -9,7 +9,7 @@ description: Gate individual bull-board API calls with before and after hooks, f
 A [visibility guard](/recipes/visibility-guard) decides which queues a request may see, and [read-only mode](/recipes/read-only-mode) decides whether a queue accepts writes at all. Neither can express "support may retry a job but not obliterate a queue". `handlerHooks` can: it runs a function of your own before every API call, and lets you decide from the method and route whether that particular call goes through.
 
 ```ts
-createBullBoard({
+createWorkerManagerBoard({
   queues: [new BullMQAdapter(emailQueue)],
   serverAdapter,
   options: {
@@ -29,7 +29,7 @@ That gives everyone read access and reserves every write for admins.
 
 ## The before hook
 
-`before` receives `{ method, route, request }`. `method` is the lowercase HTTP method, `route` is the route pattern rather than the concrete URL (`/api/queues/:queueName/:jobId/retry`, not `/api/queues/emails/42/retry`), and `request` is the same `BullBoardRequest` a visibility guard gets, carrying `headers`, `params`, `query` and `body`.
+`before` receives `{ method, route, request }`. `method` is the lowercase HTTP method, `route` is the route pattern rather than the concrete URL (`/api/queues/:queueName/:jobId/retry`, not `/api/queues/emails/42/retry`), and `request` is the same `WorkerManagerRequest` a visibility guard gets, carrying `headers`, `params`, `query` and `body`.
 
 Return nothing, or `{ allow: true }`, and the request proceeds. Return `{ allow: false }` and it stops there with **403** and the `ERRORS.FORBIDDEN` key. Both parts are overridable:
 

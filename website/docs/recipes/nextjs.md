@@ -1,6 +1,6 @@
 # Next.js & Vercel
 
-There is no dedicated Next.js adapter. bull-board runs inside a Next.js API
+There is no dedicated Next.js adapter. Worker Manager runs inside a Next.js API
 route using an existing adapter. Two runnable examples:
 
 - [`examples/with-nextjs-app`](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-nextjs-app): App Router, `@worker-manager/hono` adapter.
@@ -15,7 +15,7 @@ A single optional catch-all Route Handler at
 `app/api/queues/[[...path]]/route.ts`:
 
 ```ts
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 import { HonoAdapter } from '@worker-manager/hono';
 import { serveStatic } from '@hono/node-server/serve-static';
@@ -30,7 +30,7 @@ const basePath = '/api/queues';
 const serverAdapter = new HonoAdapter(serveStatic);
 serverAdapter.setBasePath(basePath);
 
-createBullBoard({ queues: [new BullMQAdapter(queue)], serverAdapter });
+createWorkerManagerBoard({ queues: [new BullMQAdapter(queue)], serverAdapter });
 
 const app = new Hono();
 app.route(basePath, serverAdapter.registerPlugin());
@@ -49,7 +49,7 @@ delegates to an Express router. Disable `bodyParser` and enable
 `externalResolver` so Express owns the response:
 
 ```ts
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 import { ExpressAdapter } from '@worker-manager/express';
 import express from 'express';
@@ -59,7 +59,7 @@ const basePath = '/api/queues';
 const serverAdapter = new ExpressAdapter();
 serverAdapter.setBasePath(basePath);
 
-createBullBoard({ queues: [new BullMQAdapter(queue)], serverAdapter });
+createWorkerManagerBoard({ queues: [new BullMQAdapter(queue)], serverAdapter });
 
 const app = express();
 app.use(basePath, serverAdapter.getRouter());
@@ -88,7 +88,7 @@ Fix it in `next.config.js`:
 ```js
 /** @type {import('next').NextConfig} */
 module.exports = {
-  // Resolve bull-board and bullmq from node_modules at runtime, not from the bundle.
+  // Resolve @worker-manager/* and bullmq from node_modules at runtime, not from the bundle.
   serverExternalPackages: ['@worker-manager/api', '@worker-manager/ui', 'bullmq'],
 
   // Force the compiled UI into the serverless function (the tracer can't see the eval).
@@ -109,11 +109,11 @@ options in **Next.js 15+** (in 13/14 they lived under `experimental`).
 
 ### Alternative: `uiBasePath`
 
-Instead of the trace config you can tell bull-board where the UI lives directly,
+Instead of the trace config you can tell Worker Manager where the UI lives directly,
 skipping the `eval(require.resolve(...))` entirely:
 
 ```ts
-createBullBoard({
+createWorkerManagerBoard({
   queues,
   serverAdapter,
   options: { uiBasePath: 'node_modules/@worker-manager/ui' },

@@ -1,4 +1,4 @@
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 import { ExpressAdapter } from '@worker-manager/express';
 import { Queue } from 'bullmq';
@@ -39,14 +39,17 @@ describe('Job data schema', () => {
       required: ['make', 'model'],
     };
     queue = new Queue('WithSchema', { connection });
-    createBullBoard({ queues: [new BullMQAdapter(queue, { jobDataSchema })], serverAdapter });
+    createWorkerManagerBoard({
+      queues: [new BullMQAdapter(queue, { jobDataSchema })],
+      serverAdapter,
+    });
 
     expect(await fetchJobDataSchema(serverAdapter, 'WithSchema')).toEqual(jobDataSchema);
   });
 
   it('returns an empty object when the queue does not configure a schema', async () => {
     queue = new Queue('NoSchema', { connection });
-    createBullBoard({ queues: [new BullMQAdapter(queue)], serverAdapter });
+    createWorkerManagerBoard({ queues: [new BullMQAdapter(queue)], serverAdapter });
 
     expect(await fetchJobDataSchema(serverAdapter, 'NoSchema')).toEqual({});
   });
@@ -54,7 +57,10 @@ describe('Job data schema', () => {
   it('keeps the schema out of the polled queues list', async () => {
     const jobDataSchema = { type: 'object', properties: { make: { type: 'string' } } };
     queue = new Queue('WithSchema', { connection });
-    createBullBoard({ queues: [new BullMQAdapter(queue, { jobDataSchema })], serverAdapter });
+    createWorkerManagerBoard({
+      queues: [new BullMQAdapter(queue, { jobDataSchema })],
+      serverAdapter,
+    });
 
     const res = await request(serverAdapter.getRouter()).get('/api/queues').expect(200);
     const serialized = JSON.parse(res.text).queues.find((q: any) => q.name === 'WithSchema');

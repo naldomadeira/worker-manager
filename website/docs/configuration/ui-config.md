@@ -2,19 +2,19 @@
 
 > Applies to: all adapters.
 
-`UIConfig` controls the visual shell of the dashboard: title, logo, favicon, locale, polling, misc links. Pass it via `setUIConfig()` on the server adapter, or forward it through `createBullBoard({ options: { uiConfig } })`.
+`UIConfig` controls the visual shell of the dashboard: title, logo, favicon, locale, polling, misc links. Pass it via `setUIConfig()` on the server adapter, or forward it through `createWorkerManagerBoard({ options: { uiConfig } })`.
 
 ## Usage
 
 ```ts
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 import { ExpressAdapter } from '@worker-manager/express';
 
 const serverAdapter = new ExpressAdapter();
 serverAdapter.setBasePath('/admin/queues');
 
-createBullBoard({
+createWorkerManagerBoard({
   queues: [new BullMQAdapter(emailQueue)],
   serverAdapter,
   options: {
@@ -34,11 +34,11 @@ createBullBoard({
 });
 ```
 
-`serverAdapter.setUIConfig({ ... })` directly works the same way, `createBullBoard` just forwards `options.uiConfig` to it.
+`serverAdapter.setUIConfig({ ... })` directly works the same way, `createWorkerManagerBoard` just forwards `options.uiConfig` to it.
 
 ## Fields
 
-All fields are optional. Defaults are applied by `createBullBoard` where noted.
+All fields are optional. Defaults are applied by `createWorkerManagerBoard` where noted.
 
 | Field | Type | Default | Description |
 | --- | --- | --- | --- |
@@ -47,7 +47,7 @@ All fields are optional. Defaults are applied by `createBullBoard` where noted.
 | `boardLogo.width` | `number \| string` | — | Logo width (px number or CSS length). |
 | `boardLogo.height` | `number \| string` | — | Logo height (px number or CSS length). |
 | `miscLinks` | `Array<{ text: string; url: string; icon?: string }>` | `[]` | Extra links in the header menu (logout, etc.). `icon` is an optional URL or static path to an image shown before the link text; it is rendered as-is, so pick one that reads on both the light and dark dropdown background. |
-| `hideDocsLink` | `boolean` | `false` | Hide the header Docs icon that links to the bull-board documentation site. |
+| `hideDocsLink` | `boolean` | `false` | Hide the header Docs icon that links to the Worker Manager documentation site. |
 | `queueSortOptions` | `Array<{ key: string; label: string }>` | — | Custom sort keys for the queue list. |
 | `favIcon.default` | `string` | `'static/images/logo.svg'` | Favicon when the tab is inactive. |
 | `favIcon.alternative` | `string` | `'static/favicon-32x32.png'` | Favicon when jobs are active. |

@@ -88,11 +88,11 @@ jobs:
           context: .
           platforms: linux/amd64,linux/arm64
           push: true
-          build-args: BULL_BOARD_VERSION=${{ inputs.version }}
+          build-args: WORKER_MANAGER_VERSION=${{ inputs.version }}
           tags: ${{ steps.image.outputs.tags }}
           labels: |
             org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
-            org.opencontainers.image.description=bull-board dashboard as a standalone server, configured through the @worker-manager/cli flags and BULL_BOARD_* variables
+            org.opencontainers.image.description=Worker Manager dashboard as a standalone server, configured through the @worker-manager/cli flags and WORKER_MANAGER_* variables
             org.opencontainers.image.licenses=MIT
             org.opencontainers.image.version=${{ inputs.version }}
           provenance: mode=max

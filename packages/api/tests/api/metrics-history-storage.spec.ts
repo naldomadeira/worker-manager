@@ -1,4 +1,4 @@
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 import type {
   MetricsHistoryProvider,
@@ -74,7 +74,7 @@ describe('metrics history storage endpoints', () => {
 
   describe('capability gating', () => {
     it('registers neither route for a read-only provider', async () => {
-      createBullBoard({
+      createWorkerManagerBoard({
         queues: [makeQueue('StorageNoCapsQueue')],
         serverAdapter,
         options: { historyProvider: { getHistory: async () => [] } },
@@ -86,7 +86,7 @@ describe('metrics history storage endpoints', () => {
     });
 
     it('registers neither route when no provider is configured at all', async () => {
-      createBullBoard({ queues: [makeQueue('StorageNoProviderQueue')], serverAdapter });
+      createWorkerManagerBoard({ queues: [makeQueue('StorageNoProviderQueue')], serverAdapter });
 
       const router = request(serverAdapter.getRouter());
       await router.get('/api/metrics/history/usage').expect(404);
@@ -94,7 +94,7 @@ describe('metrics history storage endpoints', () => {
     });
 
     it('registers usage but not purge when the provider only reports usage', async () => {
-      createBullBoard({
+      createWorkerManagerBoard({
         queues: [makeQueue('StorageUsageOnlyQueue')],
         serverAdapter,
         options: {
@@ -108,7 +108,7 @@ describe('metrics history storage endpoints', () => {
     });
 
     it('withholds purge when every queue is read-only', async () => {
-      createBullBoard({
+      createWorkerManagerBoard({
         queues: [makeQueue('StorageReadOnlyQueue', { readOnlyMode: true })],
         serverAdapter,
         options: { historyProvider: fullProvider() },
@@ -120,7 +120,7 @@ describe('metrics history storage endpoints', () => {
     });
 
     it('allows purge when at least one queue is writable', async () => {
-      createBullBoard({
+      createWorkerManagerBoard({
         queues: [
           makeQueue('StorageMixedReadOnlyQueue', { readOnlyMode: true }),
           makeQueue('StorageMixedWritableQueue'),
@@ -138,7 +138,7 @@ describe('metrics history storage endpoints', () => {
 
   describe('uiConfig flags', () => {
     it('advertises both capabilities when the provider has them', async () => {
-      createBullBoard({
+      createWorkerManagerBoard({
         queues: [makeQueue('StorageFlagsOnQueue')],
         serverAdapter,
         options: { historyProvider: fullProvider() },
@@ -154,7 +154,7 @@ describe('metrics history storage endpoints', () => {
     });
 
     it('advertises them as false without a provider', async () => {
-      createBullBoard({ queues: [makeQueue('StorageFlagsOffQueue')], serverAdapter });
+      createWorkerManagerBoard({ queues: [makeQueue('StorageFlagsOffQueue')], serverAdapter });
 
       await request(serverAdapter.getRouter())
         .get('/')
@@ -168,7 +168,7 @@ describe('metrics history storage endpoints', () => {
     it('does not let caller uiConfig force the flags on', async () => {
       // Same rule as hasHistoryProvider: the flags gate UI whose routes only exist when
       // the provider really implements them, so a stray uiConfig can't switch them on.
-      createBullBoard({
+      createWorkerManagerBoard({
         queues: [makeQueue('StorageFlagsForcedQueue')],
         serverAdapter,
         options: { uiConfig: { hasHistoryUsage: true, canPurgeHistory: true } },
@@ -186,7 +186,7 @@ describe('metrics history storage endpoints', () => {
 
   describe('usage endpoint', () => {
     it('returns the provider payload verbatim', async () => {
-      createBullBoard({
+      createWorkerManagerBoard({
         queues: [makeQueue('StorageUsageQueue')],
         serverAdapter,
         options: { historyProvider: fullProvider() },
@@ -201,7 +201,7 @@ describe('metrics history storage endpoints', () => {
     });
 
     it('surfaces a provider failure as a structured 500', async () => {
-      createBullBoard({
+      createWorkerManagerBoard({
         queues: [makeQueue('StorageUsageFailQueue')],
         serverAdapter,
         options: {
@@ -226,7 +226,7 @@ describe('metrics history storage endpoints', () => {
   describe('purge endpoint', () => {
     it('passes no scope through for a full purge', async () => {
       const purges: MetricsHistoryPurgeOptions[] = [];
-      createBullBoard({
+      createWorkerManagerBoard({
         queues: [makeQueue('StoragePurgeAllQueue')],
         serverAdapter,
         options: { historyProvider: fullProvider(purges) },
@@ -245,7 +245,7 @@ describe('metrics history storage endpoints', () => {
 
     it('forwards queue and before', async () => {
       const purges: MetricsHistoryPurgeOptions[] = [];
-      createBullBoard({
+      createWorkerManagerBoard({
         queues: [makeQueue('StoragePurgeScopedQueue')],
         serverAdapter,
         options: { historyProvider: fullProvider(purges) },
@@ -263,7 +263,7 @@ describe('metrics history storage endpoints', () => {
       // The dangerous failure mode: a bad `before` silently dropping to "no cutoff"
       // turns a trim request into a full wipe.
       const purges: MetricsHistoryPurgeOptions[] = [];
-      createBullBoard({
+      createWorkerManagerBoard({
         queues: [makeQueue('StoragePurgeBadCutoffQueue')],
         serverAdapter,
         options: { historyProvider: fullProvider(purges) },
@@ -279,7 +279,7 @@ describe('metrics history storage endpoints', () => {
 
     it('rejects a non-string queue', async () => {
       const purges: MetricsHistoryPurgeOptions[] = [];
-      createBullBoard({
+      createWorkerManagerBoard({
         queues: [makeQueue('StoragePurgeBadQueueQueue')],
         serverAdapter,
         options: { historyProvider: fullProvider(purges) },
@@ -294,7 +294,7 @@ describe('metrics history storage endpoints', () => {
     });
 
     it('surfaces a provider failure as a structured 500', async () => {
-      createBullBoard({
+      createWorkerManagerBoard({
         queues: [makeQueue('StoragePurgeFailQueue')],
         serverAdapter,
         options: {

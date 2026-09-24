@@ -22,7 +22,7 @@ function visibilityGuard(req) {
   }
 }
 
-createBullBoard({
+createWorkerManagerBoard({
   queues: queues.map((queue) => {
     const adapter = new BullMQAdapter(queue);
     adapter.setVisibilityGuard(visibilityGuard);
@@ -50,7 +50,7 @@ tenantBQueue.setVisibilityGuard((req) => req.headers['x-tenant-id'] === 'tenant-
 const sharedQueue = new BullMQAdapter(common);
 sharedQueue.setVisibilityGuard(() => true);
 
-createBullBoard({
+createWorkerManagerBoard({
   queues: [tenantAQueue, tenantBQueue, sharedQueue],
   serverAdapter,
 });

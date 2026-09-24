@@ -1,4 +1,4 @@
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import { ExpressAdapter } from '@worker-manager/express';
 import type { CliConfig } from './config/types';
 import { describeConnection, RETRY_INTERVAL_MS, type ConnectionState } from './connectionState';
@@ -97,7 +97,7 @@ export async function run(
 
   const serverAdapter = new ExpressAdapter();
   serverAdapter.setBasePath(config.basePath);
-  const board = createBullBoard({
+  const board = createWorkerManagerBoard({
     queues: [],
     serverAdapter,
     options: { uiConfig: config.uiConfig, historyProvider: history?.provider },
@@ -246,7 +246,7 @@ export async function run(
 
     beforeReady?.(close);
 
-    log.log(`bull-board listening on ${server.url}`);
+    log.log(`Worker Manager listening on ${server.url}`);
     log.log(`Redis:  ${redisLabel}`);
     log.log(`Prefix: ${config.prefixes.join(', ')}`);
     if (postgres) log.log(`Postgres: ${postgres.label} (schema ${config.postgres!.schema})`);
@@ -374,7 +374,7 @@ export async function run(
     await becomeConnected(true);
   }
 
-  log.log(`bull-board listening on ${server.url}`);
+  log.log(`Worker Manager listening on ${server.url}`);
   log.log(`Redis:  ${redisLabel}`);
   log.log(`Prefix: ${config.prefixes.join(', ')}`);
   if (postgres) log.log(`Postgres: ${postgres.label} (schema ${config.postgres!.schema})`);
@@ -395,7 +395,7 @@ function warnIfExposed(config: CliConfig, log: Pick<Console, 'warn'>): void {
   if (isLoopbackHost(config.host) || config.auth || config.keycloak) return;
 
   log.warn(
-    `Warning: bull-board is listening on ${config.host}, which accepts connections from ` +
+    `Warning: Worker Manager is listening on ${config.host}, which accepts connections from ` +
       'outside this machine, with no --user/--password set. Anyone who can reach it can ' +
       'view and modify every queue. Set --user and --password (or Keycloak), or bind to 127.0.0.1.'
   );
@@ -418,7 +418,7 @@ async function runPostgresOnly(
 
   const serverAdapter = new ExpressAdapter();
   serverAdapter.setBasePath(config.basePath);
-  const board = createBullBoard({
+  const board = createWorkerManagerBoard({
     queues: [],
     serverAdapter,
     options: { uiConfig: config.uiConfig, historyProvider: history?.provider },
@@ -488,7 +488,7 @@ async function runPostgresOnly(
 
   beforeReady?.(close);
 
-  log.log(`bull-board listening on ${server.url}`);
+  log.log(`Worker Manager listening on ${server.url}`);
   log.log(`Postgres: ${postgres.label} (schema ${config.postgres!.schema})`);
   if (history) log.log(`History: ${history.label}`);
   if (count === 0) {

@@ -3,10 +3,10 @@ import { queueProvider } from '../providers/queue';
 import { BaseAdapter } from '../queueAdapters/base';
 import type { SetRateLimitBody } from '../schemas/requests';
 import { EmptyResponse, GetQueueRateLimitResponse } from '../schemas/responses';
-import { BullBoardRequest, ControllerHandlerReturnType } from '../types';
+import { WorkerManagerRequest, ControllerHandlerReturnType } from '../types';
 
 async function getConfiguredRateLimit(
-  _req: BullBoardRequest,
+  _req: WorkerManagerRequest,
   queue: BaseAdapter
 ): Promise<ControllerHandlerReturnType<GetQueueRateLimitResponse>> {
   if (!queue.supportsGlobalRateLimit) {
@@ -20,7 +20,7 @@ async function getConfiguredRateLimit(
 }
 
 async function setConfiguredRateLimit(
-  req: BullBoardRequest<Record<string, any>, SetRateLimitBody>,
+  req: WorkerManagerRequest<Record<string, any>, SetRateLimitBody>,
   queue: BaseAdapter
 ): Promise<ControllerHandlerReturnType<EmptyResponse>> {
   if (!queue.supportsGlobalRateLimit) {
@@ -39,7 +39,7 @@ async function setConfiguredRateLimit(
 }
 
 async function releaseActiveRateLimit(
-  _req: BullBoardRequest,
+  _req: WorkerManagerRequest,
   queue: BaseAdapter
 ): Promise<ControllerHandlerReturnType<EmptyResponse>> {
   await queue.releaseActiveRateLimit();

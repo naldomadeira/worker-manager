@@ -2,10 +2,10 @@
 
 > Applies to: all adapters.
 
-`createBullBoard` isn't a one-shot call. It also returns four functions that change which queues the board shows while it's running, with no rebuild or restart:
+`createWorkerManagerBoard` isn't a one-shot call. It also returns four functions that change which queues the board shows while it's running, with no rebuild or restart:
 
 ```ts
-const { addQueue, removeQueue, setQueues, replaceQueues } = createBullBoard({
+const { addQueue, removeQueue, setQueues, replaceQueues } = createWorkerManagerBoard({
   queues: [new BullMQAdapter(emailQueue)],
   serverAdapter,
 });
@@ -27,7 +27,7 @@ Queues are keyed by name (`queue.getName()`, which includes any `prefix` you set
 ## Add a queue on demand
 
 ```ts
-const board = createBullBoard({ queues: [], serverAdapter });
+const board = createWorkerManagerBoard({ queues: [], serverAdapter });
 
 function onTenantCreated(tenantId: string) {
   const queue = new Queue(`emails-${tenantId}`, { connection });
@@ -58,8 +58,8 @@ Reach for `replaceQueues` when you have the authoritative full list and want the
 
 - Changes take effect on the next request. The functions write to the same `Map` the board reads each time, so there's no cache to bust.
 - Removing a queue only detaches it from the dashboard. It doesn't close the Bull/BullMQ connection or touch Redis, so clean those up yourself if the queue is really gone.
-- On [NestJS](/server-adapters/nestjs) you don't hold the return value of `createBullBoard` directly. The module already calls `addQueue` when you register feature queues, and it exposes the same board instance for manual changes via `@InjectBullBoard() board: BullBoardInstance`. See [`examples/with-nestjs-module`](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-nestjs-module).
+- On [NestJS](/server-adapters/nestjs) you don't hold the return value of `createWorkerManagerBoard` directly. The module already calls `addQueue` when you register feature queues, and it exposes the same board instance for manual changes via `@InjectWorkerManager() board: WorkerManagerBoard`. See [`examples/with-nestjs-module`](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-nestjs-module).
 
 ## Source of truth
 
-The four functions are built in [`packages/api/src/queuesApi.ts`](https://github.com/naldomadeira/worker-manager/blob/main/packages/api/src/queuesApi.ts) and returned from `createBullBoard` in [`packages/api/src/index.ts`](https://github.com/naldomadeira/worker-manager/blob/main/packages/api/src/index.ts).
+The four functions are built in [`packages/api/src/queuesApi.ts`](https://github.com/naldomadeira/worker-manager/blob/main/packages/api/src/queuesApi.ts) and returned from `createWorkerManagerBoard` in [`packages/api/src/index.ts`](https://github.com/naldomadeira/worker-manager/blob/main/packages/api/src/index.ts).

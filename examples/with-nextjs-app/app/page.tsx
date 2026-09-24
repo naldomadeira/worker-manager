@@ -1,7 +1,7 @@
 export default function Home() {
   return (
     <main style={{ fontFamily: 'system-ui, sans-serif', padding: 40, lineHeight: 1.6 }}>
-      <h1>bull-board + Next.js (App Router)</h1>
+      <h1>Worker Manager + Next.js (App Router)</h1>
       <ul>
         <li>
           <a href="/api/queues">Open the dashboard</a>

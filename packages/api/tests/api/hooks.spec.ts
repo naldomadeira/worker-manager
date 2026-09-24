@@ -1,4 +1,4 @@
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 import { ExpressAdapter } from '@worker-manager/express';
 import { Queue } from 'bullmq';
@@ -37,7 +37,7 @@ describe('hooks', () => {
 
       const before = jest.fn().mockReturnValue({ allow: false, message: 'nope' });
 
-      createBullBoard({
+      createWorkerManagerBoard({
         queues: [new BullMQAdapter(paintQueue)],
         serverAdapter,
         options: { handlerHooks: { before } },
@@ -59,7 +59,7 @@ describe('hooks', () => {
       const paintQueue = new Queue('Paint', { connection });
       queueList.push(paintQueue);
 
-      createBullBoard({
+      createWorkerManagerBoard({
         queues: [new BullMQAdapter(paintQueue)],
         serverAdapter,
         options: { handlerHooks: { before: () => ({ allow: false }) } },
@@ -75,7 +75,7 @@ describe('hooks', () => {
       const paintQueue = new Queue('Paint', { connection });
       queueList.push(paintQueue);
 
-      createBullBoard({
+      createWorkerManagerBoard({
         queues: [new BullMQAdapter(paintQueue)],
         serverAdapter,
         options: {
@@ -94,7 +94,7 @@ describe('hooks', () => {
       const paintQueue = new Queue('Paint', { connection });
       queueList.push(paintQueue);
 
-      createBullBoard({
+      createWorkerManagerBoard({
         queues: [new BullMQAdapter(paintQueue)],
         serverAdapter,
         options: {
@@ -115,7 +115,7 @@ describe('hooks', () => {
       const paintQueue = new Queue('Paint', { connection });
       queueList.push(paintQueue);
 
-      createBullBoard({
+      createWorkerManagerBoard({
         queues: [new BullMQAdapter(paintQueue)],
         serverAdapter,
         options: { handlerHooks: { before: () => ({ allow: true }) } },
@@ -134,7 +134,7 @@ describe('hooks', () => {
       const paintQueue = new Queue('Paint', { connection });
       queueList.push(paintQueue);
 
-      createBullBoard({
+      createWorkerManagerBoard({
         queues: [new BullMQAdapter(paintQueue)],
         serverAdapter,
         options: { handlerHooks: { after: (_ctx, result) => result } },
@@ -154,7 +154,7 @@ describe('hooks', () => {
         body: { ...result.body, injected: true },
       }));
 
-      createBullBoard({
+      createWorkerManagerBoard({
         queues: [new BullMQAdapter(paintQueue)],
         serverAdapter,
         options: { handlerHooks: { after } },
@@ -176,7 +176,7 @@ describe('hooks', () => {
 
       const after = jest.fn().mockImplementation((_ctx, result) => result);
 
-      createBullBoard({
+      createWorkerManagerBoard({
         queues: [new BullMQAdapter(paintQueue)],
         serverAdapter,
         options: { handlerHooks: { before: () => ({ allow: false }), after } },
@@ -193,7 +193,7 @@ describe('hooks', () => {
       const paintQueue = new Queue('Paint', { connection });
       queueList.push(paintQueue);
 
-      createBullBoard({ queues: [new BullMQAdapter(paintQueue)], serverAdapter });
+      createWorkerManagerBoard({ queues: [new BullMQAdapter(paintQueue)], serverAdapter });
 
       const res = await request(serverAdapter.getRouter())
         .get('/api/queues')

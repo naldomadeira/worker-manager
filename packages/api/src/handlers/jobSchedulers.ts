@@ -1,10 +1,10 @@
 import { BaseAdapter } from '../queueAdapters/base';
 import type { GetJobSchedulersQuery } from '../schemas/requests';
 import { GetJobSchedulersResponse } from '../schemas/responses';
-import { AppJobScheduler, BullBoardRequest, ControllerHandlerReturnType } from '../types';
+import { AppJobScheduler, WorkerManagerRequest, ControllerHandlerReturnType } from '../types';
 
 async function visibleQueues(
-  req: BullBoardRequest<GetJobSchedulersQuery>
+  req: WorkerManagerRequest<GetJobSchedulersQuery>
 ): Promise<[string, BaseAdapter][]> {
   const requested = req.query.queueName;
   const pairs: [string, BaseAdapter][] = [];
@@ -28,7 +28,7 @@ async function visibleQueues(
  * affordable.
  */
 export async function jobSchedulersHandler(
-  req: BullBoardRequest<GetJobSchedulersQuery>
+  req: WorkerManagerRequest<GetJobSchedulersQuery>
 ): Promise<ControllerHandlerReturnType<GetJobSchedulersResponse>> {
   const pairs = await visibleQueues(req);
 

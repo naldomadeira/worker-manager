@@ -23,7 +23,7 @@ export default defineConfig({
         miscLinks: [],
         hideDocsLink: false,
         // Served statically here rather than by the entry route, so the flags
-        // `createBullBoard` derives from the history provider have to be repeated. They
+        // `createWorkerManagerBoard` derives from the history provider have to be repeated. They
         // must match the provider wired up in src/mocks/handlers.ts.
         hasHistoryProvider: true,
         hasHistoryUsage: true,

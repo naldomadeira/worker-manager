@@ -11,7 +11,7 @@ async function main(): Promise<void> {
   try {
     flags = parseFlags(process.argv.slice(2));
   } catch (error) {
-    throw new Error(`${(error as Error).message}\nRun bull-board --help for usage.`);
+    throw new Error(`${(error as Error).message}\nRun worker-manager --help for usage.`);
   }
 
   if (flags.help) {
@@ -28,7 +28,7 @@ async function main(): Promise<void> {
 
   const file = await loadConfigFile({
     cwd: process.cwd(),
-    explicitPath: flags.config || process.env.BULL_BOARD_CONFIG,
+    explicitPath: flags.config || process.env.WORKER_MANAGER_CONFIG,
   });
   const config = resolveConfig({ flags, env: process.env, file });
 

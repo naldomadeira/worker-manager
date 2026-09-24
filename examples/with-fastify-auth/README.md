@@ -1,6 +1,6 @@
 # Fastify example
 
-This example shows how to use [Fastify.js](https://www.fastify.io/) as a server for bull-board.
+This example shows how to use [Fastify.js](https://www.fastify.io/) as a server for Worker Manager.
 
 ### Notes
 1. It will work with any **cookie** / **basic auth** based auth, since the browser will attach

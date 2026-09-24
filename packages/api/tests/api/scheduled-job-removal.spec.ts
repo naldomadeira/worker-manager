@@ -1,4 +1,4 @@
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 import { ExpressAdapter } from '@worker-manager/express';
 import { Queue, Worker } from 'bullmq';
@@ -29,7 +29,7 @@ describe('Scheduled Job Removal', () => {
     // Clear queue before each test
     await testQueue.obliterate({ force: true });
 
-    createBullBoard({
+    createWorkerManagerBoard({
       queues: [new BullMQAdapter(testQueue)],
       serverAdapter,
     });
@@ -212,7 +212,7 @@ describe('Scheduled Job Removal', () => {
 
     it('is rejected on a read only queue', async () => {
       const readOnlyServerAdapter = new ExpressAdapter();
-      createBullBoard({
+      createWorkerManagerBoard({
         queues: [new BullMQAdapter(testQueue, { readOnlyMode: true })],
         serverAdapter: readOnlyServerAdapter,
       });

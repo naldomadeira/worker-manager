@@ -45,10 +45,10 @@ describePostgres('PostgresMetricsStore', () => {
       await store.migrate();
 
       expect(await tablesIn(schema)).toEqual([
-        'bull_board_metrics_counters',
-        'bull_board_metrics_histograms',
-        'bull_board_metrics_meta',
-        'bull_board_metrics_sampler_state',
+        'worker_manager_metrics_counters',
+        'worker_manager_metrics_histograms',
+        'worker_manager_metrics_meta',
+        'worker_manager_metrics_sampler_state',
       ]);
       const { rows } = await pool.query(
         `SELECT value FROM ${store.tables.meta} WHERE name = 'schema_version'`

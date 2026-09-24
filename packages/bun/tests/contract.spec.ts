@@ -1,4 +1,4 @@
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import {
   runServerAdapterContract,
   uiFixtureBasePath,
@@ -10,7 +10,7 @@ import { BunAdapter } from '../src';
 runServerAdapterContract('Bun', async ({ basePath, queue }) => {
   const serverAdapter = new BunAdapter();
   serverAdapter.setBasePath(basePath || '/');
-  createBullBoard({
+  createWorkerManagerBoard({
     queues: [queue.adapter],
     serverAdapter,
     options: { uiBasePath: uiFixtureBasePath },

@@ -5,7 +5,12 @@ import { queueProvider } from '../providers/queue';
 import { BaseAdapter } from '../queueAdapters/base';
 import type { GetJobFlowQuery } from '../schemas/requests';
 import { GetJobFlowResponse } from '../schemas/responses';
-import type { BullBoardRequest, ControllerHandlerReturnType, FlowNode, QueueJob } from '../types';
+import type {
+  WorkerManagerRequest,
+  ControllerHandlerReturnType,
+  FlowNode,
+  QueueJob,
+} from '../types';
 
 const MAX_FLOW_NODES = 200;
 
@@ -147,7 +152,7 @@ function emptyNodeResponse(nodeId: string) {
 }
 
 async function getJobFlow(
-  req: BullBoardRequest<GetJobFlowQuery>,
+  req: WorkerManagerRequest<GetJobFlowQuery>,
   job: QueueJob,
   queue: BaseAdapter
 ): Promise<ControllerHandlerReturnType<GetJobFlowResponse>> {

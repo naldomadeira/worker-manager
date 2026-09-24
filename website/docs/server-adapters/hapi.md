@@ -9,7 +9,7 @@ npm install @worker-manager/api @worker-manager/hapi
 ```
 
 ```ts
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 import { HapiAdapter } from '@worker-manager/hapi';
 import { Queue } from 'bullmq';
@@ -23,7 +23,7 @@ const app = Hapi.server({ port: 3000, host: 'localhost' });
 
 const serverAdapter = new HapiAdapter();
 
-createBullBoard({
+createWorkerManagerBoard({
   queues: [new BullMQAdapter(queue)],
   serverAdapter,
 });

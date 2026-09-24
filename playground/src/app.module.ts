@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
-import { BullBoardModule } from '@worker-manager/nestjs';
+import { WorkerManagerModule } from '@worker-manager/nestjs';
 import { config } from './config';
 import { HomeController } from './home.controller';
 import { allQueues } from './queues/queues';
@@ -33,7 +33,7 @@ function boardAuth() {
 
 @Module({
   imports: [
-    BullBoardModule.forRoot({
+    WorkerManagerModule.forRoot({
       route: '/queues',
       // No `adapter`: the module detects Express from the running Nest app.
       auth: boardAuth(),

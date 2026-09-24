@@ -1,4 +1,4 @@
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 import type { MetricsHistoryProvider, MetricsLatencyQuery } from '@worker-manager/api/typings/app';
 import { ExpressAdapter } from '@worker-manager/express';
@@ -43,7 +43,7 @@ describe('metrics latency endpoint', () => {
       },
     };
 
-    createBullBoard({
+    createWorkerManagerBoard({
       queues: [new BullMQAdapter(queue)],
       serverAdapter,
       options: { historyProvider: provider },
@@ -88,7 +88,7 @@ describe('metrics latency endpoint', () => {
       },
     };
 
-    createBullBoard({
+    createWorkerManagerBoard({
       queues: [new BullMQAdapter(queue)],
       serverAdapter,
       options: { historyProvider: provider },
@@ -187,7 +187,7 @@ describe('metrics latency endpoint', () => {
       getLatency: async () => [],
     };
 
-    createBullBoard({
+    createWorkerManagerBoard({
       queues: [new BullMQAdapter(queue)],
       serverAdapter,
       options: { historyProvider: provider },
@@ -206,7 +206,7 @@ describe('metrics latency endpoint', () => {
     const queue = makeQueue('LatencyQueueNoProvider');
     const provider: MetricsHistoryProvider = { getHistory: async () => [] };
 
-    createBullBoard({
+    createWorkerManagerBoard({
       queues: [new BullMQAdapter(queue)],
       serverAdapter,
       options: { historyProvider: provider },
@@ -248,7 +248,7 @@ describe('hasLatencyHistory uiConfig flag', () => {
       getLatency: async () => [],
     };
 
-    createBullBoard({
+    createWorkerManagerBoard({
       queues: [new BullMQAdapter(queue)],
       serverAdapter,
       options: { historyProvider: provider },
@@ -266,7 +266,7 @@ describe('hasLatencyHistory uiConfig flag', () => {
     const queue = makeQueue('LatencyFlagOffQueue');
     const provider: MetricsHistoryProvider = { getHistory: async () => [] };
 
-    createBullBoard({
+    createWorkerManagerBoard({
       queues: [new BullMQAdapter(queue)],
       serverAdapter,
       options: { historyProvider: provider },
@@ -282,7 +282,7 @@ describe('hasLatencyHistory uiConfig flag', () => {
 
   it('injects hasLatencyHistory: false into the entry HTML when no provider is set', async () => {
     const queue = makeQueue('LatencyFlagNoProviderQueue');
-    createBullBoard({ queues: [new BullMQAdapter(queue)], serverAdapter });
+    createWorkerManagerBoard({ queues: [new BullMQAdapter(queue)], serverAdapter });
 
     await request(serverAdapter.getRouter())
       .get('/')

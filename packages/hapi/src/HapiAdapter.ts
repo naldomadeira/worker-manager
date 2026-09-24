@@ -4,7 +4,7 @@ import Vision from '@hapi/vision';
 import type {
   AppControllerRoute,
   AppViewRoute,
-  BullBoardQueues,
+  WorkerManagerQueues,
   ControllerHandlerReturnType,
   IServerAdapter,
   UIConfig,
@@ -21,7 +21,7 @@ type HapiRouteDef = {
 
 export class HapiAdapter implements IServerAdapter {
   private basePath = '';
-  private bullBoardQueues: BullBoardQueues | undefined;
+  private workerManagerQueues: WorkerManagerQueues | undefined;
   private errorHandler: ((error: Error) => ControllerHandlerReturnType) | undefined;
   private statics: { path: string; route: string } | undefined;
   private viewPath: string | undefined;
@@ -75,8 +75,8 @@ export class HapiAdapter implements IServerAdapter {
     return this;
   }
 
-  public setQueues(bullBoardQueues: BullBoardQueues): HapiAdapter {
-    this.bullBoardQueues = bullBoardQueues;
+  public setQueues(workerManagerQueues: WorkerManagerQueues): HapiAdapter {
+    this.workerManagerQueues = workerManagerQueues;
     return this;
   }
 
@@ -97,7 +97,7 @@ export class HapiAdapter implements IServerAdapter {
           throw new Error(`Please call 'setViewsPath' before using 'registerPlugin'`);
         } else if (!this.apiRoutes) {
           throw new Error(`Please call 'setApiRoutes' before using 'registerPlugin'`);
-        } else if (!this.bullBoardQueues) {
+        } else if (!this.workerManagerQueues) {
           throw new Error(`Please call 'setQueues' before using 'registerPlugin'`);
         } else if (!this.errorHandler) {
           throw new Error(`Please call 'setErrorHandler' before using 'registerPlugin'`);
@@ -154,7 +154,7 @@ export class HapiAdapter implements IServerAdapter {
             handler: async (request, h) => {
               try {
                 const response = await route.handler({
-                  queues: this.bullBoardQueues!,
+                  queues: this.workerManagerQueues!,
                   uiConfig: this.uiConfig || {},
                   params: request.params,
                   query: request.query,

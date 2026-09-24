@@ -1,4 +1,4 @@
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import { ExpressAdapter } from '@worker-manager/express';
 import { Queue as BullMQQueue } from 'bullmq';
 import { Redis } from 'ioredis';
@@ -22,7 +22,7 @@ async function boot(argv: string[]) {
   await new Promise<void>((resolve) => client.once('ready', () => resolve()));
   const serverAdapter = new ExpressAdapter();
   serverAdapter.setBasePath(config.basePath);
-  const board = createBullBoard({
+  const board = createWorkerManagerBoard({
     queues: [],
     serverAdapter,
     options: { uiConfig: config.uiConfig },

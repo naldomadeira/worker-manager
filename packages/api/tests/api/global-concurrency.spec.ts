@@ -1,4 +1,4 @@
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 import { ExpressAdapter } from '@worker-manager/express';
 import { Queue } from 'bullmq';
@@ -28,7 +28,7 @@ describe('Global Concurrency', () => {
   });
 
   it('should return globalConcurrency as null when not set', async () => {
-    createBullBoard({
+    createWorkerManagerBoard({
       queues: [new BullMQAdapter(testQueue)],
       serverAdapter,
     });
@@ -43,7 +43,7 @@ describe('Global Concurrency', () => {
   });
 
   it('should set global concurrency', async () => {
-    createBullBoard({
+    createWorkerManagerBoard({
       queues: [new BullMQAdapter(testQueue)],
       serverAdapter,
     });
@@ -65,7 +65,7 @@ describe('Global Concurrency', () => {
   it('should remove global concurrency when set to 0', async () => {
     await testQueue.setGlobalConcurrency(10);
 
-    createBullBoard({
+    createWorkerManagerBoard({
       queues: [new BullMQAdapter(testQueue)],
       serverAdapter,
     });
@@ -85,7 +85,7 @@ describe('Global Concurrency', () => {
   });
 
   it('should return 400 for negative concurrency', async () => {
-    createBullBoard({
+    createWorkerManagerBoard({
       queues: [new BullMQAdapter(testQueue)],
       serverAdapter,
     });
@@ -101,7 +101,7 @@ describe('Global Concurrency', () => {
   });
 
   it('should return 400 for non-integer concurrency', async () => {
-    createBullBoard({
+    createWorkerManagerBoard({
       queues: [new BullMQAdapter(testQueue)],
       serverAdapter,
     });
@@ -113,7 +113,7 @@ describe('Global Concurrency', () => {
   });
 
   it('should return 400 for non-number concurrency', async () => {
-    createBullBoard({
+    createWorkerManagerBoard({
       queues: [new BullMQAdapter(testQueue)],
       serverAdapter,
     });
@@ -125,7 +125,7 @@ describe('Global Concurrency', () => {
   });
 
   it('should return 405 in read-only mode', async () => {
-    createBullBoard({
+    createWorkerManagerBoard({
       queues: [new BullMQAdapter(testQueue, { readOnlyMode: true })],
       serverAdapter,
     });
@@ -137,7 +137,7 @@ describe('Global Concurrency', () => {
   });
 
   it('should return 404 for non-existent queue', async () => {
-    createBullBoard({
+    createWorkerManagerBoard({
       queues: [new BullMQAdapter(testQueue)],
       serverAdapter,
     });

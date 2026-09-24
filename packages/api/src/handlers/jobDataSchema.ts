@@ -1,10 +1,10 @@
 import { queueProvider } from '../providers/queue';
 import { BaseAdapter } from '../queueAdapters/base';
 import { GetQueueJobDataSchemaResponse } from '../schemas/responses';
-import { BullBoardRequest, ControllerHandlerReturnType } from '../types';
+import { WorkerManagerRequest, ControllerHandlerReturnType } from '../types';
 
 async function getJobDataSchema(
-  _req: BullBoardRequest,
+  _req: WorkerManagerRequest,
   queue: BaseAdapter
 ): Promise<ControllerHandlerReturnType<GetQueueJobDataSchemaResponse>> {
   return {

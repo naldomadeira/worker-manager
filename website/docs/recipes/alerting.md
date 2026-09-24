@@ -67,7 +67,7 @@ worker.on('failed', async (job, err) => {
 });
 
 // Register both on the board so the DLQ is one click away.
-createBullBoard({
+createWorkerManagerBoard({
   queues: [new BullMQAdapter(emailsQueue), new BullMQAdapter(deadLetters)],
   serverAdapter,
 });
@@ -85,7 +85,7 @@ Not alerts, but three things worth knowing:
 
 ## Going deeper
 
-Alerting well (deduping, escalation, telling a stalled worker apart from a genuinely failing job) is a BullMQ and ops concern, not a bull-board one. The BullMQ docs are the source for the event semantics:
+Alerting well (deduping, escalation, telling a stalled worker apart from a genuinely failing job) is a BullMQ and ops concern, not a Worker Manager one. The BullMQ docs are the source for the event semantics:
 
 - [Events](https://docs.bullmq.io/guide/events): the full `QueueEvents` list.
 - [Workers](https://docs.bullmq.io/guide/workers): worker-level listeners and the `error` event.

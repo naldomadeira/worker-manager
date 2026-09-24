@@ -177,7 +177,7 @@ export class LatencyStore implements LatencyStorage {
   readonly retention: Retention;
 
   /**
-   * `keys` defaults to the default `bull-board:metrics` namespace, which is what this public
+   * `keys` defaults to the default `worker-manager:metrics` namespace, which is what this public
    * constructor took before stores became namespace-aware in 1.1.0.
    */
   constructor(opts: { redis: MetricsClient; keys?: MetricsKeys; retention: Retention }) {

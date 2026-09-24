@@ -1,4 +1,4 @@
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 import { ExpressAdapter } from '@worker-manager/express';
 import { FlowProducer, Queue } from 'bullmq';
@@ -48,7 +48,7 @@ if (!runnable) {
 
     function setupBoard() {
       const serverAdapter = new ExpressAdapter();
-      createBullBoard({ queues: [new BullMQAdapter(queue)], serverAdapter });
+      createWorkerManagerBoard({ queues: [new BullMQAdapter(queue)], serverAdapter });
       return request(serverAdapter.getRouter());
     }
 
@@ -227,7 +227,7 @@ if (!runnable) {
         });
 
         const serverAdapter = new ExpressAdapter();
-        createBullBoard({
+        createWorkerManagerBoard({
           queues: [new BullMQAdapter(queue), new BullMQAdapter(childQueue)],
           serverAdapter,
         });
@@ -264,7 +264,7 @@ if (!runnable) {
         });
 
         const serverAdapter = new ExpressAdapter();
-        createBullBoard({
+        createWorkerManagerBoard({
           queues: [new BullMQAdapter(queue, { prefix: boardPrefix })],
           serverAdapter,
         });
@@ -295,7 +295,7 @@ if (!runnable) {
         });
 
         const serverAdapter = new ExpressAdapter();
-        createBullBoard({
+        createWorkerManagerBoard({
           queues: [new BullMQAdapter(queue), new BullMQAdapter(redisQueue)],
           serverAdapter,
         });

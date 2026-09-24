@@ -1,6 +1,6 @@
 import { RETRY_INTERVAL_MS, type ConnectionState } from './connectionState';
 
-export const STATUS_PATH = '/__bull-board-cli/status';
+export const STATUS_PATH = '/__worker-manager-cli/status';
 
 function escapeHtml(value: string): string {
   return value
@@ -24,10 +24,10 @@ function describeState(state: ConnectionState): {
       headline: `Connected to Redis${afterRetrying}, but could not finish starting up.`,
       error: state.lastError,
       footer:
-        'This is not a connectivity problem, so bull-board is not retrying the failed step on ' +
+        'This is not a connectivity problem, so Worker Manager is not retrying the failed step on ' +
         'its own. It is still watching the connection, though: if Redis itself drops and comes ' +
         'back, that can clear this on its own. Otherwise, fix the underlying issue (check the ' +
-        'error above) and restart bull-board.',
+        'error above) and restart Worker Manager.',
     };
   }
 
@@ -68,7 +68,7 @@ export function renderDiagnosticPage(state: ConnectionState): string {
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta http-equiv="refresh" content="5" />
-<title>bull-board - waiting for Redis</title>
+<title>Worker Manager - waiting for Redis</title>
 <style>
   :root {
     color-scheme: light dark;
@@ -127,7 +127,7 @@ export function renderDiagnosticPage(state: ConnectionState): string {
 </head>
 <body>
 <main>
-  <h1>bull-board is waiting for Redis</h1>
+  <h1>Worker Manager is waiting for Redis</h1>
   <p class="status">${headline}</p>
   <dl>
     <dt>Redis</dt><dd><code>${escapeHtml(state.redis)}</code></dd>

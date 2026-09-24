@@ -2,7 +2,7 @@ import { errorResponse } from '../errors';
 import { queueProvider } from '../providers/queue';
 import { BaseAdapter } from '../queueAdapters/base';
 import { GetQueueWorkersResponse } from '../schemas/responses';
-import { BullBoardRequest, ControllerHandlerReturnType } from '../types';
+import { WorkerManagerRequest, ControllerHandlerReturnType } from '../types';
 
 /**
  * The full worker list for one queue, for the section of the queue info panel that shows it.
@@ -10,7 +10,7 @@ import { BullBoardRequest, ControllerHandlerReturnType } from '../types';
  * when the panel opens, rather than on the polling interval.
  */
 async function getQueueWorkers(
-  req: BullBoardRequest,
+  req: WorkerManagerRequest,
   queue: BaseAdapter
 ): Promise<ControllerHandlerReturnType<GetQueueWorkersResponse>> {
   if (req.uiConfig?.showWorkers === false) {

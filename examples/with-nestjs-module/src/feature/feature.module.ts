@@ -1,7 +1,7 @@
 import { BullModule } from '@nestjs/bullmq';
 import { Module } from '@nestjs/common';
 import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
-import { BullBoardModule } from '@worker-manager/nestjs';
+import { WorkerManagerModule } from '@worker-manager/nestjs';
 
 // example feature module, feature can be anything. eg. user module
 @Module({
@@ -11,7 +11,7 @@ import { BullBoardModule } from '@worker-manager/nestjs';
     }),
 
     //Register each queue using the `forFeature` method.
-    BullBoardModule.forFeature({
+    WorkerManagerModule.forFeature({
       name: 'feature_queue',
       adapter: BullMQAdapter,
     }),

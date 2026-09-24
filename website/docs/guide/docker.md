@@ -8,7 +8,7 @@ description: Run the Worker Manager dashboard in a container with the official g
 
 ```sh
 docker run --rm -p 127.0.0.1:3000:3000 \
-  -e BULL_BOARD_USER=admin -e BULL_BOARD_PASSWORD=secret \
+  -e WORKER_MANAGER_USER=admin -e WORKER_MANAGER_PASSWORD=secret \
   ghcr.io/naldomadeira/worker-manager --redis redis://host.docker.internal:6379
 ```
 
@@ -18,16 +18,16 @@ That serves the dashboard on `http://127.0.0.1:3000` with every Bull and BullMQ 
 
 `node:22-alpine` and the published `@worker-manager/cli`, nothing else. About 63 MB, built for `linux/amd64` and `linux/arm64`, running as the unprivileged `node` user.
 
-The entrypoint is the CLI itself, so anything after the image name is a flag exactly as the [CLI guide](/guide/cli#options) documents it, and every `BULL_BOARD_*` variable behaves the same way. There's no image-specific configuration to learn. Two CLI defaults come preset, because they're the two that make no sense in a container:
+The entrypoint is the CLI itself, so anything after the image name is a flag exactly as the [CLI guide](/guide/cli#options) documents it, and every `WORKER_MANAGER_*` variable behaves the same way. There's no image-specific configuration to learn. Two CLI defaults come preset, because they're the two that make no sense in a container:
 
 | Variable | Image default | Why |
 |---|---|---|
-| `BULL_BOARD_HOST` | `0.0.0.0` | The CLI default `127.0.0.1` only accepts connections from inside the container |
-| `BULL_BOARD_OPEN` | `false` | There's no browser in there to open |
+| `WORKER_MANAGER_HOST` | `0.0.0.0` | The CLI default `127.0.0.1` only accepts connections from inside the container |
+| `WORKER_MANAGER_OPEN` | `false` | There's no browser in there to open |
 
-Both are ordinary environment variables, so `--host` or your own `-e BULL_BOARD_HOST` still wins.
+Both are ordinary environment variables, so `--host` or your own `-e WORKER_MANAGER_HOST` still wins.
 
-There's also a `HEALTHCHECK` polling the dashboard on its own port, so `depends_on: { bull-board: { condition: service_healthy } }` works for anything that should start behind it. Basic auth doesn't get in its way, since a 401 still proves the server is answering.
+There's also a `HEALTHCHECK` polling the dashboard on its own port, so `depends_on: { worker-manager: { condition: service_healthy } }` works for anything that should start behind it. Basic auth doesn't get in its way, since a 401 still proves the server is answering.
 
 ## Tags
 
@@ -37,7 +37,7 @@ There's also a `HEALTHCHECK` polling the dashboard on its own port, so `depends_
 | `9` | The newest release in that major |
 | `9.5.0` | That exact release, forever |
 
-Pin the exact version if you'd rather nothing moved under you, or the major for patches without surprises. The [package page](https://github.com/naldomadeira/worker-manager/pkgs/container/bull-board) lists every tag that exists.
+Pin the exact version if you'd rather nothing moved under you, or the major for patches without surprises. The [package page](https://github.com/naldomadeira/worker-manager/pkgs/container/worker-manager) lists every tag that exists.
 
 ## Docker Compose
 
@@ -50,12 +50,12 @@ services:
     ports:
       - '6379:6379'
 
-  bull-board:
+  worker-manager:
     image: ghcr.io/naldomadeira/worker-manager:9
     command: --redis redis://redis:6379
     environment:
-      BULL_BOARD_USER: ${BULL_BOARD_USER}
-      BULL_BOARD_PASSWORD: ${BULL_BOARD_PASSWORD}
+      WORKER_MANAGER_USER: ${WORKER_MANAGER_USER}
+      WORKER_MANAGER_PASSWORD: ${WORKER_MANAGER_PASSWORD}
     ports:
       - '127.0.0.1:3000:3000'
     depends_on:
@@ -66,14 +66,14 @@ None of that is Compose specific. It's an ordinary container listening on 3000, 
 
 ## Configuring it
 
-Flags after the image name, `BULL_BOARD_*` variables and a config file all work, and they resolve in that order. The CLI guide has the [full table](/guide/cli#environment-variables); these are the ones that come up in a container:
+Flags after the image name, `WORKER_MANAGER_*` variables and a config file all work, and they resolve in that order. The CLI guide has the [full table](/guide/cli#environment-variables); these are the ones that come up in a container:
 
 ```sh
 docker run --rm -p 127.0.0.1:3000:3000 \
-  -e BULL_BOARD_REDIS_URL=redis://redis:6379 \
-  -e BULL_BOARD_PREFIX=bull,tenant-a \
-  -e BULL_BOARD_READ_ONLY=true \
-  -e BULL_BOARD_BOARD_TITLE='Ops Dashboard' \
+  -e WORKER_MANAGER_REDIS_URL=redis://redis:6379 \
+  -e WORKER_MANAGER_PREFIX=bull,tenant-a \
+  -e WORKER_MANAGER_READ_ONLY=true \
+  -e WORKER_MANAGER_BOARD_TITLE='Ops Dashboard' \
   ghcr.io/naldomadeira/worker-manager
 ```
 
@@ -81,13 +81,13 @@ For anything longer, mount a [config file](/guide/cli#config-file). The working 
 
 ```yaml
     volumes:
-      - ./bull-board.config.js:/app/bull-board.config.js:ro
+      - ./worker-manager.config.js:/app/worker-manager.config.js:ro
 ```
 
-[Historical metrics](/recipes/historical-metrics) work here too, since the image carries `@worker-manager/metrics` as part of the CLI. `--history`, or `BULL_BOARD_HISTORY=true`, registers the history provider and starts recording throughput and latency into your Redis once a minute:
+[Historical metrics](/recipes/historical-metrics) work here too, since the image carries `@worker-manager/metrics` as part of the CLI. `--history`, or `WORKER_MANAGER_HISTORY=true`, registers the history provider and starts recording throughput and latency into your Redis once a minute:
 
 ```yaml
-  bull-board:
+  worker-manager:
     image: ghcr.io/naldomadeira/worker-manager:9
     command: --redis redis://redis:6379 --history --history-retention-days 90
 ```
@@ -97,16 +97,16 @@ The container is a normal recorder, so it keeps writing for as long as it runs a
 [Redis Sentinel](/guide/cli#redis-sentinel) needs no URL, which is the point: the master address is not fixed, so the container is given the sentinel nodes and the master group name instead.
 
 ```yaml
-  bull-board:
+  worker-manager:
     image: ghcr.io/naldomadeira/worker-manager:9
     environment:
-      BULL_BOARD_SENTINELS: sentinel-1:26379,sentinel-2:26379,sentinel-3:26379
-      BULL_BOARD_SENTINEL_NAME: mymaster
-      BULL_BOARD_SENTINEL_PASSWORD: ${SENTINEL_PASSWORD}
-      BULL_BOARD_REDIS_PASSWORD: ${REDIS_PASSWORD}
+      WORKER_MANAGER_SENTINELS: sentinel-1:26379,sentinel-2:26379,sentinel-3:26379
+      WORKER_MANAGER_SENTINEL_NAME: mymaster
+      WORKER_MANAGER_SENTINEL_PASSWORD: ${SENTINEL_PASSWORD}
+      WORKER_MANAGER_REDIS_PASSWORD: ${REDIS_PASSWORD}
 ```
 
-Leave `BULL_BOARD_REDIS_URL` unset there. Setting both is an error, so an old URL left behind in a compose file or an env file stops the container rather than quietly winning.
+Leave `WORKER_MANAGER_REDIS_URL` unset there. Setting both is an error, so an old URL left behind in a compose file or an env file stops the container rather than quietly winning.
 
 Serving the dashboard under a path prefix, which is what a reverse proxy routing on the path needs, is `--base-path`:
 
@@ -117,7 +117,7 @@ docker run --rm -p 127.0.0.1:3000:3000 \
 
 ## Keeping it private
 
-The container listens on every interface inside itself, so `BULL_BOARD_USER` and `BULL_BOARD_PASSWORD` (or `--user` and `--password`) aren't optional here, and the port mapping above publishes to `127.0.0.1` on the host rather than everywhere. The CLI warns at startup when it's bound to a non-loopback host with no auth set, since that's an unauthenticated dashboard with delete-job and obliterate-queue on it, reachable from anywhere that can route to the host. If all you need is visibility, `--read-only` turns off every destructive action.
+The container listens on every interface inside itself, so `WORKER_MANAGER_USER` and `WORKER_MANAGER_PASSWORD` (or `--user` and `--password`) aren't optional here, and the port mapping above publishes to `127.0.0.1` on the host rather than everywhere. The CLI warns at startup when it's bound to a non-loopback host with no auth set, since that's an unauthenticated dashboard with delete-job and obliterate-queue on it, reachable from anywhere that can route to the host. If all you need is visibility, `--read-only` turns off every destructive action.
 
 Basic auth over plain HTTP still sends the credentials in the clear. Publishing the port beyond the host, whether that's a routable address, a cloud security group or a proxy without TLS, wants an SSH tunnel or TLS termination in front of it either way.
 
@@ -126,7 +126,7 @@ Basic auth over plain HTTP still sends the credentials in the clear. Publishing 
 The `Dockerfile` at the root of the repo is the one that produces the published image, and the CLI version is a build argument:
 
 ```sh
-docker build --build-arg BULL_BOARD_VERSION=9.5.0 -t bull-board .
+docker build --build-arg WORKER_MANAGER_VERSION=9.5.0 -t worker-manager .
 ```
 
 Worth doing if you need a different base image or an internal registry.
@@ -136,12 +136,12 @@ Worth doing if you need a different base image or an internal registry.
 The CLI also runs from npm inside a stock Node container. That re-resolves the package on every start, so it pins nothing and needs egress to the registry:
 
 ```yaml
-  bull-board:
+  worker-manager:
     image: node:22-alpine
     command: npx -y @worker-manager/cli --redis redis://redis:6379 --host 0.0.0.0 --no-open
     environment:
-      BULL_BOARD_USER: ${BULL_BOARD_USER}
-      BULL_BOARD_PASSWORD: ${BULL_BOARD_PASSWORD}
+      WORKER_MANAGER_USER: ${WORKER_MANAGER_USER}
+      WORKER_MANAGER_PASSWORD: ${WORKER_MANAGER_PASSWORD}
     ports:
       - '127.0.0.1:3000:3000'
     depends_on:

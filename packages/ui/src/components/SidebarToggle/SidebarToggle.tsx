@@ -27,7 +27,7 @@ export const SidebarToggle = ({ className }: { className?: string }) => {
           className={cn('text-muted-foreground hover:text-foreground', className)}
           onClick={toggleSidebar}
           aria-expanded={expanded}
-          aria-controls="bull-board-sidebar"
+          aria-controls="worker-manager-sidebar"
           aria-label={label}
         >
           <Icon aria-hidden="true" className="transition-transform duration-200" />

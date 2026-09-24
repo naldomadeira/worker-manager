@@ -27,7 +27,7 @@ export interface PostgresMetricsStoreOptions {
    * migration when missing.
    */
   schema?: string;
-  /** Prepended to every table name. Defaults to `bull_board_metrics_`. */
+  /** Prepended to every table name. Defaults to `worker_manager_metrics_`. */
   tablePrefix?: string;
   /**
    * Create or upgrade the tables before the first query. Off by default, in which case the

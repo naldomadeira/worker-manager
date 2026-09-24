@@ -1,10 +1,10 @@
 import { queueProvider } from '../providers/queue';
 import { BaseAdapter } from '../queueAdapters/base';
 import { GetJobLogsResponse } from '../schemas/responses';
-import { BullBoardRequest, ControllerHandlerReturnType } from '../types';
+import { WorkerManagerRequest, ControllerHandlerReturnType } from '../types';
 
 async function jobLogs(
-  req: BullBoardRequest,
+  req: WorkerManagerRequest,
   queue: BaseAdapter
 ): Promise<ControllerHandlerReturnType<GetJobLogsResponse>> {
   const { jobId } = req.params;

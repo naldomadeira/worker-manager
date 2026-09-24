@@ -8,21 +8,21 @@ import {
   Provider,
 } from '@nestjs/common';
 import { ApplicationConfig, HttpAdapterHost, ModuleRef } from '@nestjs/core';
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import { createAuthMiddleware, createFastifyAuthPlugin } from '@worker-manager/auth';
 import {
-  BULL_BOARD_ADAPTER,
-  BULL_BOARD_INSTANCE,
-  BULL_BOARD_OPTIONS,
-  DEFAULT_BULL_BOARD_ROUTE,
-} from './bull-board.constants';
+  WORKER_MANAGER_ADAPTER,
+  WORKER_MANAGER_INSTANCE,
+  WORKER_MANAGER_OPTIONS,
+  DEFAULT_WORKER_MANAGER_ROUTE,
+} from './worker-manager.constants';
 import {
-  BullBoardInstance,
-  BullBoardModuleAsyncOptions,
-  BullBoardModuleOptions,
-  BullBoardOptionsFactory,
-  BullBoardServerAdapter,
-} from './bull-board.types';
+  WorkerManagerBoard,
+  WorkerManagerModuleAsyncOptions,
+  WorkerManagerModuleOptions,
+  WorkerManagerOptionsFactory,
+  WorkerManagerServerAdapter,
+} from './worker-manager.types';
 import {
   isExpressAdapter,
   isFastifyAdapter,
@@ -30,17 +30,17 @@ import {
   registerQueues,
   resolveBoardOptions,
   resolveServerAdapter,
-} from './bull-board.util';
+} from './worker-manager.util';
 
 @Module({})
-export class BullBoardRootModule implements NestModule, OnModuleInit {
+export class WorkerManagerRootModule implements NestModule, OnModuleInit {
   constructor(
     private readonly adapterHost: HttpAdapterHost,
     private readonly applicationConfig: ApplicationConfig,
     private readonly moduleRef: ModuleRef,
-    @Inject(BULL_BOARD_ADAPTER) private readonly adapter: BullBoardServerAdapter | null,
-    @Inject(BULL_BOARD_OPTIONS) private readonly options: BullBoardModuleOptions,
-    @Inject(BULL_BOARD_INSTANCE) private readonly board: BullBoardInstance | null
+    @Inject(WORKER_MANAGER_ADAPTER) private readonly adapter: WorkerManagerServerAdapter | null,
+    @Inject(WORKER_MANAGER_OPTIONS) private readonly options: WorkerManagerModuleOptions,
+    @Inject(WORKER_MANAGER_INSTANCE) private readonly board: WorkerManagerBoard | null
   ) {}
 
   onModuleInit(): void {
@@ -52,7 +52,7 @@ export class BullBoardRootModule implements NestModule, OnModuleInit {
   configure(consumer: MiddlewareConsumer): any {
     if (!isEnabled(this.options) || !this.adapter) return;
 
-    const route = this.options.route ?? DEFAULT_BULL_BOARD_ROUTE;
+    const route = this.options.route ?? DEFAULT_WORKER_MANAGER_ROUTE;
     const addForwardSlash = (path: string) => {
       return path.startsWith('/') || path === '' ? path : `/${path}`;
     };
@@ -97,22 +97,22 @@ export class BullBoardRootModule implements NestModule, OnModuleInit {
     }
   }
 
-  static forRoot(options: BullBoardModuleOptions): DynamicModule {
+  static forRoot(options: WorkerManagerModuleOptions): DynamicModule {
     const optionsProvider: Provider = {
-      provide: BULL_BOARD_OPTIONS,
+      provide: WORKER_MANAGER_OPTIONS,
       useValue: options,
     };
 
-    return BullBoardRootModule.build(optionsProvider, []);
+    return WorkerManagerRootModule.build(optionsProvider, []);
   }
 
-  static forRootAsync(options: BullBoardModuleAsyncOptions): DynamicModule {
+  static forRootAsync(options: WorkerManagerModuleAsyncOptions): DynamicModule {
     const extraProviders: Provider[] = [];
     let optionsProvider: Provider;
 
     if (options.useFactory) {
       optionsProvider = {
-        provide: BULL_BOARD_OPTIONS,
+        provide: WORKER_MANAGER_OPTIONS,
         useFactory: options.useFactory,
         inject: options.inject ?? [],
       };
@@ -122,50 +122,53 @@ export class BullBoardRootModule implements NestModule, OnModuleInit {
         extraProviders.push({ provide: options.useClass, useClass: options.useClass });
       }
       optionsProvider = {
-        provide: BULL_BOARD_OPTIONS,
-        useFactory: (factory: BullBoardOptionsFactory) => factory.createBullBoardOptions(),
+        provide: WORKER_MANAGER_OPTIONS,
+        useFactory: (factory: WorkerManagerOptionsFactory) => factory.createWorkerManagerOptions(),
         inject: [factoryToken],
       };
     } else {
       throw new Error(
-        'BullBoardModule.forRootAsync() needs one of useFactory, useClass or useExisting.'
+        'WorkerManagerModule.forRootAsync() needs one of useFactory, useClass or useExisting.'
       );
     }
 
-    return BullBoardRootModule.build(optionsProvider, extraProviders, options.imports);
+    return WorkerManagerRootModule.build(optionsProvider, extraProviders, options.imports);
   }
 
   private static build(
     optionsProvider: Provider,
     extraProviders: Provider[],
-    imports: BullBoardModuleAsyncOptions['imports'] = []
+    imports: WorkerManagerModuleAsyncOptions['imports'] = []
   ): DynamicModule {
     const serverAdapterProvider: Provider = {
-      provide: BULL_BOARD_ADAPTER,
-      useFactory: (options: BullBoardModuleOptions, adapterHost: HttpAdapterHost) =>
+      provide: WORKER_MANAGER_ADAPTER,
+      useFactory: (options: WorkerManagerModuleOptions, adapterHost: HttpAdapterHost) =>
         isEnabled(options) ? resolveServerAdapter(options, adapterHost) : null,
-      inject: [BULL_BOARD_OPTIONS, HttpAdapterHost],
+      inject: [WORKER_MANAGER_OPTIONS, HttpAdapterHost],
     };
 
-    const bullBoardProvider: Provider = {
-      provide: BULL_BOARD_INSTANCE,
-      useFactory: (options: BullBoardModuleOptions, adapter: BullBoardServerAdapter | null) =>
+    const workerManagerProvider: Provider = {
+      provide: WORKER_MANAGER_INSTANCE,
+      useFactory: (
+        options: WorkerManagerModuleOptions,
+        adapter: WorkerManagerServerAdapter | null
+      ) =>
         isEnabled(options) && adapter
-          ? createBullBoard({
+          ? createWorkerManagerBoard({
               queues: [],
               serverAdapter: adapter,
               options: resolveBoardOptions(options),
             })
           : null,
-      inject: [BULL_BOARD_OPTIONS, BULL_BOARD_ADAPTER],
+      inject: [WORKER_MANAGER_OPTIONS, WORKER_MANAGER_ADAPTER],
     };
 
     return {
-      module: BullBoardRootModule,
+      module: WorkerManagerRootModule,
       global: true,
       imports,
-      providers: [...extraProviders, optionsProvider, serverAdapterProvider, bullBoardProvider],
-      exports: [serverAdapterProvider, bullBoardProvider, optionsProvider],
+      providers: [...extraProviders, optionsProvider, serverAdapterProvider, workerManagerProvider],
+      exports: [serverAdapterProvider, workerManagerProvider, optionsProvider],
     };
   }
 }

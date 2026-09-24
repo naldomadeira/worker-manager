@@ -47,7 +47,7 @@ const isMac =
   typeof navigator !== 'undefined' && /Mac|iPhone|iPod|iPad/.test(navigator.platform || '');
 export const searchShortcut = isMac ? '⌘K' : 'Ctrl K';
 
-const SIDEBAR_ID = 'bull-board-sidebar';
+const SIDEBAR_ID = 'worker-manager-sidebar';
 
 type NavEntry = { to: string; label: string; icon: typeof LayoutDashboard; exact?: boolean };
 
@@ -253,7 +253,7 @@ export const Menu = () => {
                 tooltip={t('MENU.RELEASES')}
                 className="text-sidebar-foreground/60 hover:text-sidebar-foreground"
               >
-                <a target="_blank" rel="noreferrer" href={process.env.BULL_BOARD_REPO}>
+                <a target="_blank" rel="noreferrer" href={process.env.WORKER_MANAGER_REPO}>
                   <GitHub aria-hidden="true" />
                   <span className="flex min-w-0 flex-1 items-center justify-between gap-2">
                     <span className="truncate">{t('MENU.RELEASES')}</span>

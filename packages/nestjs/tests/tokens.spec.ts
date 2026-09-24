@@ -1,4 +1,4 @@
-import * as constants from '../src/bull-board.constants';
+import * as constants from '../src/worker-manager.constants';
 
 // @bull-board/nestjs registers global providers under these exact strings. Reusing them would
 // make one board resolve the other's instance in an app that runs both during a migration.
@@ -12,10 +12,10 @@ const LEGACY_TOKENS = [
 describe('DI tokens', () => {
   it('never reuse the legacy @bull-board/nestjs provider tokens', () => {
     const tokens = [
-      constants.BULL_BOARD_OPTIONS,
-      constants.BULL_BOARD_QUEUES,
-      constants.BULL_BOARD_ADAPTER,
-      constants.BULL_BOARD_INSTANCE,
+      constants.WORKER_MANAGER_OPTIONS,
+      constants.WORKER_MANAGER_QUEUES,
+      constants.WORKER_MANAGER_ADAPTER,
+      constants.WORKER_MANAGER_INSTANCE,
     ];
 
     for (const token of tokens) {

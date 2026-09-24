@@ -1,4 +1,4 @@
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 import { ExpressAdapter } from '@worker-manager/express';
 import { Queue } from 'bullmq';
@@ -27,7 +27,7 @@ describe('happy', () => {
     const paintQueue = new Queue('Paint', { connection });
     queueList.push(paintQueue);
 
-    createBullBoard({ queues: [new BullMQAdapter(paintQueue)], serverAdapter });
+    createWorkerManagerBoard({ queues: [new BullMQAdapter(paintQueue)], serverAdapter });
 
     await request(serverAdapter.getRouter())
       .get('/api/queues')
@@ -49,7 +49,7 @@ describe('happy', () => {
     queueList.push(paintQueue, drainQueue, codeQueue);
 
     const queues = [new BullMQAdapter(paintQueue), new BullMQAdapter(drainQueue)];
-    const { replaceQueues } = createBullBoard({
+    const { replaceQueues } = createWorkerManagerBoard({
       queues,
       serverAdapter,
     });
@@ -87,7 +87,7 @@ describe('happy', () => {
   it('should be able to add a queue', async () => {
     const addedQueue = new Queue('AddedQueue', { connection });
     queueList.push(addedQueue);
-    const { addQueue } = createBullBoard({ queues: [], serverAdapter });
+    const { addQueue } = createWorkerManagerBoard({ queues: [], serverAdapter });
 
     await request(serverAdapter.getRouter())
       .get('/api/queues')
@@ -115,7 +115,7 @@ describe('happy', () => {
   it('should be able to remove a queue when passed as queue object', async () => {
     const addedQueue = new Queue('AddedQueue', { connection });
     queueList.push(addedQueue);
-    const { addQueue, removeQueue } = createBullBoard({ queues: [], serverAdapter });
+    const { addQueue, removeQueue } = createWorkerManagerBoard({ queues: [], serverAdapter });
 
     addQueue(new BullMQAdapter(addedQueue));
     await request(serverAdapter.getRouter())
@@ -145,7 +145,7 @@ describe('happy', () => {
     const addedQueue = new Queue('AddedQueue', { connection });
     queueList.push(addedQueue);
 
-    const { addQueue, removeQueue } = createBullBoard({ queues: [], serverAdapter });
+    const { addQueue, removeQueue } = createWorkerManagerBoard({ queues: [], serverAdapter });
 
     addQueue(new BullMQAdapter(addedQueue));
     await request(serverAdapter.getRouter())
@@ -174,7 +174,7 @@ describe('happy', () => {
   it('should be able to replace queues without initial set', async () => {
     const codeQueue = new Queue('Code', { connection });
     queueList.push(codeQueue);
-    const { replaceQueues } = createBullBoard({ queues: [], serverAdapter });
+    const { replaceQueues } = createWorkerManagerBoard({ queues: [], serverAdapter });
 
     replaceQueues([new BullMQAdapter(codeQueue)]);
 
@@ -195,7 +195,7 @@ describe('happy', () => {
       const paintQueue = new Queue('Paint', { connection });
       queueList.push(paintQueue);
 
-      createBullBoard({
+      createWorkerManagerBoard({
         queues: [new BullMQAdapter(paintQueue, { allowRetries: false })],
         serverAdapter,
       });
@@ -216,7 +216,7 @@ describe('happy', () => {
       const paintQueue = new Queue('Paint', { connection });
       queueList.push(paintQueue);
 
-      createBullBoard({
+      createWorkerManagerBoard({
         queues: [new BullMQAdapter(paintQueue, { allowRetries: true, readOnlyMode: true })],
         serverAdapter,
       });
@@ -238,7 +238,7 @@ describe('happy', () => {
       const paintQueue = new Queue('Paint', { connection });
       queueList.push(paintQueue);
 
-      createBullBoard({
+      createWorkerManagerBoard({
         queues: [new BullMQAdapter(paintQueue)],
         serverAdapter,
       });

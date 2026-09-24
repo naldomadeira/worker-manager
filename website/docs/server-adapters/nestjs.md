@@ -27,13 +27,13 @@ the setup below changes on Nest 12.
 
 ## Module-based setup (recommended)
 
-Register `BullBoardModule.forRoot()` in your root module, then `BullBoardModule.forFeature()` per queue from the feature module.
+Register `WorkerManagerModule.forRoot()` in your root module, then `WorkerManagerModule.forFeature()` per queue from the feature module.
 
 ```ts
 // app.module.ts
 import { Module } from '@nestjs/common';
 import { BullModule } from '@nestjs/bullmq';
-import { BullBoardModule } from '@worker-manager/nestjs';
+import { WorkerManagerModule } from '@worker-manager/nestjs';
 import { ExpressAdapter } from '@worker-manager/express';
 import { FeatureModule } from './feature/feature.module';
 
@@ -42,7 +42,7 @@ import { FeatureModule } from './feature/feature.module';
     BullModule.forRoot({
       connection: { host: 'localhost', port: 6379 },
     }),
-    BullBoardModule.forRoot({
+    WorkerManagerModule.forRoot({
       route: '/queues', // the default
       adapter: ExpressAdapter, // optional: detected from the Nest platform when left out
     }),
@@ -56,13 +56,13 @@ export class AppModule {}
 // feature/feature.module.ts
 import { Module } from '@nestjs/common';
 import { BullModule } from '@nestjs/bullmq';
-import { BullBoardModule } from '@worker-manager/nestjs';
+import { WorkerManagerModule } from '@worker-manager/nestjs';
 import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 
 @Module({
   imports: [
     BullModule.registerQueue({ name: 'feature_queue' }),
-    BullBoardModule.forFeature({
+    WorkerManagerModule.forFeature({
       name: 'feature_queue',
       adapter: BullMQAdapter, // or BullAdapter for Bull v3
     }),
@@ -78,16 +78,16 @@ export class FeatureModule {}
 | `route` | `'/queues'` | Base path where the dashboard is mounted, relative to the Nest global prefix. |
 | `adapter` | auto-detected | Server adapter class (`ExpressAdapter` or `FastifyAdapter`). When left out, the module asks `HttpAdapterHost` which platform the app runs on and loads `@worker-manager/express` or `@worker-manager/fastify`, failing with an install hint if the package is missing. |
 | `auth` | none | Built-in authentication (Basic or Keycloak). See [Authentication](#authentication). |
-| `enabled` | `true` | `false` registers nothing: no routes, no middleware, `forFeature()` becomes a no-op and `@InjectBullBoard()` resolves `null`. Handy to switch the board off per environment. |
+| `enabled` | `true` | `false` registers nothing: no routes, no middleware, `forFeature()` becomes a no-op and `@InjectWorkerManager()` resolves `null`. Handy to switch the board off per environment. |
 | `readOnly` | `false` | Read-only mode for every queue registered through `queues` or `forFeature()`, unless the queue sets `options.readOnlyMode` itself. |
 | `queues` | `[]` | Queues to register at the root without a separate `forFeature()` import. Same shape as `forFeature()` entries. |
 | `uiConfig` | | Merged into `boardOptions.uiConfig`, taking precedence. |
 | `title`, `logo`, `theme` | | Shortcuts for `uiConfig.boardTitle`, `uiConfig.boardLogo` and `uiConfig.theme`. |
-| `boardOptions` | | Forwarded to `createBullBoard` (e.g. `uiConfig`, `uiBasePath`). |
+| `boardOptions` | | Forwarded to `createWorkerManagerBoard` (e.g. `uiConfig`, `uiBasePath`). |
 | `middleware` | | Optional Nest middleware on the board route. On Express it runs after `auth`; on Fastify it is Nest middleware on the exact `route`. |
 
 ```ts
-BullBoardModule.forRoot({
+WorkerManagerModule.forRoot({
   title: 'Ops queues',
   readOnly: process.env.NODE_ENV === 'production',
   enabled: process.env.QUEUE_BOARD !== 'off',
@@ -105,7 +105,7 @@ BullBoardModule.forRoot({
 To register several queues at once, pass multiple option objects:
 
 ```ts
-BullBoardModule.forFeature(
+WorkerManagerModule.forFeature(
   { name: 'emails', adapter: BullMQAdapter },
   { name: 'billing', adapter: BullMQAdapter },
 );
@@ -120,7 +120,7 @@ Pass the instances directly via `queue` instead. Hold the queues somewhere you c
 ```ts
 @Module({
   imports: [
-    BullBoardModule.forFeature(
+    WorkerManagerModule.forFeature(
       { queue: emailsTenantA, adapter: BullMQAdapter, options: { prefix: 'tenant-a:' } },
       { queue: emailsTenantB, adapter: BullMQAdapter, options: { prefix: 'tenant-b:' } },
     ),
@@ -133,24 +133,24 @@ The board keys entries by `prefix` + name, so the two show up as `tenant-a:email
 
 ### Async configuration
 
-`BullBoardModule.forRootAsync()` takes `imports` plus one of `useFactory` (with `inject`),
+`WorkerManagerModule.forRootAsync()` takes `imports` plus one of `useFactory` (with `inject`),
 `useClass` or `useExisting`. The latter two name a provider implementing
-`BullBoardOptionsFactory`:
+`WorkerManagerOptionsFactory`:
 
 ```ts
 import { Injectable, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import {
-  BullBoardModule,
-  type BullBoardModuleOptions,
-  type BullBoardOptionsFactory,
+  WorkerManagerModule,
+  type WorkerManagerModuleOptions,
+  type WorkerManagerOptionsFactory,
 } from '@worker-manager/nestjs';
 
 @Injectable()
-class BoardConfig implements BullBoardOptionsFactory {
+class BoardConfig implements WorkerManagerOptionsFactory {
   constructor(private readonly config: ConfigService) {}
 
-  createBullBoardOptions(): BullBoardModuleOptions {
+  createWorkerManagerOptions(): WorkerManagerModuleOptions {
     return {
       enabled: this.config.get('QUEUE_BOARD_ENABLED') !== 'false',
       readOnly: this.config.get('NODE_ENV') === 'production',
@@ -159,7 +159,7 @@ class BoardConfig implements BullBoardOptionsFactory {
 }
 
 @Module({
-  imports: [BullBoardModule.forRootAsync({ imports: [ConfigModule], useClass: BoardConfig })],
+  imports: [WorkerManagerModule.forRootAsync({ imports: [ConfigModule], useClass: BoardConfig })],
 })
 export class AppModule {}
 ```
@@ -173,7 +173,7 @@ includes the Nest global prefix.
 ### Basic
 
 ```ts
-BullBoardModule.forRoot({
+WorkerManagerModule.forRoot({
   auth: {
     strategy: 'basic',
     users: [{ username: 'admin', password: process.env.BOARD_PASSWORD!, roles: ['admin'] }],
@@ -187,7 +187,7 @@ Unauthenticated requests get `401` with a `WWW-Authenticate: Basic` challenge an
 ### Keycloak, configured from `ConfigService`
 
 ```ts
-BullBoardModule.forRootAsync({
+WorkerManagerModule.forRootAsync({
   imports: [ConfigModule],
   inject: [ConfigService],
   useFactory: (config: ConfigService) => ({
@@ -230,7 +230,7 @@ const invoices = new Queue(
 
 @Module({
   imports: [
-    BullBoardModule.forRoot({
+    WorkerManagerModule.forRoot({
       queues: [{ queue: invoices, adapter: BullMQAdapter }],
     }),
   ],
@@ -244,7 +244,7 @@ are created with `bullmq` directly, as above, rather than through `BullModule.re
 must stay on BullMQ v5, install v6 under an alias for the Postgres ones
 (`"bullmq-v6": "npm:bullmq@^6"`, then `import { Queue } from 'bullmq-v6'`).
 
-If the queue is created inside a provider instead, inject the board with `@InjectBullBoard()` and
+If the queue is created inside a provider instead, inject the board with `@InjectWorkerManager()` and
 call `board.addQueue(new BullMQAdapter(queue))` from `onModuleInit`. Redis and PostgreSQL queues can share one board; the datastore panel reports
 Postgres stats for the Postgres queue.
 
@@ -258,11 +258,11 @@ You can inject the board instance anywhere:
 
 ```ts
 import { Controller } from '@nestjs/common';
-import { BullBoardInstance, InjectBullBoard } from '@worker-manager/nestjs';
+import { WorkerManagerBoard, InjectWorkerManager } from '@worker-manager/nestjs';
 
 @Controller('ops')
 export class OpsController {
-  constructor(@InjectBullBoard() private readonly board: BullBoardInstance) {}
+  constructor(@InjectWorkerManager() private readonly board: WorkerManagerBoard) {}
 }
 ```
 
@@ -278,7 +278,7 @@ import {
   NestModule,
 } from '@nestjs/common';
 import { BullModule } from '@nestjs/bullmq';
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 import { ExpressAdapter } from '@worker-manager/express';
 import { Queue } from 'bullmq';
@@ -303,7 +303,7 @@ export class QueuesModule implements NestModule {
     const serverAdapter = new ExpressAdapter();
     serverAdapter.setBasePath('/queues');
 
-    createBullBoard({
+    createWorkerManagerBoard({
       queues: [new BullMQAdapter(this.testQueue)],
       serverAdapter,
     });

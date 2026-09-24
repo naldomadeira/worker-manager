@@ -6,7 +6,7 @@ import { ConfigModule } from '@nestjs/config';
 import { HttpAdapterHost } from '@nestjs/core';
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 import { FastifyAdapter } from '@worker-manager/fastify';
 import { Queue } from 'bullmq';
@@ -55,11 +55,11 @@ export class QueueModule implements NestModule {
   ) {}
 
   configure() {
-    const BULLBOARD_PAGE_PATH = '/queues';
+    const WORKER_MANAGER_PAGE_PATH = '/queues';
     const serverAdapter = new FastifyAdapter();
-    serverAdapter.setBasePath(BULLBOARD_PAGE_PATH);
+    serverAdapter.setBasePath(WORKER_MANAGER_PAGE_PATH);
 
-    createBullBoard({
+    createWorkerManagerBoard({
       queues: [new BullMQAdapter(this.testQueue)],
       serverAdapter,
     });
@@ -69,7 +69,7 @@ export class QueueModule implements NestModule {
     fastify.register(fastifyCookie);
 
     (fastify as any).register(secureSession, {
-      secret: process.env.BULLBOARD_SESSION_SECRET,
+      secret: process.env.WORKER_MANAGER_SESSION_SECRET,
       cookieName: 'session-cookie',
       cookie: {
         path: '/',
@@ -91,7 +91,7 @@ export class QueueModule implements NestModule {
         });
         instance.register(serverAdapter.registerPlugin());
       },
-      { prefix: BULLBOARD_PAGE_PATH }
+      { prefix: WORKER_MANAGER_PAGE_PATH }
     );
   }
 }

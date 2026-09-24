@@ -3,7 +3,7 @@ import { queueProvider } from '../providers/queue';
 import { BaseAdapter } from '../queueAdapters/base';
 import type { ObliterateQueueBody } from '../schemas/requests';
 import { EmptyResponse } from '../schemas/responses';
-import { BullBoardRequest, ControllerHandlerReturnType } from '../types';
+import { WorkerManagerRequest, ControllerHandlerReturnType } from '../types';
 
 /**
  * Bull and BullMQ both surface the "there are active jobs" refusal as a plain Error carrying this
@@ -15,7 +15,7 @@ function isActiveJobsError(error: unknown): boolean {
 }
 
 async function obliterateQueue(
-  req: BullBoardRequest<Record<string, any>, ObliterateQueueBody>,
+  req: WorkerManagerRequest<Record<string, any>, ObliterateQueueBody>,
   queue: BaseAdapter
 ): Promise<ControllerHandlerReturnType<EmptyResponse>> {
   const isPaused = await queue.isPaused();

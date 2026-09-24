@@ -1,4 +1,4 @@
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 import { ExpressAdapter } from '@worker-manager/express';
 import { Queue } from 'bullmq';
@@ -41,7 +41,7 @@ describe('Pause/Resume all queues', () => {
   function setupBoard() {
     const hiddenAdapter = new BullMQAdapter(hiddenQueue);
     hiddenAdapter.setVisibilityGuard(() => false);
-    createBullBoard({
+    createWorkerManagerBoard({
       queues: [
         new BullMQAdapter(queueA),
         new BullMQAdapter(queueB),

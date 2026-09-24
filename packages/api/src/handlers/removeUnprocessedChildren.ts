@@ -2,10 +2,10 @@ import { errorResponse } from '../errors';
 import { jobProvider } from '../providers/job';
 import { queueProvider } from '../providers/queue';
 import { RemoveUnprocessedChildrenResponse } from '../schemas/responses';
-import { BullBoardRequest, ControllerHandlerReturnType, QueueJob } from '../types';
+import { WorkerManagerRequest, ControllerHandlerReturnType, QueueJob } from '../types';
 
 async function removeUnprocessedChildren(
-  _req: BullBoardRequest,
+  _req: WorkerManagerRequest,
   job: QueueJob
 ): Promise<ControllerHandlerReturnType<RemoveUnprocessedChildrenResponse>> {
   if (typeof job.removeUnprocessedChildren !== 'function') {

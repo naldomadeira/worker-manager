@@ -1,6 +1,6 @@
 # <img alt="Worker Manager" src="https://raw.githubusercontent.com/naldomadeira/worker-manager/main/packages/ui/src/static/images/logo.svg" width="35px" /> @worker-manager/nestjs
 
-[NestJS](https://nestjs.com/)  for `bull-board`.
+[NestJS](https://nestjs.com/) module for Worker Manager.
 
 <p align="center">
   <a href="https://www.npmjs.com/package/@worker-manager/nestjs">
@@ -32,11 +32,11 @@ $ npm install --save @worker-manager/fastify
 ```
 
 ## Register the root module
-Once the installation is completed, we can import the `BullBoardModule` into your rootmodule e.g. `AppModule`.
+Once the installation is completed, we can import the `WorkerManagerModule` into your rootmodule e.g. `AppModule`.
 
 ```typescript
 import { Module } from '@nestjs/common';
-import { BullBoardModule } from "@worker-manager/nestjs";
+import { WorkerManagerModule } from "@worker-manager/nestjs";
 
 @Module({
   imports: [
@@ -45,14 +45,14 @@ import { BullBoardModule } from "@worker-manager/nestjs";
     }),
 
     // Served at /queues, with the adapter matching your Nest platform (Express or Fastify).
-    BullBoardModule.forRoot(),
+    WorkerManagerModule.forRoot(),
   ],
 })
 export class AppModule {
 }
 ```
 
-The `forRoot()` method registers the bull-board instance and allows you to pass several options to both the instance and module.
+The `forRoot()` method registers the Worker Manager instance and allows you to pass several options to both the instance and module.
 The following options are available, all optional.
 
 | Option | Default | |
@@ -65,11 +65,11 @@ The following options are available, all optional.
 | `queues` | `[]` | Queues to register at the root, same shape as `forFeature` entries. |
 | `uiConfig` | | Merged into `boardOptions.uiConfig`. |
 | `title` / `logo` / `theme` | | Shortcuts for `uiConfig.boardTitle`, `uiConfig.boardLogo`, `uiConfig.theme`. |
-| `boardOptions` | | Options as provided by the bull-board package, such as `uiBasePath` and `uiConfig`. |
+| `boardOptions` | | Options as provided by the Worker Manager package, such as `uiBasePath` and `uiConfig`. |
 | `middleware` | | Nest middleware applied to the board route, after `auth` on Express. |
 
 ```typescript
-BullBoardModule.forRoot({
+WorkerManagerModule.forRoot({
   route: '/ops/queues',
   title: 'Ops queues',
   readOnly: process.env.NODE_ENV === 'production',
@@ -83,7 +83,7 @@ BullBoardModule.forRoot({
 `forRootAsync()` accepts `useFactory` + `inject`, `useClass` or `useExisting`, with `imports`:
 
 ```typescript
-BullBoardModule.forRootAsync({
+WorkerManagerModule.forRootAsync({
   imports: [ConfigModule],
   inject: [ConfigService],
   useFactory: (config: ConfigService) => ({
@@ -104,15 +104,15 @@ BullBoardModule.forRootAsync({
 
 ```typescript
 @Injectable()
-class BoardConfig implements BullBoardOptionsFactory {
+class BoardConfig implements WorkerManagerOptionsFactory {
   constructor(private readonly config: ConfigService) {}
 
-  createBullBoardOptions(): BullBoardModuleOptions {
+  createWorkerManagerOptions(): WorkerManagerModuleOptions {
     return { auth: { strategy: 'basic', users: [{ username: 'admin', password: this.config.getOrThrow('BOARD_PASSWORD') }] } };
   }
 }
 
-BullBoardModule.forRootAsync({ imports: [ConfigModule], useClass: BoardConfig }),
+WorkerManagerModule.forRootAsync({ imports: [ConfigModule], useClass: BoardConfig }),
 ```
 
 ## Authentication
@@ -124,7 +124,7 @@ Fastify alike, and honours the Nest global prefix.
 ### Basic
 
 ```typescript
-BullBoardModule.forRoot({
+WorkerManagerModule.forRoot({
   auth: {
     strategy: 'basic',
     users: [{ username: 'admin', password: process.env.BOARD_PASSWORD, roles: ['admin'] }],
@@ -135,7 +135,7 @@ BullBoardModule.forRoot({
 ### Keycloak
 
 ```typescript
-BullBoardModule.forRoot({
+WorkerManagerModule.forRoot({
   auth: {
     strategy: 'keycloak',
     url: 'https://sso.example.com',
@@ -163,7 +163,7 @@ hooks.
 ```typescript
 import basicAuth from "express-basic-auth";
 
-BullBoardModule.forRoot({
+WorkerManagerModule.forRoot({
   route: "/queues",
   middleware: basicAuth({
     challenge: true,
@@ -173,11 +173,11 @@ BullBoardModule.forRoot({
 ```
 
 ## Register your queues
-To register a new queue, you need to register `BullBoardModule.forFeature` in the same module as where your queues are registered.
+To register a new queue, you need to register `WorkerManagerModule.forFeature` in the same module as where your queues are registered.
 
 ```typescript
 import { Module } from '@nestjs/common';
-import { BullBoardModule } from "@worker-manager/nestjs";
+import { WorkerManagerModule } from "@worker-manager/nestjs";
 import { BullMQAdapter } from "@worker-manager/api/bullMQAdapter";
 import { BullModule } from "@nestjs/bullmq";
 
@@ -189,7 +189,7 @@ import { BullModule } from "@nestjs/bullmq";
       }
     ),
     
-    BullBoardModule.forFeature({
+    WorkerManagerModule.forFeature({
       name: 'my_awesome_queue',
       adapter: BullMQAdapter, //or use BullAdapter if you're using bull instead of bullMQ
     }),
@@ -198,12 +198,12 @@ import { BullModule } from "@nestjs/bullmq";
 export class FeatureModule {}
 ```
 
-The `forFeature` method registers the given queues to the bull-board instance.
+The `forFeature` method registers the given queues to the Worker Manager instance.
 The following options are available.
 - `name` the queue name to resolve from the Nest DI container.
 - `queue` a queue instance to register directly, instead of resolving it by `name`.
 - `adapter` either `BullAdapter` or `BullMQAdapter` depending on which package you use.
-- `options` queue adapter options as found in the bull-board package, such as `readOnlyMode`, `description` etc.
+- `options` queue adapter options as found in the Worker Manager package, such as `readOnlyMode`, `description` etc.
 
 Provide either `name` or `queue`.
 
@@ -217,7 +217,7 @@ import { Queue, createPostgresBackend } from 'bullmq'; // bullmq@6, plus `pg`
 
 const invoices = new Queue('invoices', { connection: process.env.POSTGRES_URL }, createPostgresBackend);
 
-BullBoardModule.forRoot({
+WorkerManagerModule.forRoot({
   queues: [{ queue: invoices, adapter: BullMQAdapter }],
 }),
 ```
@@ -234,7 +234,7 @@ directly via `queue` to register them as distinct board entries:
 ```typescript
 @Module({
   imports: [
-    BullBoardModule.forFeature(
+    WorkerManagerModule.forFeature(
       { queue: emailsTenantA, adapter: BullMQAdapter, options: { prefix: 'tenant-a:' } },
       { queue: emailsTenantB, adapter: BullMQAdapter, options: { prefix: 'tenant-b:' } },
     ),
@@ -243,19 +243,19 @@ directly via `queue` to register them as distinct board entries:
 export class FeatureModule {}
 ```
 
-##  Using the bull-board instance in your controllers and/or services.
-The created bull-board instance is available via the `@InjectBullBoard()` decorator.
+##  Using the Worker Manager instance in your controllers and/or services.
+The created Worker Manager instance is available via the `@InjectWorkerManager()` decorator.
 For example in a controller:
 
 ```typescript
 import { Controller, Get } from "@nestjs/common";
-import { BullBoardInstance, InjectBullBoard } from "@worker-manager/nestjs";
+import { WorkerManagerBoard, InjectWorkerManager } from "@worker-manager/nestjs";
 
 @Controller('my-feature')
 export class FeatureController {
 
   constructor(
-    @InjectBullBoard() private readonly boardInstance: BullBoardInstance
+    @InjectWorkerManager() private readonly boardInstance: WorkerManagerBoard
   ) {
   }
   

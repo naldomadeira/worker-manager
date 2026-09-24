@@ -16,7 +16,7 @@ export const emailQueue = new Queue('emails', {
 
 ```ts
 import express from 'express';
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 import { ExpressAdapter } from '@worker-manager/express';
 import { emailQueue } from './queues';
@@ -26,7 +26,7 @@ const app = express();
 const serverAdapter = new ExpressAdapter();
 serverAdapter.setBasePath('/admin/queues');
 
-createBullBoard({
+createWorkerManagerBoard({
   queues: [new BullMQAdapter(emailQueue)],
   serverAdapter,
 });
@@ -54,7 +54,7 @@ await emailQueue.add('welcome', { to: 'you@example.com' });
 
 ## Where to next
 
-- Add more queues: pass them to `createBullBoard({ queues: [...] })`, or [add and remove them at runtime](/recipes/manage-queues-at-runtime).
+- Add more queues: pass them to `createWorkerManagerBoard({ queues: [...] })`, or [add and remove them at runtime](/recipes/manage-queues-at-runtime).
 - Lock the dashboard with [read-only mode](/recipes/read-only-mode).
 - Scope queues per tenant with a [visibility guard](/recipes/visibility-guard).
 - Change title, logo, polling via [UIConfig](/configuration/ui-config).

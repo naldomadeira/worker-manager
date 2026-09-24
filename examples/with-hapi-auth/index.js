@@ -1,4 +1,4 @@
-const { createBullBoard } = require('@worker-manager/api');
+const { createWorkerManagerBoard } = require('@worker-manager/api');
 const { BullMQAdapter } = require('@worker-manager/api/bullMQAdapter');
 const { HapiAdapter } = require('@worker-manager/hapi');
 const { Queue: QueueMQ, Worker } = require('bullmq');
@@ -54,7 +54,7 @@ const run = async () => {
 
   const serverAdapter = new HapiAdapter();
 
-  createBullBoard({
+  createWorkerManagerBoard({
     queues: [new BullMQAdapter(exampleBullMq)],
     serverAdapter,
   });

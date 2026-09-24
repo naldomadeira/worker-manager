@@ -4,7 +4,7 @@ A tour of how the dashboard is laid out and the controls you'll use day to day: 
 
 ## Grouping queues by category
 
-When a queue name contains a delimiter, bull-board splits it into a path. A queue named `Emails.Transactional.Welcome` registered with `{ delimiter: '.' }` becomes `Emails › Transactional › Welcome`. The sidebar has always shown this as a tree; the main overview can now show the same structure.
+When a queue name contains a delimiter, Worker Manager splits it into a path. A queue named `Emails.Transactional.Welcome` registered with `{ delimiter: '.' }` becomes `Emails › Transactional › Welcome`. The sidebar has always shown this as a tree; the main overview can now show the same structure.
 
 ![Grouped overview with category sections and per-group counts](/screenshots/grouped-overview.png)
 
@@ -15,7 +15,7 @@ Switch between the flat card grid and the grouped view from **Settings → Queue
 To make grouped the starting view for everyone, set it in `UIConfig`. This is only the default: once a user switches it in Settings, their choice is remembered and overrides the config on the next load.
 
 ```ts
-createBullBoard({
+createWorkerManagerBoard({
   queues: [
     new BullMQAdapter(welcomeEmails, { delimiter: '.' }),
     new BullMQAdapter(receiptEmails, { delimiter: '.' }),

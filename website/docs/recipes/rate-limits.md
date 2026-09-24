@@ -10,7 +10,7 @@ The **active limit** is a state: what a worker wrote when it called `queue.rateL
 
 Open the queue's actions dropdown, pick "Set rate limit", enter a maximum and a window in milliseconds.
 
-Bull-board calls `Queue.setGlobalRateLimit(max, duration)` on your behalf. Leaving both fields empty removes the limit through `removeGlobalRateLimit()`.
+Worker Manager calls `Queue.setGlobalRateLimit(max, duration)` on your behalf. Leaving both fields empty removes the limit through `removeGlobalRateLimit()`.
 
 ## Set it in code
 

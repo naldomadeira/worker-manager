@@ -9,7 +9,7 @@ bun add @worker-manager/api @worker-manager/elysia
 ```
 
 ```ts
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 import { ElysiaAdapter } from '@worker-manager/elysia';
 import { Queue } from 'bullmq';
@@ -24,7 +24,7 @@ const serverAdapter = new ElysiaAdapter({
   basePath: '/api/ui',
 });
 
-createBullBoard({
+createWorkerManagerBoard({
   queues: [new BullMQAdapter(queue)],
   serverAdapter,
   options: {

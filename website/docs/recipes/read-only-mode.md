@@ -7,10 +7,10 @@ Read-only mode disables every destructive action on a queue. No retries, no remo
 ## Enable per queue
 
 ```ts
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 
-createBullBoard({
+createWorkerManagerBoard({
   queues: [
     new BullMQAdapter(emailQueue, { readOnlyMode: true }),
   ],

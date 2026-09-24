@@ -1,4 +1,4 @@
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 import { formatJob } from '@worker-manager/api/dist/handlers/queues';
 import { ExpressAdapter } from '@worker-manager/express';
@@ -40,7 +40,7 @@ describe('job diagnostics', () => {
     await queue.obliterate({ force: true });
     adapter = new BullMQAdapter(queue);
     serverAdapter = new ExpressAdapter();
-    createBullBoard({ queues: [adapter], serverAdapter });
+    createWorkerManagerBoard({ queues: [adapter], serverAdapter });
   });
 
   afterEach(async () => {

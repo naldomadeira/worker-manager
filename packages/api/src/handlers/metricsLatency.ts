@@ -2,7 +2,7 @@ import type { GetMetricsLatencyQuery } from '../schemas/requests';
 import { GetMetricsLatencyResponse } from '../schemas/responses';
 import {
   AppControllerRoute,
-  BullBoardRequest,
+  WorkerManagerRequest,
   ControllerHandlerReturnType,
   MetricsHistoryProvider,
 } from '../types';
@@ -13,7 +13,7 @@ export function createMetricsLatencyHandler(
   provider: MetricsHistoryProvider
 ): AppControllerRoute<'GetMetricsLatencyResponse', GetMetricsLatencyQuery>['handler'] {
   return async function metricsLatencyHandler(
-    req?: BullBoardRequest<GetMetricsLatencyQuery>
+    req?: WorkerManagerRequest<GetMetricsLatencyQuery>
   ): Promise<ControllerHandlerReturnType<GetMetricsLatencyResponse>> {
     const { metric, granularity, queue } = req!.query;
     const from = req!.query.from ?? 0;

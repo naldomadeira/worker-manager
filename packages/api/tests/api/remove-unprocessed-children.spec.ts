@@ -1,4 +1,4 @@
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import { BullAdapter } from '@worker-manager/api/bullAdapter';
 import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 import { ExpressAdapter } from '@worker-manager/express';
@@ -24,7 +24,7 @@ describe('remove unprocessed children', () => {
     await parentQueue.obliterate({ force: true }).catch(() => {});
     await childQueue.obliterate({ force: true }).catch(() => {});
     serverAdapter = new ExpressAdapter();
-    createBullBoard({
+    createWorkerManagerBoard({
       queues: [new BullMQAdapter(parentQueue), new BullMQAdapter(childQueue)],
       serverAdapter,
     });
@@ -98,7 +98,10 @@ describe('remove unprocessed children', () => {
   it('tells a Bull caller it is unsupported', async () => {
     const bullQueue = new Bull('UnprocessedBullQueue', { redis: connection });
     const bullServerAdapter = new ExpressAdapter();
-    createBullBoard({ queues: [new BullAdapter(bullQueue)], serverAdapter: bullServerAdapter });
+    createWorkerManagerBoard({
+      queues: [new BullAdapter(bullQueue)],
+      serverAdapter: bullServerAdapter,
+    });
 
     const job = await bullQueue.add({});
 

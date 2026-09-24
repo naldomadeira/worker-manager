@@ -3,7 +3,11 @@ import { queueProvider } from '../providers/queue';
 import { BaseAdapter } from '../queueAdapters/base';
 import type { UpdateJobSchedulerBody } from '../schemas/requests';
 import { EmptyResponse } from '../schemas/responses';
-import { BullBoardRequest, ControllerHandlerReturnType, JobSchedulerRepeatOptions } from '../types';
+import {
+  WorkerManagerRequest,
+  ControllerHandlerReturnType,
+  JobSchedulerRepeatOptions,
+} from '../types';
 
 /**
  * Rewrites the schedule of an existing scheduler. Only the schedule: the job the scheduler
@@ -11,7 +15,7 @@ import { BullBoardRequest, ControllerHandlerReturnType, JobSchedulerRepeatOption
  * silently change what runs.
  */
 async function updateJobScheduler(
-  req: BullBoardRequest<Record<string, any>, UpdateJobSchedulerBody>,
+  req: WorkerManagerRequest<Record<string, any>, UpdateJobSchedulerBody>,
   queue: BaseAdapter
 ): Promise<ControllerHandlerReturnType<EmptyResponse>> {
   const { schedulerId } = req.params;

@@ -1,4 +1,4 @@
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 import { ExpressAdapter } from '@worker-manager/express';
 import { Queue } from 'bullmq';
@@ -28,7 +28,7 @@ describe('metrics', () => {
     const metricsQueue = new Queue('MetricsQueue', { connection });
     queueList.push(metricsQueue);
 
-    createBullBoard({ queues: [new BullMQAdapter(metricsQueue)], serverAdapter });
+    createWorkerManagerBoard({ queues: [new BullMQAdapter(metricsQueue)], serverAdapter });
 
     await request(serverAdapter.getRouter())
       .get(`/api/queues/${metricsQueue.name}/metrics`)
@@ -55,7 +55,7 @@ describe('metrics', () => {
           ? Promise.reject(new Error('metrics unavailable'))
           : Promise.resolve({ meta: { count: 0, prevTS: 0, prevCount: 0 }, data: [], count: 0 })
       );
-    createBullBoard({ queues: [adapter], serverAdapter });
+    createWorkerManagerBoard({ queues: [adapter], serverAdapter });
 
     const res = await request(serverAdapter.getRouter())
       .get(`/api/queues/${metricsQueue.name}/metrics`)
@@ -69,7 +69,7 @@ describe('metrics', () => {
     const metricsQueue = new Queue('KnownQueue', { connection });
     queueList.push(metricsQueue);
 
-    createBullBoard({ queues: [new BullMQAdapter(metricsQueue)], serverAdapter });
+    createWorkerManagerBoard({ queues: [new BullMQAdapter(metricsQueue)], serverAdapter });
 
     await request(serverAdapter.getRouter())
       .get('/api/queues/UnknownQueue/metrics')

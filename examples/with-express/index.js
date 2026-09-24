@@ -1,4 +1,4 @@
-const { createBullBoard } = require('@worker-manager/api');
+const { createWorkerManagerBoard } = require('@worker-manager/api');
 const { BullMQAdapter } = require('@worker-manager/api/bullMQAdapter');
 const { ExpressAdapter } = require('@worker-manager/express');
 const { Queue: QueueMQ, Worker } = require('bullmq');
@@ -43,7 +43,7 @@ const run = async () => {
   const serverAdapter = new ExpressAdapter();
   serverAdapter.setBasePath('/ui');
 
-  createBullBoard({
+  createWorkerManagerBoard({
     queues: [new BullMQAdapter(exampleBullMq)],
     serverAdapter,
   });

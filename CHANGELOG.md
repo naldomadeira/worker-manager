@@ -1,3 +1,38 @@
+### [v2.0.0](https://github.com/naldomadeira/worker-manager/compare/v1.2.0...v2.0.0)
+
+> 2026-09-24
+
+### ⚠ Breaking changes
+Every "BullBoard" product name is renamed to "WorkerManager". There are no deprecated aliases:
+the old names are gone.
+
+| Area | Old | New |
+| --- | --- | --- |
+| `@worker-manager/api` | `createBullBoard()` | `createWorkerManagerBoard()` |
+| `@worker-manager/api` | `BullBoardRequest`, `BullBoardQueues` | `WorkerManagerRequest`, `WorkerManagerQueues` |
+| `@worker-manager/nestjs` | `BullBoardModule` | `WorkerManagerModule` |
+| `@worker-manager/nestjs` | `@InjectBullBoard()` | `@InjectWorkerManager()` |
+| `@worker-manager/nestjs` | `BullBoardInstance` | `WorkerManagerBoard` |
+| `@worker-manager/nestjs` | `BullBoardModuleOptions`, `BullBoardModuleAsyncOptions` | `WorkerManagerModuleOptions`, `WorkerManagerModuleAsyncOptions` |
+| `@worker-manager/nestjs` | `BullBoardOptionsFactory` (`createBullBoardOptions()`) | `WorkerManagerOptionsFactory` (`createWorkerManagerOptions()`) |
+| `@worker-manager/nestjs` | `BullBoardQueueOptions`, `BullBoardServerAdapter`, `BullBoardExpressAdapter`, `BullBoardFastifyAdapter` | `WorkerManagerQueueOptions`, `WorkerManagerServerAdapter`, `WorkerManagerExpressAdapter`, `WorkerManagerFastifyAdapter` |
+| `@worker-manager/nestjs` | `BULL_BOARD_OPTIONS`, `BULL_BOARD_QUEUES`, `BULL_BOARD_ADAPTER`, `BULL_BOARD_INSTANCE`, `DEFAULT_BULL_BOARD_ROUTE` | `WORKER_MANAGER_OPTIONS`, `WORKER_MANAGER_QUEUES`, `WORKER_MANAGER_ADAPTER`, `WORKER_MANAGER_INSTANCE`, `DEFAULT_WORKER_MANAGER_ROUTE` |
+| `@worker-manager/cli` | `bull-board` binary | `worker-manager` binary |
+| `@worker-manager/cli` | every `BULL_BOARD_*` env var (`BULL_BOARD_REDIS_URL`, `BULL_BOARD_PORT`, `BULL_BOARD_USER`, ...) | `WORKER_MANAGER_*` (`WORKER_MANAGER_REDIS_URL`, `WORKER_MANAGER_PORT`, `WORKER_MANAGER_USER`, ...) |
+| `@worker-manager/cli` | `bull-board.config.{mjs,js,cjs,json}` | `worker-manager.config.{mjs,js,cjs,json}` |
+| `@worker-manager/cli` | `/__bull-board-cli/status`, Basic auth realm `bull-board` | `/__worker-manager-cli/status`, realm `worker-manager` |
+| Docker image | `ARG BULL_BOARD_VERSION`, `/opt/bull-board`, `ENTRYPOINT ["bull-board"]` | `ARG WORKER_MANAGER_VERSION`, `/opt/worker-manager`, `ENTRYPOINT ["worker-manager"]` |
+| `@worker-manager/metrics` | Redis namespace `bull-board:metrics` (`{bull-board:metrics}` on a cluster) | `worker-manager:metrics` (`{worker-manager:metrics}`) |
+| `@worker-manager/metrics` | PostgreSQL tables `bull_board_metrics_*` | `worker_manager_metrics_*` |
+| `@worker-manager/ui` | localStorage `bull-board:menu-state`, `bull-board:overview-state` | `worker-manager:menu-state`, `worker-manager:overview-state` |
+
+- Persisted names are not migrated. To keep the history a 1.x board recorded, pass
+  `prefix: 'bull-board:metrics'` to `MetricsRecorder`, `RedisMetricsHistoryProvider` and
+  `MetricsHistoryAdmin`, or `tablePrefix: 'bull_board_metrics_'` to the PostgreSQL store and
+  provider. The sidebar and overview layout reset once, since their localStorage keys moved.
+- Unchanged: `BullMQAdapter`, `BullAdapter` and `BullMQProAdapter` (they name the queue
+  libraries), and every BullMQ/Bull queue key prefix (`bull:`, `{bull}`).
+
 ### [v1.2.0](https://github.com/naldomadeira/worker-manager/compare/v1.1.0...v1.2.0)
 
 > 2026-09-24

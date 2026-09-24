@@ -1,5 +1,5 @@
 ---
-description: The JSON API the bull-board dashboard serves, generated from the route table so it always matches the routes the board registers.
+description: The JSON API the Worker Manager dashboard serves, generated from the route table so it always matches the routes the board registers.
 ---
 
 # HTTP API reference

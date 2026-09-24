@@ -1,4 +1,4 @@
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 import { ExpressAdapter } from '@worker-manager/express';
 import { FlowProducer, Queue, UnrecoverableError, Worker } from 'bullmq';
@@ -36,7 +36,7 @@ describe('Job flow dependencies', () => {
   });
 
   function setupBoard() {
-    createBullBoard({
+    createWorkerManagerBoard({
       queues: [new BullMQAdapter(parentQueue), new BullMQAdapter(childQueue)],
       serverAdapter,
     });

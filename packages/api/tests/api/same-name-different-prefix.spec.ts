@@ -1,4 +1,4 @@
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 import { ExpressAdapter } from '@worker-manager/express';
 import { Queue } from 'bullmq';
@@ -30,7 +30,7 @@ describe('queues with the same name but a different prefix', () => {
     const emailsTenantB = new Queue('emails', { connection, prefix: 'tenant-b' });
     queueList.push(emailsTenantA, emailsTenantB);
 
-    createBullBoard({
+    createWorkerManagerBoard({
       queues: [
         new BullMQAdapter(emailsTenantA, { prefix: 'tenant-a:' }),
         new BullMQAdapter(emailsTenantB, { prefix: 'tenant-b:' }),

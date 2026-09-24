@@ -1,6 +1,6 @@
 # Next.js (Pages Router) example
 
-bull-board in a Next.js Pages Router app using the `@worker-manager/express` adapter, deployable to Vercel. The dashboard is one optional catch-all API route — `pages/api/queues/[[...path]].ts` — that hands the request to an Express router (`bodyParser` off, `externalResolver` on, so Express owns the response).
+Worker Manager in a Next.js Pages Router app using the `@worker-manager/express` adapter, deployable to Vercel. The dashboard is one optional catch-all API route — `pages/api/queues/[[...path]].ts` — that hands the request to an Express router (`bodyParser` off, `externalResolver` on, so Express owns the response).
 
 ## Run it
 

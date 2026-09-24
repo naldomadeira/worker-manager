@@ -1,4 +1,4 @@
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 import { ElysiaAdapter } from '@worker-manager/elysia';
 import { Queue as QueueMQ, Worker } from 'bullmq';
@@ -39,7 +39,7 @@ setupBullMQProcessor(exampleBullMq.name);
 (async function main() {
   const serverAdapter = new ElysiaAdapter({ prefix: '/ui', basePath: '/api/ui' });
 
-  createBullBoard({
+  createWorkerManagerBoard({
     queues: [new BullMQAdapter(exampleBullMq)],
     serverAdapter,
     options: {

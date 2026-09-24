@@ -1,4 +1,4 @@
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 import { ExpressAdapter } from '@worker-manager/express';
 import { Queue, Worker } from 'bullmq';
@@ -32,7 +32,7 @@ describe('Retry All', () => {
   });
 
   function setupBoard(options: Partial<{ readOnlyMode: boolean }> = {}) {
-    createBullBoard({
+    createWorkerManagerBoard({
       queues: [new BullMQAdapter(testQueue, options)],
       serverAdapter,
     });

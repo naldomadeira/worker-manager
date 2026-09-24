@@ -9,7 +9,7 @@ npm install @worker-manager/api @worker-manager/koa
 ```
 
 ```ts
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 import { KoaAdapter } from '@worker-manager/koa';
 import { Queue } from 'bullmq';
@@ -23,7 +23,7 @@ const app = new Koa();
 
 const serverAdapter = new KoaAdapter();
 
-createBullBoard({
+createWorkerManagerBoard({
   queues: [new BullMQAdapter(queue)],
   serverAdapter,
 });

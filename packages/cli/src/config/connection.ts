@@ -84,7 +84,7 @@ function credentialOptions({ flags, env }: { flags: FlagValues; env: NodeJS.Proc
     names.push(name);
   };
 
-  const db = firstDefined(flags['redis-db'], env.BULL_BOARD_REDIS_DB);
+  const db = firstDefined(flags['redis-db'], env.WORKER_MANAGER_REDIS_DB);
   if (db !== undefined && (!Number.isInteger(Number(db)) || Number(db) < 0)) {
     throw new Error(`Invalid --redis-db: ${db}`);
   }
@@ -92,17 +92,17 @@ function credentialOptions({ flags, env }: { flags: FlagValues; env: NodeJS.Proc
   add(
     '--sentinel-password',
     'sentinelPassword',
-    firstDefined(flags['sentinel-password'], env.BULL_BOARD_SENTINEL_PASSWORD)
+    firstDefined(flags['sentinel-password'], env.WORKER_MANAGER_SENTINEL_PASSWORD)
   );
   add(
     '--redis-username',
     'username',
-    firstDefined(flags['redis-username'], env.BULL_BOARD_REDIS_USERNAME)
+    firstDefined(flags['redis-username'], env.WORKER_MANAGER_REDIS_USERNAME)
   );
   add(
     '--redis-password',
     'password',
-    firstDefined(flags['redis-password'], env.BULL_BOARD_REDIS_PASSWORD)
+    firstDefined(flags['redis-password'], env.WORKER_MANAGER_REDIS_PASSWORD)
   );
   add('--redis-db', 'db', db === undefined ? undefined : Number(db));
 
@@ -118,10 +118,10 @@ export function resolveConnection({
   env: NodeJS.ProcessEnv;
   file: FileConfig;
 }): ConnectionConfig {
-  const explicitUrl = firstDefined(flags.redis, env.BULL_BOARD_REDIS_URL);
-  const sentinelList = firstDefined(flags.sentinel, env.BULL_BOARD_SENTINELS);
-  const sentinelName = firstDefined(flags['sentinel-name'], env.BULL_BOARD_SENTINEL_NAME);
-  const clusterList = firstDefined(flags.cluster, env.BULL_BOARD_CLUSTER_NODES);
+  const explicitUrl = firstDefined(flags.redis, env.WORKER_MANAGER_REDIS_URL);
+  const sentinelList = firstDefined(flags.sentinel, env.WORKER_MANAGER_SENTINELS);
+  const sentinelName = firstDefined(flags['sentinel-name'], env.WORKER_MANAGER_SENTINEL_NAME);
+  const clusterList = firstDefined(flags.cluster, env.WORKER_MANAGER_CLUSTER_NODES);
   const credentials = credentialOptions({ flags, env });
 
   const modes = [

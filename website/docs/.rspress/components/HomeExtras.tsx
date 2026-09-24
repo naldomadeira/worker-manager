@@ -4,7 +4,7 @@ const links = [
   {
     to: '/guide/introduction',
     title: 'New here',
-    body: 'What bull-board is, the two ways to run it, and what you get.',
+    body: 'What Worker Manager is, the two ways to run it, and what you get.',
   },
   {
     to: '/guide/exploring-the-dashboard',

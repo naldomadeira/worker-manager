@@ -43,7 +43,7 @@ await flow.add({
 });
 ```
 
-Bull-board draws the whole flow as a graph on the job's detail view, whichever job in it you opened. It pans and zooms, and it opens fitted to the entire flow so you see the shape first. The control below the zoom buttons recentres on the job you came in on.
+Worker Manager draws the whole flow as a graph on the job's detail view, whichever job in it you opened. It pans and zooms, and it opens fitted to the entire flow so you see the shape first. The control below the zoom buttons recentres on the job you came in on.
 
 ![Job flow graph with the details panel beside it](/screenshots/flow-tree.png)
 

@@ -3,10 +3,10 @@ import { jobProvider } from '../providers/job';
 import { queueProvider } from '../providers/queue';
 import type { ChangeJobDelayBody, ChangeJobPriorityBody } from '../schemas/requests';
 import type { EmptyResponse } from '../schemas/responses';
-import { BullBoardRequest, ControllerHandlerReturnType, QueueJob } from '../types';
+import { WorkerManagerRequest, ControllerHandlerReturnType, QueueJob } from '../types';
 
 async function changeDelay(
-  req: BullBoardRequest<Record<string, any>, ChangeJobDelayBody>,
+  req: WorkerManagerRequest<Record<string, any>, ChangeJobDelayBody>,
   job: QueueJob
 ): Promise<ControllerHandlerReturnType<EmptyResponse>> {
   if (typeof job.changeDelay !== 'function') {
@@ -24,7 +24,7 @@ async function changeDelay(
 }
 
 async function changePriority(
-  req: BullBoardRequest<Record<string, any>, ChangeJobPriorityBody>,
+  req: WorkerManagerRequest<Record<string, any>, ChangeJobPriorityBody>,
   job: QueueJob
 ): Promise<ControllerHandlerReturnType<EmptyResponse>> {
   if (typeof job.changePriority !== 'function') {

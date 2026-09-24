@@ -2,7 +2,7 @@ import type { PurgeMetricsHistoryBody } from '../schemas/requests';
 import { GetMetricsHistoryUsageResponse, PurgeMetricsHistoryResponse } from '../schemas/responses';
 import {
   AppControllerRoute,
-  BullBoardRequest,
+  WorkerManagerRequest,
   ControllerHandlerReturnType,
   MetricsHistoryProvider,
 } from '../types';
@@ -26,7 +26,7 @@ export function createMetricsHistoryPurgeHandler(
   PurgeMetricsHistoryBody
 >['handler'] {
   return async function metricsHistoryPurgeHandler(
-    req?: BullBoardRequest<Record<string, any>, PurgeMetricsHistoryBody>
+    req?: WorkerManagerRequest<Record<string, any>, PurgeMetricsHistoryBody>
   ): Promise<ControllerHandlerReturnType<PurgeMetricsHistoryResponse>> {
     const { queue, before } = req!.body;
     const result = await provider.purge!({ queue, before });

@@ -50,7 +50,7 @@ describe('resolveConfig', () => {
   it('prefers a flag over env, config file and default', () => {
     const config = resolveConfig({
       flags: parseFlags(['--port', '4000']),
-      env: { BULL_BOARD_PORT: '5000' } as NodeJS.ProcessEnv,
+      env: { WORKER_MANAGER_PORT: '5000' } as NodeJS.ProcessEnv,
       file: { port: 6000 },
     });
 
@@ -60,7 +60,7 @@ describe('resolveConfig', () => {
   it('prefers env over the config file', () => {
     const config = resolveConfig({
       flags: parseFlags([]),
-      env: { BULL_BOARD_PORT: '5000' } as NodeJS.ProcessEnv,
+      env: { WORKER_MANAGER_PORT: '5000' } as NodeJS.ProcessEnv,
       file: { port: 6000 },
     });
 
@@ -120,7 +120,7 @@ describe('resolveConfig', () => {
   it('reads boolean env vars as flags', () => {
     const config = resolveConfig({
       flags: parseFlags([]),
-      env: { BULL_BOARD_READ_ONLY: '1', BULL_BOARD_OPEN: 'false' } as NodeJS.ProcessEnv,
+      env: { WORKER_MANAGER_READ_ONLY: '1', WORKER_MANAGER_OPEN: 'false' } as NodeJS.ProcessEnv,
       file: noFile,
     });
 
@@ -131,7 +131,7 @@ describe('resolveConfig', () => {
   it('lets an explicit false at a higher layer beat a true at a lower one', () => {
     const config = resolveConfig({
       flags: parseFlags([]),
-      env: { BULL_BOARD_READ_ONLY: '0' } as NodeJS.ProcessEnv,
+      env: { WORKER_MANAGER_READ_ONLY: '0' } as NodeJS.ProcessEnv,
       file: { readOnly: true },
     });
 
@@ -144,26 +144,26 @@ describe('resolveConfig', () => {
     ).toThrow(/port/i);
   });
 
-  it('resolves --browser in flag, BULL_BOARD_BROWSER, BROWSER, config file order', () => {
+  it('resolves --browser in flag, WORKER_MANAGER_BROWSER, BROWSER, config file order', () => {
     const fromFlag = resolveConfig({
       flags: parseFlags(['--browser', 'flag-browser']),
       env: {
-        BULL_BOARD_BROWSER: 'env-specific-browser',
+        WORKER_MANAGER_BROWSER: 'env-specific-browser',
         BROWSER: 'env-browser',
       } as NodeJS.ProcessEnv,
       file: { browser: 'file-browser' },
     });
     expect(fromFlag.browser).toBe('flag-browser');
 
-    const fromBullBoardEnv = resolveConfig({
+    const fromWorkerManagerEnv = resolveConfig({
       flags: parseFlags([]),
       env: {
-        BULL_BOARD_BROWSER: 'env-specific-browser',
+        WORKER_MANAGER_BROWSER: 'env-specific-browser',
         BROWSER: 'env-browser',
       } as NodeJS.ProcessEnv,
       file: { browser: 'file-browser' },
     });
-    expect(fromBullBoardEnv.browser).toBe('env-specific-browser');
+    expect(fromWorkerManagerEnv.browser).toBe('env-specific-browser');
 
     const fromBrowserEnv = resolveConfig({
       flags: parseFlags([]),
@@ -183,11 +183,11 @@ describe('resolveConfig', () => {
     expect(fromDefault.browser).toBeUndefined();
   });
 
-  it('lets --no-open win over --browser, BULL_BOARD_BROWSER, BROWSER and the config file', () => {
+  it('lets --no-open win over --browser, WORKER_MANAGER_BROWSER, BROWSER and the config file', () => {
     const config = resolveConfig({
       flags: parseFlags(['--no-open', '--browser', 'flag-browser']),
       env: {
-        BULL_BOARD_BROWSER: 'env-specific-browser',
+        WORKER_MANAGER_BROWSER: 'env-specific-browser',
         BROWSER: 'env-browser',
       } as NodeJS.ProcessEnv,
       file: { browser: 'file-browser' },
@@ -203,7 +203,7 @@ describe('resolveConfig', () => {
   it('turns history on from a flag, an env var or the config file, in that order', () => {
     const fromFlag = resolveConfig({
       flags: parseFlags(['--history', '--history-retention-days', '30']),
-      env: { BULL_BOARD_HISTORY_RETENTION_DAYS: '60' } as NodeJS.ProcessEnv,
+      env: { WORKER_MANAGER_HISTORY_RETENTION_DAYS: '60' } as NodeJS.ProcessEnv,
       file: { history: { retentionDays: 90 } },
     });
     expect(fromFlag.history).toMatchObject({ record: true, retentionDays: 30, latency: true });
@@ -211,8 +211,8 @@ describe('resolveConfig', () => {
     const fromEnv = resolveConfig({
       flags: parseFlags([]),
       env: {
-        BULL_BOARD_HISTORY: 'true',
-        BULL_BOARD_HISTORY_RETENTION_DAYS: '60',
+        WORKER_MANAGER_HISTORY: 'true',
+        WORKER_MANAGER_HISTORY_RETENTION_DAYS: '60',
       } as NodeJS.ProcessEnv,
       file: { history: { retentionDays: 90 } },
     });

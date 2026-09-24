@@ -1,5 +1,5 @@
 const { FastifyAdapter } = require('@worker-manager/fastify');
-const { createBullBoard } = require('@worker-manager/api');
+const { createWorkerManagerBoard } = require('@worker-manager/api');
 const { BullMQAdapter } = require('@worker-manager/api/bullMQAdapter');
 const pointOfView = require('@fastify/view');
 const path = require('path');
@@ -19,7 +19,7 @@ module.exports.cookieAuth = function cookieAuth(fastify, { queue }, next) {
   fastify.after(() => {
     const serverAdapter = new FastifyAdapter();
 
-    createBullBoard({
+    createWorkerManagerBoard({
       queues: [new BullMQAdapter(queue)],
       serverAdapter,
     });

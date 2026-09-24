@@ -4,13 +4,13 @@ board mounted at `/admin/queues` serves `GET /admin/queues/api/queues`.
 
 ## Authentication
 
-There is none. bull-board does not authenticate requests and never has: the board inherits
+There is none. Worker Manager does not authenticate requests and never has: the board inherits
 whatever protects the route it is mounted on, which is your application's own middleware. See
 [basic auth](/recipes/basic-auth) for the standalone case, and
 [access control hooks](/recipes/access-control-hooks) for per-route rules.
 
 This matters when pointing a script or an agent at a running board. You send whatever credential
-your own middleware expects, as an ordinary header, and bull-board neither issues nor validates
+your own middleware expects, as an ordinary header, and Worker Manager neither issues nor validates
 it.
 
 ## What can reject a call

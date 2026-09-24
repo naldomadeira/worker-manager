@@ -1,6 +1,6 @@
 # <img alt="Worker Manager" src="https://raw.githubusercontent.com/naldomadeira/worker-manager/main/packages/ui/src/static/images/logo.svg" width="35px" /> @worker-manager/fastify 
 
-[Fastify.js](https://www.fastify.io/) server adapter for `bull-board`.
+[Fastify.js](https://www.fastify.io/) server adapter for Worker Manager.
 
 <p align="center">
   <a href="https://www.npmjs.com/package/@worker-manager/fastify">

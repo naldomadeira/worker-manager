@@ -1,7 +1,7 @@
 import { BullModule } from '@nestjs/bullmq';
 import { Module } from '@nestjs/common';
 import { ExpressAdapter } from '@worker-manager/express';
-import { BullBoardModule } from '@worker-manager/nestjs';
+import { WorkerManagerModule } from '@worker-manager/nestjs';
 import { FeatureModule } from './feature/feature.module';
 
 @Module({
@@ -16,8 +16,8 @@ import { FeatureModule } from './feature/feature.module';
       },
     }),
 
-    //register the bull-board module forRoot in your app.module
-    BullBoardModule.forRoot({
+    //register the Worker Manager module forRoot in your app.module
+    WorkerManagerModule.forRoot({
       route: '/queues',
       adapter: ExpressAdapter,
     }),

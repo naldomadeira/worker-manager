@@ -1,8 +1,8 @@
 import { errorResponse } from '../errors';
 import { BaseAdapter } from '../queueAdapters/base';
-import { BullBoardRequest, ControllerHandlerReturnType, QueueJob } from '../types';
+import { WorkerManagerRequest, ControllerHandlerReturnType, QueueJob } from '../types';
 
-export function jobProvider<TBody, TRequest extends BullBoardRequest<any, any>>(
+export function jobProvider<TBody, TRequest extends WorkerManagerRequest<any, any>>(
   next: (
     req: TRequest,
     job: QueueJob,

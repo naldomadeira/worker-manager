@@ -22,9 +22,9 @@ describe('keycloak auth flags', () => {
         'https://ops.example.com/queues',
       ]),
       env: {
-        BULL_BOARD_KEYCLOAK_CLIENT_ID: 'board',
-        BULL_BOARD_KEYCLOAK_CLIENT_SECRET: 'client-secret',
-        BULL_BOARD_SESSION_SECRET: 'session-secret',
+        WORKER_MANAGER_KEYCLOAK_CLIENT_ID: 'board',
+        WORKER_MANAGER_KEYCLOAK_CLIENT_SECRET: 'client-secret',
+        WORKER_MANAGER_SESSION_SECRET: 'session-secret',
       } as NodeJS.ProcessEnv,
       file: noFile,
     });

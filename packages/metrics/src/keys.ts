@@ -1,4 +1,4 @@
-export const DEFAULT_NAMESPACE = 'bull-board:metrics';
+export const DEFAULT_NAMESPACE = 'worker-manager:metrics';
 export const GLOBAL_QUEUE = '__global__';
 /** Marks the hourly rollup key so it can't be mistaken for a minute-level day hash. */
 export const HOUR_TIER = 'hour';

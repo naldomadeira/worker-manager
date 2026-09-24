@@ -3,7 +3,7 @@ import type { serveStatic as nodeServeStatic } from '@hono/node-server/serve-sta
 import type {
   AppControllerRoute,
   AppViewRoute,
-  BullBoardQueues,
+  WorkerManagerQueues,
   ControllerHandlerReturnType,
   HTTPMethod,
   IServerAdapter,
@@ -18,7 +18,7 @@ import type { serveStatic as cloudflareWorkersServeStatic } from 'hono/cloudflar
 import type { serveStatic as denoServeStatic } from 'hono/deno';
 
 export class HonoAdapter implements IServerAdapter {
-  protected bullBoardQueues: BullBoardQueues | undefined;
+  protected workerManagerQueues: WorkerManagerQueues | undefined;
 
   protected errorHandler: ((error: Error) => ControllerHandlerReturnType) | undefined;
 
@@ -77,9 +77,9 @@ export class HonoAdapter implements IServerAdapter {
   }
 
   setApiRoutes(routes: readonly AppControllerRoute[]): this {
-    const { errorHandler, bullBoardQueues } = this;
+    const { errorHandler, workerManagerQueues } = this;
 
-    if (!errorHandler || !bullBoardQueues) {
+    if (!errorHandler || !workerManagerQueues) {
       throw new Error('');
     }
 
@@ -99,8 +99,8 @@ export class HonoAdapter implements IServerAdapter {
     return this;
   }
 
-  setQueues(bullBoardQueues: BullBoardQueues): this {
-    this.bullBoardQueues = bullBoardQueues;
+  setQueues(workerManagerQueues: WorkerManagerQueues): this {
+    this.workerManagerQueues = workerManagerQueues;
     return this;
   }
 
@@ -157,9 +157,9 @@ export class HonoAdapter implements IServerAdapter {
     method: HTTPMethod,
     handler: AppControllerRoute['handler']
   ) {
-    const { bullBoardQueues } = this;
+    const { workerManagerQueues } = this;
 
-    if (!bullBoardQueues) {
+    if (!workerManagerQueues) {
       throw new Error(`Please call 'setQueues' before using 'registerPlugin'`);
     }
 
@@ -177,7 +177,7 @@ export class HonoAdapter implements IServerAdapter {
 
         try {
           const response = await handler({
-            queues: bullBoardQueues,
+            queues: workerManagerQueues,
             uiConfig: this.uiConfig || {},
             params: c.req.param(),
             query: c.req.query(),

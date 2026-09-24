@@ -9,7 +9,7 @@ Install the core `@worker-manager/api` plus one adapter for your framework.
 - [Bull](https://github.com/OptimalBits/bull) or [BullMQ](https://docs.bullmq.io/) already set up in your app
 
 ::: tip Sharing an ioredis connection?
-Worker Manager reads your existing Bull/BullMQ queues, so it inherits their Redis connection. If you construct BullMQ with a shared `ioredis` instance rather than a plain `{ host, port }`, BullMQ requires that connection to be created with `maxRetriesPerRequest: null`. This is a BullMQ requirement, not a bull-board one, but it's the most common setup snag. See the [BullMQ connection docs](https://docs.bullmq.io/guide/connections).
+Worker Manager reads your existing Bull/BullMQ queues, so it inherits their Redis connection. If you construct BullMQ with a shared `ioredis` instance rather than a plain `{ host, port }`, BullMQ requires that connection to be created with `maxRetriesPerRequest: null`. This is a BullMQ requirement, not a Worker Manager one, but it's the most common setup snag. See the [BullMQ connection docs](https://docs.bullmq.io/guide/connections).
 :::
 
 ## Install

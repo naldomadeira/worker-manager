@@ -6,7 +6,7 @@ Opt-in long-retention historical job metrics for [Worker Manager](https://github
 
 Snapshots native BullMQ per-minute metrics into long-retention buckets, in Redis or in
 PostgreSQL (see [PostgreSQL storage](#postgresql-storage)), and exposes a
-`MetricsHistoryProvider` that feeds bull-board's history charts. Everything is opt-in: the core
+`MetricsHistoryProvider` that feeds Worker Manager's history charts. Everything is opt-in: the core
 `@worker-manager/api` stays stateless.
 
 ## Precondition
@@ -32,7 +32,7 @@ recorder downtime, for example:
     recorder.start();
 
     // Where you build the board:
-    createBullBoard({
+    createWorkerManagerBoard({
       queues,
       serverAdapter,
       options: { historyProvider: new RedisMetricsHistoryProvider({ connection }) },
@@ -40,7 +40,7 @@ recorder downtime, for example:
 
 `queues` also accepts a function, resolved on every tick instead of once, which is what you want when the queue set changes while the recorder runs.
 
-Not embedding bull-board in an app of your own? This package ships inside [`@worker-manager/cli`](https://www.npmjs.com/package/@worker-manager/cli) and the `ghcr.io/naldomadeira/worker-manager` image, where `--history` registers the provider and starts a recorder in the same process. See the [CLI guide](https://naldomadeira.github.io/worker-manager/guide/cli#historical-metrics).
+Not embedding Worker Manager in an app of your own? This package ships inside [`@worker-manager/cli`](https://www.npmjs.com/package/@worker-manager/cli) and the `ghcr.io/naldomadeira/worker-manager` image, where `--history` registers the provider and starts a recorder in the same process. See the [CLI guide](https://naldomadeira.github.io/worker-manager/guide/cli#historical-metrics).
 
 On shutdown, call `recorder.stop()` and `provider.disconnect()`. Both only close the Redis connection if the recorder/provider opened it internally, so it's a safe no-op if you passed in your own `Redis` instance.
 
@@ -50,18 +50,20 @@ Timestamps and buckets are UTC.
 
 ## Key namespace
 
-Every key the recorder writes lives under `bull-board:metrics:`. Pass `prefix` to move it, which is how two boards share one Redis without their histories running together:
+Every key the recorder writes lives under `worker-manager:metrics:`. Pass `prefix` to move it, which is how two boards share one Redis without their histories running together:
 
     const recorder = new MetricsRecorder({ queues, connection, prefix: 'staging:metrics' });
     const provider = new RedisMetricsHistoryProvider({ connection, prefix: 'staging:metrics' });
 
 The provider, the recorder and any `MetricsHistoryAdmin` must all be given the same prefix. A provider reading a namespace nothing writes to reports empty history rather than an error, the same way a mismatched retention quietly shortens the window.
 
+Before v2.0 the default namespace was `bull-board:metrics` (`{bull-board:metrics}` on a cluster). Nothing is migrated, so to keep reading history recorded by a 1.x board pass `prefix: 'bull-board:metrics'` to the recorder, the provider and any admin.
+
 ## Redis Cluster
 
 Pass a `Cluster` as `connection` and it works, with one thing worth knowing about the key layout.
 
-Each snapshot writes a queue's three tiers and the three `__global__` rollup tiers in a single `EVAL`, which is what makes the write idempotent across all resolutions at once. Redis Cluster rejects a multi-key command whose keys land in different slots, so the whole namespace has to hash to one slot. It is given a [hash tag](https://redis.io/docs/latest/operate/oss_and_stack/reference/cluster-spec/#hash-tags) for that: `bull-board:metrics` becomes `{bull-board:metrics}`, and a `prefix` of your own is wrapped the same way unless it already carries a `{...}` tag, in which case yours is used and you choose the slot.
+Each snapshot writes a queue's three tiers and the three `__global__` rollup tiers in a single `EVAL`, which is what makes the write idempotent across all resolutions at once. Redis Cluster rejects a multi-key command whose keys land in different slots, so the whole namespace has to hash to one slot. It is given a [hash tag](https://redis.io/docs/latest/operate/oss_and_stack/reference/cluster-spec/#hash-tags) for that: `worker-manager:metrics` becomes `{worker-manager:metrics}`, and a `prefix` of your own is wrapped the same way unless it already carries a `{...}` tag, in which case yours is used and you choose the slot.
 
 One slot means one master holds the history for the whole board. That is the trade for keeping the rollup consistent on write rather than recomputing it on read, and the volume is the same as the storage section below: roughly 50 MB at 200 busy queues, and one `EVAL` per queue per metric per minute.
 
@@ -108,7 +110,7 @@ For deployments that run BullMQ 6 entirely on PostgreSQL, the history can live t
     const recorder = new MetricsRecorder({ queues, store, retentionDays: 90 });
     recorder.start();
 
-    createBullBoard({
+    createWorkerManagerBoard({
       queues,
       serverAdapter,
       options: { historyProvider: new PostgresMetricsHistoryProvider({ store, retentionDays: 90 }) },
@@ -122,7 +124,9 @@ A store only writes; the queues it records are whatever the recorder is given, o
 
 ### Schema and migrations
 
-Four tables, named `<tablePrefix><name>` (`tablePrefix` defaults to `bull_board_metrics_`) in `schema`:
+Four tables, named `<tablePrefix><name>` (`tablePrefix` defaults to `worker_manager_metrics_`) in `schema`:
+
+Before v2.0 the default was `bull_board_metrics_`. The tables are not renamed for you: pass `tablePrefix: 'bull_board_metrics_'` to keep using the history a 1.x board recorded.
 
 | Table | Key | Holds |
 | --- | --- | --- |

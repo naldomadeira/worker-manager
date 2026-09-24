@@ -1,3 +1,3 @@
-# Multiple instances of `bull-board` example
+# Multiple instances of Worker Manager example
 
-This example shows how to install multiple instances of your `bull-board`.
+This example shows how to install multiple instances of your Worker Manager.

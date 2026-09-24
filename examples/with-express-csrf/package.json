@@ -1,7 +1,7 @@
 {
-  "name": "bull-board-express-with-csrf-example",
-  "version": "1.2.0",
-  "description": "Example of how to use bull-board on existing Express server with csrf protection",
+  "name": "worker-manager-express-with-csrf-example",
+  "version": "2.0.0",
+  "description": "Example of how to use Worker Manager on existing Express server with csrf protection",
   "main": "index.js",
   "scripts": {
     "start": "nodemon index.js",
@@ -10,7 +10,7 @@
   "author": "naldomadeira",
   "license": "ISC",
   "dependencies": {
-    "@worker-manager/express": "^1.2.0",
+    "@worker-manager/express": "^2.0.0",
     "bullmq": "^5.80.9",
     "cookie-parser": "^1.4.7",
     "csrf-csrf": "^4.0.3",

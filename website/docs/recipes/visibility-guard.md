@@ -10,16 +10,16 @@ A visibility guard is a per-request predicate on a queue adapter that decides wh
 
 ```ts
 queueAdapter.setVisibilityGuard(
-  (request: BullBoardRequest) => boolean | Promise<boolean>,
+  (request: WorkerManagerRequest) => boolean | Promise<boolean>,
 );
 ```
 
-`BullBoardRequest` carries the fields bull-board pulled from the underlying server's request: `queues`, `uiConfig`, `query`, `params`, `body`, `headers`. Authenticate off `request.headers` (cookies, bearer tokens) and route on `request.params.queueName` or a reference captured in the closure.
+`WorkerManagerRequest` carries the fields Worker Manager pulled from the underlying server's request: `queues`, `uiConfig`, `query`, `params`, `body`, `headers`. Authenticate off `request.headers` (cookies, bearer tokens) and route on `request.params.queueName` or a reference captured in the closure.
 
 ## Register the guard
 
 ```ts
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 import { ExpressAdapter } from '@worker-manager/express';
 
@@ -38,7 +38,7 @@ notificationsAdapter.setVisibilityGuard((request) => {
   return !!user; // visible to any authenticated user
 });
 
-createBullBoard({
+createWorkerManagerBoard({
   queues: [billingAdapter, notificationsAdapter],
   serverAdapter,
 });
@@ -51,7 +51,7 @@ Each queue has its own guard. Queues without a guard are visible to everyone.
 - Invoked on every queue list request and every per-queue API call.
 - Runs on the hot path. The dashboard polls on an interval, so every queue's guard runs every poll cycle.
 - Async is allowed (`Promise<boolean>`), but I/O inside the guard will serialise requests. Read a pre-validated session off headers, or use a small in-memory cache, rather than hitting the DB on every poll.
-- Guards run after your framework's auth layer. Reject unauthenticated requests before bull-board's router, the guard should assume "is the requester authenticated?" is already decided.
+- Guards run after your framework's auth layer. Reject unauthenticated requests before Worker Manager's router, the guard should assume "is the requester authenticated?" is already decided.
 
 ## Hidden means hidden
 

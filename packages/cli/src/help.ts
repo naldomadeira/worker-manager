@@ -1,8 +1,8 @@
 export const HELP = `
-bull-board - run the bull-board dashboard against Redis and/or PostgreSQL
+worker-manager - run the Worker Manager dashboard against Redis and/or PostgreSQL
 
 Usage:
-  bull-board [options]
+  worker-manager [options]
   npx @worker-manager/cli [options]
 
 Options:
@@ -60,7 +60,7 @@ Options:
   -h, --help              Show this help
   -v, --version           Show the version
 
-If Redis is unreachable at startup, bull-board still opens: it serves a
+If Redis is unreachable at startup, Worker Manager still opens: it serves a
 diagnostic page explaining why, keeps retrying every 3 seconds, and switches
 to the real dashboard on its own once Redis answers. That only covers
 startup: once the dashboard is live it stays live, even if Redis goes away
@@ -71,7 +71,7 @@ exit 1 immediately, without opening a port.
 
 --history turns on historical metrics: the dashboard gains a range selector
 per queue and a cross-queue Metrics history page, and this process records
-throughput, latency and queue age into Redis under the bull-board:metrics:
+throughput, latency and queue age into Redis under the worker-manager:metrics:
 namespace once a minute. --read-only stops the recording but keeps serving
 whatever another process has recorded.
 
@@ -99,23 +99,23 @@ through the OIDC authorization code flow (PKCE), API clients may send an
 Authorization: Bearer access token. The redirect URI to register in Keycloak
 is <public url>/auth/callback.
 
-Environment variables mirror every flag, for example BULL_BOARD_REDIS_URL,
-BULL_BOARD_SENTINELS, BULL_BOARD_SENTINEL_NAME, BULL_BOARD_CLUSTER_NODES,
-BULL_BOARD_PORT, BULL_BOARD_READ_ONLY, BULL_BOARD_KEYCLOAK_URL,
-BULL_BOARD_KEYCLOAK_REALM, BULL_BOARD_KEYCLOAK_CLIENT_ID,
-BULL_BOARD_KEYCLOAK_CLIENT_SECRET, BULL_BOARD_KEYCLOAK_ROLES,
-BULL_BOARD_PUBLIC_URL, BULL_BOARD_SESSION_SECRET, BULL_BOARD_POSTGRES_URL,
-BULL_BOARD_POSTGRES_SCHEMA.
+Environment variables mirror every flag, for example WORKER_MANAGER_REDIS_URL,
+WORKER_MANAGER_SENTINELS, WORKER_MANAGER_SENTINEL_NAME, WORKER_MANAGER_CLUSTER_NODES,
+WORKER_MANAGER_PORT, WORKER_MANAGER_READ_ONLY, WORKER_MANAGER_KEYCLOAK_URL,
+WORKER_MANAGER_KEYCLOAK_REALM, WORKER_MANAGER_KEYCLOAK_CLIENT_ID,
+WORKER_MANAGER_KEYCLOAK_CLIENT_SECRET, WORKER_MANAGER_KEYCLOAK_ROLES,
+WORKER_MANAGER_PUBLIC_URL, WORKER_MANAGER_SESSION_SECRET, WORKER_MANAGER_POSTGRES_URL,
+WORKER_MANAGER_POSTGRES_SCHEMA.
 
 Examples:
-  bull-board
-  bull-board -r redis://localhost:6379 -p 4000
-  bull-board --prefix tenant-a,tenant-b --read-only
-  bull-board --user admin --password secret --host 0.0.0.0
-  bull-board --sentinel s1:26379,s2:26379 --sentinel-name mymaster
-  bull-board --cluster n1:7000,n2:7000,n3:7000
-  bull-board --postgres postgres://bullmq:bullmq@localhost:5432/bullmq
-  bull-board --keycloak-url https://sso.example.com --keycloak-realm ops \\
+  worker-manager
+  worker-manager -r redis://localhost:6379 -p 4000
+  worker-manager --prefix tenant-a,tenant-b --read-only
+  worker-manager --user admin --password secret --host 0.0.0.0
+  worker-manager --sentinel s1:26379,s2:26379 --sentinel-name mymaster
+  worker-manager --cluster n1:7000,n2:7000,n3:7000
+  worker-manager --postgres postgres://bullmq:bullmq@localhost:5432/bullmq
+  worker-manager --keycloak-url https://sso.example.com --keycloak-realm ops \\
     --keycloak-client-id board --keycloak-client-secret $SECRET \\
     --keycloak-roles wm-admin --public-url https://ops.example.com
 `;

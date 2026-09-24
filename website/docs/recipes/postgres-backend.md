@@ -9,7 +9,7 @@ Install `pg` alongside BullMQ v6, then pass `createPostgresBackend` as the third
 ```js
 const express = require('express');
 const { Queue, createPostgresBackend } = require('bullmq');
-const { createBullBoard } = require('@worker-manager/api');
+const { createWorkerManagerBoard } = require('@worker-manager/api');
 const { BullMQAdapter } = require('@worker-manager/api/bullMQAdapter');
 const { ExpressAdapter } = require('@worker-manager/express');
 
@@ -20,7 +20,7 @@ const emails = new Queue('emails', { connection }, createPostgresBackend);
 const serverAdapter = new ExpressAdapter();
 serverAdapter.setBasePath('/admin/queues');
 
-createBullBoard({
+createWorkerManagerBoard({
   queues: [new BullMQAdapter(emails)],
   serverAdapter,
 });
@@ -81,7 +81,7 @@ Memory usage, peak memory, fragmentation ratio and replication mode are left out
 A single board can hold Redis-backed and Postgres-backed queues at once. Each queue answers for itself:
 
 ```js
-createBullBoard({
+createWorkerManagerBoard({
   queues: [
     new BullMQAdapter(new Queue('emails', { connection: pgConnection }, createPostgresBackend)),
     new BullMQAdapter(new Queue('reports', { connection: { host: 'localhost', port: 6379 } })),
@@ -107,7 +107,7 @@ const store = new PostgresMetricsStore({ connection, schema: 'bullmq', migrate: 
 const recorder = new MetricsRecorder({ queues: [new BullMQAdapter(emails)], store });
 recorder.start();
 
-createBullBoard({
+createWorkerManagerBoard({
   queues: [new BullMQAdapter(emails)],
   serverAdapter,
   options: {
@@ -117,4 +117,4 @@ createBullBoard({
 });
 ```
 
-The tables are prefixed `bull_board_metrics_` and sit next to BullMQ's in the same schema here; see [PostgreSQL storage](/recipes/historical-metrics#postgresql-storage) for the schema, migrations and sizing. With the CLI, `--postgres ... --history` does the same with no code.
+The tables are prefixed `worker_manager_metrics_` and sit next to BullMQ's in the same schema here; see [PostgreSQL storage](/recipes/historical-metrics#postgresql-storage) for the schema, migrations and sizing. With the CLI, `--postgres ... --history` does the same with no code.

@@ -3,7 +3,7 @@ import { normalize, resolve } from 'node:path';
 import type {
   AppControllerRoute,
   AppViewRoute,
-  BullBoardQueues,
+  WorkerManagerQueues,
   ControllerHandlerReturnType,
   HTTPMethod,
   IServerAdapter,
@@ -30,7 +30,7 @@ export class H3Adapter implements IServerAdapter {
   private entryRoute: AppViewRoute | undefined;
   private statics: { path: string; route: string } | undefined;
   private errorHandler: ((error: Error) => ControllerHandlerReturnType) | undefined;
-  private bullBoardQueues: BullBoardQueues | undefined;
+  private workerManagerQueues: WorkerManagerQueues | undefined;
   private viewPath: string | undefined;
   private uiConfig: UIConfig = {};
 
@@ -75,8 +75,8 @@ export class H3Adapter implements IServerAdapter {
     return this;
   }
 
-  public setQueues(bullBoardQueues: BullBoardQueues): H3Adapter {
-    this.bullBoardQueues = bullBoardQueues;
+  public setQueues(workerManagerQueues: WorkerManagerQueues): H3Adapter {
+    this.workerManagerQueues = workerManagerQueues;
     return this;
   }
 
@@ -173,9 +173,9 @@ export class H3Adapter implements IServerAdapter {
     method: HTTPMethod,
     handler: AppControllerRoute['handler']
   ) {
-    const { bullBoardQueues } = this;
+    const { workerManagerQueues } = this;
 
-    if (!bullBoardQueues) {
+    if (!workerManagerQueues) {
       throw new Error(`Please call 'setQueues' before using 'registerHandlers'`);
     }
 
@@ -187,7 +187,7 @@ export class H3Adapter implements IServerAdapter {
         eventHandler(async (event) => {
           try {
             const { body, status } = await handler({
-              queues: this.bullBoardQueues as BullBoardQueues,
+              queues: this.workerManagerQueues as WorkerManagerQueues,
               uiConfig: this.uiConfig || {},
               params: getRouterParams(event, { decode: true }),
               query: getQuery(event),

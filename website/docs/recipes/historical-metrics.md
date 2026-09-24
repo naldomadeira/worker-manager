@@ -6,7 +6,7 @@
 
 Worker Manager is a viewer, not a monitor, and its built-in throughput chart reflects that: it reads BullMQ's native `queue.getMetrics()`, a per-minute ring buffer capped at `maxDataPoints`, scoped to a single queue, and only as deep as that buffer's window. Restart the buffer's window, or just wait long enough, and the older points are gone. There's no long history and no cross-queue total, because BullMQ was never asked to keep one.
 
-`@worker-manager/metrics` is an opt-in companion package that fills that gap. It doesn't replace the live chart, it adds a second, longer-retention path behind it: a recorder that snapshots the native metrics into Redis (or [PostgreSQL](#postgresql-storage)) before they roll off, and a history provider you register with `createBullBoard` that lets the UI read them back.
+`@worker-manager/metrics` is an opt-in companion package that fills that gap. It doesn't replace the live chart, it adds a second, longer-retention path behind it: a recorder that snapshots the native metrics into Redis (or [PostgreSQL](#postgresql-storage)) before they roll off, and a history provider you register with `createWorkerManagerBoard` that lets the UI read them back.
 
 ## How it fits together
 
@@ -14,11 +14,11 @@ Two pieces, living in two different places.
 
 `MetricsRecorder` runs in your own always-on process, typically wherever your workers already live. On an interval, it reads each queue's native completed/failed per-minute metrics and writes them into long-retention Redis buckets: a daily rollup per queue, plus a cross-queue global rollup. Writes are idempotent by minute, so it's safe to run the recorder in several processes, or restart it, without double-counting. There's no singleton to coordinate and no leader election.
 
-`RedisMetricsHistoryProvider` runs wherever you build the board. You pass it to `createBullBoard({ options: { historyProvider } })`. The core itself only defines the `MetricsHistoryProvider` interface and stays stateless: registering a provider just turns on one additional read endpoint that delegates to it. `@worker-manager/metrics` is the batteries-included implementation, with Redis and PostgreSQL storage, but if you already have a metrics store of your own, you can implement the interface directly instead of adopting this package. With no provider configured, nothing about the board changes.
+`RedisMetricsHistoryProvider` runs wherever you build the board. You pass it to `createWorkerManagerBoard({ options: { historyProvider } })`. The core itself only defines the `MetricsHistoryProvider` interface and stays stateless: registering a provider just turns on one additional read endpoint that delegates to it. `@worker-manager/metrics` is the batteries-included implementation, with Redis and PostgreSQL storage, but if you already have a metrics store of your own, you can implement the interface directly instead of adopting this package. With no provider configured, nothing about the board changes.
 
 ## Without an app: the CLI and the Docker image
 
-If you aren't embedding bull-board in an app at all, the [standalone CLI](/guide/cli) and the [Docker image](/guide/docker) do both halves for you. `@worker-manager/metrics` ships as part of `@worker-manager/cli`, and `--history` registers the provider and starts a recorder in the same process:
+If you aren't embedding Worker Manager in an app at all, the [standalone CLI](/guide/cli) and the [Docker image](/guide/docker) do both halves for you. `@worker-manager/metrics` ships as part of `@worker-manager/cli`, and `--history` registers the provider and starts a recorder in the same process:
 
 ```sh
 npx @worker-manager/cli --redis redis://localhost:6379 --history
@@ -26,7 +26,7 @@ docker run --rm -p 127.0.0.1:3000:3000 ghcr.io/naldomadeira/worker-manager \
   --redis redis://redis:6379 --history
 ```
 
-On a PostgreSQL-only board (`--postgres` with no Redis) the history goes into [PostgreSQL](#postgresql-storage), in `bull_board_metrics_*` tables in the BullMQ schema, created on start unless the board is `--read-only`.
+On a PostgreSQL-only board (`--postgres` with no Redis) the history goes into [PostgreSQL](#postgresql-storage), in `worker_manager_metrics_*` tables in the BullMQ schema, created on start unless the board is `--read-only`.
 
 The flag turns on `showMetrics` as well, so the range selector appears on queue pages and not only on the Metrics history page. `--history-retention-days` sets the window; per-tier retention, the snapshot interval and `latency: false` go in the CLI's config file under a `history` key. `--read-only` keeps the provider and drops the recorder, which is what you want when your workers already record and the CLI is only there to read.
 
@@ -75,7 +75,7 @@ const recorder = new MetricsRecorder({ queues, store, retentionDays: 90 });
 recorder.start();
 
 // Where you build the board:
-createBullBoard({
+createWorkerManagerBoard({
   queues,
   serverAdapter,
   options: {
@@ -93,14 +93,18 @@ await store.close(); // ends the pool only if the store created it
 
 ### Tables and migrations
 
-Four tables in `schema`, each named with `tablePrefix` (default `bull_board_metrics_`), which is also how two boards share one database:
+Four tables in `schema`, each named with `tablePrefix` (default `worker_manager_metrics_`), which is also how two boards share one database:
+
+::: tip Upgrading from 1.x
+The default was `bull_board_metrics_` before v2.0, and the tables are not renamed for you. Pass `tablePrefix: 'bull_board_metrics_'` to keep the history a 1.x board recorded.
+:::
 
 | Table | Holds |
 | --- | --- |
-| `bull_board_metrics_counters` | completed/failed sums per minute, hour and day, and the queue-age max per hour and day |
-| `bull_board_metrics_histograms` | runtime and waittime bucket counts per hour and day |
-| `bull_board_metrics_sampler_state` | each queue's sampling lease and watermark |
-| `bull_board_metrics_meta` | the schema version |
+| `worker_manager_metrics_counters` | completed/failed sums per minute, hour and day, and the queue-age max per hour and day |
+| `worker_manager_metrics_histograms` | runtime and waittime bucket counts per hour and day |
+| `worker_manager_metrics_sampler_state` | each queue's sampling lease and watermark |
+| `worker_manager_metrics_meta` | the schema version |
 
 Rows are keyed by `(queue, metric, tier, bucket)`, where `bucket` is a UTC minute, hour or day index and `__global__` is the cross-queue rollup.
 
@@ -190,13 +194,17 @@ const recorder = new MetricsRecorder({
 });
 ```
 
-Retention is enforced by Redis itself, so old buckets expire on their own and there's nothing to prune by hand. Buckets are UTC-aligned, and every key the recorder writes is namespaced under `bull-board:metrics:`, so it can't collide with BullMQ's own keys. Pass `prefix` to move that namespace, which is what separates two boards sharing one Redis:
+Retention is enforced by Redis itself, so old buckets expire on their own and there's nothing to prune by hand. Buckets are UTC-aligned, and every key the recorder writes is namespaced under `worker-manager:metrics:`, so it can't collide with BullMQ's own keys. Pass `prefix` to move that namespace, which is what separates two boards sharing one Redis:
 
 ```ts
 const recorder = new MetricsRecorder({ queues, connection, prefix: 'staging:metrics' });
 ```
 
 Give the provider and any `MetricsHistoryAdmin` the same prefix. A provider pointed at a namespace nothing writes to reports empty history rather than an error, so a mismatch looks like a board that never recorded anything.
+
+::: tip Upgrading from 1.x
+The default namespace was `bull-board:metrics` (`{bull-board:metrics}` on a cluster) before v2.0, and nothing is migrated. Pass `prefix: 'bull-board:metrics'` to the recorder, the provider and any `MetricsHistoryAdmin` to keep the history a 1.x board recorded.
+:::
 
 On shutdown, call `recorder.stop()`. It clears the snapshot interval and, if the recorder created its own Redis connection internally, closes it too. If you passed in your own `Redis` instance, `stop()` leaves that connection alone, so it's a safe no-op to call either way.
 
@@ -346,10 +354,10 @@ Call `admin.disconnect()` when you're done. Like the recorder and the provider, 
 Where you build the board. The per-queue chart on each queue page needs `showMetrics: true` in `uiConfig` as well (see [UIConfig](/configuration/ui-config)); the dedicated "Metrics history" page below doesn't need it, but you'll usually want both:
 
 ```ts
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import { RedisMetricsHistoryProvider } from '@worker-manager/metrics';
 
-createBullBoard({
+createWorkerManagerBoard({
   queues,
   serverAdapter,
   options: {
@@ -369,7 +377,7 @@ With `showMetrics: true`, each queue's metrics chart gains a range selector: 60m
 
 ![Queue metrics chart with the 60m / 7d / 30d / 90d range selector](/screenshots/historical-metrics-range.png)
 
-A "Metrics history" page also appears in the sidebar, independent of `showMetrics`. It's a cross-queue view, the closest thing bull-board has to a wallboard: total completed/failed throughput across every registered queue, over the same range selector, plus a per-queue breakdown table underneath, sorted by total runs.
+A "Metrics history" page also appears in the sidebar, independent of `showMetrics`. It's a cross-queue view, the closest thing Worker Manager has to a wallboard: total completed/failed throughput across every registered queue, over the same range selector, plus a per-queue breakdown table underneath, sorted by total runs.
 
 Each row in that table carries a bar scaled against the busiest queue and split into a completed and a failed segment. Bar length compares volume between queues, the split compares outcomes inside one queue, and hovering a bar gives the exact counts. A queue that only fails a fraction of a percent of its runs would otherwise draw a segment too thin to see, so a non-zero segment never shrinks below 1% of the track. The failure rate is spelled out next to the failed count.
 
@@ -383,10 +391,10 @@ Hand `connection` a `Cluster` and the recorder, the provider and the admin all w
 
 Each snapshot writes a queue's three tiers and the three `__global__` rollup tiers in one `EVAL`. That single script is what makes the write idempotent at every resolution at once: it computes the delta against the minute already stored and applies it everywhere, so a restart or a second recorder re-snapshotting the same window adds nothing. Redis Cluster rejects a multi-key command whose keys fall in different slots, so those six keys have to share one.
 
-The namespace therefore carries a [hash tag](https://redis.io/docs/latest/operate/oss_and_stack/reference/cluster-spec/#hash-tags) whenever the connection is a cluster: `bull-board:metrics` is written as `{bull-board:metrics}`, and a `prefix` of your own is wrapped the same way unless it already contains a `{...}` tag, in which case yours is used as given and picks the slot.
+The namespace therefore carries a [hash tag](https://redis.io/docs/latest/operate/oss_and_stack/reference/cluster-spec/#hash-tags) whenever the connection is a cluster: `worker-manager:metrics` is written as `{worker-manager:metrics}`, and a `prefix` of your own is wrapped the same way unless it already contains a `{...}` tag, in which case yours is used as given and picks the slot.
 
 ```ts
-new MetricsRecorder({ queues, connection: cluster });                          // {bull-board:metrics}
+new MetricsRecorder({ queues, connection: cluster });                          // {worker-manager:metrics}
 new MetricsRecorder({ queues, connection: cluster, prefix: 'staging' });       // {staging}
 new MetricsRecorder({ queues, connection: cluster, prefix: '{eu}:metrics' });  // {eu}:metrics
 ```

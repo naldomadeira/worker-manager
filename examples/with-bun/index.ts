@@ -1,4 +1,4 @@
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 import { BunAdapter } from '@worker-manager/bun';
 import { Queue as QueueMQ, Worker } from 'bullmq';
@@ -38,13 +38,13 @@ setupBullMQProcessor(exampleBullMq.name);
 const serverAdapter = new BunAdapter();
 serverAdapter.setBasePath('/ui');
 
-createBullBoard({
+createWorkerManagerBoard({
   queues: [new BullMQAdapter(exampleBullMq)],
   serverAdapter,
 });
 
-// Get bull-board routes
-const bullBoardRoutes = serverAdapter.getRoutes();
+// Get Worker Manager routes
+const workerManagerRoutes = serverAdapter.getRoutes();
 
 // Start Bun server with routes
 Bun.serve({
@@ -63,8 +63,8 @@ Bun.serve({
         return Response.json({ ok: true });
       },
     },
-    // Spread bull-board routes
-    ...bullBoardRoutes,
+    // Spread Worker Manager routes
+    ...workerManagerRoutes,
   },
 });
 

@@ -1,7 +1,7 @@
 {
-  "name": "bull-board-with-fastify-visibility-guard",
-  "version": "1.2.0",
-  "description": "Example of how to use Fastify server with bull-board with visibility guards",
+  "name": "worker-manager-with-fastify-visibility-guard",
+  "version": "2.0.0",
+  "description": "Example of how to use Fastify server with Worker Manager with visibility guards",
   "main": "index.js",
   "scripts": {
     "start": "nodemon index.js",
@@ -10,8 +10,8 @@
   "author": "naldomadeira",
   "license": "ISC",
   "dependencies": {
-    "@worker-manager/api": "^1.2.0",
-    "@worker-manager/fastify": "^1.2.0",
+    "@worker-manager/api": "^2.0.0",
+    "@worker-manager/fastify": "^2.0.0",
     "@fastify/cookie": "^11.1.2",
     "@fastify/jwt": "^10.2.0",
     "@fastify/view": "^12.0.0",

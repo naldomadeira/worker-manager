@@ -1,4 +1,4 @@
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 import { ExpressAdapter } from '@worker-manager/express';
 import { Queue, Worker } from 'bullmq';
@@ -68,7 +68,7 @@ describe('Obliterate Queue', () => {
 
   it('should successfully obliterate a paused queue', async () => {
     // Create board with queue
-    createBullBoard({
+    createWorkerManagerBoard({
       queues: [new BullMQAdapter(testQueue)],
       serverAdapter,
     });
@@ -101,7 +101,7 @@ describe('Obliterate Queue', () => {
 
   it('should return 400 when trying to obliterate a running queue', async () => {
     // Create board with queue
-    createBullBoard({
+    createWorkerManagerBoard({
       queues: [new BullMQAdapter(testQueue)],
       serverAdapter,
     });
@@ -131,7 +131,7 @@ describe('Obliterate Queue', () => {
 
   it('should return 405 when trying to obliterate in read-only mode', async () => {
     // Create board with queue in read-only mode
-    createBullBoard({
+    createWorkerManagerBoard({
       queues: [new BullMQAdapter(testQueue, { readOnlyMode: true })],
       serverAdapter,
     });
@@ -156,7 +156,7 @@ describe('Obliterate Queue', () => {
 
   it('should return 404 when trying to obliterate a non-existent queue', async () => {
     // Create board with a different queue
-    createBullBoard({
+    createWorkerManagerBoard({
       queues: [new BullMQAdapter(testQueue)],
       serverAdapter,
     });
@@ -169,7 +169,7 @@ describe('Obliterate Queue', () => {
 
   it('should obliterate queue with delayed jobs', async () => {
     // Create board with queue
-    createBullBoard({
+    createWorkerManagerBoard({
       queues: [new BullMQAdapter(testQueue)],
       serverAdapter,
     });
@@ -196,7 +196,7 @@ describe('Obliterate Queue', () => {
   });
 
   it('should report a conflict when the queue still has active jobs', async () => {
-    createBullBoard({
+    createWorkerManagerBoard({
       queues: [new BullMQAdapter(testQueue)],
       serverAdapter,
     });
@@ -222,7 +222,7 @@ describe('Obliterate Queue', () => {
   });
 
   it('should obliterate a queue with active jobs when force is passed', async () => {
-    createBullBoard({
+    createWorkerManagerBoard({
       queues: [new BullMQAdapter(testQueue)],
       serverAdapter,
     });
@@ -245,7 +245,7 @@ describe('Obliterate Queue', () => {
 
   it('should obliterate queue with completed jobs', async () => {
     // Create board with queue
-    createBullBoard({
+    createWorkerManagerBoard({
       queues: [new BullMQAdapter(testQueue)],
       serverAdapter,
     });

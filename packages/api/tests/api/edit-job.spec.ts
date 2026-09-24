@@ -1,4 +1,4 @@
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import { BullAdapter } from '@worker-manager/api/bullAdapter';
 import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 import { ExpressAdapter } from '@worker-manager/express';
@@ -19,7 +19,7 @@ describe('edit a job', () => {
     queue = new Queue('EditJobQueue', { connection });
     await queue.obliterate({ force: true }).catch(() => {});
     serverAdapter = new ExpressAdapter();
-    createBullBoard({ queues: [new BullMQAdapter(queue)], serverAdapter });
+    createWorkerManagerBoard({ queues: [new BullMQAdapter(queue)], serverAdapter });
   });
 
   afterEach(async () => {
@@ -145,7 +145,10 @@ describe('edit a job', () => {
   it('tells a Bull caller the edit is unsupported', async () => {
     const bullQueue = new Bull('EditJobBullQueue', { redis: connection });
     const bullServerAdapter = new ExpressAdapter();
-    createBullBoard({ queues: [new BullAdapter(bullQueue)], serverAdapter: bullServerAdapter });
+    createWorkerManagerBoard({
+      queues: [new BullAdapter(bullQueue)],
+      serverAdapter: bullServerAdapter,
+    });
 
     const job = await bullQueue.add({}, { delay: 60 * 60 * 1000 });
 

@@ -230,7 +230,7 @@ jobs:
         with:
           context: .
           load: true
-          tags: bull-board:ci
+          tags: worker-manager:ci
 
       - name: Run the CLI from the image
-        run: docker run --rm bull-board:ci --version
+        run: docker run --rm worker-manager:ci --version

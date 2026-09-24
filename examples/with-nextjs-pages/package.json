@@ -1,8 +1,8 @@
 {
-  "name": "bull-board-nextjs-pages-example",
-  "version": "1.2.0",
+  "name": "worker-manager-nextjs-pages-example",
+  "version": "2.0.0",
   "private": true,
-  "description": "Example of how to install bull-board in a Next.js Pages Router project (deployable to Vercel)",
+  "description": "Example of how to install Worker Manager in a Next.js Pages Router project (deployable to Vercel)",
   "author": "naldomadeira",
   "license": "ISC",
   "scripts": {
@@ -12,8 +12,8 @@
     "worker": "tsx watch worker.ts"
   },
   "dependencies": {
-    "@worker-manager/api": "^1.2.0",
-    "@worker-manager/express": "^1.2.0",
+    "@worker-manager/api": "^2.0.0",
+    "@worker-manager/express": "^2.0.0",
     "bullmq": "^5.56.4",
     "express": "^5.2.0",
     "next": "^15.0.0",

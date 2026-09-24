@@ -1,8 +1,8 @@
 # Contributing to Worker Manager
 
-Thanks for your interest in improving bull-board! Issues and pull requests are welcome.
+Thanks for your interest in improving Worker Manager! Issues and pull requests are welcome.
 
-Before opening a new issue, please check the [issues page](https://github.com/naldomadeira/worker-manager/issues). When reporting a bug, include versions (Node, Redis, Bull/BullMQ, bull-board) and a minimal reproduction.
+Before opening a new issue, please check the [issues page](https://github.com/naldomadeira/worker-manager/issues). When reporting a bug, include versions (Node, Redis, Bull/BullMQ, Worker Manager) and a minimal reproduction.
 
 ## Monorepo layout
 
@@ -13,7 +13,7 @@ Worker Manager is a Yarn 4 workspaces monorepo. The packages live under `package
 | `api` | Core library — BullMQ/Bull adapters, queue handlers, server-adapter base |
 | `ui` | React UI, built to `dist/` |
 | `express`, `fastify`, `hono`, `koa`, `h3`, `hapi`, `nestjs`, `elysia`, `bun` | Server adapters |
-| `cli` | Standalone `bull-board` executable, also what the Docker image installs |
+| `cli` | Standalone `worker-manager` executable, also what the Docker image installs |
 | `metrics` | Opt-in Redis-backed metrics recorder behind the core's `historyProvider` seam |
 | `test-utils` | Private (unpublished) test kit powering the adapter contract tests |
 
@@ -29,7 +29,7 @@ Standalone runnable examples live under `examples/*`, and the documentation site
 
 ```sh
 git clone git@github.com:naldomadeira/worker-manager.git
-cd bull-board
+cd worker-manager
 yarn                # install dependencies
 yarn dev:docker     # start Redis (docker-compose.redis.yml)
 yarn build          # build all publishable packages

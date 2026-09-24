@@ -68,8 +68,8 @@ export function resolveConfig({
     Partial<QueueAdapterOptions>
   >;
 
-  const user = firstDefined(flags.user, env.BULL_BOARD_USER, file.user);
-  const password = firstDefined(flags.password, env.BULL_BOARD_PASSWORD, file.password);
+  const user = firstDefined(flags.user, env.WORKER_MANAGER_USER, file.user);
+  const password = firstDefined(flags.password, env.WORKER_MANAGER_PASSWORD, file.password);
   if (Boolean(user) !== Boolean(password)) {
     throw new Error('Basic auth needs both --user and --password (or neither).');
   }
@@ -80,13 +80,13 @@ export function resolveConfig({
   }
 
   const uiConfig = { ...file.uiConfig };
-  const boardTitle = firstDefined(flags['board-title'], env.BULL_BOARD_BOARD_TITLE);
+  const boardTitle = firstDefined(flags['board-title'], env.WORKER_MANAGER_BOARD_TITLE);
   if (boardTitle) {
     uiConfig.boardTitle = boardTitle;
   }
 
   const readOnly =
-    flags['read-only'] ?? toBoolean(env.BULL_BOARD_READ_ONLY) ?? file.readOnly ?? false;
+    flags['read-only'] ?? toBoolean(env.WORKER_MANAGER_READ_ONLY) ?? file.readOnly ?? false;
   const history = resolveHistory({ flags, env, file, readOnly });
   if (history) {
     // Without showMetrics the per-queue chart never renders, so nor does its range selector.
@@ -97,36 +97,37 @@ export function resolveConfig({
     connection: resolveConnection({ flags, env, file }),
     port:
       toNumber(flags.port, 'port') ??
-      toNumber(env.BULL_BOARD_PORT, 'port') ??
+      toNumber(env.WORKER_MANAGER_PORT, 'port') ??
       toNumber(file.port, 'port') ??
       DEFAULTS.port,
-    host: firstDefined(flags.host, env.BULL_BOARD_HOST, file.host) ?? DEFAULTS.host,
+    host: firstDefined(flags.host, env.WORKER_MANAGER_HOST, file.host) ?? DEFAULTS.host,
     prefixes:
       toList(flags.prefix) ??
-      toList(env.BULL_BOARD_PREFIX) ??
+      toList(env.WORKER_MANAGER_PREFIX) ??
       toList(file.prefix) ??
       DEFAULTS.prefixes,
     queueNames:
-      toList(flags.queues) ?? toList(env.BULL_BOARD_QUEUES) ?? toList(explicitQueues) ?? null,
+      toList(flags.queues) ?? toList(env.WORKER_MANAGER_QUEUES) ?? toList(explicitQueues) ?? null,
     scanInterval:
       toNumber(flags['scan-interval'], 'scan-interval') ??
-      toNumber(env.BULL_BOARD_SCAN_INTERVAL, 'scan-interval') ??
+      toNumber(env.WORKER_MANAGER_SCAN_INTERVAL, 'scan-interval') ??
       toNumber(file.scanInterval, 'scan-interval') ??
       DEFAULTS.scanInterval,
     basePath:
       normalizeBasePath(flags['base-path']) ??
-      normalizeBasePath(env.BULL_BOARD_BASE_PATH) ??
+      normalizeBasePath(env.WORKER_MANAGER_BASE_PATH) ??
       normalizeBasePath(file.basePath) ??
       '',
     readOnly,
     auth: user && password ? { user, password } : null,
     keycloak,
     postgres: resolvePostgres({ flags, env, file }),
-    open: flags['no-open'] === true ? false : (toBoolean(env.BULL_BOARD_OPEN) ?? file.open ?? true),
-    browser: firstDefined(flags.browser, env.BULL_BOARD_BROWSER, env.BROWSER, file.browser),
+    open:
+      flags['no-open'] === true ? false : (toBoolean(env.WORKER_MANAGER_OPEN) ?? file.open ?? true),
+    browser: firstDefined(flags.browser, env.WORKER_MANAGER_BROWSER, env.BROWSER, file.browser),
     uiConfig,
     queueOptions,
-    noRetry: flags['no-retry'] ?? toBoolean(env.BULL_BOARD_NO_RETRY) ?? file.noRetry ?? false,
+    noRetry: flags['no-retry'] ?? toBoolean(env.WORKER_MANAGER_NO_RETRY) ?? file.noRetry ?? false,
     history,
   };
 }
@@ -145,7 +146,7 @@ function resolveHistory({
   const fileHistory: FileHistoryConfig =
     typeof file.history === 'boolean' ? { enabled: file.history } : (file.history ?? {});
   const enabled =
-    flags.history ?? toBoolean(env.BULL_BOARD_HISTORY) ?? fileHistory.enabled ?? false;
+    flags.history ?? toBoolean(env.WORKER_MANAGER_HISTORY) ?? fileHistory.enabled ?? false;
   if (!enabled) return null;
 
   return {
@@ -155,7 +156,7 @@ function resolveHistory({
     prefix: fileHistory.prefix,
     retentionDays:
       toNumber(flags['history-retention-days'], 'history-retention-days') ??
-      toNumber(env.BULL_BOARD_HISTORY_RETENTION_DAYS, 'history-retention-days') ??
+      toNumber(env.WORKER_MANAGER_HISTORY_RETENTION_DAYS, 'history-retention-days') ??
       toNumber(fileHistory.retentionDays, 'history-retention-days'),
     retention: fileHistory.retention,
     latency: fileHistory.latency ?? true,
@@ -173,17 +174,17 @@ function resolveKeycloak({
   file: FileConfig;
 }): KeycloakAuthOptions | null {
   const fromFile = file.keycloak;
-  const url = firstDefined(flags['keycloak-url'], env.BULL_BOARD_KEYCLOAK_URL, fromFile?.url);
+  const url = firstDefined(flags['keycloak-url'], env.WORKER_MANAGER_KEYCLOAK_URL, fromFile?.url);
   if (!url) return null;
 
   const realm = firstDefined(
     flags['keycloak-realm'],
-    env.BULL_BOARD_KEYCLOAK_REALM,
+    env.WORKER_MANAGER_KEYCLOAK_REALM,
     fromFile?.realm
   );
   const clientId = firstDefined(
     flags['keycloak-client-id'],
-    env.BULL_BOARD_KEYCLOAK_CLIENT_ID,
+    env.WORKER_MANAGER_KEYCLOAK_CLIENT_ID,
     fromFile?.clientId
   );
   if (!realm || !clientId) {
@@ -194,25 +195,25 @@ function resolveKeycloak({
 
   const clientSecret = firstDefined(
     flags['keycloak-client-secret'],
-    env.BULL_BOARD_KEYCLOAK_CLIENT_SECRET,
+    env.WORKER_MANAGER_KEYCLOAK_CLIENT_SECRET,
     fromFile?.clientSecret
   );
   const roles =
     toList(flags['keycloak-roles']) ??
-    toList(env.BULL_BOARD_KEYCLOAK_ROLES) ??
+    toList(env.WORKER_MANAGER_KEYCLOAK_ROLES) ??
     toList(fromFile?.requiredRoles);
   const bearerOnly =
     flags['keycloak-bearer-only'] ??
-    toBoolean(env.BULL_BOARD_KEYCLOAK_BEARER_ONLY) ??
+    toBoolean(env.WORKER_MANAGER_KEYCLOAK_BEARER_ONLY) ??
     fromFile?.bearerOnly;
   const publicUrl = firstDefined(
     flags['public-url'],
-    env.BULL_BOARD_PUBLIC_URL,
+    env.WORKER_MANAGER_PUBLIC_URL,
     fromFile?.publicUrl
   );
   const sessionSecret = firstDefined(
     flags['session-secret'],
-    env.BULL_BOARD_SESSION_SECRET,
+    env.WORKER_MANAGER_SESSION_SECRET,
     fromFile?.cookie?.secret
   );
 
@@ -236,9 +237,9 @@ function hasExplicitRedis(flags: FlagValues, env: NodeJS.ProcessEnv, file: FileC
       flags.redis,
       flags.sentinel,
       flags.cluster,
-      env.BULL_BOARD_REDIS_URL,
-      env.BULL_BOARD_SENTINELS,
-      env.BULL_BOARD_CLUSTER_NODES
+      env.WORKER_MANAGER_REDIS_URL,
+      env.WORKER_MANAGER_SENTINELS,
+      env.WORKER_MANAGER_CLUSTER_NODES
     ) !== undefined || file.redis !== undefined
   );
 }
@@ -252,14 +253,14 @@ function resolvePostgres({
   env: NodeJS.ProcessEnv;
   file: FileConfig;
 }): PostgresConfig | null {
-  const url = firstDefined(flags.postgres, env.BULL_BOARD_POSTGRES_URL);
+  const url = firstDefined(flags.postgres, env.WORKER_MANAGER_POSTGRES_URL);
   const fromFile = url ? undefined : file.postgres;
   if (!url && !fromFile) return null;
 
   const schema =
     firstDefined(
       flags['postgres-schema'],
-      env.BULL_BOARD_POSTGRES_SCHEMA,
+      env.WORKER_MANAGER_POSTGRES_SCHEMA,
       typeof fromFile === 'object' ? fromFile.schema : undefined
     ) ?? 'bullmq';
   if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(schema)) {

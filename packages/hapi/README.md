@@ -1,6 +1,6 @@
 # <img alt="Worker Manager" src="https://raw.githubusercontent.com/naldomadeira/worker-manager/main/packages/ui/src/static/images/logo.svg" width="35px" /> @worker-manager/hapi 
 
-[Hapi.js](https://hapi.dev/) server adapter for `bull-board`.
+[Hapi.js](https://hapi.dev/) server adapter for Worker Manager.
 
 <p align="center">
   <a href="https://www.npmjs.com/package/@worker-manager/hapi">

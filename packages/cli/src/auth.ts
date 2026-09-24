@@ -9,7 +9,7 @@ import type { CliConfig } from './config/types';
 export function basicAuth({ user, password }: { user: string; password: string }): RequestHandler {
   return createAuthMiddleware({
     strategy: 'basic',
-    realm: 'bull-board',
+    realm: 'worker-manager',
     users: [{ username: user, password }],
   }) as unknown as RequestHandler;
 }
@@ -23,7 +23,7 @@ export function createCliAuth(config: CliConfig): AuthMiddleware | null {
     return createAuthMiddleware(
       {
         strategy: 'basic',
-        realm: 'bull-board',
+        realm: 'worker-manager',
         users: [{ username: config.auth.user, password: config.auth.password }],
       },
       { basePath: config.basePath }

@@ -1,12 +1,12 @@
-# bull-board with NestJS on Fastify, behind a login
+# Worker Manager with NestJS on Fastify, behind a login
 
-A NestJS app on the Fastify platform that mounts bull-board at `/queues` and puts a
+A NestJS app on the Fastify platform that mounts Worker Manager at `/queues` and puts a
 `@fastify/secure-session` login in front of it. Unauthenticated requests to `/queues` redirect
 to `/login`.
 
 ```bash
 pnpm install
-BULLBOARD_SESSION_SECRET=<32 characters or more> pnpm start
+WORKER_MANAGER_SESSION_SECRET=<32 characters or more> pnpm start
 ```
 
 Then open `http://localhost:3000/queues`. Redis is expected on `localhost:6379`.

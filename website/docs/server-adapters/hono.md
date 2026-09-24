@@ -11,7 +11,7 @@ npm install @worker-manager/api @worker-manager/hono @hono/node-server
 `@hono/node-server` is only for Node.js. On Bun, Deno, or Workers bring your own serve function, see the [Hono docs](https://hono.dev/docs/getting-started/basic).
 
 ```ts
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 import { HonoAdapter } from '@worker-manager/hono';
 import { Queue } from 'bullmq';
@@ -27,7 +27,7 @@ const app = new Hono();
 
 const serverAdapter = new HonoAdapter(serveStatic);
 
-createBullBoard({
+createWorkerManagerBoard({
   queues: [new BullMQAdapter(queue)],
   serverAdapter,
 });

@@ -1,12 +1,12 @@
 const { FastifyAdapter } = require('@worker-manager/fastify');
-const { createBullBoard } = require('@worker-manager/api');
+const { createWorkerManagerBoard } = require('@worker-manager/api');
 const { BullMQAdapter } = require('@worker-manager/api/bullMQAdapter');
 const pointOfView = require('@fastify/view');
 const path = require('path');
 
 const users = [
-  { username: 'user1', password: 'bullboard', allowedQueues: ['BullMQ1'] },
-  { username: 'user2', password: 'bullboard', allowedQueues: ['BullMQ2'] },
+  { username: 'user1', password: 'workermanager', allowedQueues: ['BullMQ1'] },
+  { username: 'user2', password: 'workermanager', allowedQueues: ['BullMQ2'] },
 ];
 
 module.exports.cookieAuth = function cookieAuth(fastify, { queues }, next) {
@@ -42,7 +42,7 @@ module.exports.cookieAuth = function cookieAuth(fastify, { queues }, next) {
 
       return false;
     }
-    createBullBoard({
+    createWorkerManagerBoard({
       queues: queues.map((queue) => {
         const adapter = new BullMQAdapter(queue);
         adapter.setVisibilityGuard(visibilityGuard);

@@ -7,7 +7,7 @@ Formatters rewrite how a job's fields render in the dashboard without touching p
 ## Register a formatter
 
 ```ts
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 
 const adapter = new BullMQAdapter(emailQueue);
@@ -17,7 +17,7 @@ adapter.setFormatter('data', (data) => ({
   apiKey: data.apiKey ? '***' : undefined,
 }));
 
-createBullBoard({ queues: [adapter], serverAdapter });
+createWorkerManagerBoard({ queues: [adapter], serverAdapter });
 ```
 
 `setFormatter` is per queue adapter. Each queue has its own set, only the fields you register are transformed.

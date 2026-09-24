@@ -2,7 +2,7 @@ import type { GetMetricsHistoryQuery } from '../schemas/requests';
 import { GetMetricsHistoryResponse } from '../schemas/responses';
 import {
   AppControllerRoute,
-  BullBoardRequest,
+  WorkerManagerRequest,
   ControllerHandlerReturnType,
   MetricsHistoryMetric,
   MetricsHistoryPoint,
@@ -16,7 +16,7 @@ export function createMetricsHistoryHandler(
   provider: MetricsHistoryProvider
 ): AppControllerRoute<'GetMetricsHistoryResponse', GetMetricsHistoryQuery>['handler'] {
   return async function metricsHistoryHandler(
-    req?: BullBoardRequest<GetMetricsHistoryQuery>
+    req?: WorkerManagerRequest<GetMetricsHistoryQuery>
   ): Promise<ControllerHandlerReturnType<GetMetricsHistoryResponse>> {
     const { from, to, granularity, queue, metric } = req!.query;
     const metrics = metric ? [metric] : DEFAULT_METRICS;

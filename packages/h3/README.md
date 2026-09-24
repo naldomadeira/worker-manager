@@ -1,6 +1,6 @@
 # <img alt="Worker Manager" src="https://raw.githubusercontent.com/naldomadeira/worker-manager/main/packages/ui/src/static/images/logo.svg" width="35px" /> @worker-manager/h3
 
-[h3](https://github.com/unjs/h3) server adapter for `bull-board`.
+[h3](https://github.com/unjs/h3) server adapter for Worker Manager.
 
 <p align="center">
   <a href="https://www.npmjs.com/package/@worker-manager/h3">

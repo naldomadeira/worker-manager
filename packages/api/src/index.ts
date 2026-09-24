@@ -6,7 +6,7 @@ import { getQueuesApi } from './queuesApi';
 import { appRoutes, buildHistoryRoutes } from './routes';
 import { BoardOptions, IServerAdapter } from './types';
 
-export function createBullBoard({
+export function createWorkerManagerBoard({
   queues,
   serverAdapter,
   options = { uiConfig: {} },
@@ -15,7 +15,8 @@ export function createBullBoard({
   serverAdapter: IServerAdapter;
   options?: BoardOptions;
 }) {
-  const { bullBoardQueues, setQueues, replaceQueues, addQueue, removeQueue } = getQueuesApi(queues);
+  const { workerManagerQueues, setQueues, replaceQueues, addQueue, removeQueue } =
+    getQueuesApi(queues);
   const uiBasePath =
     // oxlint-disable-next-line no-eval
     options.uiBasePath || path.dirname(eval(`require.resolve('@worker-manager/ui/package.json')`));
@@ -49,7 +50,7 @@ export function createBullBoard({
   }));
 
   serverAdapter
-    .setQueues(bullBoardQueues)
+    .setQueues(workerManagerQueues)
     .setViewsPath(path.join(uiBasePath, 'dist'))
     .setStaticPath('/static', path.join(uiBasePath, 'dist/static'))
     .setUIConfig({

@@ -1,6 +1,6 @@
 {
   "name": "@worker-manager/fastify",
-  "version": "1.2.0",
+  "version": "2.0.0",
   "description": "A Fastify.js server adapter for the Worker Manager dashboard.",
   "keywords": [
     "bull",
@@ -31,12 +31,12 @@
   "dependencies": {
     "@fastify/static": "^10.1.3",
     "@fastify/view": "^12.0.0",
-    "@worker-manager/api": "1.2.0",
-    "@worker-manager/ui": "1.2.0",
+    "@worker-manager/api": "2.0.0",
+    "@worker-manager/ui": "2.0.0",
     "ejs": "^6.0.1"
   },
   "devDependencies": {
-    "@worker-manager/test-utils": "1.2.0",
+    "@worker-manager/test-utils": "2.0.0",
     "bullmq": "^5.81.3",
     "fastify": "^5.12.1",
     "jest": "^30.4.2",

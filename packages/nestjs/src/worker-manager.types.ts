@@ -4,7 +4,7 @@ import type {
   OptionalFactoryDependency,
   Type,
 } from '@nestjs/common';
-import { createBullBoard } from '@worker-manager/api';
+import { createWorkerManagerBoard } from '@worker-manager/api';
 import type { BaseAdapter } from '@worker-manager/api/baseAdapter';
 import type {
   BoardOptions,
@@ -16,9 +16,9 @@ import type { AuthOptions } from '@worker-manager/auth';
 
 export type { AuthOptions } from '@worker-manager/auth';
 
-export type BullBoardInstance = ReturnType<typeof createBullBoard>;
+export type WorkerManagerBoard = ReturnType<typeof createWorkerManagerBoard>;
 
-export type BullBoardModuleOptions = {
+export type WorkerManagerModuleOptions = {
   /**
    * Where the board is served, relative to the Nest global prefix. Defaults to `/queues`.
    */
@@ -28,7 +28,7 @@ export type BullBoardModuleOptions = {
    * `FastifyAdapter` from `@worker-manager/fastify`. When left out, the module picks the one
    * matching the Nest HTTP platform the application runs on.
    */
-  adapter?: { new (): BullBoardServerAdapter };
+  adapter?: { new (): WorkerManagerServerAdapter };
   boardOptions?: BoardOptions;
   /** Nest middleware applied to the board's routes, after `auth`. */
   middleware?: any;
@@ -45,7 +45,7 @@ export type BullBoardModuleOptions = {
    */
   readOnly?: boolean;
   /** Queues to register at the root, without a separate `forFeature` import. */
-  queues?: BullBoardQueueOptions[];
+  queues?: WorkerManagerQueueOptions[];
   /** Merged into `boardOptions.uiConfig` (these take precedence). */
   uiConfig?: UIConfig;
   /** Shortcut for `uiConfig.boardTitle`. */
@@ -56,26 +56,26 @@ export type BullBoardModuleOptions = {
   theme?: UIConfig['theme'];
 };
 
-export interface BullBoardOptionsFactory {
-  createBullBoardOptions(): BullBoardModuleOptions | Promise<BullBoardModuleOptions>;
+export interface WorkerManagerOptionsFactory {
+  createWorkerManagerOptions(): WorkerManagerModuleOptions | Promise<WorkerManagerModuleOptions>;
 }
 
-export type BullBoardModuleAsyncOptions = {
+export type WorkerManagerModuleAsyncOptions = {
   imports?: ModuleMetadata['imports'];
-  useFactory?: (...args: any[]) => BullBoardModuleOptions | Promise<BullBoardModuleOptions>;
+  useFactory?: (...args: any[]) => WorkerManagerModuleOptions | Promise<WorkerManagerModuleOptions>;
   inject?: Array<InjectionToken | OptionalFactoryDependency>;
-  /** A class implementing `BullBoardOptionsFactory`, instantiated by the module. */
-  useClass?: Type<BullBoardOptionsFactory>;
-  /** An existing provider implementing `BullBoardOptionsFactory`. */
+  /** A class implementing `WorkerManagerOptionsFactory`, instantiated by the module. */
+  useClass?: Type<WorkerManagerOptionsFactory>;
+  /** An existing provider implementing `WorkerManagerOptionsFactory`. */
   useExisting?: InjectionToken;
 };
 
-type BullBoardQueueCommonOptions = {
+type WorkerManagerQueueCommonOptions = {
   adapter: { new (queue: any, options?: Partial<QueueAdapterOptions>): BaseAdapter };
   options?: Partial<QueueAdapterOptions>;
 };
 
-export type BullBoardQueueOptions = BullBoardQueueCommonOptions &
+export type WorkerManagerQueueOptions = WorkerManagerQueueCommonOptions &
   (
     | {
         /**
@@ -99,6 +99,6 @@ export type BullBoardQueueOptions = BullBoardQueueCommonOptions &
   );
 
 //create our own types with the needed functions, so we don't need to include express/fastify libraries here.
-export type BullBoardServerAdapter = IServerAdapter & { setBasePath(path: string): any };
-export type BullBoardFastifyAdapter = BullBoardServerAdapter & { registerPlugin(): any };
-export type BullBoardExpressAdapter = BullBoardServerAdapter & { getRouter(): any };
+export type WorkerManagerServerAdapter = IServerAdapter & { setBasePath(path: string): any };
+export type WorkerManagerFastifyAdapter = WorkerManagerServerAdapter & { registerPlugin(): any };
+export type WorkerManagerExpressAdapter = WorkerManagerServerAdapter & { getRouter(): any };

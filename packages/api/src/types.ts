@@ -14,7 +14,7 @@ export type MetricsType = 'completed' | 'failed';
 export type HookContext = {
   method: HTTPMethod;
   route: string;
-  request: BullBoardRequest;
+  request: WorkerManagerRequest;
 };
 
 export type BeforeHookResult = {
@@ -153,7 +153,7 @@ export interface QueueAdapterOptions {
   jobDataSchema?: Record<string, any>;
 }
 
-export type BullBoardQueues = Map<string, BaseAdapter>;
+export type WorkerManagerQueues = Map<string, BaseAdapter>;
 
 export interface QueueJob {
   repeatJobKey?: string;
@@ -277,8 +277,8 @@ export type AppQueue = v.InferOutput<typeof schemas.appQueueSchema>;
 export type HTTPMethod = 'get' | 'post' | 'put' | 'patch';
 export type HTTPStatus = 200 | 204 | 400 | 403 | 404 | 405 | 409 | 500;
 
-export interface BullBoardRequest<TQuery = Record<string, any>, TBody = Record<string, any>> {
-  queues: BullBoardQueues;
+export interface WorkerManagerRequest<TQuery = Record<string, any>, TBody = Record<string, any>> {
+  queues: WorkerManagerQueues;
   uiConfig: UIConfig;
   query: TQuery;
   params: Record<string, any>;
@@ -337,7 +337,7 @@ export interface AppControllerRoute<
   spec: RouteSpec<TResponse>;
 
   handler(
-    request?: BullBoardRequest<TQuery, TBody>
+    request?: WorkerManagerRequest<TQuery, TBody>
   ): Promisify<ControllerHandlerReturnType<ResponseSchemas[TResponse]>>;
 }
 
@@ -354,7 +354,7 @@ export type AppRouteDefs = {
 };
 
 export interface IServerAdapter {
-  setQueues(bullBoardQueues: BullBoardQueues): IServerAdapter;
+  setQueues(workerManagerQueues: WorkerManagerQueues): IServerAdapter;
 
   setViewsPath(viewPath: string): IServerAdapter;
 
@@ -465,7 +465,7 @@ export type UIConfig = Partial<{
   boardTitle: string;
   boardLogo: { path: string; width?: number | string; height?: number | string };
   miscLinks: Array<IMiscLink>;
-  /** Hide the header Docs icon that links to the bull-board documentation site. Default: false (shown). */
+  /** Hide the header Docs icon that links to the Worker Manager documentation site. Default: false (shown). */
   hideDocsLink: boolean;
   queueSortOptions: Array<{ key: string; label: string }>;
   favIcon: FavIcon;
@@ -486,13 +486,13 @@ export type UIConfig = Partial<{
    * Set to false to drop the per-queue `CLIENT LIST` the board otherwise runs on every poll.
    */
   showWorkers?: boolean;
-  /** Set by createBullBoard when a historyProvider is configured. Enables the history range selector in the UI. */
+  /** Set by createWorkerManagerBoard when a historyProvider is configured. Enables the history range selector in the UI. */
   hasHistoryProvider?: boolean;
-  /** Set by createBullBoard when the provider reports storage usage. Enables the storage panel. */
+  /** Set by createWorkerManagerBoard when the provider reports storage usage. Enables the storage panel. */
   hasHistoryUsage?: boolean;
-  /** Set by createBullBoard when the provider can purge and the board is not read-only. */
+  /** Set by createWorkerManagerBoard when the provider can purge and the board is not read-only. */
   canPurgeHistory?: boolean;
-  /** Set by createBullBoard when the provider reports latency percentiles. Enables the latency chart. */
+  /** Set by createWorkerManagerBoard when the provider reports latency percentiles. Enables the latency chart. */
   hasLatencyHistory?: boolean;
   environment?: {
     label: string;

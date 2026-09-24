@@ -9,8 +9,8 @@ export class BasicAuthMiddleware implements NestMiddleware {
   private readonly passwordHash: string;
 
   constructor(private readonly configService: ConfigService) {
-    this.username = this.configService.get<string>('BULL_BOARD_USERNAME') || '';
-    this.passwordHash = this.configService.get<string>('BULL_BOARD_PASSWORD_HASH') || '';
+    this.username = this.configService.get<string>('WORKER_MANAGER_USERNAME') || '';
+    this.passwordHash = this.configService.get<string>('WORKER_MANAGER_PASSWORD_HASH') || '';
   }
 
   async use(req: Request, res: Response, next: NextFunction): Promise<void> {

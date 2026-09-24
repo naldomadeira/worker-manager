@@ -1,5 +1,5 @@
 {
-    "name": "bull-board",
+    "name": "worker-manager",
     "image": "mcr.microsoft.com/devcontainers/typescript-node:1-20",
     "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
     "customizations": {

@@ -1,7 +1,7 @@
 {
-  "name": "bull-board-with-hono",
-  "version": "1.2.0",
-  "description": "Example of how to use Hono server with bull-board",
+  "name": "worker-manager-with-hono",
+  "version": "2.0.0",
+  "description": "Example of how to use Hono server with Worker Manager",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
@@ -10,7 +10,7 @@
   "author": "naldomadeira",
   "license": "ISC",
   "dependencies": {
-    "@worker-manager/hono": "^1.2.0",
+    "@worker-manager/hono": "^2.0.0",
     "@hono/node-server": "^1.19.15",
     "bullmq": "^5.81.3",
     "hono": "^4.12.34"

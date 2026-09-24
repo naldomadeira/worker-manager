@@ -3,7 +3,7 @@ import pointOfView from '@fastify/view';
 import type {
   AppControllerRoute,
   AppViewRoute,
-  BullBoardQueues,
+  WorkerManagerQueues,
   ControllerHandlerReturnType,
   IServerAdapter,
   UIConfig,
@@ -20,7 +20,7 @@ type FastifyRouteDef = {
 
 export class FastifyAdapter implements IServerAdapter {
   private basePath = '';
-  private bullBoardQueues: BullBoardQueues | undefined;
+  private workerManagerQueues: WorkerManagerQueues | undefined;
   private errorHandler: ((error: Error) => ControllerHandlerReturnType) | undefined;
   private statics: { path: string; route: string } | undefined;
   private viewPath: string | undefined;
@@ -79,8 +79,8 @@ export class FastifyAdapter implements IServerAdapter {
     return this;
   }
 
-  public setQueues(bullBoardQueues: BullBoardQueues): FastifyAdapter {
-    this.bullBoardQueues = bullBoardQueues;
+  public setQueues(workerManagerQueues: WorkerManagerQueues): FastifyAdapter {
+    this.workerManagerQueues = workerManagerQueues;
     return this;
   }
 
@@ -99,7 +99,7 @@ export class FastifyAdapter implements IServerAdapter {
         throw new Error(`Please call 'setViewsPath' before using 'registerPlugin'`);
       } else if (!this.apiRoutes) {
         throw new Error(`Please call 'setApiRoutes' before using 'registerPlugin'`);
-      } else if (!this.bullBoardQueues) {
+      } else if (!this.workerManagerQueues) {
         throw new Error(`Please call 'setQueues' before using 'registerPlugin'`);
       } else if (!this.errorHandler) {
         throw new Error(`Please call 'setErrorHandler' before using 'registerPlugin'`);
@@ -146,7 +146,7 @@ export class FastifyAdapter implements IServerAdapter {
           } as any,
           handler: async (request, reply) => {
             const response = await route.handler({
-              queues: this.bullBoardQueues!,
+              queues: this.workerManagerQueues!,
               uiConfig: this.uiConfig || {},
               params: request.params as Record<string, unknown>,
               query: request.query as Record<string, unknown>,

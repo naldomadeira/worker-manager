@@ -1,4 +1,4 @@
-# bull-board-sails-example
+# worker-manager-sails-example
 
 a [Sails v1](https://sailsjs.com) application
 

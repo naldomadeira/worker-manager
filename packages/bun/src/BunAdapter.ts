@@ -2,7 +2,7 @@ import { join, resolve } from 'node:path';
 import type {
   AppControllerRoute,
   AppViewRoute,
-  BullBoardQueues,
+  WorkerManagerQueues,
   ControllerHandlerReturnType,
   IServerAdapter,
   UIConfig,
@@ -23,7 +23,7 @@ type BunRoutes = Record<string, Record<string, BunHandler>>;
 
 export class BunAdapter implements IServerAdapter {
   private basePath = '/';
-  private bullBoardQueues: BullBoardQueues | undefined;
+  private workerManagerQueues: WorkerManagerQueues | undefined;
   private errorHandler: ((error: Error) => ControllerHandlerReturnType) | undefined;
   private uiConfig: UIConfig = {};
   private staticRoute?: string;
@@ -63,8 +63,8 @@ export class BunAdapter implements IServerAdapter {
     return this;
   }
 
-  public setQueues(bullBoardQueues: BullBoardQueues): this {
-    this.bullBoardQueues = bullBoardQueues;
+  public setQueues(workerManagerQueues: WorkerManagerQueues): this {
+    this.workerManagerQueues = workerManagerQueues;
     return this;
   }
 
@@ -90,7 +90,7 @@ export class BunAdapter implements IServerAdapter {
     if (!this.uiConfig) {
       throw new Error(`Please call 'setUIConfig' before using 'getRoutes'`);
     }
-    if (!this.bullBoardQueues) {
+    if (!this.workerManagerQueues) {
       throw new Error(`Please call 'setQueues' before using 'getRoutes'`);
     }
 
@@ -202,7 +202,7 @@ export class BunAdapter implements IServerAdapter {
               const params = (request as any).params || {};
 
               const response = await route.handler({
-                queues: this.bullBoardQueues!,
+                queues: this.workerManagerQueues!,
                 uiConfig: this.uiConfig || {},
                 params,
                 query,
