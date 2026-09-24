@@ -89,6 +89,8 @@ jobs:
         # Trusted publishing: npm exchanges the workflow's OIDC token for a publish credential,
         # so there is no NPM_TOKEN secret. Private workspaces are skipped, and a version that is
         # already on the registry is skipped too, so a failed run can simply be re-run.
+        # `--tag latest` is explicit because 9.10.1 was published before versions restarted at
+        # 1.0.0, and npm refuses to move `latest` to a lower version implicitly.
         run: |
           npm install -g npm@latest
           for pkg in packages/*/; do
@@ -103,7 +105,7 @@ jobs:
               continue
             fi
             echo "Publishing $name@$version..."
-            (cd "$pkg" && npm publish --provenance --access public)
+            (cd "$pkg" && npm publish --provenance --access public --tag latest)
           done
 
       - name: Comment on released PRs
