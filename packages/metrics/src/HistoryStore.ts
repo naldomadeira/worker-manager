@@ -1,6 +1,14 @@
 import type { MetricsClient } from './connection';
 import type { MinutePoint } from './dataMapping';
-import { GLOBAL_QUEUE, minuteToDay, minuteToHour, shiftDay, type MetricsKeys } from './keys';
+import {
+  DEFAULT_NAMESPACE,
+  GLOBAL_QUEUE,
+  minuteToDay,
+  minuteToHour,
+  shiftDay,
+  metricsKeys,
+  type MetricsKeys,
+} from './keys';
 import type { CounterStore, Retention } from './store';
 
 export type { Retention } from './store';
@@ -85,9 +93,13 @@ export class HistoryStore implements CounterStore {
   private readonly keys: MetricsKeys;
   readonly retention: Retention;
 
-  constructor(opts: { redis: MetricsClient; keys: MetricsKeys; retention: Retention }) {
+  /**
+   * `keys` defaults to the default `bull-board:metrics` namespace, which is what this public
+   * constructor took before stores became namespace-aware in 1.1.0.
+   */
+  constructor(opts: { redis: MetricsClient; keys?: MetricsKeys; retention: Retention }) {
     this.redis = opts.redis;
-    this.keys = opts.keys;
+    this.keys = opts.keys ?? metricsKeys(DEFAULT_NAMESPACE);
     this.retention = {
       minutes: Math.max(1, Math.floor(opts.retention.minutes)),
       hours: Math.max(1, Math.floor(opts.retention.hours)),

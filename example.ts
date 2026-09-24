@@ -15,10 +15,12 @@ import { FlowProducer, JobsOptions, MetricsTime, Queue as QueueMQ, Worker } from
 import express from 'express';
 import { Redis } from 'ioredis';
 
+// Override with REDIS_HOST / REDIS_PORT / REDIS_PASSWORD, e.g. REDIS_PORT=6390 yarn dev to use the
+// playground's Redis when another one already owns 6379.
 const redisOptions = {
-  port: 6379,
-  host: 'localhost',
-  password: '',
+  port: Number(process.env.REDIS_PORT ?? 6379),
+  host: process.env.REDIS_HOST ?? 'localhost',
+  password: process.env.REDIS_PASSWORD ?? '',
 };
 
 const sleep = (t: number) => new Promise((resolve) => setTimeout(resolve, t * 1000));
@@ -994,7 +996,7 @@ const run = async () => {
   app.listen(3000, () => {
     console.log('Running on 3000...');
     console.log('For the UI, open http://localhost:3000/ui');
-    console.log('Make sure Redis is running on port 6379 by default');
+    console.log(`Make sure Redis is running on ${redisOptions.host}:${redisOptions.port}`);
     console.log('To populate the queue, run:');
     console.log('  curl http://localhost:3000/add?title=Example');
     console.log('To populate the queue with custom options (opts), run:');

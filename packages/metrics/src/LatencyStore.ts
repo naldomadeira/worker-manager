@@ -1,6 +1,13 @@
 import type { MetricsClient } from './connection';
 import { BUCKET_COUNT, mergeVectors, packVector, unpackVector } from './histogram';
-import { GLOBAL_QUEUE, minuteToDay, shiftDay, type MetricsKeys } from './keys';
+import {
+  DEFAULT_NAMESPACE,
+  GLOBAL_QUEUE,
+  minuteToDay,
+  shiftDay,
+  metricsKeys,
+  type MetricsKeys,
+} from './keys';
 import type { LatencyMetric, LatencyStorage, Retention } from './store';
 
 export type { LatencyMetric } from './store';
@@ -169,9 +176,13 @@ export class LatencyStore implements LatencyStorage {
   private readonly keys: MetricsKeys;
   readonly retention: Retention;
 
-  constructor(opts: { redis: MetricsClient; keys: MetricsKeys; retention: Retention }) {
+  /**
+   * `keys` defaults to the default `bull-board:metrics` namespace, which is what this public
+   * constructor took before stores became namespace-aware in 1.1.0.
+   */
+  constructor(opts: { redis: MetricsClient; keys?: MetricsKeys; retention: Retention }) {
     this.redis = opts.redis;
-    this.keys = opts.keys;
+    this.keys = opts.keys ?? metricsKeys(DEFAULT_NAMESPACE);
     this.retention = opts.retention;
   }
 
