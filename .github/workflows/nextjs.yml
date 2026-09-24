@@ -13,6 +13,7 @@ on:
       - 'examples/with-nextjs-app/**'
       - 'examples/with-nextjs-pages/**'
       - 'scripts/check-nextjs-trace.mjs'
+      - 'scripts/pack-local.sh'
       - '.github/workflows/nextjs.yml'
 
 jobs:
@@ -29,6 +30,13 @@ jobs:
         with:
           node-version: 22.x
 
+      - name: Build the workspace packages
+        run: yarn install --immutable && yarn build
+
+      # The examples install @worker-manager/* from these tarballs, i.e. from this commit.
+      - name: Pack the packages the examples use
+        run: scripts/pack-local.sh "$RUNNER_TEMP/packages" api ui express hono
+
       - name: Build each example on each Next.js version and check tracing
         run: |
           set -uo pipefail
@@ -39,7 +47,7 @@ jobs:
               if (
                 set -e
                 cd "examples/$example"
-                npm install --no-audit --no-fund
+                npm install --no-audit --no-fund "$RUNNER_TEMP"/packages/*.tgz
                 npm install --no-audit --no-fund "next@$next"
                 rm -rf .next
                 npm run build

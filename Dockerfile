@@ -3,7 +3,15 @@ FROM node:22-alpine AS deps
 ARG BULL_BOARD_VERSION=latest
 
 WORKDIR /opt/bull-board
-RUN npm install --omit=dev --no-audit --no-fund "@worker-manager/cli@${BULL_BOARD_VERSION}"
+# Tarballs from `scripts/pack-local.sh docker-dist ...` build the image from this checkout;
+# without any, the published @worker-manager/cli is installed from npm.
+COPY docker-dist/ /tmp/packages/
+RUN if ls /tmp/packages/*.tgz > /dev/null 2>&1; then \
+      npm install --omit=dev --no-audit --no-fund /tmp/packages/*.tgz; \
+    else \
+      npm install --omit=dev --no-audit --no-fund "@worker-manager/cli@${BULL_BOARD_VERSION}"; \
+    fi \
+    && rm -rf /tmp/packages
 
 FROM node:22-alpine
 
