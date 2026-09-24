@@ -4,6 +4,7 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { App } from './App';
 import { ApiContext } from './hooks/useApi';
+import './styles/tailwind.css';
 import './index.css';
 import { useSettingsStore } from './hooks/useSettings';
 import { UIConfigContext } from './hooks/useUIConfig';

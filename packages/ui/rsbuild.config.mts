@@ -6,6 +6,11 @@ import { I18NextHMRPlugin } from 'i18next-hmr/webpack';
 import pkgJson from './package.json';
 
 export default defineConfig({
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+    },
+  },
   source: {
     entry: {
       main: path.resolve(__dirname, './src/index.tsx'),

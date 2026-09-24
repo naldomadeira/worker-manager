@@ -6,9 +6,9 @@ export const RedisIcon = () => (
       .rds-b2 {fill: #c29ea2}
       .rds-b3 {fill: #e2d0d2}
 
-      .dark-mode .rds-b1 {fill: #a26169}
-      .dark-mode .rds-b2 {fill: #7b4a50}
-      .dark-mode .rds-b3 {fill: #514042}
+      .dark .rds-b1 {fill: #a26169}
+      .dark .rds-b2 {fill: #7b4a50}
+      .dark .rds-b3 {fill: #514042}
     `}
     </style>
     <path

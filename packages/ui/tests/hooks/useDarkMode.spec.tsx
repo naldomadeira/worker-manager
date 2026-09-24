@@ -29,7 +29,7 @@ function mockMatchMedia(matches: boolean) {
 
 describe('useDarkMode', () => {
   beforeEach(() => {
-    document.body.classList.remove('dark-mode');
+    document.documentElement.classList.remove('dark');
     mockMatchMedia(false);
     act(() => {
       useSettingsStore.setState({ theme: 'system' });
@@ -43,18 +43,18 @@ describe('useDarkMode', () => {
 
     renderHook(() => useDarkMode());
 
-    expect(document.body.classList.contains('dark-mode')).toBe(true);
+    expect(document.documentElement.classList.contains('dark')).toBe(true);
   });
 
   it('removes the dark-mode class when the preference is light', () => {
-    document.body.classList.add('dark-mode');
+    document.documentElement.classList.add('dark');
     act(() => {
       useSettingsStore.setState({ theme: 'light' });
     });
 
     renderHook(() => useDarkMode());
 
-    expect(document.body.classList.contains('dark-mode')).toBe(false);
+    expect(document.documentElement.classList.contains('dark')).toBe(false);
   });
 
   it('follows the system preference and updates when it changes', () => {
@@ -65,11 +65,11 @@ describe('useDarkMode', () => {
 
     renderHook(() => useDarkMode());
 
-    expect(document.body.classList.contains('dark-mode')).toBe(true);
+    expect(document.documentElement.classList.contains('dark')).toBe(true);
 
     act(() => media.dispatch(false));
 
-    expect(document.body.classList.contains('dark-mode')).toBe(false);
+    expect(document.documentElement.classList.contains('dark')).toBe(false);
   });
 
   it('stops following the system once a fixed theme is chosen', () => {
@@ -80,7 +80,7 @@ describe('useDarkMode', () => {
 
     renderHook(() => useDarkMode());
 
-    expect(document.body.classList.contains('dark-mode')).toBe(false);
+    expect(document.documentElement.classList.contains('dark')).toBe(false);
 
     act(() => {
       useSettingsStore.setState({ theme: 'light' });
@@ -88,6 +88,6 @@ describe('useDarkMode', () => {
 
     act(() => media.dispatch(true));
 
-    expect(document.body.classList.contains('dark-mode')).toBe(false);
+    expect(document.documentElement.classList.contains('dark')).toBe(false);
   });
 });

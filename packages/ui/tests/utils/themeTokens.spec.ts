@@ -62,8 +62,8 @@ const declaredIn = (selector: string) =>
   new Set(rulesFor(selector).flatMap((rule) => Object.keys(rule.declarations)));
 
 const light = declaredIn(':root');
-const dark = declaredIn('.dark-mode');
-const derived = declaredIn(':root, .dark-mode');
+const dark = declaredIn('.dark');
+const derived = declaredIn(':root, .dark');
 
 describe('theme.css', () => {
   it('ships a value for every token uiConfig.theme accepts', () => {
@@ -95,14 +95,14 @@ describe('theme.css', () => {
 
   /**
    * The one way this file breaks silently. A custom property that references another is
-   * substituted where it is declared, and `.dark-mode` sits on `body`: a `var(--primary)`
+   * substituted where it is declared, and `.dark` sits on `body`: a `var(--primary)`
    * declared only under `:root` freezes the light primary and never picks up the dark one.
    * Such a token has to be declared under a selector that matches both themes, or repeated
    * in each.
    */
   it('declares every token that references another token for both themes', () => {
     const singleThemeRules = rules.filter(
-      (rule) => rule.selector === ':root' || rule.selector === '.dark-mode'
+      (rule) => rule.selector === ':root' || rule.selector === '.dark'
     );
 
     const frozen = singleThemeRules.flatMap((rule) =>
@@ -138,7 +138,7 @@ describe('theme.css', () => {
       expect(dark.has(name)).toBe(false);
     }
 
-    const [shared] = rulesFor(':root, .dark-mode');
+    const [shared] = rulesFor(':root, .dark');
     expect(shared.declarations['--ring']).toBe('var(--primary)');
     expect(shared.declarations['--sidebar-primary']).toBe('var(--primary)');
     expect(shared.declarations['--sidebar-ring']).toBe('var(--primary)');

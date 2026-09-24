@@ -8,20 +8,32 @@
     <title><%= title %></title>
     <link rel="alternate icon" type="image/png" href="<%= favIconAlternative %>">
     <link rel="icon" type="image/svg+xml" id="fav-logo" href="<%= favIconDefault %>">
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script>
+      // Resolve the colour scheme before first paint so the board never flashes the wrong theme.
+      (function () {
+        try {
+          var stored = JSON.parse(localStorage.getItem('board-settings') || '{}');
+          var pref = (stored.state && stored.state.theme) || 'system';
+          var dark = pref === 'dark' || (pref === 'system' && matchMedia('(prefers-color-scheme: dark)').matches);
+          document.documentElement.classList.toggle('dark', dark);
+          document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
+        } catch (e) {}
+      })();
+    </script>
 </head>
 <body class="preload">
 <script id="__UI_CONFIG__" type="application/json"><%= uiConfig %></script>
 <div id="root">
-  <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:#151a21;font-family:'IBM Plex Sans',sans-serif;color:#8b96a5;font-size:0.85rem;gap:1rem;letter-spacing:0.05em;">
-    <span style="display:flex;gap:0.5rem;">
-      <span style="width:0.5rem;height:0.5rem;border-radius:50%;background:#7c8a9e;animation:bb-pulse 1.2s ease-in-out infinite;"></span>
-      <span style="width:0.5rem;height:0.5rem;border-radius:50%;background:#7c8a9e;animation:bb-pulse 1.2s ease-in-out 0.15s infinite;"></span>
-      <span style="width:0.5rem;height:0.5rem;border-radius:50%;background:#7c8a9e;animation:bb-pulse 1.2s ease-in-out 0.3s infinite;"></span>
-    </span>
-    Loading
+  <div class="wm-splash">
+    <span class="wm-splash-mark"></span>
+    <span>Loading</span>
   </div>
-  <style>@keyframes bb-pulse{0%,80%,100%{opacity:.2;transform:scale(.8)}40%{opacity:1;transform:scale(1)}}</style>
+  <style>
+    .wm-splash{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;gap:1rem;font-family:system-ui,sans-serif;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;background:#f8fafc;color:#64748b}
+    .dark .wm-splash{background:#0f141c;color:#8a94a6}
+    .wm-splash-mark{width:2.25rem;height:2.25rem;border-radius:.75rem;background:linear-gradient(135deg,#3b82f6,#6366f1);animation:wm-breathe 1.4s ease-in-out infinite}
+    @keyframes wm-breathe{0%,100%{transform:scale(.85);opacity:.55}50%{transform:scale(1);opacity:1}}
+  </style>
 </div>
 </body>
 </html>

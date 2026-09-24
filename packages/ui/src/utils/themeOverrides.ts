@@ -75,11 +75,11 @@ function toDeclarations(tokens: Record<string, string> | undefined): string {
 
 export function buildThemeOverridesCss(theme: UITheme | undefined): string {
   const light = toDeclarations(theme?.light);
-  // body.dark-mode outranks the stylesheet's .dark-mode block and, being set on
-  // body, also shadows any :root-level light override through inheritance.
+  // html.dark outranks both the stylesheet's .dark block and a :root-level light
+  // override, since both sit on the same root element and this one is more specific.
   const dark = toDeclarations(theme?.dark);
 
-  return [light && `:root { ${light} }`, dark && `body.dark-mode { ${dark} }`]
+  return [light && `:root { ${light} }`, dark && `html.dark { ${dark} }`]
     .filter(Boolean)
     .join('\n');
 }

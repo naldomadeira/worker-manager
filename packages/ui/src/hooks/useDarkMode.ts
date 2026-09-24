@@ -2,7 +2,9 @@ import { useEffect } from 'react';
 import { useSettingsStore } from './useSettings';
 
 function applyDarkClass(enabled: boolean): void {
-  document.body.classList.toggle('dark-mode', enabled);
+  const root = document.documentElement;
+  root.classList.toggle('dark', enabled);
+  root.style.colorScheme = enabled ? 'dark' : 'light';
 }
 
 export function useDarkMode() {

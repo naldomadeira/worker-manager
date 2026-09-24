@@ -11,6 +11,7 @@ module.exports = {
   setupFilesAfterEnv: ['<rootDir>/tests/setup.ts'],
   moduleNameMapper: {
     '\\.(css|less|scss)$': 'identity-obj-proxy',
+    '^@/(.*)$': '<rootDir>/src/$1',
     // pretty-bytes ships ESM only, which Jest can't parse. The formatting is incidental
     // to what these tests assert, so resolve it to a CommonJS stand-in.
     '^pretty-bytes$': '<rootDir>/tests/mocks/prettyBytes.ts',

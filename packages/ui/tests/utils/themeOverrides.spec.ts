@@ -12,10 +12,10 @@ describe('buildThemeOverridesCss', () => {
     expect(css).toBe(':root { --primary: #0f6f64; --radius: 0.75rem; }');
   });
 
-  it('builds body.dark-mode declarations for dark overrides', () => {
+  it('builds html.dark declarations for dark overrides', () => {
     const css = buildThemeOverridesCss({ dark: { background: '#0b0e12' } });
 
-    expect(css).toBe('body.dark-mode { --background: #0b0e12; }');
+    expect(css).toBe('html.dark { --background: #0b0e12; }');
   });
 
   it('combines light and dark blocks', () => {
@@ -24,7 +24,7 @@ describe('buildThemeOverridesCss', () => {
       dark: { primary: 'plum' },
     });
 
-    expect(css).toBe(':root { --primary: rebeccapurple; }\nbody.dark-mode { --primary: plum; }');
+    expect(css).toBe(':root { --primary: rebeccapurple; }\nhtml.dark { --primary: plum; }');
   });
 
   it('accepts every documented token namespace', () => {

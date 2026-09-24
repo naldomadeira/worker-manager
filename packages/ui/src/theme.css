@@ -1,10 +1,10 @@
 /**
- * bull-board design tokens.
+ * Worker Manager design tokens.
  *
  * Naming follows the shadcn theme contract (https://ui.shadcn.com/themes) so any
- * shadcn-compatible theme generator produces a valid bull-board palette. Values are
- * bull-board's own. `:root` is the light theme ("mist"), `.dark-mode` the dark
- * theme ("harbor"). Component stylesheets consume these tokens only; the
+ * shadcn-compatible theme generator produces a valid Worker Manager palette. Values are
+ * Worker Manager's own. `:root` is the light theme ("daylight"), `.dark` (on `<html>`) the
+ * dark theme ("midnight"). Component stylesheets consume these tokens only; the
  * `uiConfig.theme` option overrides them per deployment.
  *
  * The two theme blocks below carry only tokens that hold an independent value. Everything
@@ -21,11 +21,11 @@
   --card-padding: 1rem;
 
   /* Type */
-  --font-sans: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-sans: 'Inter Variable', 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono Variable', ui-monospace, SFMono-Regular, Menlo, monospace;
 
   /* Shape */
-  --radius: 0.375rem;
+  --radius: 0.625rem;
 
   /* Elevation. One recipe for every floating surface: menus, popovers, toasts and both
      kinds of tooltip, so nothing reads as a different layer of the same board. */
@@ -36,32 +36,32 @@
   --overlay: rgb(0 0 0 / 0.85);
 
   /* Core surfaces */
-  --background: #f3f5f7;
-  --foreground: #20262c;
-  --card: #ffffff;
-  --popover: #ffffff;
+  --background: oklch(0.985 0.003 255);
+  --foreground: oklch(0.21 0.025 262);
+  --card: oklch(1 0 0);
+  --popover: oklch(1 0 0);
 
   /* Interaction */
-  --primary: #0f6f64;
-  --primary-foreground: #f0faf8;
-  --secondary: #e7ecef;
-  --secondary-foreground: #39424b;
-  --muted: #eaeef2;
-  --muted-foreground: #5f6b76;
-  --accent: #eef4f3;
-  --accent-foreground: #1f3733;
-  --destructive: #d5433c;
-  --destructive-foreground: #fdf4f3;
+  --primary: oklch(0.52 0.215 262);
+  --primary-foreground: oklch(0.985 0.005 255);
+  --secondary: oklch(0.955 0.008 258);
+  --secondary-foreground: oklch(0.3 0.03 262);
+  --muted: oklch(0.962 0.006 258);
+  --muted-foreground: oklch(0.52 0.025 260);
+  --accent: oklch(0.95 0.025 260);
+  --accent-foreground: oklch(0.32 0.1 262);
+  --destructive: oklch(0.58 0.22 27);
+  --destructive-foreground: oklch(0.98 0.01 20);
 
   /* Strokes */
-  --border: #e2e7ec;
-  --input: #d4dbe2;
+  --border: oklch(0.915 0.008 258);
+  --input: oklch(0.885 0.01 258);
 
   /* Sidebar */
-  --sidebar: #eceff2;
-  --sidebar-foreground: #39424b;
-  --sidebar-accent: #e2e7ec;
-  --sidebar-border: #dde3e9;
+  --sidebar: oklch(0.975 0.005 258);
+  --sidebar-foreground: oklch(0.32 0.03 262);
+  --sidebar-accent: oklch(0.94 0.015 260);
+  --sidebar-border: oklch(0.92 0.008 258);
 
   /* Job statuses: the board's domain vocabulary. Hues are long-established
      bull-board semantics, only recalibrated per theme. */
@@ -101,34 +101,34 @@
   --json-edit-selection-bg: #d4dbe2;
 }
 
-.dark-mode {
+.dark {
   /* Core surfaces */
-  --background: #151a21;
-  --foreground: #d5dce4;
-  --card: #1c232d;
-  --popover: #202834;
+  --background: oklch(0.155 0.014 262);
+  --foreground: oklch(0.94 0.008 255);
+  --card: oklch(0.195 0.016 262);
+  --popover: oklch(0.215 0.018 262);
 
   /* Interaction */
-  --primary: #3ecfb2;
-  --primary-foreground: #0c1f1b;
-  --secondary: #242d39;
-  --secondary-foreground: #b9c2cd;
-  --muted: #232b36;
-  --muted-foreground: #8b96a5;
-  --accent: #20293a;
-  --accent-foreground: #d5dce4;
-  --destructive: #e0635c;
-  --destructive-foreground: #1d0f0e;
+  --primary: oklch(0.68 0.17 256);
+  --primary-foreground: oklch(0.16 0.035 262);
+  --secondary: oklch(0.25 0.018 262);
+  --secondary-foreground: oklch(0.86 0.012 255);
+  --muted: oklch(0.235 0.016 262);
+  --muted-foreground: oklch(0.69 0.018 256);
+  --accent: oklch(0.27 0.04 262);
+  --accent-foreground: oklch(0.94 0.008 255);
+  --destructive: oklch(0.66 0.2 25);
+  --destructive-foreground: oklch(0.18 0.04 25);
 
   /* Strokes */
-  --border: #2a3340;
-  --input: #333e4d;
+  --border: oklch(1 0 0 / 0.09);
+  --input: oklch(1 0 0 / 0.14);
 
   /* Sidebar */
-  --sidebar: #12171d;
-  --sidebar-foreground: #aab4c0;
-  --sidebar-accent: #1d2530;
-  --sidebar-border: #232b36;
+  --sidebar: oklch(0.135 0.014 262);
+  --sidebar-foreground: oklch(0.82 0.014 256);
+  --sidebar-accent: oklch(0.22 0.02 262);
+  --sidebar-border: oklch(1 0 0 / 0.07);
 
   /* Job statuses */
   --status-failed: #d95c5c;
@@ -170,15 +170,15 @@
  *
  * Everything here restates another token, so a deployment retints the board by setting the few
  * tokens above rather than the twenty that used to repeat their values. Overriding a derived
- * name still works and wins: `uiConfig.theme` writes into `:root` and `body.dark-mode`, both of
+ * name still works and wins: `uiConfig.theme` writes into `:root` and `html.dark`, both of
  * which outrank this rule.
  *
  * Declared for both themes rather than once on `:root`: a custom property that references
- * another is substituted where it is declared, and `.dark-mode` sits on `body`, so a lone
+ * another is substituted where it is declared, and `.dark` is a separate rule on the root element, so a lone
  * `:root` declaration would freeze the light values and never pick up the dark ones.
  */
 :root,
-.dark-mode {
+.dark {
   --header-offset: var(--header-height);
 
   /* Shape */
