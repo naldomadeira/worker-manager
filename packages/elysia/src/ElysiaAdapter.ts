@@ -9,7 +9,7 @@ import type {
   HTTPMethod,
   IServerAdapter,
   UIConfig,
-} from '@bull-board/api/typings/app';
+} from '@worker-manager/api/typings/app';
 import ejs from 'ejs';
 import { Elysia } from 'elysia';
 import mime from 'mime';
@@ -41,7 +41,7 @@ export class ElysiaAdapter implements IServerAdapter {
     this.basePath = basePath;
     this.plugin = new Elysia({
       prefix,
-      name: '@bull-board/elysia',
+      name: '@worker-manager/elysia',
     });
   }
 

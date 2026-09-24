@@ -2,7 +2,7 @@ import fs from 'fs';
 import { MARKDOWN_PATH, renderArtifacts, SPEC_PATH } from '../scripts/openapi/artifacts';
 import { allRoutes, buildSpec } from '../scripts/openapi/buildSpec';
 
-const REGENERATE = 'Run `yarn workspace @bull-board/api openapi`.';
+const REGENERATE = 'Run `yarn workspace @worker-manager/api openapi`.';
 
 describe('OpenAPI artifacts', () => {
   const artifacts = renderArtifacts();

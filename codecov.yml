@@ -1,4 +1,4 @@
-# Coverage is collected for @bull-board/api only, so statuses are scoped to the
+# Coverage is collected for @worker-manager/api only, so statuses are scoped to the
 # `api` flag. Uploads need a CODECOV_TOKEN secret; until then the CI step is
 # non-blocking and no status checks post.
 coverage:

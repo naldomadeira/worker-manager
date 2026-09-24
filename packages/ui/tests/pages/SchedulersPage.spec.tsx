@@ -1,9 +1,9 @@
-import type { AppJobScheduler } from '@bull-board/api/typings/app';
+import { fireEvent, screen, waitFor, within } from '@testing-library/react';
+import type { AppJobScheduler } from '@worker-manager/api/typings/app';
 import type {
   GetJobSchedulersResponse,
   GetQueuesResponse,
-} from '@bull-board/api/typings/responses';
-import { fireEvent, screen, waitFor, within } from '@testing-library/react';
+} from '@worker-manager/api/typings/responses';
 import { createMemoryHistory } from 'history';
 import { useSettingsStore } from '../../src/hooks/useSettings';
 import { SchedulersPage } from '../../src/pages/SchedulersPage/SchedulersPage';

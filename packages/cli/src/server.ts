@@ -1,5 +1,5 @@
 import type { Server } from 'node:http';
-import type { ExpressAdapter } from '@bull-board/express';
+import type { ExpressAdapter } from '@worker-manager/express';
 import express, { type Express } from 'express';
 import { basicAuth } from './auth';
 import type { CliConfig } from './config/types';

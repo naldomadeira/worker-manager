@@ -7,7 +7,7 @@
  * declarations of `BaseAdapter` that TS refuses to assign between, which is why `yarn build`
  * deletes `dist/` first. The runtime matrix covers source against both majors instead.
  */
-import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
+import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 import { Queue } from 'bullmq';
 
 const connection = { host: 'localhost', port: 6379 };

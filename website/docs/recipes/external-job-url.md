@@ -5,7 +5,7 @@ If your jobs exist in your own admin app too (an order, an email, a rendered rep
 Pass `externalJobUrl` to the queue adapter:
 
 ```ts
-import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
+import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 
 const adapter = new BullMQAdapter(ordersQueue, {
   externalJobUrl: (job) => ({

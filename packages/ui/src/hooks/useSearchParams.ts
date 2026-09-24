@@ -1,4 +1,4 @@
-import { STATUSES } from '@bull-board/api/constants/statuses';
+import { STATUSES } from '@worker-manager/api/constants/statuses';
 import { useLocation } from 'react-router-dom';
 import { Status } from '../../typings/app';
 

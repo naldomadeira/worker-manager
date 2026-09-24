@@ -1,6 +1,6 @@
-import type { AppQueue } from '@bull-board/api/typings/app';
-import type { GetQueuesResponse } from '@bull-board/api/typings/responses';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
+import type { AppQueue } from '@worker-manager/api/typings/app';
+import type { GetQueuesResponse } from '@worker-manager/api/typings/responses';
 import { OverviewActions } from '../../src/components/OverviewDropDownActions/OverviewDropDownActions';
 import { QueueDropdownActions } from '../../src/components/QueueDropdownActions/QueueDropdownActions';
 import { useSettingsStore } from '../../src/hooks/useSettings';

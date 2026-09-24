@@ -1,6 +1,6 @@
-import type { BaseAdapter } from '@bull-board/api/baseAdapter';
-import type { MetricsHistoryProvider } from '@bull-board/api/typings/app';
-import { MetricsRecorder, RedisMetricsHistoryProvider } from '@bull-board/metrics';
+import type { BaseAdapter } from '@worker-manager/api/baseAdapter';
+import type { MetricsHistoryProvider } from '@worker-manager/api/typings/app';
+import { MetricsRecorder, RedisMetricsHistoryProvider } from '@worker-manager/metrics';
 import type { HistoryConfig } from './config/types';
 import { describeError } from './describeError';
 import type { RedisClient } from './redisClient';

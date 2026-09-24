@@ -3,7 +3,7 @@ bull-board - run the bull-board dashboard against a Redis instance
 
 Usage:
   bull-board [options]
-  npx @bull-board/cli [options]
+  npx @worker-manager/cli [options]
 
 Options:
   -r, --redis <url>       Redis connection URL          [redis://localhost:6379]

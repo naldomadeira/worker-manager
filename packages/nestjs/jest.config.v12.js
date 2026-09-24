@@ -21,7 +21,7 @@ module.exports = {
     ],
   },
   moduleNameMapper: {
-    '^@bull-board/test-utils$': '<rootDir>/tests/esmTestUtils.ts',
+    '^@worker-manager/test-utils$': '<rootDir>/tests/esmTestUtils.ts',
     ...nestModuleNameMapper(12),
   },
 };

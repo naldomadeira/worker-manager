@@ -1,17 +1,17 @@
 # Elysia
 
-[Elysia](https://elysiajs.com/) on Bun. `@bull-board/elysia` is an Elysia plugin.
+[Elysia](https://elysiajs.com/) on Bun. `@worker-manager/elysia` is an Elysia plugin.
 
 ## Install
 
 ```sh
-bun add @bull-board/api @bull-board/elysia
+bun add @worker-manager/api @worker-manager/elysia
 ```
 
 ```ts
-import { createBullBoard } from '@bull-board/api';
-import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
-import { ElysiaAdapter } from '@bull-board/elysia';
+import { createBullBoard } from '@worker-manager/api';
+import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
+import { ElysiaAdapter } from '@worker-manager/elysia';
 import { Queue } from 'bullmq';
 import Elysia from 'elysia';
 
@@ -29,7 +29,7 @@ createBullBoard({
   serverAdapter,
   options: {
     // Works around a Bun build issue caused by eval in the default UI bundle.
-    uiBasePath: 'node_modules/@bull-board/ui',
+    uiBasePath: 'node_modules/@worker-manager/ui',
   },
 });
 
@@ -46,7 +46,7 @@ Top-level `await` in the example. Wrap the body in `async function main() { ... 
 
 ## Full runnable example
 
-- Simple setup: [`examples/with-elysia`](https://github.com/felixmosh/bull-board/tree/master/examples/with-elysia)
+- Simple setup: [`examples/with-elysia`](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-elysia)
 
 ## Next steps
 

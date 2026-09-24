@@ -1,4 +1,4 @@
-import type { QueueMetrics } from '@bull-board/api/typings/app';
+import type { QueueMetrics } from '@worker-manager/api/typings/app';
 import { metricsToMinutePoints } from '../src/dataMapping';
 
 function metrics(prevTS: number, data: number[]): QueueMetrics {

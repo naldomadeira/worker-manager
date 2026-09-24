@@ -1,6 +1,6 @@
 # Queue Adapters
 
-Queue adapters wrap your Bull or BullMQ queue instances so the board can read and manipulate them. The core `@bull-board/api` ships with three built-in adapters; third-party queue systems can add their own.
+Queue adapters wrap your Bull or BullMQ queue instances so the board can read and manipulate them. The core `@worker-manager/api` ships with three built-in adapters; third-party queue systems can add their own.
 
 ## Built-in adapters
 

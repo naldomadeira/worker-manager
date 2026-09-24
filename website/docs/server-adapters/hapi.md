@@ -1,17 +1,17 @@
 # Hapi
 
-[Hapi](https://hapi.dev/). `@bull-board/hapi` registers as a Hapi plugin.
+[Hapi](https://hapi.dev/). `@worker-manager/hapi` registers as a Hapi plugin.
 
 ## Install
 
 ```sh
-npm install @bull-board/api @bull-board/hapi
+npm install @worker-manager/api @worker-manager/hapi
 ```
 
 ```ts
-import { createBullBoard } from '@bull-board/api';
-import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
-import { HapiAdapter } from '@bull-board/hapi';
+import { createBullBoard } from '@worker-manager/api';
+import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
+import { HapiAdapter } from '@worker-manager/hapi';
 import { Queue } from 'bullmq';
 import Hapi from '@hapi/hapi';
 
@@ -40,8 +40,8 @@ await app.start();
 
 ## Full runnable examples
 
-- Simple setup: [`examples/with-hapi`](https://github.com/felixmosh/bull-board/tree/master/examples/with-hapi)
-- With basic auth: [`examples/with-hapi-auth`](https://github.com/felixmosh/bull-board/tree/master/examples/with-hapi-auth)
+- Simple setup: [`examples/with-hapi`](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-hapi)
+- With basic auth: [`examples/with-hapi-auth`](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-hapi-auth)
 
 ## Next steps
 

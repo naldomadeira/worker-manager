@@ -1,7 +1,7 @@
 const { Queue: QueueMQ, Worker } = require('bullmq');
-const { createBullBoard } = require('@bull-board/api');
-const { BullMQAdapter } = require('@bull-board/api/bullMQAdapter');
-const { ExpressAdapter } = require('@bull-board/express');
+const { createBullBoard } = require('@worker-manager/api');
+const { BullMQAdapter } = require('@worker-manager/api/bullMQAdapter');
+const { ExpressAdapter } = require('@worker-manager/express');
 
 const sleep = (t) => new Promise((resolve) => setTimeout(resolve, t * 1000));
 

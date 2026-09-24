@@ -2,7 +2,7 @@
 
 Thanks for your interest in improving bull-board! Issues and pull requests are welcome.
 
-Before opening a new issue, please check the [issues page](https://github.com/felixmosh/bull-board/issues). When reporting a bug, include versions (Node, Redis, Bull/BullMQ, bull-board) and a minimal reproduction.
+Before opening a new issue, please check the [issues page](https://github.com/naldomadeira/worker-manager/issues). When reporting a bug, include versions (Node, Redis, Bull/BullMQ, bull-board) and a minimal reproduction.
 
 ## Monorepo layout
 
@@ -28,7 +28,7 @@ Standalone runnable examples live under `examples/*`, and the documentation site
 ## Getting started
 
 ```sh
-git clone git@github.com:felixmosh/bull-board.git
+git clone git@github.com:naldomadeira/worker-manager.git
 cd bull-board
 yarn                # install dependencies
 yarn dev:docker     # start Redis (docker-compose.redis.yml)
@@ -54,12 +54,12 @@ All tests require Redis running (`yarn dev:docker`).
 - **Adapter contract tests** run per workspace:
 
   ```sh
-  yarn workspace @bull-board/express test
-  yarn workspace @bull-board/koa test
+  yarn workspace @worker-manager/express test
+  yarn workspace @worker-manager/koa test
   # ...one per adapter
   ```
 
-  The `@bull-board/bun` adapter runs under Bun's native runtime (`bun test`) rather than Jest.
+  The `@worker-manager/bun` adapter runs under Bun's native runtime (`bun test`) rather than Jest.
 
 ## Linting and formatting
 
@@ -84,14 +84,14 @@ npm start
 
 ## Adding a new server adapter
 
-Adapter coverage is driven by a shared contract battery in the private `@bull-board/test-utils` workspace. Each adapter carries a thin `tests/contract.spec.ts` that adapts its native request mechanism to the normalized shape the contract expects.
+Adapter coverage is driven by a shared contract battery in the private `@worker-manager/test-utils` workspace. Each adapter carries a thin `tests/contract.spec.ts` that adapts its native request mechanism to the normalized shape the contract expects.
 
 To cover a new adapter:
 
-1. Add `@bull-board/test-utils`, `jest`, and `ts-jest` as devDependencies, plus a `"test": "jest"` script.
+1. Add `@worker-manager/test-utils`, `jest`, and `ts-jest` as devDependencies, plus a `"test": "jest"` script.
 2. Add a `jest.config.js` (see any existing adapter for the preset).
 3. Implement `tests/contract.spec.ts` — spin up the adapter and return a normalized `request` function and a `teardown`. The existing specs show the pattern for each framework style.
-4. Run `yarn install && yarn workspace @bull-board/<name> test`.
+4. Run `yarn install && yarn workspace @worker-manager/<name> test`.
 
 ## Adding UI text or an API error
 
@@ -110,7 +110,7 @@ To add one:
 
 1. Add the key to `ERROR_TRANSLATION_KEYS` in `packages/api/src/schemas/errorKeys.ts`, which the `ErrorTranslationKey` union is derived from.
 2. Add it to the `ERRORS` section of `en-US/messages.json`.
-3. Translate it in the other locale files under `packages/ui/src/static/locales`. `yarn workspace @bull-board/ui sync:locales` adds any key you missed, but it fills them with the English text, so translate before committing.
+3. Translate it in the other locale files under `packages/ui/src/static/locales`. `yarn workspace @worker-manager/ui sync:locales` adds any key you missed, but it fills them with the English text, so translate before committing.
 4. Return it with `errorResponse()`.
 
 Both omissions are caught: a key missing from en-US fails the UI type check by name, and a locale left behind fails `packages/ui/tests/i18n.spec.ts`.
@@ -121,7 +121,7 @@ Both omissions are caught: a key missing from en-US fails the UI type check by n
 yarn build
 ```
 
-The `dist/` output matters: `packages/api` tests and the server adapters resolve `@bull-board/api` from its built `dist/`, so rebuild after changing source. The OpenAPI generator reads `dist/` too, so run `yarn build` before `yarn workspace @bull-board/api openapi`.
+The `dist/` output matters: `packages/api` tests and the server adapters resolve `@worker-manager/api` from its built `dist/`, so rebuild after changing source. The OpenAPI generator reads `dist/` too, so run `yarn build` before `yarn workspace @worker-manager/api openapi`.
 
 ## Submitting changes
 

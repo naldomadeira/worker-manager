@@ -1,6 +1,6 @@
-import { createBullBoard } from '@bull-board/api';
-import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
-import { ExpressAdapter } from '@bull-board/express';
+import { createBullBoard } from '@worker-manager/api';
+import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
+import { ExpressAdapter } from '@worker-manager/express';
 import express from 'express';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { queue } from '../../../lib/queue';

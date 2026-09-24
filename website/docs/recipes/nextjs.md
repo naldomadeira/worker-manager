@@ -3,8 +3,8 @@
 There is no dedicated Next.js adapter. bull-board runs inside a Next.js API
 route using an existing adapter. Two runnable examples:
 
-- [`examples/with-nextjs-app`](https://github.com/felixmosh/bull-board/tree/master/examples/with-nextjs-app): App Router, `@bull-board/hono` adapter.
-- [`examples/with-nextjs-pages`](https://github.com/felixmosh/bull-board/tree/master/examples/with-nextjs-pages): Pages Router, `@bull-board/express` adapter.
+- [`examples/with-nextjs-app`](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-nextjs-app): App Router, `@worker-manager/hono` adapter.
+- [`examples/with-nextjs-pages`](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-nextjs-pages): Pages Router, `@worker-manager/express` adapter.
 
 Both deploy to Vercel. The mounting differs by router; the Vercel-specific
 config is identical and is the part most people miss.
@@ -15,9 +15,9 @@ A single optional catch-all Route Handler at
 `app/api/queues/[[...path]]/route.ts`:
 
 ```ts
-import { createBullBoard } from '@bull-board/api';
-import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
-import { HonoAdapter } from '@bull-board/hono';
+import { createBullBoard } from '@worker-manager/api';
+import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
+import { HonoAdapter } from '@worker-manager/hono';
 import { serveStatic } from '@hono/node-server/serve-static';
 import { Hono } from 'hono';
 import { handle } from 'hono/vercel';
@@ -49,9 +49,9 @@ delegates to an Express router. Disable `bodyParser` and enable
 `externalResolver` so Express owns the response:
 
 ```ts
-import { createBullBoard } from '@bull-board/api';
-import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
-import { ExpressAdapter } from '@bull-board/express';
+import { createBullBoard } from '@worker-manager/api';
+import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
+import { ExpressAdapter } from '@worker-manager/express';
 import express from 'express';
 import { queue } from '../../../lib/queue';
 
@@ -73,14 +73,14 @@ export default function handler(req, res) {
 
 ## The Vercel fix (both routers)
 
-`@bull-board/api` finds the UI's compiled assets with
-`eval(require.resolve('@bull-board/ui/package.json'))`. The `eval` deliberately
+`@worker-manager/api` finds the UI's compiled assets with
+`eval(require.resolve('@worker-manager/ui/package.json'))`. The `eval` deliberately
 hides the require from bundlers, and that includes Next.js's static file tracer
 ([`@vercel/nft`](https://github.com/vercel/nft)). On Vercel the UI files are
 never copied into the function, so you get:
 
 ```
-Error: Cannot find module '@bull-board/ui/package.json'
+Error: Cannot find module '@worker-manager/ui/package.json'
 ```
 
 Fix it in `next.config.js`:
@@ -89,11 +89,11 @@ Fix it in `next.config.js`:
 /** @type {import('next').NextConfig} */
 module.exports = {
   // Resolve bull-board and bullmq from node_modules at runtime, not from the bundle.
-  serverExternalPackages: ['@bull-board/api', '@bull-board/ui', 'bullmq'],
+  serverExternalPackages: ['@worker-manager/api', '@worker-manager/ui', 'bullmq'],
 
   // Force the compiled UI into the serverless function (the tracer can't see the eval).
   outputFileTracingIncludes: {
-    '/api/queues/*': ['./node_modules/@bull-board/ui/dist/**/*'],
+    '/api/queues/*': ['./node_modules/@worker-manager/ui/dist/**/*'],
   },
 };
 ```
@@ -116,7 +116,7 @@ skipping the `eval(require.resolve(...))` entirely:
 createBullBoard({
   queues,
   serverAdapter,
-  options: { uiBasePath: 'node_modules/@bull-board/ui' },
+  options: { uiBasePath: 'node_modules/@worker-manager/ui' },
 });
 ```
 

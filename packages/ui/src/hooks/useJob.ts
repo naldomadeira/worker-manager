@@ -1,5 +1,5 @@
-import type { AppJob, JobState as ApiJobState } from '@bull-board/api/typings/app';
 import { keepPreviousData, useQuery, useQueryClient } from '@tanstack/react-query';
+import type { AppJob, JobState as ApiJobState } from '@worker-manager/api/typings/app';
 import { useTranslation } from 'react-i18next';
 import { useShallow } from 'zustand/react/shallow';
 import { JobActions, Status } from '../../typings/app';

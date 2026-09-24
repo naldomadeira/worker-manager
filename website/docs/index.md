@@ -17,12 +17,12 @@ hero:
       link: /demo/
     - theme: alt
       text: View on GitHub
-      link: https://github.com/felixmosh/bull-board
+      link: https://github.com/naldomadeira/worker-manager
 
 features:
   - icon: "⚡"
     title: Nothing to wire up
-    details: "npx @bull-board/cli -r redis://localhost:6379, or the official Docker image. No install, no code."
+    details: "npx @worker-manager/cli -r redis://localhost:6379, or the official Docker image. No install, no code."
   - icon: "🧩"
     title: Or mount it in your app
     details: Adapters for Express, Fastify, Koa, Hapi, NestJS, Hono, H3, Elysia, and Bun.

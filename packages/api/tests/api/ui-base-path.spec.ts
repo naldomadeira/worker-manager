@@ -1,6 +1,6 @@
 import { existsSync } from 'node:fs';
 import path from 'node:path';
-import { createBullBoard } from '@bull-board/api';
+import { createBullBoard } from '@worker-manager/api';
 import type { IServerAdapter } from '../../typings/app';
 
 // Guards the UI-path resolution the Next.js/Vercel integration depends on (#444).
@@ -29,7 +29,7 @@ function createCapturingAdapter() {
 }
 
 describe('UI base path resolution', () => {
-  it('resolves the bundled @bull-board/ui assets by default', () => {
+  it('resolves the bundled @worker-manager/ui assets by default', () => {
     const { adapter, captured } = createCapturingAdapter();
 
     createBullBoard({ queues: [], serverAdapter: adapter });

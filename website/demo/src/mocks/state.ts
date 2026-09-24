@@ -1,4 +1,4 @@
-// Reuse the real @bull-board/api types. If the API surface changes, the demo
+// Reuse the real @worker-manager/api types. If the API surface changes, the demo
 // fails to compile instead of silently drifting from production shapes.
 import type {
   AppJob,
@@ -8,7 +8,7 @@ import type {
   JobCounts,
   QueueDefaultJobOptions,
   Status,
-} from '@bull-board/api/typings/app';
+} from '@worker-manager/api/typings/app';
 
 export type { AppJob, JobCounts, Status };
 

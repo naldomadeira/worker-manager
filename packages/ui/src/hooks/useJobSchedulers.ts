@@ -1,5 +1,5 @@
-import type { AppJobScheduler, JobSchedulerRepeatOptions } from '@bull-board/api/typings/app';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import type { AppJobScheduler, JobSchedulerRepeatOptions } from '@worker-manager/api/typings/app';
 import { useTranslation } from 'react-i18next';
 import { useShallow } from 'zustand/react/shallow';
 import { runWithToast } from '../utils/actionToast';

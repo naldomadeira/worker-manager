@@ -1,7 +1,7 @@
-import { createBullBoard } from '@bull-board/api';
-import { BullAdapter } from '@bull-board/api/bullAdapter';
-import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
-import { ExpressAdapter } from '@bull-board/express';
+import { createBullBoard } from '@worker-manager/api';
+import { BullAdapter } from '@worker-manager/api/bullAdapter';
+import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
+import { ExpressAdapter } from '@worker-manager/express';
 import Bull from 'bull';
 import { FlowProducer, Queue } from 'bullmq';
 import IORedis from 'ioredis';

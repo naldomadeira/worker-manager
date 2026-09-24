@@ -1,7 +1,7 @@
 import type {
   MetricsHistoryPoint,
   QueueMetrics as QueueMetricsData,
-} from '@bull-board/api/typings/app';
+} from '@worker-manager/api/typings/app';
 import { withPartialTail } from '../../utils/partialBucket';
 
 export interface ThroughputRow {

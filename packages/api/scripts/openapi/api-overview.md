@@ -63,5 +63,5 @@ custom adapter or hook rather than for production.
 ## Versioning
 
 The `info.version` in the spec describes the shape of this HTTP API and is deliberately
-independent of the `@bull-board/api` package version, so a routine release does not churn the
+independent of the `@worker-manager/api` package version, so a routine release does not churn the
 generated artifacts.

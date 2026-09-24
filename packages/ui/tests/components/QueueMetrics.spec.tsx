@@ -1,8 +1,8 @@
+import { act, fireEvent, screen, waitFor, within } from '@testing-library/react';
 import type {
   GetMetricsHistoryResponse,
   GetQueueMetricsResponse,
-} from '@bull-board/api/typings/responses';
-import { act, fireEvent, screen, waitFor, within } from '@testing-library/react';
+} from '@worker-manager/api/typings/responses';
 import { QueueMetrics } from '../../src/components/QueueMetrics/QueueMetrics';
 import { useSettingsStore } from '../../src/hooks/useSettings';
 import { createWrapper, deferred, makeQueue, render } from '../testUtils';

@@ -1,7 +1,7 @@
-import { createBullBoard } from '@bull-board/api';
-import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
-import { formatJob } from '@bull-board/api/dist/handlers/queues';
-import { ExpressAdapter } from '@bull-board/express';
+import { createBullBoard } from '@worker-manager/api';
+import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
+import { formatJob } from '@worker-manager/api/dist/handlers/queues';
+import { ExpressAdapter } from '@worker-manager/express';
 import { Queue } from 'bullmq';
 import request from 'supertest';
 import type { QueueJob } from '../../typings/app';

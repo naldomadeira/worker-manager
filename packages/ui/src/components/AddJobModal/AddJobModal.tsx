@@ -1,4 +1,4 @@
-import type { AppJob, AppQueue } from '@bull-board/api/typings/app';
+import type { AppJob, AppQueue } from '@worker-manager/api/typings/app';
 import { FormEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useActiveQueue } from '../../hooks/useActiveQueue';

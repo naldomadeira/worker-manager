@@ -1,17 +1,17 @@
 # Bun
 
-[Bun](https://bun.sh/). `@bull-board/bun` targets Bun's native HTTP server.
+[Bun](https://bun.sh/). `@worker-manager/bun` targets Bun's native HTTP server.
 
 ## Install
 
 ```sh
-bun add @bull-board/api @bull-board/bun
+bun add @worker-manager/api @worker-manager/bun
 ```
 
 ```ts
-import { createBullBoard } from '@bull-board/api';
-import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
-import { BunAdapter } from '@bull-board/bun';
+import { createBullBoard } from '@worker-manager/api';
+import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
+import { BunAdapter } from '@worker-manager/bun';
 import { Queue } from 'bullmq';
 
 const queue = new Queue('my-queue', {
@@ -41,7 +41,7 @@ Bun.serve({
 
 ## Full runnable example
 
-- Simple setup: [`examples/with-bun`](https://github.com/felixmosh/bull-board/tree/master/examples/with-bun)
+- Simple setup: [`examples/with-bun`](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-bun)
 
 ## Next steps
 

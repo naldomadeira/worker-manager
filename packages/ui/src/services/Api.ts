@@ -13,7 +13,7 @@ import {
   QueueRateLimit,
   RedisStats,
   Status,
-} from '@bull-board/api/typings/app';
+} from '@worker-manager/api/typings/app';
 import {
   CleanJobResponse,
   GetJobResponse,
@@ -29,7 +29,7 @@ import {
   GetQueueWorkersResponse,
   RetryAllResponse,
   RunJobSchedulerResponse,
-} from '@bull-board/api/typings/responses';
+} from '@worker-manager/api/typings/responses';
 import Axios, { AxiosInstance, AxiosResponse } from 'axios';
 import { translateMessage } from '../utils/translateMessage';
 import { toastManager } from './toastManager';

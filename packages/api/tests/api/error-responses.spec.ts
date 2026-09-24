@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { errorResponse } from '@bull-board/api/dist/errors';
+import { errorResponse } from '@worker-manager/api/dist/errors';
 
 describe('errorResponse', () => {
   it('expands a bare key into a translatable message', () => {

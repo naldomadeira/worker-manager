@@ -1,5 +1,5 @@
 {
-  "name": "@bull-board/hapi",
+  "name": "@worker-manager/hapi",
   "version": "9.10.1",
   "description": "A Hapi.js server adapter for Bull-Board dashboard.",
   "keywords": [
@@ -14,11 +14,11 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/felixmosh/bull-board.git",
+    "url": "git+https://github.com/naldomadeira/worker-manager.git",
     "directory": "packages/hapi"
   },
   "license": "MIT",
-  "author": "felixmosh",
+  "author": "naldomadeira",
   "main": "dist/index.js",
   "files": [
     "dist"
@@ -30,15 +30,15 @@
     "test": "jest"
   },
   "dependencies": {
-    "@bull-board/api": "9.10.1",
-    "@bull-board/ui": "9.10.1",
     "@hapi/inert": "^7.1.2",
     "@hapi/vision": "^7.0.3",
+    "@worker-manager/api": "9.10.1",
+    "@worker-manager/ui": "9.10.1",
     "ejs": "^6.0.1"
   },
   "devDependencies": {
-    "@bull-board/test-utils": "9.10.1",
     "@hapi/hapi": "^21.4.10",
+    "@worker-manager/test-utils": "9.10.1",
     "bullmq": "^5.81.3",
     "jest": "^30.4.2",
     "ts-jest": "^29.4.12"

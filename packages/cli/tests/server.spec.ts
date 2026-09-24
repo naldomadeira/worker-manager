@@ -1,5 +1,5 @@
-import { createBullBoard } from '@bull-board/api';
-import { ExpressAdapter } from '@bull-board/express';
+import { createBullBoard } from '@worker-manager/api';
+import { ExpressAdapter } from '@worker-manager/express';
 import { Queue as BullMQQueue } from 'bullmq';
 import { Redis } from 'ioredis';
 import request from 'supertest';

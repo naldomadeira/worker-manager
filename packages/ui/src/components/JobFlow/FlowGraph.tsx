@@ -1,4 +1,4 @@
-import type { FlowNode } from '@bull-board/api/typings/app';
+import type { FlowNode } from '@worker-manager/api/typings/app';
 import {
   Background,
   ControlButton,

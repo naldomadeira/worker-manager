@@ -9,9 +9,9 @@ Install `pg` alongside BullMQ v6, then pass `createPostgresBackend` as the third
 ```js
 const express = require('express');
 const { Queue, createPostgresBackend } = require('bullmq');
-const { createBullBoard } = require('@bull-board/api');
-const { BullMQAdapter } = require('@bull-board/api/bullMQAdapter');
-const { ExpressAdapter } = require('@bull-board/express');
+const { createBullBoard } = require('@worker-manager/api');
+const { BullMQAdapter } = require('@worker-manager/api/bullMQAdapter');
+const { ExpressAdapter } = require('@worker-manager/express');
 
 const connection = 'postgres://user:password@localhost:5432/bullmq';
 
@@ -72,4 +72,4 @@ The datastore details panel describes the first registered queue, so put the one
 
 ## Not covered
 
-[`@bull-board/metrics`](/recipes/historical-metrics) is Redis-only. It scans Redis sorted sets directly to build throughput and latency history, so it has no Postgres implementation yet. Everything else on the board works.
+[`@worker-manager/metrics`](/recipes/historical-metrics) is Redis-only. It scans Redis sorted sets directly to build throughput and latency history, so it has no Postgres implementation yet. Everything else on the board works.

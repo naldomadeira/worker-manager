@@ -1,5 +1,5 @@
 {
-  "name": "@bull-board/cli",
+  "name": "@worker-manager/cli",
   "version": "9.10.1",
   "description": "Run the bull-board dashboard against a Redis instance from the command line.",
   "keywords": [
@@ -16,10 +16,10 @@
     "standalone"
   ],
   "license": "MIT",
-  "author": "felixmosh",
+  "author": "naldomadeira",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/felixmosh/bull-board.git",
+    "url": "git+https://github.com/naldomadeira/worker-manager.git",
     "directory": "packages/cli"
   },
   "bin": {
@@ -38,9 +38,9 @@
     "test": "jest"
   },
   "dependencies": {
-    "@bull-board/api": "9.10.1",
-    "@bull-board/express": "9.10.1",
-    "@bull-board/metrics": "9.10.1",
+    "@worker-manager/api": "9.10.1",
+    "@worker-manager/express": "9.10.1",
+    "@worker-manager/metrics": "9.10.1",
     "bull": "^4.16.5",
     "bullmq": "^5.81.3",
     "express": "^5.2.1",

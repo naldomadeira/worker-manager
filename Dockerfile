@@ -3,7 +3,7 @@ FROM node:22-alpine AS deps
 ARG BULL_BOARD_VERSION=latest
 
 WORKDIR /opt/bull-board
-RUN npm install --omit=dev --no-audit --no-fund "@bull-board/cli@${BULL_BOARD_VERSION}"
+RUN npm install --omit=dev --no-audit --no-fund "@worker-manager/cli@${BULL_BOARD_VERSION}"
 
 FROM node:22-alpine
 

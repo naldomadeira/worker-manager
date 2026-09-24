@@ -1,6 +1,6 @@
-const { createBullBoard } = require('@bull-board/api');
-const { BullMQAdapter } = require('@bull-board/api/bullMQAdapter');
-const { HonoAdapter } = require('@bull-board/hono');
+const { createBullBoard } = require('@worker-manager/api');
+const { BullMQAdapter } = require('@worker-manager/api/bullMQAdapter');
+const { HonoAdapter } = require('@worker-manager/hono');
 const { Queue: QueueMQ, Worker } = require('bullmq');
 const { Hono } = require('hono');
 const { showRoutes } = require('hono/dev');

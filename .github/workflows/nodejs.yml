@@ -77,13 +77,13 @@ jobs:
       # Peer versions break types before they break runtime, so the `bullmq` peer range is
       # checked at both ends as well as exercised by the runtime matrix.
       - name: Typecheck against the BullMQ peer floor and every supported major
-        run: yarn workspace @bull-board/api typecheck:bullmq
+        run: yarn workspace @worker-manager/api typecheck:bullmq
 
       - name: Check the generated OpenAPI artifacts are current
         run: |
-          yarn workspace @bull-board/api openapi
+          yarn workspace @worker-manager/api openapi
           git diff --exit-code --stat -- website/docs/public/openapi.json website/docs/reference/http-api.md \
-            || { echo "::error::OpenAPI artifacts are stale. Run 'yarn workspace @bull-board/api openapi' and commit the result."; exit 1; }
+            || { echo "::error::OpenAPI artifacts are stale. Run 'yarn workspace @worker-manager/api openapi' and commit the result."; exit 1; }
       # A cluster cannot be a `services:` entry: it needs three servers brought up and then
       # joined, which that block has no way to express. Without REDIS_CLUSTER_NODES the
       # metrics and CLI cluster specs skip themselves.
@@ -112,9 +112,9 @@ jobs:
           POSTGRES_URL: postgres://bullmq:bullmq@localhost:5432/bullmq
           REDIS_CLUSTER_NODES: 127.0.0.1:7101,127.0.0.1:7102,127.0.0.1:7103
 
-      - name: Coverage (@bull-board/api)
+      - name: Coverage (@worker-manager/api)
         if: matrix.node == '24.x'
-        run: yarn workspace @bull-board/api test:coverage
+        run: yarn workspace @worker-manager/api test:coverage
         env:
           CI: true
           REDIS_HOST: localhost
@@ -168,7 +168,7 @@ jobs:
           CI: true
 
       - name: Test Bun adapter
-        run: yarn workspace @bull-board/bun test
+        run: yarn workspace @worker-manager/bun test
 
   test-ui:
     name: Test UI

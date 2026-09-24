@@ -1,5 +1,5 @@
-import type { GetQueuesResponse } from '@bull-board/api/typings/responses';
 import { act, renderHook, waitFor } from '@testing-library/react';
+import type { GetQueuesResponse } from '@worker-manager/api/typings/responses';
 import { createMemoryHistory } from 'history';
 import { useConfirm } from '../../src/hooks/useConfirm';
 import { useQueues } from '../../src/hooks/useQueues';

@@ -31,7 +31,7 @@ const onClickFullScreen = async () => {
   return document.exitFullscreen();
 };
 
-const DOCS_URL = 'https://felixmosh.github.io/bull-board/';
+const DOCS_URL = 'https://naldomadeira.github.io/worker-manager/';
 const DOCS_LABEL = 'Docs';
 
 export const HeaderActions = () => {

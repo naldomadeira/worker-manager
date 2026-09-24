@@ -7,9 +7,9 @@
 ## Usage
 
 ```ts
-import { createBullBoard } from '@bull-board/api';
-import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
-import { ExpressAdapter } from '@bull-board/express';
+import { createBullBoard } from '@worker-manager/api';
+import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
+import { ExpressAdapter } from '@worker-manager/express';
 
 const serverAdapter = new ExpressAdapter();
 serverAdapter.setBasePath('/admin/queues');
@@ -160,4 +160,4 @@ or `>` are dropped, so a theme can never inject arbitrary CSS or markup into the
 
 ## Source of truth
 
-The authoritative type is in [`packages/api/typings/app.d.ts`](https://github.com/felixmosh/bull-board/blob/master/packages/api/typings/app.d.ts) (`UIConfig`). Defaults live in [`packages/api/src/index.ts`](https://github.com/felixmosh/bull-board/blob/master/packages/api/src/index.ts).
+The authoritative type is in [`packages/api/typings/app.d.ts`](https://github.com/naldomadeira/worker-manager/blob/main/packages/api/typings/app.d.ts) (`UIConfig`). Defaults live in [`packages/api/src/index.ts`](https://github.com/naldomadeira/worker-manager/blob/main/packages/api/src/index.ts).

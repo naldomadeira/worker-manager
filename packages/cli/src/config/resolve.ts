@@ -1,4 +1,4 @@
-import type { QueueAdapterOptions } from '@bull-board/api/typings/app';
+import type { QueueAdapterOptions } from '@worker-manager/api/typings/app';
 import { resolveConnection } from './connection';
 import type { FlagValues } from './flags';
 import type { CliConfig, FileConfig, FileHistoryConfig, HistoryConfig } from './types';

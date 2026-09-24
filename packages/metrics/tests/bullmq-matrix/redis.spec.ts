@@ -1,4 +1,4 @@
-import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
+import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 import { MetricsTime, Queue, Worker } from 'bullmq';
 import { Redis } from 'ioredis';
 import { vectorTotal } from '../../src/histogram';

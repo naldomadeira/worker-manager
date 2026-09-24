@@ -1,7 +1,11 @@
-import { STATUSES } from '@bull-board/api/constants/statuses';
-import type { JobCleanStatus, JobRetryStatus, QueueRateLimit } from '@bull-board/api/typings/app';
-import { GetQueuesResponse } from '@bull-board/api/typings/responses';
 import { keepPreviousData, useQuery, useQueryClient } from '@tanstack/react-query';
+import { STATUSES } from '@worker-manager/api/constants/statuses';
+import type {
+  JobCleanStatus,
+  JobRetryStatus,
+  QueueRateLimit,
+} from '@worker-manager/api/typings/app';
+import { GetQueuesResponse } from '@worker-manager/api/typings/responses';
 import { useTranslation } from 'react-i18next';
 import { useShallow } from 'zustand/react/shallow';
 import { QueueActions } from '../../typings/app';

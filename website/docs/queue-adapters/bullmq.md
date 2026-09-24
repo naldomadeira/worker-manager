@@ -4,7 +4,7 @@ For the [BullMQ](https://docs.bullmq.io/) queue library.
 
 ## Supported versions
 
-`@bull-board/api` declares its BullMQ peer as `^5.56.0 || ^6.0.0`, and the adapter figures out which one it is holding. Nothing to configure.
+`@worker-manager/api` declares its BullMQ peer as `^5.56.0 || ^6.0.0`, and the adapter figures out which one it is holding. Nothing to configure.
 
 Two v6 changes are visible in the dashboard:
 
@@ -13,7 +13,7 @@ Two v6 changes are visible in the dashboard:
 
 ### Support policy
 
-Three BullMQ versions run the full `@bull-board/api` suite on every commit:
+Three BullMQ versions run the full `@worker-manager/api` suite on every commit:
 
 | Tested version | Why |
 |---|---|
@@ -27,22 +27,22 @@ Below `5.56.0` the dashboard still starts and still lists, inspects and retries 
 
 Anything at or above `5.56.0` gets every feature. If you are pinned lower and something on that list matters to you, open an issue rather than assuming the floor is fixed: it is set by what CI can prove, and it moves down whenever a fix makes a lower version pass.
 
-Raising the floor is a breaking change and only happens in a major release of `@bull-board/api`.
+Raising the floor is a breaking change and only happens in a major release of `@worker-manager/api`.
 
 ## Import
 
 ```ts
-import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
+import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 // or
-const { BullMQAdapter } = require('@bull-board/api/bullMQAdapter');
+const { BullMQAdapter } = require('@worker-manager/api/bullMQAdapter');
 ```
 
 ## Usage
 
 ```ts
-import { createBullBoard } from '@bull-board/api';
-import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
-import { ExpressAdapter } from '@bull-board/express';
+import { createBullBoard } from '@worker-manager/api';
+import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
+import { ExpressAdapter } from '@worker-manager/express';
 import { Queue } from 'bullmq';
 
 const myQueue = new Queue('my-queue', {

@@ -1,5 +1,5 @@
 {
-  "name": "@bull-board/hono",
+  "name": "@worker-manager/hono",
   "version": "9.10.1",
   "description": "A Hono server adapter for Bull-Board dashboard.",
   "keywords": [
@@ -14,11 +14,11 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/felixmosh/bull-board.git",
+    "url": "git+https://github.com/naldomadeira/worker-manager.git",
     "directory": "packages/hono"
   },
   "license": "MIT",
-  "author": "felixmosh",
+  "author": "naldomadeira",
   "main": "dist/index.js",
   "files": [
     "dist"
@@ -29,14 +29,14 @@
     "test": "jest"
   },
   "dependencies": {
-    "@bull-board/api": "9.10.1",
-    "@bull-board/ui": "9.10.1",
+    "@worker-manager/api": "9.10.1",
+    "@worker-manager/ui": "9.10.1",
     "ejs": "^6.0.1"
   },
   "devDependencies": {
-    "@bull-board/test-utils": "9.10.1",
     "@cloudflare/workers-types": "^4.20260702.1",
     "@hono/node-server": "^2.1.1",
+    "@worker-manager/test-utils": "9.10.1",
     "bullmq": "^5.81.3",
     "hono": "^4.13.5",
     "jest": "^30.4.2",

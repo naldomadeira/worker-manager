@@ -1,11 +1,11 @@
-import { createBullBoard } from '@bull-board/api';
+import Hapi from '@hapi/hapi';
+import { createBullBoard } from '@worker-manager/api';
 import {
   runServerAdapterContract,
   uiFixtureBasePath,
   NormalizedResponse,
   ContractRequest,
-} from '@bull-board/test-utils';
-import Hapi from '@hapi/hapi';
+} from '@worker-manager/test-utils';
 import { HapiAdapter } from '../src';
 
 runServerAdapterContract('Hapi', async ({ basePath, queue }) => {

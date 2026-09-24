@@ -1,5 +1,5 @@
-import type { FlowNode } from '@bull-board/api/typings/app';
 import { useQueries } from '@tanstack/react-query';
+import type { FlowNode } from '@worker-manager/api/typings/app';
 import { useCallback, useMemo, useState } from 'react';
 import { queryKeys } from '../../hooks/queryKeys';
 import { useApi } from '../../hooks/useApi';

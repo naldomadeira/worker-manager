@@ -1,3 +1,5 @@
+import fastifyStatic from '@fastify/static';
+import pointOfView from '@fastify/view';
 import type {
   AppControllerRoute,
   AppViewRoute,
@@ -5,9 +7,7 @@ import type {
   ControllerHandlerReturnType,
   IServerAdapter,
   UIConfig,
-} from '@bull-board/api/typings/app';
-import fastifyStatic from '@fastify/static';
-import pointOfView from '@fastify/view';
+} from '@worker-manager/api/typings/app';
 import ejs from 'ejs';
 import { FastifyPluginCallback } from 'fastify';
 import { HTTPMethods } from 'fastify/types/utils';

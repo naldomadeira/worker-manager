@@ -1,7 +1,7 @@
-import { createBullBoard } from '@bull-board/api';
-import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
-import { HonoAdapter } from '@bull-board/hono';
 import { serveStatic } from '@hono/node-server/serve-static';
+import { createBullBoard } from '@worker-manager/api';
+import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
+import { HonoAdapter } from '@worker-manager/hono';
 import { Hono } from 'hono';
 import { handle } from 'hono/vercel';
 import { queue } from '@/lib/queue';

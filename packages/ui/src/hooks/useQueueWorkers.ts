@@ -1,5 +1,5 @@
-import type { QueueWorker } from '@bull-board/api/typings/app';
 import { useQuery } from '@tanstack/react-query';
+import type { QueueWorker } from '@worker-manager/api/typings/app';
 import { queryKeys } from './queryKeys';
 import { useApi } from './useApi';
 import { useUIConfig } from './useUIConfig';

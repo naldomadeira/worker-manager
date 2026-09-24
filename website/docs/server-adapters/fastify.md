@@ -1,11 +1,11 @@
 # Fastify
 
-[Fastify](https://fastify.dev/). `@bull-board/fastify` registers as a plugin.
+[Fastify](https://fastify.dev/). `@worker-manager/fastify` registers as a plugin.
 
 ## Install
 
 ```sh
-npm install @bull-board/api @bull-board/fastify
+npm install @worker-manager/api @worker-manager/fastify
 ```
 
 ::: warning Fastify 5 only
@@ -13,9 +13,9 @@ The adapter bundles `@fastify/static` and `@fastify/view`, both of which target 
 :::
 
 ```ts
-import { createBullBoard } from '@bull-board/api';
-import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
-import { FastifyAdapter } from '@bull-board/fastify';
+import { createBullBoard } from '@worker-manager/api';
+import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
+import { FastifyAdapter } from '@worker-manager/fastify';
 import { Queue } from 'bullmq';
 import Fastify from 'fastify';
 
@@ -46,9 +46,9 @@ Top-level `await` in the example. Wrap the body in `async function main() { ... 
 
 ## Full runnable examples
 
-- Simple setup: [`examples/with-fastify`](https://github.com/felixmosh/bull-board/tree/master/examples/with-fastify)
-- With basic auth: [`examples/with-fastify-auth`](https://github.com/felixmosh/bull-board/tree/master/examples/with-fastify-auth)
-- With visibility guard: [`examples/with-fastify-visibility-guard`](https://github.com/felixmosh/bull-board/tree/master/examples/with-fastify-visibility-guard)
+- Simple setup: [`examples/with-fastify`](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-fastify)
+- With basic auth: [`examples/with-fastify-auth`](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-fastify-auth)
+- With visibility guard: [`examples/with-fastify-visibility-guard`](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-fastify-visibility-guard)
 
 ## Next steps
 

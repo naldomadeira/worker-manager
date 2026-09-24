@@ -105,7 +105,7 @@ export type MetricsHistoryPurgeResult = v.InferOutput<
 
 /**
  * Seam the core uses to serve long-retention metrics history.
- * The concrete implementation lives in the opt-in @bull-board/metrics package.
+ * The concrete implementation lives in the opt-in @worker-manager/metrics package.
  * The core never stores anything; it only calls this interface.
  *
  * `getUsage` and `purge` are optional. Their routes are registered only when a provider

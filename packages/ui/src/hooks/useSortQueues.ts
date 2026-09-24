@@ -1,4 +1,4 @@
-import type { AppQueue } from '@bull-board/api/typings/app';
+import type { AppQueue } from '@worker-manager/api/typings/app';
 import { useCallback } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import { useSettingsStore } from './useSettings';

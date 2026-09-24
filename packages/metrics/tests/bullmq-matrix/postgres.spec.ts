@@ -1,4 +1,4 @@
-import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
+import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 import { Queue, Worker } from 'bullmq';
 import { Redis } from 'ioredis';
 import { HistoryStore } from '../../src/HistoryStore';

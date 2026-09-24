@@ -1,7 +1,7 @@
 /*
  * NOTE ON FASTIFY VERSION MATRIX
  *
- * The @bull-board/fastify adapter bundles @fastify/static@9 and @fastify/view@11 as runtime
+ * The @worker-manager/fastify adapter bundles @fastify/static@9 and @fastify/view@11 as runtime
  * dependencies. Both of these plugins target fastify@5; fastify-plugin enforces the host
  * fastify version at registration time. Registering this adapter under fastify@4 throws:
  *
@@ -13,13 +13,13 @@
  * demonstrated on the Express adapter (Task 5) where no version-locked plugins are bundled.
  */
 
-import { createBullBoard } from '@bull-board/api';
+import { createBullBoard } from '@worker-manager/api';
 import {
   runServerAdapterContract,
   uiFixtureBasePath,
   NormalizedResponse,
   ContractRequest,
-} from '@bull-board/test-utils';
+} from '@worker-manager/test-utils';
 import Fastify from 'fastify';
 import { FastifyAdapter } from '../src';
 

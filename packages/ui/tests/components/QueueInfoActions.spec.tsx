@@ -1,5 +1,5 @@
-import type { AppQueue } from '@bull-board/api/typings/app';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
+import type { AppQueue } from '@worker-manager/api/typings/app';
 import { QueueInfoModal } from '../../src/components/QueueInfoModal/QueueInfoModal';
 import { useSettingsStore } from '../../src/hooks/useSettings';
 import { createWrapper, makeQueue, render } from '../testUtils';

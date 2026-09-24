@@ -16,9 +16,9 @@ export const emailQueue = new Queue('emails', {
 
 ```ts
 import express from 'express';
-import { createBullBoard } from '@bull-board/api';
-import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
-import { ExpressAdapter } from '@bull-board/express';
+import { createBullBoard } from '@worker-manager/api';
+import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
+import { ExpressAdapter } from '@worker-manager/express';
 import { emailQueue } from './queues';
 
 const app = express();

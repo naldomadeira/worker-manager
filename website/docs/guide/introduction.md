@@ -11,7 +11,7 @@ Mount it into your existing HTTP server with one of the adapters. That is what y
 Or run it standalone against a Redis URL, with no app involved at all:
 
 ```sh
-npx @bull-board/cli -r redis://localhost:6379
+npx @worker-manager/cli -r redis://localhost:6379
 ```
 
 Quicker when you only want to look at a queue, and the only option when the workers live in a repo you are not editing, or in a language that is not Node. See the [CLI guide](/guide/cli) and [Run with Docker](/guide/docker).

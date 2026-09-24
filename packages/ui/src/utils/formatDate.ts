@@ -1,4 +1,4 @@
-import type { DateFormats } from '@bull-board/api/typings/app';
+import type { DateFormats } from '@worker-manager/api/typings/app';
 import { isSameYear, isToday } from 'date-fns';
 
 export type TimeStamp = number | Date;

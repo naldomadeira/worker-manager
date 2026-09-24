@@ -1,14 +1,14 @@
 // oxlint-disable no-console
-import { createBullBoard } from '@bull-board/api';
-import { BullAdapter } from '@bull-board/api/bullAdapter';
-import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
-import { ExpressAdapter } from '@bull-board/express';
+import { createBullBoard } from '@worker-manager/api';
+import { BullAdapter } from '@worker-manager/api/bullAdapter';
+import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
+import { ExpressAdapter } from '@worker-manager/express';
 import {
   BUCKET_COUNT,
   LatencyStore,
   MetricsRecorder,
   RedisMetricsHistoryProvider,
-} from '@bull-board/metrics';
+} from '@worker-manager/metrics';
 import * as Bull from 'bull';
 import Queue3 from 'bull';
 import { FlowProducer, JobsOptions, MetricsTime, Queue as QueueMQ, Worker } from 'bullmq';
@@ -304,7 +304,7 @@ const groupedQueueDefs: Array<[string, JobsOptions?]> = [
 // fabricates 30 days of plausible-looking history directly in Redis on startup so the charts
 // have something to show immediately.
 //
-// It writes straight into the storage @bull-board/metrics defines, using its public
+// It writes straight into the storage @worker-manager/metrics defines, using its public
 // `LatencyStore` export for latency histograms and the queue-age gauge. There is no public
 // writer for arbitrary backdated counter (completed/failed) totals -- `HistoryStore`, which
 // owns that, is intentionally not exported (see packages/metrics/src/index.ts), and the only

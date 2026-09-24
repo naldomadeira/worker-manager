@@ -1,6 +1,6 @@
 name: Next.js examples
 
-# Builds the Next.js examples and checks the @bull-board/ui assets get traced into
+# Builds the Next.js examples and checks the @worker-manager/ui assets get traced into
 # the serverless function (#444). Not run per-commit — building an example is overkill
 # and the adapter has its own tests. Manual, plus once post-merge when the example
 # changes. The library's own resolution is covered by ui-base-path.spec.ts in main CI.

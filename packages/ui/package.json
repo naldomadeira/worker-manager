@@ -1,5 +1,5 @@
 {
-  "name": "@bull-board/ui",
+  "name": "@worker-manager/ui",
   "version": "9.10.1",
   "description": "A Dashboard UI built on top of bull or bullmq.",
   "keywords": [
@@ -11,10 +11,10 @@
     "redis"
   ],
   "license": "MIT",
-  "author": "felixmosh",
+  "author": "naldomadeira",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/felixmosh/bull-board.git",
+    "url": "git+https://github.com/naldomadeira/worker-manager.git",
     "directory": "packages/ui"
   },
   "files": [
@@ -36,7 +36,7 @@
     "gen:jsonSchema:bull": "npx ts-json-schema-generator --path '../../node_modules/bull/*.ts' --type 'Bull.JobOptions' --out './src/schemas/bull/jobOptions.json'"
   },
   "dependencies": {
-    "@bull-board/api": "9.10.1"
+    "@worker-manager/api": "9.10.1"
   },
   "devDependencies": {
     "@base-ui/react": "^1.7.0",

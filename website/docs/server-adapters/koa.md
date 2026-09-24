@@ -1,17 +1,17 @@
 # Koa
 
-[Koa](https://koajs.com/). `@bull-board/koa` gives you middleware to mount on your app.
+[Koa](https://koajs.com/). `@worker-manager/koa` gives you middleware to mount on your app.
 
 ## Install
 
 ```sh
-npm install @bull-board/api @bull-board/koa
+npm install @worker-manager/api @worker-manager/koa
 ```
 
 ```ts
-import { createBullBoard } from '@bull-board/api';
-import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
-import { KoaAdapter } from '@bull-board/koa';
+import { createBullBoard } from '@worker-manager/api';
+import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
+import { KoaAdapter } from '@worker-manager/koa';
 import { Queue } from 'bullmq';
 import Koa from 'koa';
 
@@ -38,7 +38,7 @@ app.listen(3000);
 
 ## Full runnable example
 
-- Simple setup: [`examples/with-koa`](https://github.com/felixmosh/bull-board/tree/master/examples/with-koa)
+- Simple setup: [`examples/with-koa`](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-koa)
 
 ## Next steps
 

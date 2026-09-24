@@ -1,4 +1,4 @@
-import type { ErrorMessage } from '@bull-board/api/typings/app';
+import type { ErrorMessage } from '@worker-manager/api/typings/app';
 import i18n, { type ParseKeys } from 'i18next';
 
 /**

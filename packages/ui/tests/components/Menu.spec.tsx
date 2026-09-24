@@ -1,5 +1,5 @@
-import type { GetQueuesResponse } from '@bull-board/api/typings/responses';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
+import type { GetQueuesResponse } from '@worker-manager/api/typings/responses';
 import { Menu } from '../../src/components/Menu/Menu';
 import { useMenuState } from '../../src/hooks/useMenuState';
 import { useSettingsStore } from '../../src/hooks/useSettings';

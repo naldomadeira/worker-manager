@@ -1,5 +1,5 @@
-import type { UIConfig } from '@bull-board/api/typings/app';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import type { UIConfig } from '@worker-manager/api/typings/app';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { App } from './App';

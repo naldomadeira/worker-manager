@@ -1,9 +1,9 @@
-import { createBullBoard } from '@bull-board/api';
-import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
-import { ExpressAdapter } from '@bull-board/express';
 import { BullModule } from '@nestjs/bullmq';
 import { DynamicModule, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { createBullBoard } from '@worker-manager/api';
+import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
+import { ExpressAdapter } from '@worker-manager/express';
 import { Queue } from 'bullmq';
 import { BasicAuthMiddleware } from './basic-auth.middleware';
 import { InjectTestQueue, TEST_QUEUE_NAME, TestProcessor } from './test.processor';

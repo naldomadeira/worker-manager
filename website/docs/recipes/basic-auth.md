@@ -4,7 +4,7 @@ The dashboard has no built-in auth. Don't expose it on the open internet without
 
 ## Express + Passport
 
-From [`examples/with-express-auth`](https://github.com/felixmosh/bull-board/tree/master/examples/with-express-auth).
+From [`examples/with-express-auth`](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-express-auth).
 
 ```js
 const passport = require('passport');
@@ -37,7 +37,7 @@ A logged-in session reaches `/ui` without a second login, which is all "auto-log
 Run it:
 
 ```sh
-git clone https://github.com/felixmosh/bull-board
+git clone https://github.com/naldomadeira/worker-manager
 cd bull-board/examples/with-express-auth
 npm install && npm start
 # http://localhost:3000/ui (login: bull / board)
@@ -45,7 +45,7 @@ npm install && npm start
 
 ## Fastify + @fastify/basic-auth
 
-From [`examples/with-fastify-auth`](https://github.com/felixmosh/bull-board/tree/master/examples/with-fastify-auth).
+From [`examples/with-fastify-auth`](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-fastify-auth).
 
 ```js
 await app.register(require('@fastify/basic-auth'), {
@@ -72,7 +72,7 @@ The `onRequest` hook covers every route registered after it. Scope the auth plug
 
 ## Hapi + strategy
 
-From [`examples/with-hapi-auth`](https://github.com/felixmosh/bull-board/tree/master/examples/with-hapi-auth).
+From [`examples/with-hapi-auth`](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-hapi-auth).
 
 ```js
 await app.register(require('@hapi/basic'));
@@ -97,7 +97,7 @@ The plugin options pass straight to Hapi's route config, so the auth strategy ap
 
 ## NestJS + guards
 
-From [`examples/with-nestjs-fastify-auth`](https://github.com/felixmosh/bull-board/tree/master/examples/with-nestjs-fastify-auth).
+From [`examples/with-nestjs-fastify-auth`](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-nestjs-fastify-auth).
 
 NestJS on the Fastify platform with a standard `@UseGuards()` guard. The example uses passport-local plus `@fastify/secure-session` for session cookies.
 
@@ -114,7 +114,7 @@ export class AppController {
 }
 ```
 
-The dashboard is mounted by `@bull-board/nestjs`, and the module's own guard checks the session before the route resolves.
+The dashboard is mounted by `@worker-manager/nestjs`, and the module's own guard checks the session before the route resolves.
 
 ## Auto-login from a token-based frontend
 

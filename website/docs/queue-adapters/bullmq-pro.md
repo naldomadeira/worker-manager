@@ -5,16 +5,16 @@ For the [BullMQ Pro](https://docs.bullmq.io/bullmq-pro/introduction) queue libra
 ## Install
 
 ```sh
-npm install @bull-board/api @bull-board/express
+npm install @worker-manager/api @worker-manager/express
 ```
 
 ## Usage
 
 ```js
 const { QueuePro } = require('@taskforcesh/bullmq-pro');
-const { createBullBoard } = require('@bull-board/api');
-const { BullMQProAdapter } = require('@bull-board/api/bullMQProAdapter');
-const { ExpressAdapter } = require('@bull-board/express');
+const { createBullBoard } = require('@worker-manager/api');
+const { BullMQProAdapter } = require('@worker-manager/api/bullMQProAdapter');
+const { ExpressAdapter } = require('@worker-manager/express');
 
 const queuePro = new QueuePro('queueProName');
 const serverAdapter = new ExpressAdapter();

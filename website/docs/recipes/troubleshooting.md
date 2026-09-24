@@ -51,11 +51,11 @@ If the regex form has to stay, append `$is_args$args` to the `proxy_pass` URI.
 
 To confirm, request `<base-path>/api/queues?activeQueue=<name>` once against the Node process directly and once through the proxy. If `jobs` is filled in the first response and empty in the second, the proxy is at fault.
 
-## `Cannot find module '@bull-board/ui/package.json'`
+## `Cannot find module '@worker-manager/ui/package.json'`
 
 Thrown at startup, almost always under a bundler (Next.js/Vercel, esbuild, `ncc`, a Docker build that prunes `node_modules`).
 
-bull-board locates the compiled UI with `eval(require.resolve('@bull-board/ui/package.json'))`. The `eval` is deliberate: it hides the require from bundlers so they don't try to inline the whole UI, but it also means bundlers don't know to ship those files. Two fixes: point bull-board at the UI directly with `options.uiBasePath`, and/or tell the bundler to include the files. The [Next.js & Vercel recipe](/recipes/nextjs) walks through both.
+bull-board locates the compiled UI with `eval(require.resolve('@worker-manager/ui/package.json'))`. The `eval` is deliberate: it hides the require from bundlers so they don't try to inline the whole UI, but it also means bundlers don't know to ship those files. Two fixes: point bull-board at the UI directly with `options.uiBasePath`, and/or tell the bundler to include the files. The [Next.js & Vercel recipe](/recipes/nextjs) walks through both.
 
 ## Blank page, or a 500 on the dashboard root
 
@@ -85,4 +85,4 @@ The leftover ids are not removed for you, since deleting datastore entries is mo
 
 ## Still stuck
 
-Open an issue on [felixmosh/bull-board](https://github.com/felixmosh/bull-board/issues) with your adapter, versions, and the mount/base-path setup. Most reports resolve to one of the above once the exact paths are on the table.
+Open an issue on [naldomadeira/worker-manager](https://github.com/naldomadeira/worker-manager/issues) with your adapter, versions, and the mount/base-path setup. Most reports resolve to one of the above once the exact paths are on the table.

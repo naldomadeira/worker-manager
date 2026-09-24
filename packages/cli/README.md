@@ -1,14 +1,14 @@
-# @bull-board/cli
+# @worker-manager/cli
 
-Run the [bull-board](https://github.com/felixmosh/bull-board) dashboard against a Redis instance, no app to wire it into.
+Run the [bull-board](https://github.com/naldomadeira/worker-manager) dashboard against a Redis instance, no app to wire it into.
 
 ```sh
-npx @bull-board/cli -r redis://localhost:6379
+npx @worker-manager/cli -r redis://localhost:6379
 ```
 
 That opens `http://127.0.0.1:3000` with the dashboard for every Bull and BullMQ queue it finds under the `bull` key prefix.
 
-![bull-board dashboard](https://raw.githubusercontent.com/felixmosh/bull-board/master/website/docs/public/screenshots/dashboard-overview.png)
+![bull-board dashboard](https://raw.githubusercontent.com/naldomadeira/worker-manager/main/website/docs/public/screenshots/dashboard-overview.png)
 
 ## When you'd reach for this
 
@@ -24,7 +24,7 @@ This is not a replacement for mounting an adapter in your own server: there's no
 ```
 Usage:
   bull-board [options]
-  npx @bull-board/cli [options]
+  npx @worker-manager/cli [options]
 
 Options:
   -r, --redis <url>       Redis connection URL          [redis://localhost:6379]
@@ -81,7 +81,7 @@ module.exports = {
 `--sentinel` connects through Redis Sentinel rather than to one instance directly, for a deployment where the master address is not fixed:
 
 ```sh
-npx @bull-board/cli --sentinel s1.internal:26379,s2.internal:26379 --sentinel-name mymaster
+npx @worker-manager/cli --sentinel s1.internal:26379,s2.internal:26379 --sentinel-name mymaster
 ```
 
 A port is optional per entry and defaults to 26379. `--sentinel-name` is the master group name from your sentinel configuration and is required. `--sentinel` and `--redis` are mutually exclusive, and passing both is an error rather than a silent preference for one.
@@ -109,28 +109,28 @@ module.exports = {
 
 ## Historical metrics
 
-`--history` turns on the long-retention metrics that otherwise need `@bull-board/metrics` wired into an app of your own:
+`--history` turns on the long-retention metrics that otherwise need `@worker-manager/metrics` wired into an app of your own:
 
 ```sh
-npx @bull-board/cli -r redis://localhost:6379 --history
+npx @worker-manager/cli -r redis://localhost:6379 --history
 ```
 
 Every queue chart gains a 60m / 7d / 30d / 90d range selector, and a cross-queue Metrics history page shows up in the sidebar. The CLI process does the recording itself, copying throughput, wait time, run time and queue age into Redis once a minute under the `bull-board:metrics:` namespace, never over a key Bull or BullMQ owns. Recording follows discovery, so a queue that appears between rescans is picked up on the next tick.
 
 `--history-retention-days` sets the window, 90 days by default. Per-tier retention, the snapshot interval and `latency: false` go in the config file under a `history` key. `--read-only` keeps the reading and stops the writing, for a board that only displays what another process records.
 
-Completed and failed history comes out of BullMQ's own metrics buffer, so it stays empty unless your workers were built with `metrics: { maxDataPoints: MetricsTime.ONE_WEEK }`; the CLI warns at startup when no discovered queue has any. Latency and queue age need nothing from your workers. See the [historical metrics recipe](https://felixmosh.github.io/bull-board/recipes/historical-metrics) for storage sizing and what the charts show.
+Completed and failed history comes out of BullMQ's own metrics buffer, so it stays empty unless your workers were built with `metrics: { maxDataPoints: MetricsTime.ONE_WEEK }`; the CLI warns at startup when no discovered queue has any. Latency and queue age need nothing from your workers. See the [historical metrics recipe](https://naldomadeira.github.io/worker-manager/recipes/historical-metrics) for storage sizing and what the charts show.
 
 ## Docker
 
 ```sh
 docker run --rm -p 127.0.0.1:3000:3000 \
   -e BULL_BOARD_USER=admin -e BULL_BOARD_PASSWORD=secret \
-  ghcr.io/felixmosh/bull-board --redis redis://host.docker.internal:6379
+  ghcr.io/naldomadeira/worker-manager --redis redis://host.docker.internal:6379
 ```
 
-`ghcr.io/felixmosh/bull-board` is this package as an image, built for amd64 and arm64 on every release and tagged with the exact version, the major, and `latest`. The entrypoint is the CLI, so flags and `BULL_BOARD_*` variables work exactly as they do above. The only things the image decides for you are `BULL_BOARD_HOST=0.0.0.0` and `BULL_BOARD_OPEN=false`, the two defaults that make no sense in a container, and you can override both. [Run with Docker](https://felixmosh.github.io/bull-board/guide/docker) covers Compose, tags and mounting a config file.
+`ghcr.io/naldomadeira/worker-manager` is this package as an image, built for amd64 and arm64 on every release and tagged with the exact version, the major, and `latest`. The entrypoint is the CLI, so flags and `BULL_BOARD_*` variables work exactly as they do above. The only things the image decides for you are `BULL_BOARD_HOST=0.0.0.0` and `BULL_BOARD_OPEN=false`, the two defaults that make no sense in a container, and you can override both. [Run with Docker](https://naldomadeira.github.io/worker-manager/guide/docker) covers Compose, tags and mounting a config file.
 
 Discovery only reads Redis, so BullMQ v6 queues backed by PostgreSQL aren't found here; use a server adapter in your own app for those. `--prefix` doesn't take wildcards either, list the prefixes you need explicitly.
 
-See the [CLI guide](https://felixmosh.github.io/bull-board/guide/cli) for the full flag and environment variable reference and the basic auth walkthrough.
+See the [CLI guide](https://naldomadeira.github.io/worker-manager/guide/cli) for the full flag and environment variable reference and the basic auth walkthrough.

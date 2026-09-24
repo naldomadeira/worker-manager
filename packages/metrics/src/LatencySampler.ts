@@ -1,4 +1,4 @@
-import type { BaseAdapter } from '@bull-board/api/baseAdapter';
+import type { BaseAdapter } from '@worker-manager/api/baseAdapter';
 import type { MetricsClient } from './connection';
 import { bucketIndex, emptyVector } from './histogram';
 import type { MetricsKeys } from './keys';

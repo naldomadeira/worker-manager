@@ -11,7 +11,7 @@ import type { AppControllerRoute, MetricsHistoryProvider, RouteSpec } from '../.
 export const API_CONTRACT_VERSION = '1.0.0';
 
 const PACKAGE_ROOT = path.resolve(__dirname, '../..');
-const DOCS_ORIGIN = 'https://felixmosh.github.io/bull-board';
+const DOCS_ORIGIN = 'https://naldomadeira.github.io/worker-manager';
 
 export const OVERVIEW_PATH = path.join(PACKAGE_ROOT, 'scripts/openapi/api-overview.md');
 

@@ -1,4 +1,4 @@
-import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
+import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 import { Queue } from 'bullmq';
 import { STATUSES } from '../../src/constants/statuses';
 import {

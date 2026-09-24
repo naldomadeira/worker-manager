@@ -19,8 +19,8 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@bull-board/api": "^9.10.0",
-    "@bull-board/fastify": "^9.10.0",
+    "@worker-manager/api": "^9.10.0",
+    "@worker-manager/fastify": "^9.10.0",
     "@fastify/cookie": "^11.0.2",
     "@fastify/secure-session": "^8.1.1",
     "@nestjs/bullmq": "^11.0.2",

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-const REPO = 'felixmosh/bull-board';
+const REPO = 'naldomadeira/worker-manager';
 const CACHE_KEY = 'bull-board:gh-stars';
 const CACHE_TTL_MS = 60 * 60 * 1000;
 
@@ -63,12 +63,14 @@ export default function GitHubStars() {
   return (
     <a
       className="gh-stars"
-      href="https://github.com/felixmosh/bull-board"
+      href="https://github.com/naldomadeira/worker-manager"
       target="_blank"
       rel="noopener noreferrer"
       aria-label="GitHub stars"
     >
-      <span className="gh-stars__icon" aria-hidden="true">&#9733;</span>
+      <span className="gh-stars__icon" aria-hidden="true">
+        &#9733;
+      </span>
       <span className="gh-stars__count">{label}</span>
     </a>
   );

@@ -3,7 +3,7 @@ import type {
   QueueJob,
   QueueJobJson,
   Status,
-} from '@bull-board/api/typings/app';
+} from '@worker-manager/api/typings/app';
 import type { DemoJob } from './state';
 import { state } from './state';
 

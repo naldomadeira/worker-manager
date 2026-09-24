@@ -1,6 +1,6 @@
-import { createBullBoard } from '@bull-board/api';
-import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
-import { BunAdapter } from '@bull-board/bun';
+import { createBullBoard } from '@worker-manager/api';
+import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
+import { BunAdapter } from '@worker-manager/bun';
 import { Queue as QueueMQ, Worker } from 'bullmq';
 
 const sleep = (t: number) => new Promise((resolve) => setTimeout(resolve, t * 1000));

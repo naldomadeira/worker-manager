@@ -2,11 +2,11 @@
 
 > Applies to: BullMQ only.
 >
-> Beta: this feature ships in the opt-in `@bull-board/metrics` package. It is safe to run, but the API and Redis storage layout may still change in a minor release while it settles, so pin an exact version if you depend on the storage format.
+> Beta: this feature ships in the opt-in `@worker-manager/metrics` package. It is safe to run, but the API and Redis storage layout may still change in a minor release while it settles, so pin an exact version if you depend on the storage format.
 
 bull-board is a viewer, not a monitor, and its built-in throughput chart reflects that: it reads BullMQ's native `queue.getMetrics()`, a per-minute ring buffer capped at `maxDataPoints`, scoped to a single queue, and only as deep as that buffer's window. Restart the buffer's window, or just wait long enough, and the older points are gone. There's no long history and no cross-queue total, because BullMQ was never asked to keep one.
 
-`@bull-board/metrics` is an opt-in companion package that fills that gap. It doesn't replace the live chart, it adds a second, longer-retention path behind it: a recorder that snapshots the native metrics into Redis before they roll off, and a history provider you register with `createBullBoard` that lets the UI read them back.
+`@worker-manager/metrics` is an opt-in companion package that fills that gap. It doesn't replace the live chart, it adds a second, longer-retention path behind it: a recorder that snapshots the native metrics into Redis before they roll off, and a history provider you register with `createBullBoard` that lets the UI read them back.
 
 ## How it fits together
 
@@ -14,15 +14,15 @@ Two pieces, living in two different places.
 
 `MetricsRecorder` runs in your own always-on process, typically wherever your workers already live. On an interval, it reads each queue's native completed/failed per-minute metrics and writes them into long-retention Redis buckets: a daily rollup per queue, plus a cross-queue global rollup. Writes are idempotent by minute, so it's safe to run the recorder in several processes, or restart it, without double-counting. There's no singleton to coordinate and no leader election.
 
-`RedisMetricsHistoryProvider` runs wherever you build the board. You pass it to `createBullBoard({ options: { historyProvider } })`. The core itself only defines the `MetricsHistoryProvider` interface and stays stateless: registering a provider just turns on one additional read endpoint that delegates to it. `@bull-board/metrics` is the batteries-included Redis implementation, but if you already have a metrics store of your own, you can implement the interface directly instead of adopting this package. With no provider configured, nothing about the board changes.
+`RedisMetricsHistoryProvider` runs wherever you build the board. You pass it to `createBullBoard({ options: { historyProvider } })`. The core itself only defines the `MetricsHistoryProvider` interface and stays stateless: registering a provider just turns on one additional read endpoint that delegates to it. `@worker-manager/metrics` is the batteries-included Redis implementation, but if you already have a metrics store of your own, you can implement the interface directly instead of adopting this package. With no provider configured, nothing about the board changes.
 
 ## Without an app: the CLI and the Docker image
 
-If you aren't embedding bull-board in an app at all, the [standalone CLI](/guide/cli) and the [Docker image](/guide/docker) do both halves for you. `@bull-board/metrics` ships as part of `@bull-board/cli`, and `--history` registers the provider and starts a recorder in the same process:
+If you aren't embedding bull-board in an app at all, the [standalone CLI](/guide/cli) and the [Docker image](/guide/docker) do both halves for you. `@worker-manager/metrics` ships as part of `@worker-manager/cli`, and `--history` registers the provider and starts a recorder in the same process:
 
 ```sh
-npx @bull-board/cli --redis redis://localhost:6379 --history
-docker run --rm -p 127.0.0.1:3000:3000 ghcr.io/felixmosh/bull-board \
+npx @worker-manager/cli --redis redis://localhost:6379 --history
+docker run --rm -p 127.0.0.1:3000:3000 ghcr.io/naldomadeira/worker-manager \
   --redis redis://redis:6379 --history
 ```
 
@@ -86,7 +86,7 @@ A latency tick that fails is swallowed rather than propagated, so a broken scan 
 ## Install
 
 ```bash
-yarn add @bull-board/metrics
+yarn add @worker-manager/metrics
 ```
 
 `ioredis` is a peer dependency; you already have it if you're using BullMQ.
@@ -96,8 +96,8 @@ yarn add @bull-board/metrics
 In the process where your workers run:
 
 ```ts
-import { MetricsRecorder } from '@bull-board/metrics';
-import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
+import { MetricsRecorder } from '@worker-manager/metrics';
+import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 
 const recorder = new MetricsRecorder({
   queues: [new BullMQAdapter(myQueue)],
@@ -240,7 +240,7 @@ One caveat on per-queue purges: the cross-queue rollup is corrected by subtracti
 `MetricsHistoryAdmin` is the same maintenance surface as a plain library object, for a debug endpoint, a one-off script, or a cleanup job.
 
 ```ts
-import { MetricsHistoryAdmin } from '@bull-board/metrics';
+import { MetricsHistoryAdmin } from '@worker-manager/metrics';
 
 const admin = new MetricsHistoryAdmin({ connection: redisOptions });
 
@@ -273,8 +273,8 @@ Call `admin.disconnect()` when you're done. Like the recorder and the provider, 
 Where you build the board. The per-queue chart on each queue page needs `showMetrics: true` in `uiConfig` as well (see [UIConfig](/configuration/ui-config)); the dedicated "Metrics history" page below doesn't need it, but you'll usually want both:
 
 ```ts
-import { createBullBoard } from '@bull-board/api';
-import { RedisMetricsHistoryProvider } from '@bull-board/metrics';
+import { createBullBoard } from '@worker-manager/api';
+import { RedisMetricsHistoryProvider } from '@worker-manager/metrics';
 
 createBullBoard({
   queues,

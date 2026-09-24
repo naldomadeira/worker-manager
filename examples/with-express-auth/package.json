@@ -7,10 +7,10 @@
     "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "felixmosh",
+  "author": "naldomadeira",
   "license": "ISC",
   "dependencies": {
-    "@bull-board/express": "^9.10.0",
+    "@worker-manager/express": "^9.10.0",
     "body-parser": "^2.3.0",
     "bullmq": "^5.80.9",
     "connect-ensure-login": "^0.1.1",

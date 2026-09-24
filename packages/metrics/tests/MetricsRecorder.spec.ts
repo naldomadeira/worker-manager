@@ -1,5 +1,5 @@
-import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
-import type { MetricsType } from '@bull-board/api/typings/app';
+import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
+import type { MetricsType } from '@worker-manager/api/typings/app';
 import { MetricsTime, Queue, Worker } from 'bullmq';
 import { Redis } from 'ioredis';
 import { vectorTotal } from '../src/histogram';

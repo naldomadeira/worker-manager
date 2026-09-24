@@ -44,10 +44,10 @@ jobs:
         run: yarn build
 
       - name: Build demo
-        run: yarn workspace @bull-board/demo build
+        run: yarn workspace @worker-manager/demo build
 
       - name: Build docs
-        run: yarn workspace @bull-board/website docs:build
+        run: yarn workspace @worker-manager/website docs:build
 
       - name: Configure Pages
         uses: actions/configure-pages@v5

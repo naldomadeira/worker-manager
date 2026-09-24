@@ -1,4 +1,4 @@
-import type { MetricsHistoryPoint, MetricsLatencyPoint } from '@bull-board/api/typings/app';
+import type { MetricsHistoryPoint, MetricsLatencyPoint } from '@worker-manager/api/typings/app';
 import { withPartialTail } from '../../utils/partialBucket';
 
 export const PERCENTILES = [50, 95, 99];

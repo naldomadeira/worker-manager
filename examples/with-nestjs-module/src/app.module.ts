@@ -1,7 +1,7 @@
-import { ExpressAdapter } from '@bull-board/express';
-import { BullBoardModule } from '@bull-board/nestjs';
 import { BullModule } from '@nestjs/bullmq';
 import { Module } from '@nestjs/common';
+import { ExpressAdapter } from '@worker-manager/express';
+import { BullBoardModule } from '@worker-manager/nestjs';
 import { FeatureModule } from './feature/feature.module';
 
 @Module({

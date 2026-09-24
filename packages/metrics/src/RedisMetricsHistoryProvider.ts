@@ -4,7 +4,7 @@ import type {
   MetricsHistoryQuery,
   MetricsLatencyPoint,
   MetricsLatencyQuery,
-} from '@bull-board/api/typings/app';
+} from '@worker-manager/api/typings/app';
 import { isCluster, resolveClient, type MetricsClient, type MetricsConnection } from './connection';
 import { emptyVector, mergeVectors, quantile, vectorTotal } from './histogram';
 import {

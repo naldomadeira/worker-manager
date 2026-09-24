@@ -1,22 +1,22 @@
 ---
-description: Run the bull-board dashboard in a container with the official ghcr.io/felixmosh/bull-board image. Docker Compose, environment variables, config files and basic auth.
+description: Run the bull-board dashboard in a container with the official ghcr.io/naldomadeira/worker-manager image. Docker Compose, environment variables, config files and basic auth.
 ---
 
 # Run with Docker
 
-`ghcr.io/felixmosh/bull-board` is the official image: the [standalone CLI](/guide/cli) with a Node runtime wrapped around it. The dashboard runs as its own container next to your Redis, so there's nothing to install on the host and no app to mount an adapter into. That's usually what you want when the workers live in a repo you aren't editing, or when nothing in the stack is Node in the first place.
+`ghcr.io/naldomadeira/worker-manager` is the official image: the [standalone CLI](/guide/cli) with a Node runtime wrapped around it. The dashboard runs as its own container next to your Redis, so there's nothing to install on the host and no app to mount an adapter into. That's usually what you want when the workers live in a repo you aren't editing, or when nothing in the stack is Node in the first place.
 
 ```sh
 docker run --rm -p 127.0.0.1:3000:3000 \
   -e BULL_BOARD_USER=admin -e BULL_BOARD_PASSWORD=secret \
-  ghcr.io/felixmosh/bull-board --redis redis://host.docker.internal:6379
+  ghcr.io/naldomadeira/worker-manager --redis redis://host.docker.internal:6379
 ```
 
 That serves the dashboard on `http://127.0.0.1:3000` with every Bull and BullMQ queue it finds under the `bull` key prefix. `host.docker.internal` is how a container reaches a Redis running on the host: Docker Desktop provides it, and on plain Docker Engine you add `--add-host host.docker.internal:host-gateway`.
 
 ## What's in the image
 
-`node:22-alpine` and the published `@bull-board/cli`, nothing else. About 63 MB, built for `linux/amd64` and `linux/arm64`, running as the unprivileged `node` user.
+`node:22-alpine` and the published `@worker-manager/cli`, nothing else. About 63 MB, built for `linux/amd64` and `linux/arm64`, running as the unprivileged `node` user.
 
 The entrypoint is the CLI itself, so anything after the image name is a flag exactly as the [CLI guide](/guide/cli#options) documents it, and every `BULL_BOARD_*` variable behaves the same way. There's no image-specific configuration to learn. Two CLI defaults come preset, because they're the two that make no sense in a container:
 
@@ -37,7 +37,7 @@ There's also a `HEALTHCHECK` polling the dashboard on its own port, so `depends_
 | `9` | The newest release in that major |
 | `9.5.0` | That exact release, forever |
 
-Pin the exact version if you'd rather nothing moved under you, or the major for patches without surprises. The [package page](https://github.com/felixmosh/bull-board/pkgs/container/bull-board) lists every tag that exists.
+Pin the exact version if you'd rather nothing moved under you, or the major for patches without surprises. The [package page](https://github.com/naldomadeira/worker-manager/pkgs/container/bull-board) lists every tag that exists.
 
 ## Docker Compose
 
@@ -51,7 +51,7 @@ services:
       - '6379:6379'
 
   bull-board:
-    image: ghcr.io/felixmosh/bull-board:9
+    image: ghcr.io/naldomadeira/worker-manager:9
     command: --redis redis://redis:6379
     environment:
       BULL_BOARD_USER: ${BULL_BOARD_USER}
@@ -74,7 +74,7 @@ docker run --rm -p 127.0.0.1:3000:3000 \
   -e BULL_BOARD_PREFIX=bull,tenant-a \
   -e BULL_BOARD_READ_ONLY=true \
   -e BULL_BOARD_BOARD_TITLE='Ops Dashboard' \
-  ghcr.io/felixmosh/bull-board
+  ghcr.io/naldomadeira/worker-manager
 ```
 
 For anything longer, mount a [config file](/guide/cli#config-file). The working directory is `/app`, which is where the CLI looks, so a file mounted there is picked up without a `--config` flag as long as uid 1000 can read it:
@@ -84,11 +84,11 @@ For anything longer, mount a [config file](/guide/cli#config-file). The working 
       - ./bull-board.config.js:/app/bull-board.config.js:ro
 ```
 
-[Historical metrics](/recipes/historical-metrics) work here too, since the image carries `@bull-board/metrics` as part of the CLI. `--history`, or `BULL_BOARD_HISTORY=true`, registers the history provider and starts recording throughput and latency into your Redis once a minute:
+[Historical metrics](/recipes/historical-metrics) work here too, since the image carries `@worker-manager/metrics` as part of the CLI. `--history`, or `BULL_BOARD_HISTORY=true`, registers the history provider and starts recording throughput and latency into your Redis once a minute:
 
 ```yaml
   bull-board:
-    image: ghcr.io/felixmosh/bull-board:9
+    image: ghcr.io/naldomadeira/worker-manager:9
     command: --redis redis://redis:6379 --history --history-retention-days 90
 ```
 
@@ -98,7 +98,7 @@ The container is a normal recorder, so it keeps writing for as long as it runs a
 
 ```yaml
   bull-board:
-    image: ghcr.io/felixmosh/bull-board:9
+    image: ghcr.io/naldomadeira/worker-manager:9
     environment:
       BULL_BOARD_SENTINELS: sentinel-1:26379,sentinel-2:26379,sentinel-3:26379
       BULL_BOARD_SENTINEL_NAME: mymaster
@@ -112,7 +112,7 @@ Serving the dashboard under a path prefix, which is what a reverse proxy routing
 
 ```sh
 docker run --rm -p 127.0.0.1:3000:3000 \
-  ghcr.io/felixmosh/bull-board --redis redis://redis:6379 --base-path /queues
+  ghcr.io/naldomadeira/worker-manager --redis redis://redis:6379 --base-path /queues
 ```
 
 ## Keeping it private
@@ -138,7 +138,7 @@ The CLI also runs from npm inside a stock Node container. That re-resolves the p
 ```yaml
   bull-board:
     image: node:22-alpine
-    command: npx -y @bull-board/cli --redis redis://redis:6379 --host 0.0.0.0 --no-open
+    command: npx -y @worker-manager/cli --redis redis://redis:6379 --host 0.0.0.0 --no-open
     environment:
       BULL_BOARD_USER: ${BULL_BOARD_USER}
       BULL_BOARD_PASSWORD: ${BULL_BOARD_PASSWORD}

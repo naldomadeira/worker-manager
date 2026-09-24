@@ -1,6 +1,6 @@
-import { BullAdapter } from '@bull-board/api/bullAdapter';
-import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
-import type { QueueAdapterOptions } from '@bull-board/api/typings/app';
+import { BullAdapter } from '@worker-manager/api/bullAdapter';
+import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
+import type { QueueAdapterOptions } from '@worker-manager/api/typings/app';
 import BullQueue from 'bull';
 import { Queue as BullMQQueue } from 'bullmq';
 import type { Redis } from 'ioredis';

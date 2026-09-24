@@ -1,9 +1,9 @@
+import { useQuery } from '@tanstack/react-query';
 import type {
   MetricsLatencyGranularity,
   MetricsLatencyMetric,
   MetricsLatencyPoint,
-} from '@bull-board/api/typings/app';
-import { useQuery } from '@tanstack/react-query';
+} from '@worker-manager/api/typings/app';
 import { queryKeys } from './queryKeys';
 import { useApi } from './useApi';
 import { useSettingsStore } from './useSettings';

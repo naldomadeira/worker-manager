@@ -1,5 +1,5 @@
-import type { FlowNode } from '@bull-board/api/typings/app';
 import { useQuery } from '@tanstack/react-query';
+import type { FlowNode } from '@worker-manager/api/typings/app';
 import cn from 'clsx';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';

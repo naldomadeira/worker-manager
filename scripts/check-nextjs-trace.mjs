@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /* eslint-disable no-console -- CLI script; stdout is its interface */
-// Asserts a built Next.js example ships the @bull-board/ui assets in its serverless
+// Asserts a built Next.js example ships the @worker-manager/ui assets in its serverless
 // function (guards #444). Usage: node scripts/check-nextjs-trace.mjs <example-dir>
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -30,16 +30,16 @@ if (!traceRel) {
 
 const tracePath = join(serverDir, traceRel);
 const { files = [] } = JSON.parse(readFileSync(tracePath, 'utf8'));
-const uiFiles = files.filter((f) => f.includes('@bull-board/ui/dist'));
+const uiFiles = files.filter((f) => f.includes('@worker-manager/ui/dist'));
 const hasEntry = uiFiles.some((f) => f.endsWith('index.ejs'));
-const hasStatic = uiFiles.some((f) => f.includes('@bull-board/ui/dist/static/'));
+const hasStatic = uiFiles.some((f) => f.includes('@worker-manager/ui/dist/static/'));
 
 console.log(`Trace: ${tracePath}`);
-console.log(`Traced ${uiFiles.length} @bull-board/ui/dist files into the function.`);
+console.log(`Traced ${uiFiles.length} @worker-manager/ui/dist files into the function.`);
 
 if (!hasEntry || !hasStatic) {
   console.error(
-    '\nFAIL: the @bull-board/ui assets are missing from the serverless trace.\n' +
+    '\nFAIL: the @worker-manager/ui assets are missing from the serverless trace.\n' +
       'This is the #444 regression. Check `outputFileTracingIncludes` (and, in a\n' +
       'monorepo, `outputFileTracingRoot`) in the example\'s next.config.js, and\n' +
       'whether a newer Next.js changed its file-tracing behavior.'

@@ -1,10 +1,10 @@
-import { createBullBoard } from '@bull-board/api';
-import { BullAdapter } from '@bull-board/api/bullAdapter';
-import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
-import { BaseAdapter } from '@bull-board/api/dist/queueAdapters/base';
-import type { AppQueue, QueueWorker } from '@bull-board/api/typings/app';
-import type { GetQueueWorkersResponse } from '@bull-board/api/typings/responses';
-import { ExpressAdapter } from '@bull-board/express';
+import { createBullBoard } from '@worker-manager/api';
+import { BullAdapter } from '@worker-manager/api/bullAdapter';
+import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
+import { BaseAdapter } from '@worker-manager/api/dist/queueAdapters/base';
+import type { AppQueue, QueueWorker } from '@worker-manager/api/typings/app';
+import type { GetQueueWorkersResponse } from '@worker-manager/api/typings/responses';
+import { ExpressAdapter } from '@worker-manager/express';
 import Bull from 'bull';
 import { Queue, Worker, type WorkerOptions } from 'bullmq';
 import request from 'supertest';

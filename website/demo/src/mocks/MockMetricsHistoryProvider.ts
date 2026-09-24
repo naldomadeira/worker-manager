@@ -10,7 +10,7 @@ import type {
   MetricsLatencyPoint,
   MetricsLatencyQuery,
   MetricsType,
-} from '@bull-board/api/typings/app';
+} from '@worker-manager/api/typings/app';
 import { hashStr, mulberry32 } from './prng';
 import { state } from './state';
 
@@ -18,7 +18,7 @@ const HOUR_MS = 60 * 60 * 1000;
 const DAY_MS = 24 * HOUR_MS;
 const TAU = Math.PI * 2;
 
-/** Matches @bull-board/metrics defaults: hour/day tiers keep 90 days, minutes keep 7. */
+/** Matches @worker-manager/metrics defaults: hour/day tiers keep 90 days, minutes keep 7. */
 const RETENTION_DAYS = 90;
 const MINUTE_RETENTION_DAYS = 7;
 
@@ -27,7 +27,7 @@ const GLOBAL_QUEUE = '__global__';
 const METRICS: MetricsType[] = ['completed', 'failed'];
 
 // Byte costs per recorded bucket, taken from the storage table in the
-// @bull-board/metrics README so the demo's storage panel shows realistic numbers.
+// @worker-manager/metrics README so the demo's storage panel shows realistic numbers.
 const BYTES_PER_MINUTE_BUCKET = 50;
 const BYTES_PER_HOUR_BUCKET = 13;
 const BYTES_PER_DAY_FIELD = 15;
@@ -108,7 +108,7 @@ function addTiers(
 }
 
 /**
- * In-memory stand-in for `RedisMetricsHistoryProvider` from @bull-board/metrics.
+ * In-memory stand-in for `RedisMetricsHistoryProvider` from @worker-manager/metrics.
  *
  * The demo has no Redis and no recorder, so the history the real package would have
  * collected over 90 days is generated once at startup and then served, purged and

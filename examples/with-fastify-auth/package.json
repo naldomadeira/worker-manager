@@ -7,11 +7,11 @@
     "start": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "felixmosh",
+  "author": "naldomadeira",
   "license": "ISC",
   "dependencies": {
-    "@bull-board/api": "^9.10.0",
-    "@bull-board/fastify": "^9.10.0",
+    "@worker-manager/api": "^9.10.0",
+    "@worker-manager/fastify": "^9.10.0",
     "@fastify/basic-auth": "^6.2.0",
     "@fastify/cookie": "^11.1.2",
     "@fastify/jwt": "^10.2.0",

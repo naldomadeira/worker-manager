@@ -1,5 +1,5 @@
-import { STATUSES } from '@bull-board/api/constants/statuses';
-import type { JobDetailsTab, Status } from '@bull-board/api/typings/app';
+import { STATUSES } from '@worker-manager/api/constants/statuses';
+import type { JobDetailsTab, Status } from '@worker-manager/api/typings/app';
 import { useEffect, useMemo, useState } from 'react';
 import { useSettingsStore } from './useSettings';
 import { useUIConfig } from './useUIConfig';

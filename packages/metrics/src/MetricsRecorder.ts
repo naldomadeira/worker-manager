@@ -1,5 +1,5 @@
-import type { BaseAdapter } from '@bull-board/api/baseAdapter';
-import type { MetricsType } from '@bull-board/api/typings/app';
+import type { BaseAdapter } from '@worker-manager/api/baseAdapter';
+import type { MetricsType } from '@worker-manager/api/typings/app';
 import { isCluster, resolveClient, type MetricsClient, type MetricsConnection } from './connection';
 import { metricsToMinutePoints } from './dataMapping';
 import { HistoryStore, type Retention } from './HistoryStore';

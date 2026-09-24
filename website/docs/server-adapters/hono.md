@@ -1,19 +1,19 @@
 # Hono
 
-[Hono](https://hono.dev/). `@bull-board/hono` gives you a Hono sub-app.
+[Hono](https://hono.dev/). `@worker-manager/hono` gives you a Hono sub-app.
 
 ## Install
 
 ```sh
-npm install @bull-board/api @bull-board/hono @hono/node-server
+npm install @worker-manager/api @worker-manager/hono @hono/node-server
 ```
 
 `@hono/node-server` is only for Node.js. On Bun, Deno, or Workers bring your own serve function, see the [Hono docs](https://hono.dev/docs/getting-started/basic).
 
 ```ts
-import { createBullBoard } from '@bull-board/api';
-import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
-import { HonoAdapter } from '@bull-board/hono';
+import { createBullBoard } from '@worker-manager/api';
+import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
+import { HonoAdapter } from '@worker-manager/hono';
 import { Queue } from 'bullmq';
 import { Hono } from 'hono';
 import { serve } from '@hono/node-server';
@@ -43,7 +43,7 @@ serve({ fetch: app.fetch, port: 3000 });
 
 ## Full runnable example
 
-- Simple setup: [`examples/with-hono`](https://github.com/felixmosh/bull-board/tree/master/examples/with-hono)
+- Simple setup: [`examples/with-hono`](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-hono)
 
 ## Next steps
 

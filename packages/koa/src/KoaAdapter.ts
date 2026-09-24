@@ -1,4 +1,7 @@
 import path from 'path';
+import { bodyParser } from '@koa/bodyparser';
+import Router from '@koa/router';
+import views from '@ladjs/koa-views';
 import type {
   AppControllerRoute,
   AppViewRoute,
@@ -6,10 +9,7 @@ import type {
   ControllerHandlerReturnType,
   IServerAdapter,
   UIConfig,
-} from '@bull-board/api/typings/app';
-import { bodyParser } from '@koa/bodyparser';
-import Router from '@koa/router';
-import views from '@ladjs/koa-views';
+} from '@worker-manager/api/typings/app';
 import Koa from 'koa';
 import mount from 'koa-mount';
 import serve from 'koa-static';

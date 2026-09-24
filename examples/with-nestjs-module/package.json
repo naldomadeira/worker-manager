@@ -14,9 +14,9 @@
     "start:prod": "node dist/main"
   },
   "dependencies": {
-    "@bull-board/api": "^9.10.0",
-    "@bull-board/express": "^9.10.0",
-    "@bull-board/nestjs": "^9.10.0",
+    "@worker-manager/api": "^9.10.0",
+    "@worker-manager/express": "^9.10.0",
+    "@worker-manager/nestjs": "^9.10.0",
     "@nestjs/bullmq": "^11.0.2",
     "@nestjs/common": "^11.0.16",
     "@nestjs/core": "^11.1.28",

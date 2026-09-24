@@ -1,34 +1,34 @@
-# <img alt="@bull-board" src="https://raw.githubusercontent.com/felixmosh/bull-board/master/packages/ui/src/static/images/logo.svg" width="35px" /> @bull-board/nestjs
+# <img alt="Worker Manager" src="https://raw.githubusercontent.com/naldomadeira/worker-manager/main/packages/ui/src/static/images/logo.svg" width="35px" /> @worker-manager/nestjs
 
 [NestJS](https://nestjs.com/)  for `bull-board`.
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/@bull-board/nestjs">
-    <img alt="npm version" src="https://img.shields.io/npm/v/@bull-board/nestjs">
+  <a href="https://www.npmjs.com/package/@worker-manager/nestjs">
+    <img alt="npm version" src="https://img.shields.io/npm/v/@worker-manager/nestjs">
   </a>
-  <a href="https://www.npmjs.com/package/@bull-board/nestjs">
-    <img alt="npm downloads" src="https://img.shields.io/npm/dw/@bull-board/nestjs">
+  <a href="https://www.npmjs.com/package/@worker-manager/nestjs">
+    <img alt="npm downloads" src="https://img.shields.io/npm/dw/@worker-manager/nestjs">
   </a>
-  <a href="https://github.com/felixmosh/bull-board/blob/master/LICENSE">
-    <img alt="licence" src="https://img.shields.io/github/license/felixmosh/bull-board">
+  <a href="https://github.com/naldomadeira/worker-manager/blob/main/LICENSE">
+    <img alt="licence" src="https://img.shields.io/github/license/naldomadeira/worker-manager">
   </a>
 <p>
 
-![Overview](https://raw.githubusercontent.com/felixmosh/bull-board/master/screenshots/overview.png)
-![UI](https://raw.githubusercontent.com/felixmosh/bull-board/master/screenshots/dashboard.png)
+![Overview](https://raw.githubusercontent.com/naldomadeira/worker-manager/main/screenshots/overview.png)
+![UI](https://raw.githubusercontent.com/naldomadeira/worker-manager/main/screenshots/dashboard.png)
 
 ## Installation
 
-Install both @bull-board/api and this module.
+Install both @worker-manager/api and this module.
 ```bash
-$ npm install --save @bull-board/nestjs @bull-board/api
+$ npm install --save @worker-manager/nestjs @worker-manager/api
 ```
 
 Install the Express or Fastify adapter depending on what you use in NestJS (default is Express)
 ```bash
-$ npm install --save @bull-board/express
+$ npm install --save @worker-manager/express
 //or 
-$ npm install --save @bull-board/fastify
+$ npm install --save @worker-manager/fastify
 ```
 
 ## Register the root module
@@ -36,8 +36,8 @@ Once the installation is completed, we can import the `BullBoardModule` into you
 
 ```typescript
 import { Module } from '@nestjs/common';
-import { BullBoardModule } from "@bull-board/nestjs";
-import { ExpressAdapter } from "@bull-board/express";
+import { BullBoardModule } from "@worker-manager/nestjs";
+import { ExpressAdapter } from "@worker-manager/express";
 
 @Module({
   imports: [
@@ -47,7 +47,7 @@ import { ExpressAdapter } from "@bull-board/express";
 
     BullBoardModule.forRoot({
       route: '/queues',
-      adapter: ExpressAdapter // Or FastifyAdapter from `@bull-board/fastify`
+      adapter: ExpressAdapter // Or FastifyAdapter from `@worker-manager/fastify`
     }),
   ],
 })
@@ -121,8 +121,8 @@ To register a new queue, you need to register `BullBoardModule.forFeature` in th
 
 ```typescript
 import { Module } from '@nestjs/common';
-import { BullBoardModule } from "@bull-board/nestjs";
-import { BullMQAdapter } from "@bull-board/api/bullMQAdapter";
+import { BullBoardModule } from "@worker-manager/nestjs";
+import { BullMQAdapter } from "@worker-manager/api/bullMQAdapter";
 import { BullModule } from "@nestjs/bullmq";
 
 @Module({
@@ -176,7 +176,7 @@ For example in a controller:
 
 ```typescript
 import { Controller, Get } from "@nestjs/common";
-import { BullBoardInstance, InjectBullBoard } from "@bull-board/nestjs";
+import { BullBoardInstance, InjectBullBoard } from "@worker-manager/nestjs";
 
 @Controller('my-feature')
 export class FeatureController {
@@ -191,6 +191,6 @@ export class FeatureController {
 ```
 
 # Usage examples
-1. [Simple NestJS setup](https://github.com/felixmosh/bull-board/tree/master/examples/with-nestjs)
+1. [Simple NestJS setup](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-nestjs)
 
-For more info visit the main [README](https://github.com/felixmosh/bull-board#readme)
+For more info visit the main [README](https://github.com/naldomadeira/worker-manager#readme)

@@ -10,8 +10,8 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@bull-board/api": "^9.10.0",
-    "@bull-board/bun": "^9.10.0",
+    "@worker-manager/api": "^9.10.0",
+    "@worker-manager/bun": "^9.10.0",
     "bullmq": "^5.81.3"
   },
   "devDependencies": {

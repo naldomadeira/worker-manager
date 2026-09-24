@@ -1,6 +1,6 @@
-import type { AppQueue, UIConfig } from '@bull-board/api/typings/app';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render } from '@testing-library/react';
+import type { AppQueue, UIConfig } from '@worker-manager/api/typings/app';
 import { createMemoryHistory, MemoryHistory } from 'history';
 import { PropsWithChildren } from 'react';
 import { Router } from 'react-router-dom';

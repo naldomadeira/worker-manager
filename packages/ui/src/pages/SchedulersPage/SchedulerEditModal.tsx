@@ -1,4 +1,4 @@
-import type { AppJobScheduler, JobSchedulerRepeatOptions } from '@bull-board/api/typings/app';
+import type { AppJobScheduler, JobSchedulerRepeatOptions } from '@worker-manager/api/typings/app';
 import { FormEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '../../components/Button/Button';

@@ -7,10 +7,10 @@
     "start": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "felixmosh",
+  "author": "naldomadeira",
   "license": "ISC",
   "dependencies": {
-    "@bull-board/express": "^9.10.0",
+    "@worker-manager/express": "^9.10.0",
     "bullmq": "^5.80.9",
     "cookie-parser": "^1.4.7",
     "csrf-csrf": "^4.0.3",

@@ -1,5 +1,5 @@
-import type { JobFlow } from '@bull-board/api/typings/app';
 import { useQuery } from '@tanstack/react-query';
+import type { JobFlow } from '@worker-manager/api/typings/app';
 import { queryKeys } from './queryKeys';
 import { useActiveJobId } from './useActiveJobId';
 import { useActiveQueueName } from './useActiveQueueName';

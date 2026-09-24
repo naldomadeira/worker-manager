@@ -18,7 +18,7 @@ function copyDemoPlugin() {
         console.log(`[docs] Copied demo into ${dest}`);
       } else {
         console.warn(
-          `[docs] Skipping demo: ${demoDistDir} does not exist. Run \`yarn workspace @bull-board/demo build\` first.`
+          `[docs] Skipping demo: ${demoDistDir} does not exist. Run \`yarn workspace @worker-manager/demo build\` first.`
         );
       }
     },
@@ -31,7 +31,7 @@ export default defineConfig({
   logoText: 'Bull-Board',
   logo: '/logo.svg',
   description: 'Dashboard for Bull and BullMQ job queues.',
-  base: '/bull-board/',
+  base: '/worker-manager/',
   icon: '/favicon.ico',
   outDir: 'doc_build',
   route: {
@@ -132,11 +132,11 @@ export default defineConfig({
       {
         icon: 'github',
         mode: 'link',
-        content: 'https://github.com/felixmosh/bull-board',
+        content: 'https://github.com/naldomadeira/worker-manager',
       },
     ],
     editLink: {
-      docRepoBaseUrl: 'https://github.com/felixmosh/bull-board/edit/master/website/docs',
+      docRepoBaseUrl: 'https://github.com/naldomadeira/worker-manager/edit/main/website/docs',
     },
     footer: {
       message: 'Released under the MIT License.',

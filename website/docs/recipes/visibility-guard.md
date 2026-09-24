@@ -19,9 +19,9 @@ queueAdapter.setVisibilityGuard(
 ## Register the guard
 
 ```ts
-import { createBullBoard } from '@bull-board/api';
-import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
-import { ExpressAdapter } from '@bull-board/express';
+import { createBullBoard } from '@worker-manager/api';
+import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
+import { ExpressAdapter } from '@worker-manager/express';
 
 const serverAdapter = new ExpressAdapter();
 serverAdapter.setBasePath('/admin/queues');
@@ -66,8 +66,8 @@ No "locked" state. The UI behaves as if the queue doesn't exist.
 
 ## Full runnable example
 
-- [`examples/with-fastify-visibility-guard`](https://github.com/felixmosh/bull-board/tree/master/examples/with-fastify-visibility-guard): cookie-based auth with two users, each limited to a different queue.
+- [`examples/with-fastify-visibility-guard`](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-fastify-visibility-guard): cookie-based auth with two users, each limited to a different queue.
 
 ## Source of truth
 
-`setVisibilityGuard` and `isVisible` are on `BaseAdapter` in [`packages/api/src/queueAdapters/base.ts`](https://github.com/felixmosh/bull-board/blob/master/packages/api/src/queueAdapters/base.ts). Enforcement is in [`packages/api/src/providers/queue.ts`](https://github.com/felixmosh/bull-board/blob/master/packages/api/src/providers/queue.ts) and in the list handlers under [`packages/api/src/handlers/`](https://github.com/felixmosh/bull-board/tree/master/packages/api/src/handlers).
+`setVisibilityGuard` and `isVisible` are on `BaseAdapter` in [`packages/api/src/queueAdapters/base.ts`](https://github.com/naldomadeira/worker-manager/blob/main/packages/api/src/queueAdapters/base.ts). Enforcement is in [`packages/api/src/providers/queue.ts`](https://github.com/naldomadeira/worker-manager/blob/main/packages/api/src/providers/queue.ts) and in the list handlers under [`packages/api/src/handlers/`](https://github.com/naldomadeira/worker-manager/tree/main/packages/api/src/handlers).

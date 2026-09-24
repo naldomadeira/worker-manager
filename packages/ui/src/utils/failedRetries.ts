@@ -1,4 +1,4 @@
-import type { AppQueue } from '@bull-board/api/typings/app';
+import type { AppQueue } from '@worker-manager/api/typings/app';
 
 export function canRetryFailedJobs(queue: AppQueue): boolean {
   return !queue.readOnlyMode && queue.allowRetries && (queue.counts.failed ?? 0) > 0;

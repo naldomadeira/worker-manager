@@ -1,4 +1,4 @@
-import type { AppJobScheduler } from '@bull-board/api/typings/app';
+import type { AppJobScheduler } from '@worker-manager/api/typings/app';
 import { describeSchedule, formatInterval } from '../../src/pages/SchedulersPage/schedule';
 
 // The page renders translation keys in tests, so the interpolated values are what matters.

@@ -1,4 +1,4 @@
-import type { MetricsHistoryGranularity } from '@bull-board/api/typings/app';
+import type { MetricsHistoryGranularity } from '@worker-manager/api/typings/app';
 import { Fragment, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {

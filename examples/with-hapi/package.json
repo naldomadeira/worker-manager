@@ -7,10 +7,10 @@
     "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "felixmosh",
+  "author": "naldomadeira",
   "license": "ISC",
   "dependencies": {
-    "@bull-board/hapi": "^9.10.0",
+    "@worker-manager/hapi": "^9.10.0",
     "@hapi/hapi": "^21.3.10",
     "bullmq": "^5.81.3"
   }

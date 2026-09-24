@@ -5,17 +5,17 @@ For the [Bull](https://github.com/OptimalBits/bull) queue library.
 ## Import
 
 ```ts
-import { BullAdapter } from '@bull-board/api/bullAdapter';
+import { BullAdapter } from '@worker-manager/api/bullAdapter';
 // or
-const { BullAdapter } = require('@bull-board/api/bullAdapter');
+const { BullAdapter } = require('@worker-manager/api/bullAdapter');
 ```
 
 ## Usage
 
 ```ts
-import { createBullBoard } from '@bull-board/api';
-import { BullAdapter } from '@bull-board/api/bullAdapter';
-import { ExpressAdapter } from '@bull-board/express';
+import { createBullBoard } from '@worker-manager/api';
+import { BullAdapter } from '@worker-manager/api/bullAdapter';
+import { ExpressAdapter } from '@worker-manager/express';
 import Queue from 'bull';
 
 const myQueue = new Queue('my-queue', {

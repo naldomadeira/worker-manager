@@ -1,6 +1,6 @@
-import type { UITheme } from '@bull-board/api/typings/app';
+import type { UITheme } from '@worker-manager/api/typings/app';
 
-/** Runtime mirror of the ThemeTokenName type in @bull-board/api. */
+/** Runtime mirror of the ThemeTokenName type in @worker-manager/api. */
 export const TOKEN_NAMES = new Set([
   'background',
   'foreground',

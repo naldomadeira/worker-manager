@@ -4,10 +4,10 @@ description: The JSON API the bull-board dashboard serves, generated from the ro
 
 # HTTP API reference
 
-> This page is generated from the route table in `@bull-board/api`. Do not edit it by hand: run
-> `yarn workspace @bull-board/api openapi` instead. The same content is browsable as an
+> This page is generated from the route table in `@worker-manager/api`. Do not edit it by hand: run
+> `yarn workspace @worker-manager/api openapi` instead. The same content is browsable as an
 > [interactive reference](/api/), and machine-readable at
-> [`openapi.json`](https://felixmosh.github.io/bull-board/openapi.json).
+> [`openapi.json`](https://naldomadeira.github.io/worker-manager/openapi.json).
 
 The dashboard's own UI is a client of this API and nothing else, so anything the UI can do is
 available here. Every route is served relative to the base path you passed to `setBasePath()`. A
@@ -74,7 +74,7 @@ custom adapter or hook rather than for production.
 ## Versioning
 
 The `info.version` in the spec describes the shape of this HTTP API and is deliberately
-independent of the `@bull-board/api` package version, so a routine release does not churn the
+independent of the `@worker-manager/api` package version, so a routine release does not churn the
 generated artifacts.
 
 ## Queues

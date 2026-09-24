@@ -1,11 +1,11 @@
-import { BullMQProAdapter } from '@bull-board/api/bullMQProAdapter';
+import { BullMQProAdapter } from '@worker-manager/api/bullMQProAdapter';
 import type {
   GroupStatusName,
   GroupSummaryWithCount,
   JobProLike,
   QueueProLike,
-} from '@bull-board/api/bullMQProAdapter';
-import { formatJob } from '@bull-board/api/dist/handlers/queues';
+} from '@worker-manager/api/bullMQProAdapter';
+import { formatJob } from '@worker-manager/api/dist/handlers/queues';
 
 const makeJobProps = (overrides: Partial<any> = {}) => ({
   id: '1',

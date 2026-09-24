@@ -1,6 +1,6 @@
 const packageJson = require('./package.json');
 
-// Maps `@bull-board/api*` to `src/` so coverage is measured against source rather
+// Maps `@worker-manager/api*` to `src/` so coverage is measured against source rather
 // than the `dist/` the tests import (a naive `jest --coverage` reports 0% otherwise).
 // `isolatedModules` skips type-checking the src-vs-dist `BaseAdapter` clash; runtime
 // is duck-typed. Scoped to this run only -- `yarn test` keeps full type-checking.
@@ -16,11 +16,11 @@ module.exports = {
     '^.+\\.tsx?$': ['ts-jest', { isolatedModules: true }],
   },
   moduleNameMapper: {
-    '^@bull-board/api/dist/(.*)$': '<rootDir>/src/$1',
-    '^@bull-board/api/bullMQAdapter$': '<rootDir>/src/queueAdapters/bullMQ',
-    '^@bull-board/api/bullMQProAdapter$': '<rootDir>/src/queueAdapters/bullMQPro',
-    '^@bull-board/api/bullAdapter$': '<rootDir>/src/queueAdapters/bull',
-    '^@bull-board/api$': '<rootDir>/src/index',
+    '^@worker-manager/api/dist/(.*)$': '<rootDir>/src/$1',
+    '^@worker-manager/api/bullMQAdapter$': '<rootDir>/src/queueAdapters/bullMQ',
+    '^@worker-manager/api/bullMQProAdapter$': '<rootDir>/src/queueAdapters/bullMQPro',
+    '^@worker-manager/api/bullAdapter$': '<rootDir>/src/queueAdapters/bull',
+    '^@worker-manager/api$': '<rootDir>/src/index',
   },
   collectCoverage: true,
   collectCoverageFrom: ['src/**/*.ts', '!src/**/*.d.ts'],

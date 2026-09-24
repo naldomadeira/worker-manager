@@ -38,8 +38,8 @@ yarn test
 Adapter contract tests cover every server adapter: Express, Fastify, Hono, Koa, Hapi, H3, Elysia, NestJS, and Bun (see "Runtime notes" for the two that need special handling). Run per-workspace, e.g.:
 
 ```bash
-yarn workspace @bull-board/express test
-yarn workspace @bull-board/koa test
+yarn workspace @worker-manager/express test
+yarn workspace @worker-manager/koa test
 # ...one per adapter
 ```
 
@@ -47,8 +47,8 @@ All adapter tests require Redis. `testTimeout` is set to 30 000 ms in each jest 
 
 ## BullMQ version matrix
 
-`@bull-board/api` declares `bullmq` as `^5.56.0 || ^6.0.0`. Both majors and the exact lower bound
-are tested on every run. `yarn workspace @bull-board/api test` is two `jest` invocations:
+`@worker-manager/api` declares `bullmq` as `^5.56.0 || ^6.0.0`. Both majors and the exact lower bound
+are tested on every run. `yarn workspace @worker-manager/api test` is two `jest` invocations:
 `jest.config.js`, a `projects` aggregate over three configs, followed by
 `jest.config.bullmq-floor.js` on its own.
 
@@ -89,7 +89,7 @@ v6 differs from v5 in three ways that matter here, all of them covered by the ma
 The PostgreSQL cases need `POSTGRES_URL` and skip, loudly, without it:
 
 ```bash
-POSTGRES_URL=postgres://bullmq:bullmq@localhost:5432/bullmq yarn workspace @bull-board/api test
+POSTGRES_URL=postgres://bullmq:bullmq@localhost:5432/bullmq yarn workspace @worker-manager/api test
 ```
 
 `packages/metrics` carries a two-project version of the same idea: `jest.config.default.js`
@@ -98,7 +98,7 @@ runs everything outside `tests/bullmq-matrix/` against the plain `bullmq` devDep
 `POSTGRES_URL` the same way:
 
 ```bash
-POSTGRES_URL=postgres://bullmq:bullmq@localhost:5432/bullmq yarn workspace @bull-board/metrics test
+POSTGRES_URL=postgres://bullmq:bullmq@localhost:5432/bullmq yarn workspace @worker-manager/metrics test
 ```
 
 Its specs share one Redis, and several of them assert on state that is global by design: the
@@ -114,7 +114,7 @@ entry.
 Types are gated separately, because a peer major breaks types before it breaks runtime:
 
 ```bash
-yarn workspace @bull-board/api typecheck:bullmq   # needs `yarn build` first
+yarn workspace @worker-manager/api typecheck:bullmq   # needs `yarn build` first
 ```
 
 ## Build
@@ -123,7 +123,7 @@ yarn workspace @bull-board/api typecheck:bullmq   # needs `yarn build` first
 yarn build
 ```
 
-The `dist/` folder matters: `packages/api` tests and server adapters resolve `@bull-board/api` from its `dist/`. Rebuild after changing source.
+The `dist/` folder matters: `packages/api` tests and server adapters resolve `@worker-manager/api` from its `dist/`. Rebuild after changing source.
 
 ## Linting
 
@@ -159,7 +159,7 @@ The UI renders both fields through `translateMessage()` (`packages/ui/src/utils/
 
 1. Add the key to `ERROR_TRANSLATION_KEYS` in `packages/api/src/schemas/errorKeys.ts`, which the `ErrorTranslationKey` union is derived from.
 2. Add the same key to `packages/ui/src/static/locales/en-US/messages.json` under `ERRORS`.
-3. Translate it in the other ten locale files (they are really translated, not English copies). `yarn workspace @bull-board/ui sync:locales` fills gaps, but the fill is English, so translate before committing.
+3. Translate it in the other ten locale files (they are really translated, not English copies). `yarn workspace @worker-manager/ui sync:locales` fills gaps, but the fill is English, so translate before committing.
 4. Return it with `errorResponse()`.
 
 Skipping step 2 fails the UI type check: `translateMessage` widens the key to i18next's `ParseKeys`, which is typed against en-US, and the error names the missing key. Skipping step 3 fails `packages/ui/tests/i18n.spec.ts`, which re-runs the locale sync and asserts it produces no changes.
@@ -202,7 +202,7 @@ compile.
    options through the valibot message and back out in the error body. Validations with no key
    fall back to `ERRORS.INVALID_QUERY_PARAM` or `ERRORS.INVALID_REQUEST_BODY`, which name the
    offending field in `options.field`.
-4. Run `yarn build` and then `yarn workspace @bull-board/api openapi`, and commit both artifacts.
+4. Run `yarn build` and then `yarn workspace @worker-manager/api openapi`, and commit both artifacts.
    The generator reads the route table out of `dist/`, so skipping the build regenerates the spec
    from the previous compile without saying so. CI builds before it runs the staleness check.
 
@@ -214,7 +214,7 @@ exists. Response validation is the same schema, off by default behind `options.v
 
 ### Overview
 
-`packages/test-utils` is a private in-repo workspace (`@bull-board/test-utils`) that exports a parametrized contract battery. Each adapter package carries a thin `tests/contract.spec.ts` that adapts the adapter's native request mechanism to the normalized shape the contract expects.
+`packages/test-utils` is a private in-repo workspace (`@worker-manager/test-utils`) that exports a parametrized contract battery. Each adapter package carries a thin `tests/contract.spec.ts` that adapts the adapter's native request mechanism to the normalized shape the contract expects.
 
 The contract battery (`runServerAdapterContract`) runs 12 test cases split across two `describe` blocks:
 
@@ -238,7 +238,7 @@ The battery uses a real Redis connection (via `seedQueue` from `src/redisFixture
 
 ### Covering a new adapter
 
-1. Add devDependencies to the adapter's `package.json`: `@bull-board/test-utils`, `jest`, `ts-jest`. Add a `"test": "jest"` script.
+1. Add devDependencies to the adapter's `package.json`: `@worker-manager/test-utils`, `jest`, `ts-jest`. Add a `"test": "jest"` script.
 
 2. Create `jest.config.js`:
 
@@ -258,8 +258,8 @@ module.exports = {
 3. Create `tests/contract.spec.ts`. Implement the `makeHarness` shim: spin up the adapter, return a normalized `request` function and a `teardown`:
 
 ```ts
-import { runServerAdapterContract, uiFixtureBasePath } from '@bull-board/test-utils';
-import { createBullBoard } from '@bull-board/api';
+import { runServerAdapterContract, uiFixtureBasePath } from '@worker-manager/test-utils';
+import { createBullBoard } from '@worker-manager/api';
 import { MyAdapter } from '../src';
 
 runServerAdapterContract('MyAdapter', async ({ basePath, queue }) => {
@@ -278,7 +278,7 @@ runServerAdapterContract('MyAdapter', async ({ basePath, queue }) => {
 
 The `request` function receives `{ method, path, body? }` and must return `{ status: number, headers: Record<string, string|string[]>, text: string }`. See the existing specs for the exact pattern per framework type.
 
-4. Run `yarn install && yarn workspace @bull-board/<name> test`.
+4. Run `yarn install && yarn workspace @worker-manager/<name> test`.
 
 ### Framework-version matrix
 
@@ -322,8 +322,8 @@ module.exports = { ...base, displayName: 'express@4', moduleNameMapper: { '^expr
 
 ### NestJS version matrix
 
-`@bull-board/nestjs` declares `@nestjs/common` and `@nestjs/core` as `^9 || ^10 || ^11 || ^12`.
-NestJS 11 and 12 are both exercised on every run. `yarn workspace @bull-board/nestjs test` is two
+`@worker-manager/nestjs` declares `@nestjs/common` and `@nestjs/core` as `^9 || ^10 || ^11 || ^12`.
+NestJS 11 and 12 are both exercised on every run. `yarn workspace @worker-manager/nestjs test` is two
 `jest` invocations over the same two spec files: `jest.config.js` for 11, then
 `jest.config.v12.js` for 12.
 
@@ -351,8 +351,8 @@ running later in the same worker executed its CommonJS output as an ES module an
 files, so it passed on a developer machine and failed on CI; `jest --maxWorkers=2` reproduces it
 exactly.
 
-`@bull-board/test-utils` cannot be loaded into the ESM config as it stands, because its barrel
-computes `uiFixtureBasePath` from `__dirname`. The v12 config maps `@bull-board/test-utils` to
+`@worker-manager/test-utils` cannot be loaded into the ESM config as it stands, because its barrel
+computes `uiFixtureBasePath` from `__dirname`. The v12 config maps `@worker-manager/test-utils` to
 `tests/esmTestUtils.ts`, which re-exports the two modules of the kit that never touch `__dirname`
 and rebuilds the fixture path from `import.meta.url`. The contract battery itself is shared
 unchanged between both majors.
@@ -362,7 +362,7 @@ CJS-from-ESM interop, which resolves the named exports off `dist/index.js` corre
 `website/docs/server-adapters/nestjs.md` states that for consumers.
 ### h3 version matrix
 
-`@bull-board/h3` declares `h3` as `^1.15.11 || ^2.0.0`. `yarn workspace @bull-board/h3 test` is
+`@worker-manager/h3` declares `h3` as `^1.15.11 || ^2.0.0`. `yarn workspace @worker-manager/h3 test` is
 two `jest` invocations over one spec file: `jest.config.js` maps `h3` to the `h3-v1` alias,
 `jest.config.v2.js` maps it to `h3-v2`, pinned to `2.0.1-rc.29`. The RC is what h3 publishes as
 `latest`; 1.x sits on the `1x` tag. Because a prerelease does not satisfy `^2.0.0`, installs keep
@@ -396,4 +396,4 @@ is there, falling back to `toNodeListener` plus supertest on 1.x.
 
 ### Fastify version-lock note
 
-The `@bull-board/fastify` adapter bundles `@fastify/static@10` and `@fastify/view@12` as runtime dependencies. Both target `fastify@5`. Registering the adapter under `fastify@4` throws a version mismatch error from `fastify-plugin`. The contract suite therefore covers fastify@5 only. The caller-injected `describe.each` matrix pattern is demonstrated on Express instead.
+The `@worker-manager/fastify` adapter bundles `@fastify/static@10` and `@fastify/view@12` as runtime dependencies. Both target `fastify@5`. Registering the adapter under `fastify@4` throws a version mismatch error from `fastify-plugin`. The contract suite therefore covers fastify@5 only. The caller-injected `describe.each` matrix pattern is demonstrated on Express instead.

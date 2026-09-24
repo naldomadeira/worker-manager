@@ -8,7 +8,7 @@ import type {
   HTTPMethod,
   IServerAdapter,
   UIConfig,
-} from '@bull-board/api/typings/app';
+} from '@worker-manager/api/typings/app';
 import ejs from 'ejs';
 import {
   createError,

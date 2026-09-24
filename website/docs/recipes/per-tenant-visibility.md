@@ -4,7 +4,7 @@ Show each user only the queues they're allowed to see. One shared dashboard, per
 
 See also: [Visibility guard](/recipes/visibility-guard) for the full reference.
 
-From [`examples/with-fastify-visibility-guard`](https://github.com/felixmosh/bull-board/tree/master/examples/with-fastify-visibility-guard) (Fastify + cookie auth + JWT).
+From [`examples/with-fastify-visibility-guard`](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-fastify-visibility-guard) (Fastify + cookie auth + JWT).
 
 ## How the Fastify example wires it
 
@@ -39,7 +39,7 @@ createBullBoard({
 Same idea, simpler auth:
 
 ```ts
-import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
+import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 
 const tenantAQueue = new BullMQAdapter(queueA);
 tenantAQueue.setVisibilityGuard((req) => req.headers['x-tenant-id'] === 'tenant-a');

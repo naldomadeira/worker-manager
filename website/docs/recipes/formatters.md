@@ -7,8 +7,8 @@ Formatters rewrite how a job's fields render in the dashboard without touching p
 ## Register a formatter
 
 ```ts
-import { createBullBoard } from '@bull-board/api';
-import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
+import { createBullBoard } from '@worker-manager/api';
+import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 
 const adapter = new BullMQAdapter(emailQueue);
 
@@ -47,4 +47,4 @@ Formatters run once per job per request, the dashboard polls at a fixed interval
 
 ## Source of truth
 
-`setFormatter` and the `format` dispatch live on `BaseAdapter` in [`packages/api/src/queueAdapters/base.ts`](https://github.com/felixmosh/bull-board/blob/master/packages/api/src/queueAdapters/base.ts). The `FormatterField` union is in [`packages/api/typings/app.d.ts`](https://github.com/felixmosh/bull-board/blob/master/packages/api/typings/app.d.ts). Formatters are applied in [`packages/api/src/handlers/queues.ts`](https://github.com/felixmosh/bull-board/blob/master/packages/api/src/handlers/queues.ts) (`formatJob`).
+`setFormatter` and the `format` dispatch live on `BaseAdapter` in [`packages/api/src/queueAdapters/base.ts`](https://github.com/naldomadeira/worker-manager/blob/main/packages/api/src/queueAdapters/base.ts). The `FormatterField` union is in [`packages/api/typings/app.d.ts`](https://github.com/naldomadeira/worker-manager/blob/main/packages/api/typings/app.d.ts). Formatters are applied in [`packages/api/src/handlers/queues.ts`](https://github.com/naldomadeira/worker-manager/blob/main/packages/api/src/handlers/queues.ts) (`formatJob`).

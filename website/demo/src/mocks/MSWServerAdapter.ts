@@ -1,4 +1,3 @@
-import { http, HttpResponse, type HttpHandler } from 'msw';
 import type {
   AppControllerRoute,
   BullBoardQueues,
@@ -6,7 +5,8 @@ import type {
   HTTPMethod,
   IServerAdapter,
   UIConfig,
-} from '@bull-board/api/typings/app';
+} from '@worker-manager/api/typings/app';
+import { http, HttpResponse, type HttpHandler } from 'msw';
 
 export class MSWServerAdapter implements IServerAdapter {
   private bullBoardQueues: BullBoardQueues | undefined;
@@ -50,9 +50,7 @@ export class MSWServerAdapter implements IServerAdapter {
       const pathPatterns = Array.isArray(route.route) ? route.route : [route.route];
 
       return methods.flatMap((method) =>
-        pathPatterns.map((pathPattern) =>
-          this.createHandler(method, pathPattern, route.handler)
-        )
+        pathPatterns.map((pathPattern) => this.createHandler(method, pathPattern, route.handler))
       );
     });
     return this;

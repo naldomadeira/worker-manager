@@ -1,6 +1,6 @@
-import { createBullBoard } from '@bull-board/api';
-import { BullAdapter } from '@bull-board/api/bullAdapter';
-import { ExpressAdapter } from '@bull-board/express';
+import { createBullBoard } from '@worker-manager/api';
+import { BullAdapter } from '@worker-manager/api/bullAdapter';
+import { ExpressAdapter } from '@worker-manager/express';
 import Queue from 'bull';
 import request from 'supertest';
 

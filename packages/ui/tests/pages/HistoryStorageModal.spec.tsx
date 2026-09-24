@@ -1,6 +1,6 @@
-import type { UIConfig } from '@bull-board/api/typings/app';
-import type { GetMetricsHistoryUsageResponse } from '@bull-board/api/typings/responses';
 import { fireEvent, screen, waitFor, within } from '@testing-library/react';
+import type { UIConfig } from '@worker-manager/api/typings/app';
+import type { GetMetricsHistoryUsageResponse } from '@worker-manager/api/typings/responses';
 import i18n from 'i18next';
 import { ConfirmModal } from '../../src/components/ConfirmModal/ConfirmModal';
 import { useConfirm } from '../../src/hooks/useConfirm';

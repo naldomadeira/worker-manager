@@ -6,7 +6,7 @@ import type {
   ControllerHandlerReturnType,
   IServerAdapter,
   UIConfig,
-} from '@bull-board/api/typings/app';
+} from '@worker-manager/api/typings/app';
 import { file } from 'bun';
 import ejs from 'ejs';
 

@@ -1,10 +1,10 @@
-import { createBullBoard } from '@bull-board/api';
+import { createBullBoard } from '@worker-manager/api';
 import {
   runServerAdapterContract,
   uiFixtureBasePath,
   NormalizedResponse,
   ContractRequest,
-} from '@bull-board/test-utils';
+} from '@worker-manager/test-utils';
 import { createApp, toNodeListener } from 'h3';
 import request from 'supertest';
 import { H3Adapter } from '../src';

@@ -1,5 +1,5 @@
-import { STATUSES } from '@bull-board/api/constants/statuses';
-import type { AppJob, Status } from '@bull-board/api/typings/app';
+import { STATUSES } from '@worker-manager/api/constants/statuses';
+import type { AppJob, Status } from '@worker-manager/api/typings/app';
 import cn from 'clsx';
 import { differenceInMilliseconds } from 'date-fns';
 import { TFunction } from 'i18next';

@@ -1,11 +1,11 @@
 import 'reflect-metadata';
-import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
-import { ExpressAdapter as BullBoardExpressAdapter } from '@bull-board/express';
-import { uiFixtureBasePath } from '@bull-board/test-utils';
 import { BullModule } from '@nestjs/bullmq';
 import { INestApplication, Module } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { ExpressAdapter } from '@nestjs/platform-express';
+import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
+import { ExpressAdapter as BullBoardExpressAdapter } from '@worker-manager/express';
+import { uiFixtureBasePath } from '@worker-manager/test-utils';
 import { Queue } from 'bullmq';
 import request from 'supertest';
 import { BullBoardModule } from '../src';

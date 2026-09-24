@@ -1,12 +1,12 @@
-# @bull-board/metrics
+# @worker-manager/metrics
 
 > Status: Beta. The API and Redis storage layout may still change in a minor release while the feature settles. It is safe to run (opt-in, and it only writes its own namespaced keys), but pin an exact version if you depend on the storage format.
 
-Opt-in long-retention historical job metrics for [bull-board](https://github.com/felixmosh/bull-board).
+Opt-in long-retention historical job metrics for [bull-board](https://github.com/naldomadeira/worker-manager).
 
 Snapshots native BullMQ per-minute metrics into long-retention Redis buckets and exposes a
 `MetricsHistoryProvider` that feeds bull-board's history charts. Everything is opt-in: the core
-`@bull-board/api` stays stateless.
+`@worker-manager/api` stays stateless.
 
 ## Precondition
 
@@ -20,7 +20,7 @@ recorder downtime, for example:
 
 ## Usage
 
-    import { MetricsRecorder, RedisMetricsHistoryProvider } from '@bull-board/metrics';
+    import { MetricsRecorder, RedisMetricsHistoryProvider } from '@worker-manager/metrics';
 
     // In your always-on worker/app process:
     const recorder = new MetricsRecorder({
@@ -39,7 +39,7 @@ recorder downtime, for example:
 
 `queues` also accepts a function, resolved on every tick instead of once, which is what you want when the queue set changes while the recorder runs.
 
-Not embedding bull-board in an app of your own? This package ships inside [`@bull-board/cli`](https://www.npmjs.com/package/@bull-board/cli) and the `ghcr.io/felixmosh/bull-board` image, where `--history` registers the provider and starts a recorder in the same process. See the [CLI guide](https://felixmosh.github.io/bull-board/guide/cli#historical-metrics).
+Not embedding bull-board in an app of your own? This package ships inside [`@worker-manager/cli`](https://www.npmjs.com/package/@worker-manager/cli) and the `ghcr.io/naldomadeira/worker-manager` image, where `--history` registers the provider and starts a recorder in the same process. See the [CLI guide](https://naldomadeira.github.io/worker-manager/guide/cli#historical-metrics).
 
 On shutdown, call `recorder.stop()` and `provider.disconnect()`. Both only close the Redis connection if the recorder/provider opened it internally, so it's a safe no-op if you passed in your own `Redis` instance.
 
@@ -118,7 +118,7 @@ Retention is enforced by Redis. Day-scoped keys expire on their own TTL; the dai
 
 ## Inspecting and clearing history
 
-    import { MetricsHistoryAdmin } from '@bull-board/metrics';
+    import { MetricsHistoryAdmin } from '@worker-manager/metrics';
 
     const admin = new MetricsHistoryAdmin({ connection });        // add `prefix` if the recorder has one
 

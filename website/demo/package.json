@@ -1,5 +1,5 @@
 {
-  "name": "@bull-board/demo",
+  "name": "@worker-manager/demo",
   "version": "9.10.1",
   "private": true,
   "description": "Interactive demo of the bull-board dashboard, powered by MSW and in-memory fixtures.",
@@ -11,8 +11,8 @@
     "preview": "rsbuild preview"
   },
   "dependencies": {
-    "@bull-board/api": "workspace:*",
-    "@bull-board/ui": "workspace:*"
+    "@worker-manager/api": "workspace:*",
+    "@worker-manager/ui": "workspace:*"
   },
   "devDependencies": {
     "@faker-js/faker": "^10.6.0",

@@ -1,5 +1,5 @@
 import { Menu } from '@base-ui/react/menu';
-import type { AppQueue } from '@bull-board/api/typings/app';
+import type { AppQueue } from '@worker-manager/api/typings/app';
 import { useTranslation } from 'react-i18next';
 import { QueueActions } from '../../../typings/app';
 import type { QueueSortKey, SortDirection } from '../../hooks/useSortQueues';

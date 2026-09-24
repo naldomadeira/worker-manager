@@ -1,5 +1,5 @@
 {
-  "name": "@bull-board/nestjs",
+  "name": "@worker-manager/nestjs",
   "version": "9.10.1",
   "description": "A NestJS module for Bull-Board dashboard.",
   "keywords": [
@@ -15,7 +15,7 @@
   "author": "Dennis Snijder <dennis@snijder.io>",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/felixmosh/bull-board.git",
+    "url": "git+https://github.com/naldomadeira/worker-manager.git",
     "directory": "packages/nestjs"
   },
   "main": "dist/index.js",
@@ -28,10 +28,6 @@
     "test": "jest && NODE_OPTIONS=--experimental-vm-modules jest -c jest.config.v12.js"
   },
   "devDependencies": {
-    "@bull-board/api": "^9.10.1",
-    "@bull-board/express": "^9.10.1",
-    "@bull-board/fastify": "^9.10.1",
-    "@bull-board/test-utils": "workspace:*",
     "@nestjs/bull-shared": "^11.0.5",
     "@nestjs/bullmq": "^11.0.5",
     "@nestjs/common": "^11.2.3",
@@ -39,6 +35,10 @@
     "@nestjs/platform-express": "^11.2.3",
     "@types/node": "^22.20.1",
     "@types/supertest": "^7.2.1",
+    "@worker-manager/api": "^9.10.1",
+    "@worker-manager/express": "^9.10.1",
+    "@worker-manager/fastify": "^9.10.1",
+    "@worker-manager/test-utils": "workspace:*",
     "bull": "^4.16.5",
     "bullmq": "^5.81.3",
     "jest": "^30.4.2",
@@ -59,10 +59,10 @@
     "typescript": "^5.9.3"
   },
   "peerDependencies": {
-    "@bull-board/api": "^9.10.1",
     "@nestjs/bull-shared": "^10.0.0 || ^11.0.0 || ^12.0.0",
     "@nestjs/common": "^9.0.0 || ^10.0.0 || ^11.0.0 || ^12.0.0",
     "@nestjs/core": "^9.0.0 || ^10.0.0 || ^11.0.0 || ^12.0.0",
+    "@worker-manager/api": "^9.10.1",
     "reflect-metadata": "^0.1.13 || ^0.2.0",
     "rxjs": "^7.8.1"
   }

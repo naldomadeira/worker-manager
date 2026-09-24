@@ -1,7 +1,7 @@
 // A wrong re-export path in `typings/*` resolves to `any` rather than failing, so it needs a gate.
-import type { AppJob, AppQueue, ErrorResponseBody } from '@bull-board/api/typings/app';
-import type { AddJobBody, GetQueuesQuery } from '@bull-board/api/typings/requests';
-import type { GetQueuesResponse } from '@bull-board/api/typings/responses';
+import type { AppJob, AppQueue, ErrorResponseBody } from '@worker-manager/api/typings/app';
+import type { AddJobBody, GetQueuesQuery } from '@worker-manager/api/typings/requests';
+import type { GetQueuesResponse } from '@worker-manager/api/typings/responses';
 
 type IsAny<T> = 0 extends 1 & T ? true : false;
 

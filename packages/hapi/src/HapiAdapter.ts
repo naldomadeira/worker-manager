@@ -1,3 +1,6 @@
+import { Plugin } from '@hapi/hapi';
+import Inert from '@hapi/inert';
+import Vision from '@hapi/vision';
 import type {
   AppControllerRoute,
   AppViewRoute,
@@ -5,10 +8,7 @@ import type {
   ControllerHandlerReturnType,
   IServerAdapter,
   UIConfig,
-} from '@bull-board/api/typings/app';
-import { Plugin } from '@hapi/hapi';
-import Inert from '@hapi/inert';
-import Vision from '@hapi/vision';
+} from '@worker-manager/api/typings/app';
 import ejs from 'ejs';
 import pkg from '../package.json';
 import { toHapiPath } from './utils/toHapiPath';

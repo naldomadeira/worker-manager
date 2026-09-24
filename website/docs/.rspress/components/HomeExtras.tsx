@@ -51,11 +51,11 @@ export default function HomeExtras() {
           it. Nothing to install, no code to write.
         </p>
         <pre>
-          <code>npx @bull-board/cli -r redis://localhost:6379</code>
+          <code>npx @worker-manager/cli -r redis://localhost:6379</code>
         </pre>
         <p>
-          The same thing runs as a container with <code>ghcr.io/felixmosh/bull-board</code>. Both
-          are covered in the <a href={withBase('/guide/cli')}>CLI guide</a> and{' '}
+          The same thing runs as a container with <code>ghcr.io/naldomadeira/worker-manager</code>.
+          Both are covered in the <a href={withBase('/guide/cli')}>CLI guide</a> and{' '}
           <a href={withBase('/guide/docker')}>Run with Docker</a>. Either way it runs on your own
           machines against your own datastore, with no telemetry and nothing phoning home.
         </p>

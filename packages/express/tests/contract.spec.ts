@@ -1,10 +1,10 @@
-import { createBullBoard } from '@bull-board/api';
+import { createBullBoard } from '@worker-manager/api';
 import {
   runServerAdapterContract,
   uiFixtureBasePath,
   NormalizedResponse,
   ContractRequest,
-} from '@bull-board/test-utils';
+} from '@worker-manager/test-utils';
 import express from 'express';
 import request from 'supertest';
 import { ExpressAdapter } from '../src';

@@ -1,6 +1,6 @@
-import type { AppJob, Status } from '@bull-board/api/typings/app';
 import { screen, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import type { AppJob, Status } from '@worker-manager/api/typings/app';
 import { Details } from '../../src/components/JobCard/Details/Details';
 import { useSettingsStore } from '../../src/hooks/useSettings';
 import { createWrapper, render } from '../testUtils';

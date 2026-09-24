@@ -416,7 +416,7 @@ export class BullMQAdapter extends BaseAdapter {
 
   /**
    * Fully prefixed Redis key for one of the queue's sets, for example `bull:MyQueue:completed`.
-   * Exposed for @bull-board/metrics, which scans the completed and failed sorted sets
+   * Exposed for @worker-manager/metrics, which scans the completed and failed sorted sets
    * directly rather than paging whole Job objects through getJobs.
    */
   public getQueueKey(set: string): string {

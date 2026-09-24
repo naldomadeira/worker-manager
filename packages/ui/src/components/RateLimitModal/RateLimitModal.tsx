@@ -1,4 +1,4 @@
-import type { AppQueue } from '@bull-board/api/typings/app';
+import type { AppQueue } from '@worker-manager/api/typings/app';
 import { FormEvent, RefObject, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQueueRateLimit } from '../../hooks/useQueueRateLimit';

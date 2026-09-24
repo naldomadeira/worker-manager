@@ -1,6 +1,6 @@
-import type { AppQueue } from '@bull-board/api/typings/app';
-import type { GetQueuesResponse } from '@bull-board/api/typings/responses';
 import { waitFor } from '@testing-library/react';
+import type { AppQueue } from '@worker-manager/api/typings/app';
+import type { GetQueuesResponse } from '@worker-manager/api/typings/responses';
 import { createMemoryHistory } from 'history';
 import { StatusLegend } from '../../src/components/StatusLegend/StatusLegend';
 import { useSettingsStore } from '../../src/hooks/useSettings';

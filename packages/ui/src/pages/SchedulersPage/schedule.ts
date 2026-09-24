@@ -1,4 +1,4 @@
-import type { AppJobScheduler } from '@bull-board/api/typings/app';
+import type { AppJobScheduler } from '@worker-manager/api/typings/app';
 import { TFunction } from 'i18next';
 
 const MINUTE = 60 * 1000;

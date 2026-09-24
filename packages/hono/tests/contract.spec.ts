@@ -1,11 +1,11 @@
-import { createBullBoard } from '@bull-board/api';
+import { serveStatic } from '@hono/node-server/serve-static';
+import { createBullBoard } from '@worker-manager/api';
 import {
   runServerAdapterContract,
   uiFixtureBasePath,
   NormalizedResponse,
   ContractRequest,
-} from '@bull-board/test-utils';
-import { serveStatic } from '@hono/node-server/serve-static';
+} from '@worker-manager/test-utils';
 import { Hono } from 'hono';
 import { HonoAdapter } from '../src';
 

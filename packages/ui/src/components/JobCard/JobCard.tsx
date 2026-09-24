@@ -1,6 +1,6 @@
 import { Collapsible } from '@base-ui/react/collapsible';
-import { STATUSES } from '@bull-board/api/constants/statuses';
-import type { AppJob, Status } from '@bull-board/api/typings/app';
+import { STATUSES } from '@worker-manager/api/constants/statuses';
+import type { AppJob, Status } from '@worker-manager/api/typings/app';
 import cn from 'clsx';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';

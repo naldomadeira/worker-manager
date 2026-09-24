@@ -1,11 +1,11 @@
-import { createBullBoard } from '@bull-board/api';
-import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
+import { createBullBoard } from '@worker-manager/api';
+import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 import type {
   MetricsHistoryProvider,
   MetricsHistoryPurgeOptions,
   MetricsHistoryUsage,
-} from '@bull-board/api/typings/app';
-import { ExpressAdapter } from '@bull-board/express';
+} from '@worker-manager/api/typings/app';
+import { ExpressAdapter } from '@worker-manager/express';
 import { Queue } from 'bullmq';
 import request from 'supertest';
 

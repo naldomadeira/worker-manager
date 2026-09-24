@@ -1,5 +1,5 @@
-import type { RedisStats } from '@bull-board/api/typings/app';
 import { screen, waitFor } from '@testing-library/react';
+import type { RedisStats } from '@worker-manager/api/typings/app';
 import { RedisStatsModal } from '../../src/components/RedisStatsModal/RedisStatsModal';
 import { createWrapper, render } from '../testUtils';
 

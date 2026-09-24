@@ -73,4 +73,4 @@ They also run alongside the queue-level checks rather than replacing them. A cal
 
 ## Source of truth
 
-The wrapper is [`packages/api/src/hooks.ts`](https://github.com/felixmosh/bull-board/blob/master/packages/api/src/hooks.ts). `BoardHooks`, `HookContext` and `BeforeHookResult` are in [`packages/api/typings/app.d.ts`](https://github.com/felixmosh/bull-board/blob/master/packages/api/typings/app.d.ts).
+The wrapper is [`packages/api/src/hooks.ts`](https://github.com/naldomadeira/worker-manager/blob/main/packages/api/src/hooks.ts). `BoardHooks`, `HookContext` and `BeforeHookResult` are in [`packages/api/typings/app.d.ts`](https://github.com/naldomadeira/worker-manager/blob/main/packages/api/typings/app.d.ts).

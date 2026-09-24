@@ -1,5 +1,5 @@
 import { Tabs } from '@base-ui/react/tabs';
-import type { AppJob, Status } from '@bull-board/api/typings/app';
+import type { AppJob, Status } from '@worker-manager/api/typings/app';
 import { useTranslation } from 'react-i18next';
 import { TabsType, useDetailsTabs } from '../../../hooks/useDetailsTabs';
 import { dynamicTranslationKey } from '../../../utils/dynamicTranslationKey';

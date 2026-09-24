@@ -1,5 +1,5 @@
-import type { QueueWorker } from '@bull-board/api/typings/app';
 import { screen } from '@testing-library/react';
+import type { QueueWorker } from '@worker-manager/api/typings/app';
 import { WorkersList } from '../../src/components/WorkersList/WorkersList';
 import { createWrapper, render } from '../testUtils';
 

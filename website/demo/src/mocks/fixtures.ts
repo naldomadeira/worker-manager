@@ -1,5 +1,5 @@
-import type { QueueDefaultJobOptions, QueueRateLimit } from '@bull-board/api/typings/app';
 import { faker } from '@faker-js/faker';
+import type { QueueDefaultJobOptions, QueueRateLimit } from '@worker-manager/api/typings/app';
 import { addMinutes, subMinutes, subSeconds } from 'date-fns';
 import { DemoJob, DemoQueue, DemoState, Status, nextJobId } from './state';
 

@@ -1,5 +1,5 @@
-import type { UIConfig } from '@bull-board/api/typings/app';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
+import type { UIConfig } from '@worker-manager/api/typings/app';
 import { CustomLinksDropdown } from '../../src/components/CustomLinksDropdown/CustomLinksDropdown';
 import { render } from '../testUtils';
 

@@ -1,4 +1,4 @@
-import type { QueueMetrics } from '@bull-board/api/typings/app';
+import type { QueueMetrics } from '@worker-manager/api/typings/app';
 
 export interface MinutePoint {
   /** Absolute minute index: Math.floor(timestampMs / 60000). */

@@ -1,9 +1,9 @@
 # Standalone CLI
 
-Sometimes you don't want to wire bull-board into an app at all, you just want to look at a Redis instance. `@bull-board/cli` does that: point it at a Redis URL and it finds the Bull and BullMQ queues stored there, then serves the same dashboard UI you'd get from any server adapter.
+Sometimes you don't want to wire bull-board into an app at all, you just want to look at a Redis instance. `@worker-manager/cli` does that: point it at a Redis URL and it finds the Bull and BullMQ queues stored there, then serves the same dashboard UI you'd get from any server adapter.
 
 ```sh
-npx @bull-board/cli -r redis://localhost:6379
+npx @worker-manager/cli -r redis://localhost:6379
 ```
 
 It needs Node.js 20 or newer. That starts the dashboard on `http://127.0.0.1:3000` and opens it in a browser. This is a tool for local development, evaluating bull-board before wiring it into your app, or looking at a queue on infrastructure you've tunnelled to. It is not a replacement for mounting the adapter in your own server: there's no auto-login, no framework-level auth to inherit, and every option has to be passed on the command line, an env var, or a config file instead of code.
@@ -18,7 +18,7 @@ If you'd rather skip discovery entirely, `--queues` takes an explicit, comma sep
 
 ## When Redis isn't reachable
 
-The dashboard still opens even if Redis is down or the URL is wrong. Instead of a dead terminal, `npx @bull-board/cli` serves a diagnostic page at the same URL, explaining what it tried to connect to, the underlying error, and the likely cause: Redis isn't running, the port is wrong (6379 is the default), it's in a container whose port isn't published, it needs credentials, or it needs TLS and therefore a `rediss://` URL. A `--user`/`--password` you've set still guards this page: the URL it names is never served to a request without the right credentials.
+The dashboard still opens even if Redis is down or the URL is wrong. Instead of a dead terminal, `npx @worker-manager/cli` serves a diagnostic page at the same URL, explaining what it tried to connect to, the underlying error, and the likely cause: Redis isn't running, the port is wrong (6379 is the default), it's in a container whose port isn't published, it needs credentials, or it needs TLS and therefore a `rediss://` URL. A `--user`/`--password` you've set still guards this page: the URL it names is never served to a request without the right credentials.
 
 The process stays alive and keeps retrying every 3 seconds. The page polls its own status and reloads on its own the moment Redis answers, switching to the real dashboard with no restart and no second command.
 
@@ -33,7 +33,7 @@ For scripts and CI, retrying forever is the wrong default: they want a non-zero 
 ```
 Usage:
   bull-board [options]
-  npx @bull-board/cli [options]
+  npx @worker-manager/cli [options]
 
 Options:
   -r, --redis <url>       Redis connection URL          [redis://localhost:6379]
@@ -143,7 +143,7 @@ module.exports = {
 A Sentinel deployment has no fixed master address, so there is no single URL to point `--redis` at. `--sentinel` takes the sentinel nodes instead and lets ioredis work out which Redis is currently the master:
 
 ```sh
-npx @bull-board/cli --sentinel s1.internal:26379,s2.internal:26379 --sentinel-name mymaster
+npx @worker-manager/cli --sentinel s1.internal:26379,s2.internal:26379 --sentinel-name mymaster
 ```
 
 Each entry is a `host` or `host:port`, with the port defaulting to 26379. An IPv6 literal is all colons, so it needs brackets to carry a port: `[2001:db8::1]:26379`. Without them the whole entry is read as a host and gets the default port. `--sentinel-name` is the master group name from your sentinel configuration, the same string you would pass as `name` to ioredis, and it is required: sentinels can monitor more than one group, so there is nothing sensible to guess.
@@ -194,7 +194,7 @@ That is the way to reach TLS to the sentinel nodes, `natMap` for a NAT-ed cluste
 `--cluster` takes a comma-separated list of startup nodes and connects through them, the way `--redis` and `--sentinel` do for their topologies. ioredis discovers the rest of the cluster from any node that answers, so listing two or three is enough:
 
 ```sh
-npx @bull-board/cli --cluster n1:7000,n2:7000,n3:7000 --prefix '{bull}'
+npx @worker-manager/cli --cluster n1:7000,n2:7000,n3:7000 --prefix '{bull}'
 ```
 
 `--redis-username` and `--redis-password` apply here as they do in sentinel mode. `--redis-db` does not: a cluster only has database 0, and passing it is an error rather than a silent no-op.
@@ -216,17 +216,17 @@ The Redis stats panel reports the cluster as a whole, summing memory and client 
 `--user` and `--password` add HTTP basic auth in front of the dashboard. Both are required together:
 
 ```sh
-npx @bull-board/cli -r redis://localhost:6379 --user admin --password secret --host 0.0.0.0
+npx @worker-manager/cli -r redis://localhost:6379 --user admin --password secret --host 0.0.0.0
 ```
 
 This is enough for a queue you've tunnelled to or a small internal box. It is not the layered, session-aware auth described in [Add basic auth](/recipes/basic-auth), which covers login flows and framework-integrated auth for an app you're embedding the dashboard into.
 
 ## Historical metrics
 
-BullMQ's own metrics are a per-minute ring buffer capped at `maxDataPoints`, so the throughput chart can't look back further than that buffer reaches. `--history` turns on the long-retention path from the [historical metrics recipe](/recipes/historical-metrics) without wiring `@bull-board/metrics` into an app of your own:
+BullMQ's own metrics are a per-minute ring buffer capped at `maxDataPoints`, so the throughput chart can't look back further than that buffer reaches. `--history` turns on the long-retention path from the [historical metrics recipe](/recipes/historical-metrics) without wiring `@worker-manager/metrics` into an app of your own:
 
 ```sh
-npx @bull-board/cli -r redis://localhost:6379 --history
+npx @worker-manager/cli -r redis://localhost:6379 --history
 ```
 
 That registers `RedisMetricsHistoryProvider` on the Redis connection the dashboard already holds, so every queue chart gains a 60m / 7d / 30d / 90d range selector and a cross-queue "Metrics history" page shows up in the sidebar. It flips `showMetrics` on too, because the range selector lives inside the per-queue chart and that chart doesn't render without it.
@@ -274,12 +274,12 @@ This is BullMQ only. Bull v3 has no native metrics to snapshot, and BullMQ v6 qu
 
 ## Docker
 
-The CLI also ships as an image, `ghcr.io/felixmosh/bull-board`, so a container next to your Redis needs no Node on the host and doesn't re-resolve the package from npm every time it starts:
+The CLI also ships as an image, `ghcr.io/naldomadeira/worker-manager`, so a container next to your Redis needs no Node on the host and doesn't re-resolve the package from npm every time it starts:
 
 ```sh
 docker run --rm -p 127.0.0.1:3000:3000 \
   -e BULL_BOARD_USER=admin -e BULL_BOARD_PASSWORD=secret \
-  ghcr.io/felixmosh/bull-board --redis redis://host.docker.internal:6379
+  ghcr.io/naldomadeira/worker-manager --redis redis://host.docker.internal:6379
 ```
 
 The entrypoint is the CLI, so every flag and variable on this page works there too. [Run with Docker](/guide/docker) covers the tags, a Compose file, mounting a config file, and putting it behind a reverse proxy.
@@ -295,7 +295,7 @@ The caveat is the same one that applies everywhere else in bull-board: the dashb
 The CLI serves the same JSON API the UI itself calls, so a shell script or an agent debugging a stuck job can query it instead of reading Redis keys by hand or writing a throwaway script:
 
 ```sh
-npx @bull-board/cli -r redis://localhost:6379 --port 3000 --no-open &
+npx @worker-manager/cli -r redis://localhost:6379 --port 3000 --no-open &
 curl -s http://127.0.0.1:3000/api/queues | jq '.queues[] | {name, counts, isPaused}'
 ```
 

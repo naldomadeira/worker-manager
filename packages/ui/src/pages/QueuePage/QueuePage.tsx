@@ -1,5 +1,5 @@
-import { STATUSES } from '@bull-board/api/constants/statuses';
-import type { AppJob } from '@bull-board/api/typings/app';
+import { STATUSES } from '@worker-manager/api/constants/statuses';
+import type { AppJob } from '@worker-manager/api/typings/app';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';

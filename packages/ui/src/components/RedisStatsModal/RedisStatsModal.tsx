@@ -1,5 +1,5 @@
-import { DATASTORES } from '@bull-board/api/constants/datastores';
 import { useQuery } from '@tanstack/react-query';
+import { DATASTORES } from '@worker-manager/api/constants/datastores';
 import formatBytes from 'pretty-bytes';
 import { useTranslation } from 'react-i18next';
 import { queryKeys } from '../../hooks/queryKeys';

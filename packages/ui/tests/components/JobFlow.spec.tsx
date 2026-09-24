@@ -1,6 +1,6 @@
-import type { FlowNode, JobFlow as JobFlowResponse } from '@bull-board/api/typings/app';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import type { FlowNode, JobFlow as JobFlowResponse } from '@worker-manager/api/typings/app';
 import { createMemoryHistory } from 'history';
 import { JobFlow } from '../../src/components/JobFlow/JobFlow';
 import { createWrapper, MockApi, render } from '../testUtils';

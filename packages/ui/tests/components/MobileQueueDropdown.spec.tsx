@@ -1,6 +1,6 @@
-import type { UIConfig } from '@bull-board/api/typings/app';
-import type { GetQueuesResponse } from '@bull-board/api/typings/responses';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
+import type { UIConfig } from '@worker-manager/api/typings/app';
+import type { GetQueuesResponse } from '@worker-manager/api/typings/responses';
 import { createMemoryHistory } from 'history';
 import { MobileQueueDropdown } from '../../src/components/Header/MobileQueueDropdown/MobileQueueDropdown';
 import { useSettingsStore } from '../../src/hooks/useSettings';

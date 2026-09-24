@@ -1,4 +1,4 @@
-import type { AppJobScheduler, AppQueue } from '@bull-board/api/typings/app';
+import type { AppJobScheduler, AppQueue } from '@worker-manager/api/typings/app';
 import { Fragment, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useHistory, useLocation } from 'react-router-dom';

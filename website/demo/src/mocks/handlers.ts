@@ -1,5 +1,8 @@
-import { createBullBoard } from '@bull-board/api';
-import type { BullBoardRequest, ControllerHandlerReturnType } from '@bull-board/api/typings/app';
+import { createBullBoard } from '@worker-manager/api';
+import type {
+  BullBoardRequest,
+  ControllerHandlerReturnType,
+} from '@worker-manager/api/typings/app';
 import { seedFixtures } from './fixtures';
 import { MockAdapter } from './MockAdapter';
 import { MockMetricsHistoryProvider } from './MockMetricsHistoryProvider';
@@ -107,7 +110,7 @@ createBullBoard({
   serverAdapter,
   options: {
     uiBasePath: '/bull-board/demo',
-    // Stands in for @bull-board/metrics, which needs Redis and a running recorder. It
+    // Stands in for @worker-manager/metrics, which needs Redis and a running recorder. It
     // turns on the Metrics history page and the longer ranges on each queue's chart.
     historyProvider: new MockMetricsHistoryProvider(),
     uiConfig: {

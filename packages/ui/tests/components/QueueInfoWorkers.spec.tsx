@@ -1,6 +1,6 @@
-import type { QueueWorker } from '@bull-board/api/typings/app';
-import type { GetQueueWorkersResponse } from '@bull-board/api/typings/responses';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
+import type { QueueWorker } from '@worker-manager/api/typings/app';
+import type { GetQueueWorkersResponse } from '@worker-manager/api/typings/responses';
 import { QueueInfoModal } from '../../src/components/QueueInfoModal/QueueInfoModal';
 import { useSettingsStore } from '../../src/hooks/useSettings';
 import { createWrapper, makeQueue, render } from '../testUtils';

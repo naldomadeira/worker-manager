@@ -1,13 +1,13 @@
 import 'reflect-metadata';
-import { ExpressAdapter as BullBoardExpressAdapter } from '@bull-board/express';
+import { NestFactory } from '@nestjs/core';
+import { ExpressAdapter } from '@nestjs/platform-express';
+import { ExpressAdapter as BullBoardExpressAdapter } from '@worker-manager/express';
 import {
   runServerAdapterContract,
   uiFixtureBasePath,
   NormalizedResponse,
   ContractRequest,
-} from '@bull-board/test-utils';
-import { NestFactory } from '@nestjs/core';
-import { ExpressAdapter } from '@nestjs/platform-express';
+} from '@worker-manager/test-utils';
 import { json } from 'express';
 import request from 'supertest';
 import { BullBoardModule } from '../src';

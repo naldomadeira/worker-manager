@@ -11,8 +11,8 @@ const uiDistStatic = resolve(uiDist, 'static');
 const demoPublicStatic = resolve(demoRoot, 'public/static');
 
 if (!existsSync(uiDistStatic)) {
-  console.warn('[demo] @bull-board/ui dist not found, building...');
-  execSync('yarn workspace @bull-board/ui build', {
+  console.warn('[demo] @worker-manager/ui dist not found, building...');
+  execSync('yarn workspace @worker-manager/ui build', {
     cwd: repoRoot,
     stdio: 'inherit',
   });

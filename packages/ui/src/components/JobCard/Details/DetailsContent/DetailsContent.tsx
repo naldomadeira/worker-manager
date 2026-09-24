@@ -1,4 +1,4 @@
-import type { AppJob, Status } from '@bull-board/api/typings/app';
+import type { AppJob, Status } from '@worker-manager/api/typings/app';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TabsType } from '../../../../hooks/useDetailsTabs';

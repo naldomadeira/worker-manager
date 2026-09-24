@@ -1,5 +1,5 @@
 import { Menu } from '@base-ui/react/menu';
-import type { UIConfig } from '@bull-board/api/typings/app';
+import type { UIConfig } from '@worker-manager/api/typings/app';
 import { Button } from '../Button/Button';
 import { DropdownContent } from '../DropdownContent/DropdownContent';
 import { UserIcon } from '../Icons/User';

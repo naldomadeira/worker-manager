@@ -1,6 +1,6 @@
 # Server Adapters
 
-One server adapter per framework. The core `@bull-board/api` package is shared. Pick your framework below.
+One server adapter per framework. The core `@worker-manager/api` package is shared. Pick your framework below.
 
 ::: tip
 <a href="/bull-board/demo/" target="_blank" rel="noopener">Try the live demo</a> first. All 9 adapters serve the same UI.
@@ -10,23 +10,23 @@ One server adapter per framework. The core `@bull-board/api` package is shared. 
 
 | Framework | Package | Docs |
 |-----------|---------|------|
-| Express | `@bull-board/express` | [Express →](/server-adapters/express) |
-| Fastify | `@bull-board/fastify` | [Fastify →](/server-adapters/fastify) |
-| NestJS | `@bull-board/nestjs` | [NestJS →](/server-adapters/nestjs) |
-| Koa | `@bull-board/koa` | [Koa →](/server-adapters/koa) |
-| Hapi | `@bull-board/hapi` | [Hapi →](/server-adapters/hapi) |
-| Hono | `@bull-board/hono` | [Hono →](/server-adapters/hono) |
-| H3 | `@bull-board/h3` | [H3 →](/server-adapters/h3) |
-| Elysia | `@bull-board/elysia` | [Elysia →](/server-adapters/elysia) |
-| Bun | `@bull-board/bun` | [Bun →](/server-adapters/bun) |
+| Express | `@worker-manager/express` | [Express →](/server-adapters/express) |
+| Fastify | `@worker-manager/fastify` | [Fastify →](/server-adapters/fastify) |
+| NestJS | `@worker-manager/nestjs` | [NestJS →](/server-adapters/nestjs) |
+| Koa | `@worker-manager/koa` | [Koa →](/server-adapters/koa) |
+| Hapi | `@worker-manager/hapi` | [Hapi →](/server-adapters/hapi) |
+| Hono | `@worker-manager/hono` | [Hono →](/server-adapters/hono) |
+| H3 | `@worker-manager/h3` | [H3 →](/server-adapters/h3) |
+| Elysia | `@worker-manager/elysia` | [Elysia →](/server-adapters/elysia) |
+| Bun | `@worker-manager/bun` | [Bun →](/server-adapters/bun) |
 
 ## Sails
 
-No dedicated Sails adapter. Sails runs on Express, so use `@bull-board/express` inside a Sails controller. Working example: [`examples/with-sails`](https://github.com/felixmosh/bull-board/tree/master/examples/with-sails).
+No dedicated Sails adapter. Sails runs on Express, so use `@worker-manager/express` inside a Sails controller. Working example: [`examples/with-sails`](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-sails).
 
 ## Next.js
 
-No dedicated Next.js adapter. Mount bull-board inside a Next.js API route using the Hono adapter (App Router) or the Express adapter (Pages Router). The Vercel deployment needs a small bit of `next.config.js`, see [Next.js & Vercel](/recipes/nextjs) and the [`with-nextjs-app`](https://github.com/felixmosh/bull-board/tree/master/examples/with-nextjs-app) / [`with-nextjs-pages`](https://github.com/felixmosh/bull-board/tree/master/examples/with-nextjs-pages) examples.
+No dedicated Next.js adapter. Mount bull-board inside a Next.js API route using the Hono adapter (App Router) or the Express adapter (Pages Router). The Vercel deployment needs a small bit of `next.config.js`, see [Next.js & Vercel](/recipes/nextjs) and the [`with-nextjs-app`](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-nextjs-app) / [`with-nextjs-pages`](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-nextjs-pages) examples.
 
 ## Shape
 

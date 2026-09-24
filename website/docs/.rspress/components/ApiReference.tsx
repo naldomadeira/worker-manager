@@ -36,7 +36,7 @@ export function ApiReference() {
           </a>
           <a
             className="api-topbar__icon"
-            href="https://github.com/felixmosh/bull-board"
+            href="https://github.com/naldomadeira/worker-manager"
             target="_blank"
             rel="noreferrer"
             aria-label="GitHub"

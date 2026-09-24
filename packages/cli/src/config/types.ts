@@ -1,5 +1,5 @@
-import type { QueueAdapterOptions, UIConfig } from '@bull-board/api/typings/app';
-import type { Retention } from '@bull-board/metrics';
+import type { QueueAdapterOptions, UIConfig } from '@worker-manager/api/typings/app';
+import type { Retention } from '@worker-manager/metrics';
 import type { RedisOptions } from 'ioredis';
 import type { ConnectionConfig } from './connection';
 

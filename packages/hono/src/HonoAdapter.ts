@@ -1,4 +1,5 @@
 import path from 'node:path';
+import type { serveStatic as nodeServeStatic } from '@hono/node-server/serve-static';
 import type {
   AppControllerRoute,
   AppViewRoute,
@@ -7,8 +8,7 @@ import type {
   HTTPMethod,
   IServerAdapter,
   UIConfig,
-} from '@bull-board/api/typings/app';
-import type { serveStatic as nodeServeStatic } from '@hono/node-server/serve-static';
+} from '@worker-manager/api/typings/app';
 import ejs from 'ejs';
 import type { Context } from 'hono';
 import { Hono } from 'hono';

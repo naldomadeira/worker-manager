@@ -1,5 +1,5 @@
 {
-  "name": "@bull-board/api",
+  "name": "@worker-manager/api",
   "version": "9.10.1",
   "description": "A Dashboard server API built on top of bull or bullmq.",
   "keywords": [
@@ -11,10 +11,10 @@
     "redis"
   ],
   "license": "MIT",
-  "author": "felixmosh",
+  "author": "naldomadeira",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/felixmosh/bull-board.git",
+    "url": "git+https://github.com/naldomadeira/worker-manager.git",
     "directory": "packages/api"
   },
   "files": [
@@ -68,7 +68,7 @@
     "ts-node": "^10.9.2"
   },
   "peerDependencies": {
-    "@bull-board/ui": "9.10.1",
+    "@worker-manager/ui": "9.10.1",
     "bull": "^4.16.5",
     "bullmq": "^5.56.0 || ^6.0.0"
   },

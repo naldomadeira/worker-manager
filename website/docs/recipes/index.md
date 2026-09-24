@@ -26,4 +26,4 @@ Most recipes link into the <a href="/bull-board/demo/" target="_blank" rel="noop
 | Deploy the dashboard on Next.js / Vercel | [Next.js & Vercel](/recipes/nextjs) | Hono, Express |
 | Diagnose a dashboard that won't load | [Troubleshooting](/recipes/troubleshooting) | All |
 
-Missing something? Open an issue. felixmosh is responsive, and good recipes become features.
+Missing something? Open an issue, good recipes become features.

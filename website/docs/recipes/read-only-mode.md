@@ -7,8 +7,8 @@ Read-only mode disables every destructive action on a queue. No retries, no remo
 ## Enable per queue
 
 ```ts
-import { createBullBoard } from '@bull-board/api';
-import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
+import { createBullBoard } from '@worker-manager/api';
+import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 
 createBullBoard({
   queues: [
@@ -69,4 +69,4 @@ It only takes effect while `allowRetries` is `true`. On `BullAdapter` it's alway
 
 ## Source of truth
 
-See `QueueAdapterOptions` in [`packages/api/typings/app.d.ts`](https://github.com/felixmosh/bull-board/blob/master/packages/api/typings/app.d.ts), the flag resolution in [`packages/api/src/queueAdapters/base.ts`](https://github.com/felixmosh/bull-board/blob/master/packages/api/src/queueAdapters/base.ts), and the 405 enforcement in [`packages/api/src/providers/queue.ts`](https://github.com/felixmosh/bull-board/blob/master/packages/api/src/providers/queue.ts).
+See `QueueAdapterOptions` in [`packages/api/typings/app.d.ts`](https://github.com/naldomadeira/worker-manager/blob/main/packages/api/typings/app.d.ts), the flag resolution in [`packages/api/src/queueAdapters/base.ts`](https://github.com/naldomadeira/worker-manager/blob/main/packages/api/src/queueAdapters/base.ts), and the 405 enforcement in [`packages/api/src/providers/queue.ts`](https://github.com/naldomadeira/worker-manager/blob/main/packages/api/src/providers/queue.ts).

@@ -11,8 +11,8 @@
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "types": ["node"],
     "paths": {
-      "@bull-board/api/dist/*": ["../../packages/api/dist/*"],
-      "@bull-board/api/typings/*": ["../../packages/api/typings/*"]
+      "@worker-manager/api/dist/*": ["../../packages/api/dist/*"],
+      "@worker-manager/api/typings/*": ["../../packages/api/typings/*"]
     }
   },
   "include": ["src/**/*.ts", "scripts/**/*.mjs", "rsbuild.config.ts"]

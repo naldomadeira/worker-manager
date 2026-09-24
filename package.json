@@ -1,5 +1,5 @@
 {
-  "name": "@bull-board/root",
+  "name": "@worker-manager/root",
   "version": "9.10.1",
   "private": true,
   "description": "Bull queue UI for inspecting jobs",
@@ -12,10 +12,10 @@
     "redis"
   ],
   "bugs": {
-    "url": "https://github.com/felixmosh/bull-board/issues"
+    "url": "https://github.com/naldomadeira/worker-manager/issues"
   },
   "license": "MIT",
-  "author": "felixmosh",
+  "author": "naldomadeira",
   "contributors": [
     "Erik Engervall <erik.engervall@gmail.com>",
     "felixmosh",
@@ -23,7 +23,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/felixmosh/bull-board.git"
+    "url": "git+https://github.com/naldomadeira/worker-manager.git"
   },
   "workspaces": [
     "packages/*",
@@ -31,21 +31,21 @@
     "website/demo"
   ],
   "scripts": {
-    "build": "yarn workspaces foreach -A -t --exclude '@bull-board/website' --exclude '@bull-board/demo' run build",
-    "clean": "yarn workspaces foreach -A --exclude '@bull-board/website' --exclude '@bull-board/demo' run clean",
+    "build": "yarn workspaces foreach -A -t --exclude '@worker-manager/website' --exclude '@worker-manager/demo' run build",
+    "clean": "yarn workspaces foreach -A --exclude '@worker-manager/website' --exclude '@worker-manager/demo' run clean",
     "postinstall": "npx simple-git-hooks",
     "dev": "concurrently --names \"UI,API\" -c \"bgBlue.bold,bgMagenta.bold\" \"yarn dev:ui\" \"yarn dev:server\"",
     "dev:docker": "docker compose -f docker-compose.redis.yml up -d",
     "dev:server": "ts-node-dev --rs example.ts",
-    "dev:ui": "yarn workspace @bull-board/ui run dev",
+    "dev:ui": "yarn workspace @worker-manager/ui run dev",
     "lint": "oxlint './packages/**/*.{ts,tsx}' . --fix",
     "lint:check": "oxlint './packages/**/*.{ts,tsx}' .",
     "format": "oxfmt './packages/**/*.{ts,tsx}' './examples/**/*.{ts,tsx}'",
     "format:check": "oxfmt './packages/**/*.{ts,tsx}' './examples/**/*.{ts,tsx}' --check",
     "prepublishOnly": "yarn build",
     "release": "release-it",
-    "test": "yarn workspaces foreach -A --exclude '@bull-board/website' --exclude '@bull-board/demo' --exclude '@bull-board/bun' --exclude '@bull-board/ui' run test",
-    "test:ui": "yarn workspace @bull-board/ui test"
+    "test": "yarn workspaces foreach -A --exclude '@worker-manager/website' --exclude '@worker-manager/demo' --exclude '@worker-manager/bun' --exclude '@worker-manager/ui' run test",
+    "test:ui": "yarn workspace @worker-manager/ui test"
   },
   "devDependencies": {
     "@release-it-plugins/workspaces": "^6.0.0",

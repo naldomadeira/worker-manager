@@ -1,4 +1,4 @@
-import type { QueueWorker } from '@bull-board/api/typings/app';
+import type { QueueWorker } from '@worker-manager/api/typings/app';
 import cn from 'clsx';
 import { useTranslation } from 'react-i18next';
 import s from './WorkersList.module.css';

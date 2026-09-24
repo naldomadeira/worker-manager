@@ -1,4 +1,4 @@
-import type { AppQueue } from '@bull-board/api/typings/app';
+import type { AppQueue } from '@worker-manager/api/typings/app';
 import { createMemoryHistory } from 'history';
 import { QueueStats } from '../../src/components/QueueCard/QueueStats/QueueStats';
 import { createWrapper, makeQueue, render } from '../testUtils';

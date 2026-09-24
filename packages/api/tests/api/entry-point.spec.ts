@@ -1,7 +1,7 @@
-import { createBullBoard } from '@bull-board/api';
-import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
-import { entryPoint } from '@bull-board/api/dist/handlers/entryPoint';
-import { ExpressAdapter } from '@bull-board/express';
+import { createBullBoard } from '@worker-manager/api';
+import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
+import { entryPoint } from '@worker-manager/api/dist/handlers/entryPoint';
+import { ExpressAdapter } from '@worker-manager/express';
 import { Queue } from 'bullmq';
 import request from 'supertest';
 

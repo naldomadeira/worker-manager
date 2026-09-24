@@ -1,6 +1,6 @@
 import { Menu } from '@base-ui/react/menu';
-import { STATUSES } from '@bull-board/api/constants/statuses';
-import type { AppQueue } from '@bull-board/api/typings/app';
+import { STATUSES } from '@worker-manager/api/constants/statuses';
+import type { AppQueue } from '@worker-manager/api/typings/app';
 import { useTranslation } from 'react-i18next';
 import { QueueActions } from '../../../typings/app';
 import { canRetryFailedJobs } from '../../utils/failedRetries';

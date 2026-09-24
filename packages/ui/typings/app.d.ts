@@ -5,10 +5,10 @@ import {
   JobRetryStatus,
   QueueRateLimit,
   Status,
-} from '@bull-board/api/typings/app';
+} from '@worker-manager/api/typings/app';
 import type { RetriableFailedJobs } from '../src/utils/failedRetries';
 
-export { Status } from '@bull-board/api/typings/app';
+export { Status } from '@worker-manager/api/typings/app';
 
 export type SelectedStatuses = Record<AppQueue['name'], Status>;
 

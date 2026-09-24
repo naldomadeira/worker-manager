@@ -1,11 +1,11 @@
-import { createBullBoard } from '@bull-board/api';
-import type { BaseAdapter } from '@bull-board/api/baseAdapter';
+import type { InjectionToken, ModuleMetadata, OptionalFactoryDependency } from '@nestjs/common';
+import { createBullBoard } from '@worker-manager/api';
+import type { BaseAdapter } from '@worker-manager/api/baseAdapter';
 import type {
   BoardOptions,
   IServerAdapter,
   QueueAdapterOptions,
-} from '@bull-board/api/typings/app';
-import type { InjectionToken, ModuleMetadata, OptionalFactoryDependency } from '@nestjs/common';
+} from '@worker-manager/api/typings/app';
 
 export type BullBoardInstance = ReturnType<typeof createBullBoard>;
 

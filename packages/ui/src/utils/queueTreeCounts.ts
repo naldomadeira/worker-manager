@@ -1,4 +1,4 @@
-import type { AppQueue, Status } from '@bull-board/api/typings/app';
+import type { AppQueue, Status } from '@worker-manager/api/typings/app';
 import { AppQueueTreeNode } from './toTree';
 
 const STATUS_ORDER: Status[] = [

@@ -1,6 +1,6 @@
-import type { AppJob } from '@bull-board/api/typings/app';
-import type { GetJobResponse } from '@bull-board/api/typings/responses';
 import { act, renderHook, waitFor } from '@testing-library/react';
+import type { AppJob } from '@worker-manager/api/typings/app';
+import type { GetJobResponse } from '@worker-manager/api/typings/responses';
 import { createMemoryHistory } from 'history';
 import { useConfirm } from '../../src/hooks/useConfirm';
 import { useJob } from '../../src/hooks/useJob';

@@ -1,14 +1,14 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-import { createBullBoard } from '@bull-board/api';
-import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
-import { FastifyAdapter } from '@bull-board/fastify';
 import fastifyCookie from '@fastify/cookie';
 import secureSession from '@fastify/secure-session';
 import { BullModule } from '@nestjs/bullmq';
 import { DynamicModule, Module, NestModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { HttpAdapterHost } from '@nestjs/core';
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+import { createBullBoard } from '@worker-manager/api';
+import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
+import { FastifyAdapter } from '@worker-manager/fastify';
 import { Queue } from 'bullmq';
 import { FastifyInstance } from 'fastify';
 import { InjectTestQueue, TEST_QUEUE_NAME, TestProcessor } from './test.processor';

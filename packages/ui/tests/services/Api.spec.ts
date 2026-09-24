@@ -1,4 +1,4 @@
-import type { ErrorResponseBody } from '@bull-board/api/typings/app';
+import type { ErrorResponseBody } from '@worker-manager/api/typings/app';
 import type { AxiosResponse } from 'axios';
 import { Api } from '../../src/services/Api';
 import { toastManager } from '../../src/services/toastManager';

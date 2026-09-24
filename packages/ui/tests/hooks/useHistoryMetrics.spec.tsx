@@ -1,5 +1,5 @@
-import type { GetMetricsHistoryResponse } from '@bull-board/api/typings/responses';
 import { act, renderHook, waitFor } from '@testing-library/react';
+import type { GetMetricsHistoryResponse } from '@worker-manager/api/typings/responses';
 import { useHistoryMetrics, UseHistoryMetricsParams } from '../../src/hooks/useHistoryMetrics';
 import { useSettingsStore } from '../../src/hooks/useSettings';
 import { createWrapper, deferred } from '../testUtils';

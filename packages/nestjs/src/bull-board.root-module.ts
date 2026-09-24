@@ -1,4 +1,3 @@
-import { createBullBoard } from '@bull-board/api';
 import {
   DynamicModule,
   Inject,
@@ -8,6 +7,7 @@ import {
   Provider,
 } from '@nestjs/common';
 import { ApplicationConfig, HttpAdapterHost } from '@nestjs/core';
+import { createBullBoard } from '@worker-manager/api';
 import {
   BULL_BOARD_ADAPTER,
   BULL_BOARD_INSTANCE,

@@ -1,5 +1,5 @@
 {
-  "name": "@bull-board/elysia",
+  "name": "@worker-manager/elysia",
   "type": "commonjs",
   "version": "9.10.1",
   "description": "A Elysia server adapter for Bull-Board dashboard.",
@@ -16,7 +16,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/felixmosh/bull-board.git",
+    "url": "git+https://github.com/naldomadeira/worker-manager.git",
     "directory": "packages/elysia"
   },
   "license": "MIT",
@@ -35,8 +35,8 @@
     "test": "jest"
   },
   "dependencies": {
-    "@bull-board/api": "9.10.1",
-    "@bull-board/ui": "9.10.1",
+    "@worker-manager/api": "9.10.1",
+    "@worker-manager/ui": "9.10.1",
     "ejs": "^6.0.1",
     "mime": "^4.1.0"
   },
@@ -47,9 +47,9 @@
     "access": "public"
   },
   "devDependencies": {
-    "@bull-board/test-utils": "9.10.1",
     "@types/ejs": "^3.1.5",
     "@types/node": "^22.20.1",
+    "@worker-manager/test-utils": "9.10.1",
     "bullmq": "^5.81.3",
     "elysia": "^1.4.30",
     "jest": "^30.4.2",

@@ -1,4 +1,4 @@
-import { BaseAdapter } from '@bull-board/api/dist/queueAdapters/base.js';
+import { BaseAdapter } from '@worker-manager/api/dist/queueAdapters/base.js';
 import type {
   AppJobScheduler,
   JobCleanStatus,
@@ -14,7 +14,7 @@ import type {
   QueueMetrics,
   QueueWorker,
   Status,
-} from '@bull-board/api/typings/app';
+} from '@worker-manager/api/typings/app';
 import { MockQueueJob } from './MockQueueJob';
 import { hashStr, mulberry32 } from './prng';
 import type { DemoJob, DemoQueue } from './state';

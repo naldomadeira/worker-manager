@@ -1,4 +1,4 @@
-import { errorHandler } from '@bull-board/api/dist/handlers/error';
+import { errorHandler } from '@worker-manager/api/dist/handlers/error';
 
 describe('errorHandler', () => {
   const ORIGINAL_ENV = process.env.NODE_ENV;

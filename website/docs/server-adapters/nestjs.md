@@ -5,23 +5,23 @@
 ## Install
 
 ```sh
-npm install @bull-board/api @bull-board/nestjs
+npm install @worker-manager/api @worker-manager/nestjs
 ```
 
 Also install the adapter for the HTTP platform your Nest app uses (Express is the default):
 
 ```sh
-npm install @bull-board/express
+npm install @worker-manager/express
 # or, for Fastify:
-npm install @bull-board/fastify
+npm install @worker-manager/fastify
 ```
 
 ## Supported NestJS versions
 
-`@bull-board/nestjs` supports NestJS 9, 10, 11 and 12. The suite runs against both 11 and 12 on
+`@worker-manager/nestjs` supports NestJS 9, 10, 11 and 12. The suite runs against both 11 and 12 on
 every CI build.
 
-NestJS 12 ships as ESM only, so a Nest 12 application has to be ESM itself. `@bull-board/nestjs`
+NestJS 12 ships as ESM only, so a Nest 12 application has to be ESM itself. `@worker-manager/nestjs`
 is published as CommonJS and its named exports are importable from an ESM app, so nothing about
 the setup below changes on Nest 12.
 
@@ -33,8 +33,8 @@ Register `BullBoardModule.forRoot()` in your root module, then `BullBoardModule.
 // app.module.ts
 import { Module } from '@nestjs/common';
 import { BullModule } from '@nestjs/bullmq';
-import { BullBoardModule } from '@bull-board/nestjs';
-import { ExpressAdapter } from '@bull-board/express';
+import { BullBoardModule } from '@worker-manager/nestjs';
+import { ExpressAdapter } from '@worker-manager/express';
 import { FeatureModule } from './feature/feature.module';
 
 @Module({
@@ -44,7 +44,7 @@ import { FeatureModule } from './feature/feature.module';
     }),
     BullBoardModule.forRoot({
       route: '/queues',
-      adapter: ExpressAdapter, // or FastifyAdapter from '@bull-board/fastify'
+      adapter: ExpressAdapter, // or FastifyAdapter from '@worker-manager/fastify'
     }),
     FeatureModule,
   ],
@@ -56,8 +56,8 @@ export class AppModule {}
 // feature/feature.module.ts
 import { Module } from '@nestjs/common';
 import { BullModule } from '@nestjs/bullmq';
-import { BullBoardModule } from '@bull-board/nestjs';
-import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
+import { BullBoardModule } from '@worker-manager/nestjs';
+import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 
 @Module({
   imports: [
@@ -120,7 +120,7 @@ You can inject the board instance anywhere:
 
 ```ts
 import { Controller } from '@nestjs/common';
-import { BullBoardInstance, InjectBullBoard } from '@bull-board/nestjs';
+import { BullBoardInstance, InjectBullBoard } from '@worker-manager/nestjs';
 
 @Controller('ops')
 export class OpsController {
@@ -140,9 +140,9 @@ import {
   NestModule,
 } from '@nestjs/common';
 import { BullModule } from '@nestjs/bullmq';
-import { createBullBoard } from '@bull-board/api';
-import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
-import { ExpressAdapter } from '@bull-board/express';
+import { createBullBoard } from '@worker-manager/api';
+import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
+import { ExpressAdapter } from '@worker-manager/express';
 import { Queue } from 'bullmq';
 
 @Module({})
@@ -177,9 +177,9 @@ export class QueuesModule implements NestModule {
 
 ## Full runnable examples
 
-- NestJS module (recommended): [`examples/with-nestjs-module`](https://github.com/felixmosh/bull-board/tree/master/examples/with-nestjs-module)
-- Plain adapter: [`examples/with-nestjs`](https://github.com/felixmosh/bull-board/tree/master/examples/with-nestjs)
-- Fastify platform with auth: [`examples/with-nestjs-fastify-auth`](https://github.com/felixmosh/bull-board/tree/master/examples/with-nestjs-fastify-auth)
+- NestJS module (recommended): [`examples/with-nestjs-module`](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-nestjs-module)
+- Plain adapter: [`examples/with-nestjs`](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-nestjs)
+- Fastify platform with auth: [`examples/with-nestjs-fastify-auth`](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-nestjs-fastify-auth)
 
 ## Next steps
 

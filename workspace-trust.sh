@@ -11,7 +11,7 @@ for pkg_dir in packages/*; do
   fi
 done
 
-REPO_NAME="felixmosh/bull-board"
+REPO_NAME="naldomadeira/worker-manager"
 WORKFLOW_FILE="release.yml" # Must be just the filename, not the full path
 
 for pkg in "${PACKAGES[@]}"; do
