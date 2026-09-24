@@ -1,6 +1,6 @@
 /*
 Language: StacktraceJS
-Author: FelixMosh
+Author: Naldo Madeira
 Description: Node stacktrace highlighter
 */
 
