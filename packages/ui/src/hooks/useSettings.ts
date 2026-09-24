@@ -9,6 +9,12 @@ export type MetricsChartTab = 'throughput' | 'latency';
 
 export type ThemePreference = 'system' | 'light' | 'dark';
 
+/** How the job schedulers page lays its schedulers out. */
+export type SchedulersView = 'table' | 'timeline';
+
+/** The span the scheduler timeline shows: a day in hours, a week or a month in days. */
+export type SchedulersTimelineZoom = 'day' | 'week' | 'month';
+
 interface SettingsState {
   language: string;
   pollingInterval: number;
@@ -37,6 +43,8 @@ interface SettingsState {
   /** One global preference for which chart tab (throughput or latency) is showing, shared by
    *  the queue detail page and the metrics history page rather than tracked per queue. */
   metricsChartTab: MetricsChartTab;
+  schedulersView: SchedulersView;
+  schedulersTimelineZoom: SchedulersTimelineZoom;
   setSettings: (settings: Partial<Omit<SettingsState, 'setSettings'>>) => void;
 }
 
@@ -84,6 +92,8 @@ export const useSettingsStore = create<SettingsState>()(
       sidebarCollapsed: false,
       latencyChartSeries: [...DEFAULT_LATENCY_SERIES],
       metricsChartTab: 'throughput',
+      schedulersView: 'table',
+      schedulersTimelineZoom: 'day',
       setSettings: (settings) => set(() => settings),
     }),
     {

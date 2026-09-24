@@ -489,7 +489,24 @@
       "CONFIRM_CLEAR": "すべてのキューの記録履歴{{size}}が削除されます。この操作は元に戻せません。記録は継続されるため、次のスナップショットから新しいデータの蓄積が開始されます。"
     },
     "SUBTITLE": "すべてのキューの完了・失敗ジョブを日ごとに表示します。",
-    "TREND": "推移"
+    "TREND": "推移",
+    "ACTIVITY": {
+      "TITLE": "日別アクティビティ",
+      "DESCRIPTION": "すべてのキューの1日あたりのジョブ数（1日1マス）。",
+      "MEASURE": "表示する指標",
+      "MODE_COMPLETED": "完了",
+      "MODE_FAILED": "失敗",
+      "MODE_FAILURE_RATE": "失敗率",
+      "GRAPH_LABEL": "{{from}}〜{{to}}の1日あたりの{{measure}}",
+      "PEAK": "ピーク日",
+      "AVERAGE": "1日平均",
+      "AVERAGE_RATE": "全体の割合",
+      "BY_WEEKDAY": "曜日別の平均",
+      "IN_PROGRESS": "本日（集計中）",
+      "PARTIAL_HINT": "破線: 本日（集計中）",
+      "LESS": "少",
+      "MORE": "多"
+    }
   },
   "SCHEDULERS": {
     "TITLE": "スケジューラー",
@@ -551,6 +568,32 @@
       "LIMIT_REACHED": "上限に到達",
       "ENDED": "終了",
       "IDLE": "未スケジュール"
+    },
+    "VIEW": {
+      "LABEL": "表示",
+      "TABLE": "テーブル",
+      "TIMELINE": "タイムライン"
+    },
+    "TIMELINE": {
+      "LABEL": "スケジューラーのタイムライン",
+      "ZOOM": "タイムラインの表示幅",
+      "ZOOM_DAY": "日",
+      "ZOOM_WEEK": "週",
+      "ZOOM_MONTH": "月",
+      "NOW": "現在",
+      "LEGEND": "凡例",
+      "NEXT_RUN": "次回実行",
+      "UPCOMING": "今後の実行",
+      "LAST_RUN": "前回実行",
+      "OVERLAPS": "重複",
+      "OVERLAP": "{{total}}件のスケジューラーが同じ分に開始します",
+      "DENSE": "{{interval}}ごとに実行",
+      "RUNS_IN_VIEW": "表示範囲内の実行: {{total}}回",
+      "NO_RUNS": "この期間に実行はありません",
+      "NEXT_ONLY": "次回実行のみ表示しています: このパターンにはタイムラインで展開できない構文が含まれます。",
+      "SHOW_ALL": "{{total}}件のスケジューラーをすべて表示",
+      "ROW_LABEL": "{{id}}（{{schedule}}）、次回実行 {{next}}",
+      "IN_VIEW": "表示範囲"
     }
   },
   "HEADER": {

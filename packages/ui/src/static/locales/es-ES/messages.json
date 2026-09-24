@@ -496,7 +496,24 @@
       "CONFIRM_CLEAR": "Se eliminarán todos los {{size}} del historial registrado de todas las colas. Esto no se puede deshacer. La grabación continúa, por lo que los nuevos datos comenzarán a acumularse a partir de la siguiente instantánea."
     },
     "SUBTITLE": "Trabajos completados y fallidos de todas las colas, día a día.",
-    "TREND": "Tendencia"
+    "TREND": "Tendencia",
+    "ACTIVITY": {
+      "TITLE": "Actividad diaria",
+      "DESCRIPTION": "Trabajos por día en todas las colas, una celda por día.",
+      "MEASURE": "Medida de actividad",
+      "MODE_COMPLETED": "Completados",
+      "MODE_FAILED": "Fallidos",
+      "MODE_FAILURE_RATE": "Tasa de fallos",
+      "GRAPH_LABEL": "{{measure}} por día, del {{from}} al {{to}}",
+      "PEAK": "Día pico",
+      "AVERAGE": "Media diaria",
+      "AVERAGE_RATE": "Tasa global",
+      "BY_WEEKDAY": "Media por día de la semana",
+      "IN_PROGRESS": "hoy hasta ahora",
+      "PARTIAL_HINT": "Discontinuo: hoy, aún en curso",
+      "LESS": "Menos",
+      "MORE": "Más"
+    }
   },
   "SCHEDULERS": {
     "TITLE": "Programaciones",
@@ -558,6 +575,32 @@
       "LIMIT_REACHED": "Límite alcanzado",
       "ENDED": "Finalizado",
       "IDLE": "Sin programar"
+    },
+    "VIEW": {
+      "LABEL": "Vista",
+      "TABLE": "Tabla",
+      "TIMELINE": "Cronograma"
+    },
+    "TIMELINE": {
+      "LABEL": "Cronograma de programaciones",
+      "ZOOM": "Zoom del cronograma",
+      "ZOOM_DAY": "Día",
+      "ZOOM_WEEK": "Semana",
+      "ZOOM_MONTH": "Mes",
+      "NOW": "Ahora",
+      "LEGEND": "Leyenda",
+      "NEXT_RUN": "Próxima ejecución",
+      "UPCOMING": "Ejecución futura",
+      "LAST_RUN": "Última ejecución",
+      "OVERLAPS": "Coincidencias",
+      "OVERLAP": "{{total}} programaciones empiezan en el mismo minuto",
+      "DENSE": "Se ejecuta cada {{interval}}",
+      "RUNS_IN_VIEW": "{{total}} ejecuciones a la vista",
+      "NO_RUNS": "No hay ejecuciones en este intervalo",
+      "NEXT_ONLY": "Solo se muestra la próxima ejecución: este patrón usa una sintaxis que el cronograma no expande.",
+      "SHOW_ALL": "Mostrar las {{total}} programaciones",
+      "ROW_LABEL": "{{id}} ({{schedule}}), próxima ejecución {{next}}",
+      "IN_VIEW": "A la vista"
     }
   },
   "HEADER": {

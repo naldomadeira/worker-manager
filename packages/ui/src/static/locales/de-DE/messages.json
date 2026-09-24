@@ -493,7 +493,24 @@
       "CONFIRM_CLEAR": "Der gesamte aufgezeichnete Verlauf ({{size}}) wird für jede Warteschlange gelöscht. Dies kann nicht rückgängig gemacht werden. Die Aufzeichnung wird fortgesetzt, sodass ab dem nächsten Snapshot neue Daten gesammelt werden."
     },
     "SUBTITLE": "Abgeschlossene und fehlgeschlagene Jobs aller Queues, Tag für Tag.",
-    "TREND": "Trend"
+    "TREND": "Trend",
+    "ACTIVITY": {
+      "TITLE": "Tägliche Aktivität",
+      "DESCRIPTION": "Jobs pro Tag über alle Queues, eine Zelle pro Tag.",
+      "MEASURE": "Aktivitätsmaß",
+      "MODE_COMPLETED": "Abgeschlossen",
+      "MODE_FAILED": "Fehlgeschlagen",
+      "MODE_FAILURE_RATE": "Fehlerquote",
+      "GRAPH_LABEL": "{{measure}} pro Tag, {{from}} bis {{to}}",
+      "PEAK": "Spitzentag",
+      "AVERAGE": "Tagesdurchschnitt",
+      "AVERAGE_RATE": "Gesamtquote",
+      "BY_WEEKDAY": "Durchschnitt nach Wochentag",
+      "IN_PROGRESS": "heute bisher",
+      "PARTIAL_HINT": "Gestrichelt: heute, noch nicht abgeschlossen",
+      "LESS": "Weniger",
+      "MORE": "Mehr"
+    }
   },
   "SCHEDULERS": {
     "TITLE": "Zeitpläne",
@@ -555,6 +572,32 @@
       "LIMIT_REACHED": "Limit erreicht",
       "ENDED": "Beendet",
       "IDLE": "Nicht geplant"
+    },
+    "VIEW": {
+      "LABEL": "Ansicht",
+      "TABLE": "Tabelle",
+      "TIMELINE": "Zeitleiste"
+    },
+    "TIMELINE": {
+      "LABEL": "Zeitleiste der Zeitpläne",
+      "ZOOM": "Zoom der Zeitleiste",
+      "ZOOM_DAY": "Tag",
+      "ZOOM_WEEK": "Woche",
+      "ZOOM_MONTH": "Monat",
+      "NOW": "Jetzt",
+      "LEGEND": "Legende",
+      "NEXT_RUN": "Nächster Lauf",
+      "UPCOMING": "Kommender Lauf",
+      "LAST_RUN": "Letzter Lauf",
+      "OVERLAPS": "Überschneidungen",
+      "OVERLAP": "{{total}} Zeitpläne starten in derselben Minute",
+      "DENSE": "Läuft alle {{interval}}",
+      "RUNS_IN_VIEW": "{{total}} Läufe im Ausschnitt",
+      "NO_RUNS": "Keine Läufe in diesem Zeitraum",
+      "NEXT_ONLY": "Nur der nächste Lauf wird gezeigt: Dieses Muster nutzt Syntax, die die Zeitleiste nicht auflöst.",
+      "SHOW_ALL": "Alle {{total}} Zeitpläne anzeigen",
+      "ROW_LABEL": "{{id}} ({{schedule}}), nächster Lauf {{next}}",
+      "IN_VIEW": "Im Ausschnitt"
     }
   },
   "HEADER": {

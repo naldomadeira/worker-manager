@@ -493,7 +493,24 @@
       "CONFIRM_CLEAR": "Al {{size}} registreret historik vil blive slettet for hver kø. Dette kan ikke fortrydes. Optagelsen fortsætter, så nye data begynder at akkumulere fra næste snapshot."
     },
     "SUBTITLE": "Fuldførte og mislykkede jobs på tværs af alle køer, dag for dag.",
-    "TREND": "Tendens"
+    "TREND": "Tendens",
+    "ACTIVITY": {
+      "TITLE": "Daglig aktivitet",
+      "DESCRIPTION": "Jobs pr. dag på tværs af alle køer, én celle pr. dag.",
+      "MEASURE": "Aktivitetsmål",
+      "MODE_COMPLETED": "Gennemført",
+      "MODE_FAILED": "Fejlet",
+      "MODE_FAILURE_RATE": "Fejlrate",
+      "GRAPH_LABEL": "{{measure}} pr. dag, {{from}} til {{to}}",
+      "PEAK": "Travleste dag",
+      "AVERAGE": "Dagligt gennemsnit",
+      "AVERAGE_RATE": "Samlet rate",
+      "BY_WEEKDAY": "Gennemsnit pr. ugedag",
+      "IN_PROGRESS": "i dag indtil videre",
+      "PARTIAL_HINT": "Stiplet: i dag, stadig i gang",
+      "LESS": "Mindre",
+      "MORE": "Mere"
+    }
   },
   "SCHEDULERS": {
     "TITLE": "Planlægninger",
@@ -555,6 +572,32 @@
       "LIMIT_REACHED": "Grænse nået",
       "ENDED": "Afsluttet",
       "IDLE": "Ikke planlagt"
+    },
+    "VIEW": {
+      "LABEL": "Visning",
+      "TABLE": "Tabel",
+      "TIMELINE": "Tidslinje"
+    },
+    "TIMELINE": {
+      "LABEL": "Tidslinje for planlægninger",
+      "ZOOM": "Zoom på tidslinje",
+      "ZOOM_DAY": "Dag",
+      "ZOOM_WEEK": "Uge",
+      "ZOOM_MONTH": "Måned",
+      "NOW": "Nu",
+      "LEGEND": "Signaturforklaring",
+      "NEXT_RUN": "Næste kørsel",
+      "UPCOMING": "Kommende kørsel",
+      "LAST_RUN": "Seneste kørsel",
+      "OVERLAPS": "Overlap",
+      "OVERLAP": "{{total}} planlægninger starter i samme minut",
+      "DENSE": "Kører hver {{interval}}",
+      "RUNS_IN_VIEW": "{{total}} kørsler i visningen",
+      "NO_RUNS": "Ingen kørsler i dette tidsrum",
+      "NEXT_ONLY": "Kun næste kørsel vises: mønsteret bruger syntaks, som tidslinjen ikke kan udfolde.",
+      "SHOW_ALL": "Vis alle {{total}} planlægninger",
+      "ROW_LABEL": "{{id}} ({{schedule}}), næste kørsel {{next}}",
+      "IN_VIEW": "I visning"
     }
   },
   "HEADER": {

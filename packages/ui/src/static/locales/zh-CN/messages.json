@@ -487,7 +487,24 @@
       "CONFIRM_CLEAR": "所有队列的 {{size}} 记录历史将被删除。此操作不可撤销。记录仍会继续，新数据将从下一个快照开始累积。"
     },
     "SUBTITLE": "所有队列每天已完成和失败的任务。",
-    "TREND": "趋势"
+    "TREND": "趋势",
+    "ACTIVITY": {
+      "TITLE": "每日活动",
+      "DESCRIPTION": "所有队列每天的任务数，每天一格。",
+      "MEASURE": "活动指标",
+      "MODE_COMPLETED": "已完成",
+      "MODE_FAILED": "失败",
+      "MODE_FAILURE_RATE": "失败率",
+      "GRAPH_LABEL": "{{from}} 至 {{to}} 每天的{{measure}}",
+      "PEAK": "峰值日",
+      "AVERAGE": "日均",
+      "AVERAGE_RATE": "总体比率",
+      "BY_WEEKDAY": "按星期平均",
+      "IN_PROGRESS": "今天（进行中）",
+      "PARTIAL_HINT": "虚线：今天，仍在进行中",
+      "LESS": "少",
+      "MORE": "多"
+    }
   },
   "SCHEDULERS": {
     "TITLE": "调度器",
@@ -549,6 +566,32 @@
       "LIMIT_REACHED": "已达上限",
       "ENDED": "已结束",
       "IDLE": "未计划"
+    },
+    "VIEW": {
+      "LABEL": "视图",
+      "TABLE": "表格",
+      "TIMELINE": "时间线"
+    },
+    "TIMELINE": {
+      "LABEL": "调度器时间线",
+      "ZOOM": "时间线缩放",
+      "ZOOM_DAY": "日",
+      "ZOOM_WEEK": "周",
+      "ZOOM_MONTH": "月",
+      "NOW": "现在",
+      "LEGEND": "图例",
+      "NEXT_RUN": "下次运行",
+      "UPCOMING": "即将运行",
+      "LAST_RUN": "上次运行",
+      "OVERLAPS": "重叠",
+      "OVERLAP": "{{total}} 个调度器在同一分钟启动",
+      "DENSE": "每 {{interval}} 运行一次",
+      "RUNS_IN_VIEW": "视图内共 {{total}} 次运行",
+      "NO_RUNS": "此时间段内没有运行",
+      "NEXT_ONLY": "仅显示下次运行：此模式使用了时间线无法展开的语法。",
+      "SHOW_ALL": "显示全部 {{total}} 个调度器",
+      "ROW_LABEL": "{{id}}（{{schedule}}），下次运行 {{next}}",
+      "IN_VIEW": "视图内"
     }
   },
   "HEADER": {

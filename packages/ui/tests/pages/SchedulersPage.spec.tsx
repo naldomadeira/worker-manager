@@ -192,3 +192,79 @@ it('shows the last run only when the scheduler has one', async () => {
   expect(within(hasRun).queryByText('-')).toBeNull();
   expect(within(neverRan).getByText('-')).toBeTruthy();
 });
+
+describe('timeline view', () => {
+  beforeEach(() => {
+    useSettingsStore.setState({ schedulersView: 'table', schedulersTimelineZoom: 'day' });
+  });
+
+  it('switches to the timeline with the view toggle and remembers the choice', async () => {
+    renderPage();
+
+    await screen.findByText('daily-report');
+    const toggle = screen.getByRole('radiogroup', { name: 'SCHEDULERS.VIEW.LABEL' });
+    fireEvent.click(within(toggle).getByRole('radio', { name: /SCHEDULERS.VIEW.TIMELINE/ }));
+
+    expect(await screen.findByRole('region', { name: 'SCHEDULERS.TIMELINE.LABEL' })).toBeTruthy();
+    expect(screen.queryByRole('table')).toBeNull();
+    expect(useSettingsStore.getState().schedulersView).toBe('timeline');
+  });
+
+  it('draws a row per scheduler, grouped by queue, with its next run and the zoom control', async () => {
+    useSettingsStore.setState({ schedulersView: 'timeline' });
+    renderPage({
+      schedulers: [
+        makeScheduler({
+          id: 'hourly',
+          every: 60 * 60_000,
+          pattern: undefined,
+          next: Date.now() + 60_000,
+        }),
+        makeScheduler({ id: 'nightly', pattern: '0 3 * * *', tz: 'UTC' }),
+      ],
+    });
+
+    const timeline = await screen.findByRole('region', { name: 'SCHEDULERS.TIMELINE.LABEL' });
+    expect(within(timeline).getByRole('group')).toBeTruthy();
+    expect(within(timeline).getByText('hourly')).toBeTruthy();
+    expect(within(timeline).getByText('nightly')).toBeTruthy();
+    expect(timeline.querySelectorAll('[data-run=next]')).toHaveLength(2);
+    expect(within(timeline).getByText('SCHEDULERS.TIMELINE.NOW')).toBeTruthy();
+
+    const zoom = screen.getByRole('group', { name: 'SCHEDULERS.TIMELINE.ZOOM' });
+    fireEvent.click(within(zoom).getByRole('button', { name: 'SCHEDULERS.TIMELINE.ZOOM_WEEK' }));
+    expect(useSettingsStore.getState().schedulersTimelineZoom).toBe('week');
+  });
+
+  it('flags two schedulers starting in the same minute', async () => {
+    useSettingsStore.setState({ schedulersView: 'timeline' });
+    const next = Math.ceil((Date.now() + 60 * 60_000) / 60_000) * 60_000;
+    renderPage({
+      schedulers: [
+        makeScheduler({ id: 'first', pattern: undefined, every: 6 * 60 * 60_000, next }),
+        makeScheduler({ id: 'second', pattern: undefined, every: 12 * 60 * 60_000, next }),
+      ],
+    });
+
+    const timeline = await screen.findByRole('region', { name: 'SCHEDULERS.TIMELINE.LABEL' });
+    expect(within(timeline).getByText('SCHEDULERS.TIMELINE.OVERLAPS')).toBeTruthy();
+    expect(timeline.querySelector('[data-lane=overlaps] [data-slot=gantt-point]')).toBeTruthy();
+  });
+
+  it('opens the edit form from a row, as the table does', async () => {
+    useSettingsStore.setState({ schedulersView: 'timeline' });
+    renderPage();
+
+    const row = await screen.findByRole('button', { name: 'SCHEDULERS.TIMELINE.ROW_LABEL' });
+    fireEvent.click(row);
+
+    expect(await screen.findByLabelText('SCHEDULERS.EDIT.PATTERN')).toBeTruthy();
+  });
+
+  it('shows the timeline skeleton while the schedulers load', () => {
+    useSettingsStore.setState({ schedulersView: 'timeline' });
+    renderPage({ api: { getJobSchedulers: jest.fn(() => new Promise(() => {})) } });
+
+    expect(screen.getByTestId('schedulers-timeline-skeleton')).toBeTruthy();
+  });
+});

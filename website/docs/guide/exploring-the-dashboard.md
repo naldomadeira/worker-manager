@@ -55,6 +55,16 @@ Queues that register job schedulers get a **Schedulers** entry in the sidebar. I
 
 ![Schedulers view listing schedulers from several queues with their schedule, next run and last run](/screenshots/schedulers-page.png)
 
+### Timeline view
+
+The **Table | Timeline** toggle in the header switches the same list to a timeline, and the board remembers which one you picked. Each scheduler is a row, grouped by queue, and the markers along it are its runs inside the window: the filled dot is the next run BullMQ has queued, the smaller dots are the ones after it, and the hollow ring is the last run where it is known. **Day** shows the next 24 hours in hour columns, **Week** and **Month** show days, with weekends shaded and a line marking now.
+
+![Scheduler timeline for one day, with dense bands for the per-minute jobs, a row of dots for each cron schedule and an overlap flagged at 6 AM](/screenshots/schedulers-timeline.png)
+
+A schedule that fires too often to draw one dot per run, every minute or every 15 minutes at month zoom, becomes a single striped band that states its cadence on hover. The **Overlaps** lane at the top marks minutes in which two or more schedulers start at once, and the runs involved get an amber ring, which is the quickest way to spot the 02:00 pile-up worth spreading out. Per-minute schedules are left out of it, since they overlap with everything.
+
+The server only reports when a scheduler fires next, so the rest of each row is worked out in the browser: interval schedules repeat from that next run, and cron patterns are expanded in the scheduler's own time zone, honouring its run limit and end date. The expansion covers the usual syntax (five or six fields, lists, ranges, steps, month and weekday names, `@daily` and friends). A pattern using `L`, `W` or `#` shows its next run alone, marked with an asterisk, rather than a guess. Clicking a row opens the same edit form as the table, or the next run's job on a queue where editing is not available.
+
 Last run is not something BullMQ stores. It is read from the pending run of each schedule, which the worker creates as the previous run starts, so a scheduler that has never fired leaves the column empty.
 
 Both times link to the job behind them when there is one to open. The next run always links, since that job is sitting in the delayed set waiting to be picked up, which is also how you can inspect its payload or promote it. The last run links only when the job it produced still exists and the dashboard can name it, which means interval schedules whose previous run has not been trimmed away by `removeOnComplete`. Naming the previous run of a cron schedule would mean parsing the pattern backwards, so those show the time alone.
@@ -72,6 +82,14 @@ The exception is a scheduler your application created dynamically and never re-r
 Removing a scheduler takes its pending run with it. Completed and failed runs from the past stay where they are, and a run already being processed finishes normally.
 
 Opening a queue that has schedulers shows a link into the same view, filtered to that queue.
+
+## Metrics history
+
+With a [history provider](../recipes/historical-metrics.md) configured, **Metrics history** in the sidebar charts completed and failed jobs across every queue over 7, 30 or 90 days, with a per-queue breakdown underneath.
+
+Between the two sits **Daily activity**, the same daily totals as a calendar: one cell per day, darker the busier it was. Switch it between completed jobs, failed jobs and the failure rate. 7 and 30 days read as a single strip; 90 days folds into weeks, GitHub style. Beside it are the peak day, the daily average and an average per weekday, which is where a weekly rhythm or a bad Monday shows up. Today's cell has a dashed outline because its bucket is still filling. Every cell names its day and counts on hover and to a screen reader, and the arrow keys move between days.
+
+![Daily activity over 90 days, with the week grid, peak day, daily average and the average per weekday](/screenshots/metrics-activity.png)
 
 ## Queue info
 

@@ -39,6 +39,7 @@ import { useRangeWindow } from '../../hooks/useRangeWindow';
 import { useSettingsStore } from '../../hooks/useSettings';
 import { useUIConfig } from '../../hooks/useUIConfig';
 import { isPartialBucket } from '../../utils/partialBucket';
+import { DailyActivityCard } from './DailyActivityCard';
 import { HistoryStorageModal } from './HistoryStorageModal';
 import { QueueThroughputRow, QueueTotals } from './QueueThroughputRow';
 
@@ -287,6 +288,14 @@ export const MetricsHistoryPage = () => {
           />
         </CardContent>
       </Card>
+
+      {rows.length > 0 && (
+        <DailyActivityCard
+          rows={rows}
+          days={RANGE_DAYS[range]}
+          className="gap-4 shadow-xs animate-fade-in-up [animation-delay:40ms]"
+        />
+      )}
 
       {sortedQueueNames.length > 0 && (
         <Card className="gap-0 py-0 shadow-xs animate-fade-in-up [animation-delay:80ms]">

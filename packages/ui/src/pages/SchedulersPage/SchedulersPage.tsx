@@ -5,8 +5,10 @@ import {
   ArrowUpDown,
   CalendarClock,
   ChevronRight,
+  ChartGantt,
   Pencil,
   Play,
+  Table2,
   Trash2,
 } from 'lucide-react';
 import { Fragment, useState } from 'react';
@@ -32,6 +34,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 import { CollapsibleJSON } from '../../components/CollapsibleJSON/CollapsibleJSON';
@@ -39,11 +42,13 @@ import { Loader } from '../../components/Loader/Loader';
 import { formatNumber } from '../../components/MetricsSummary/formatNumber';
 import { useJobSchedulers } from '../../hooks/useJobSchedulers';
 import { useQueues } from '../../hooks/useQueues';
+import { type SchedulersView, useSettingsStore } from '../../hooks/useSettings';
 import { useUIConfig } from '../../hooks/useUIConfig';
 import { formatDate, formatRelativeToNow } from '../../utils/formatDate';
 import { links } from '../../utils/links';
 import { describeSchedule } from './schedule';
 import { SchedulerEditModal } from './SchedulerEditModal';
+import { SchedulersTimeline, SchedulersTimelineSkeleton } from './SchedulersTimeline';
 
 const ALL_QUEUES = '';
 /** Radix Select reserves the empty string for "no value", so "all queues" needs a stand-in. */
@@ -119,6 +124,15 @@ const compareSchedulers = (
   return direction === 'asc' ? order : -order;
 };
 
+const VIEWS: SchedulersView[] = ['table', 'timeline'];
+
+const VIEW_LABEL_KEYS = {
+  table: 'SCHEDULERS.VIEW.TABLE',
+  timeline: 'SCHEDULERS.VIEW.TIMELINE',
+} as const;
+
+const VIEW_ICONS = { table: Table2, timeline: ChartGantt } as const;
+
 const HEAD_CLASS = 'h-9 text-[0.68rem] font-semibold tracking-wide text-muted-foreground uppercase';
 
 const Muted = () => <span className="text-muted-foreground">-</span>;
@@ -136,6 +150,8 @@ export const SchedulersPage = () => {
   const [expanded, setExpanded] = useState<string[]>([]);
   const [editing, setEditing] = useState<AppJobScheduler | null>(null);
   const [sort, setSort] = useState<SortState>(null);
+  const view = useSettingsStore((state) => state.schedulersView);
+  const setSettings = useSettingsStore((state) => state.setSettings);
 
   const queuesByName = new Map<string, AppQueue>(
     (queues ?? []).map((queue) => [queue.name, queue])
@@ -162,6 +178,21 @@ export const SchedulersPage = () => {
           ? { key, direction: 'desc' }
           : null
     );
+
+  /**
+   * What a timeline row opens: the edit form where the schedule can be changed, otherwise the
+   * job its next run will be, otherwise its queue -- the same places the table links to.
+   */
+  const selectScheduler = (scheduler: AppJobScheduler) => {
+    const queue = queuesByName.get(scheduler.queueName);
+    if (queue?.type === 'bullmq' && !queue.readOnlyMode) {
+      setEditing(scheduler);
+    } else if (scheduler.nextRunJobId) {
+      history.push(links.jobPage(scheduler.queueName, scheduler.nextRunJobId));
+    } else {
+      history.push(`/queue/${encodeURIComponent(scheduler.queueName)}`);
+    }
+  };
 
   const sortedSchedulers = sort
     ? [...schedulers].sort((a, b) => compareSchedulers(a, b, sort))
@@ -266,7 +297,32 @@ export const SchedulersPage = () => {
               )}
             </CardTitle>
           </div>
-          <CardAction>
+          <CardAction className="flex flex-wrap items-center gap-2">
+            <ToggleGroup
+              type="single"
+              variant="outline"
+              size="sm"
+              spacing={0}
+              value={view}
+              onValueChange={(next) =>
+                next && setSettings({ schedulersView: next as SchedulersView })
+              }
+              aria-label={t('SCHEDULERS.VIEW.LABEL')}
+            >
+              {VIEWS.map((option) => {
+                const Icon = VIEW_ICONS[option];
+                return (
+                  <ToggleGroupItem
+                    key={option}
+                    value={option}
+                    className="gap-1.5 px-2.5 text-xs data-[state=on]:bg-state-selected data-[state=on]:text-state-selected-foreground"
+                  >
+                    <Icon aria-hidden="true" />
+                    {t(VIEW_LABEL_KEYS[option])}
+                  </ToggleGroupItem>
+                );
+              })}
+            </ToggleGroup>
             <Select
               value={queueFilter || ALL_QUEUES_OPTION}
               onValueChange={(value) =>
@@ -296,9 +352,13 @@ export const SchedulersPage = () => {
 
         <CardContent className="p-0">
           {loading ? (
-            <div className="p-6">
-              <Loader />
-            </div>
+            view === 'timeline' ? (
+              <SchedulersTimelineSkeleton />
+            ) : (
+              <div className="p-6">
+                <Loader />
+              </div>
+            )
           ) : schedulers.length === 0 ? (
             <Empty className="py-12">
               <EmptyHeader>
@@ -308,6 +368,12 @@ export const SchedulersPage = () => {
                 <EmptyDescription>{t('SCHEDULERS.EMPTY')}</EmptyDescription>
               </EmptyHeader>
             </Empty>
+          ) : view === 'timeline' ? (
+            <SchedulersTimeline
+              schedulers={schedulers}
+              queuesByName={queuesByName}
+              onSelect={selectScheduler}
+            />
           ) : (
             <TooltipProvider>
               <Table>

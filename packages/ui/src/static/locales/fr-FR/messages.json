@@ -496,7 +496,24 @@
       "CONFIRM_CLEAR": "La totalité des {{size}} de l'historique enregistré sera supprimée pour chaque file. Cette action est irréversible. L'enregistrement continue, donc les nouvelles données recommencent à s'accumuler à partir de la prochaine capture."
     },
     "SUBTITLE": "Tâches terminées et échouées de toutes les files, jour par jour.",
-    "TREND": "Tendance"
+    "TREND": "Tendance",
+    "ACTIVITY": {
+      "TITLE": "Activité quotidienne",
+      "DESCRIPTION": "Tâches par jour sur toutes les files, une case par jour.",
+      "MEASURE": "Mesure d’activité",
+      "MODE_COMPLETED": "Terminés",
+      "MODE_FAILED": "Échoués",
+      "MODE_FAILURE_RATE": "Taux d’échec",
+      "GRAPH_LABEL": "{{measure}} par jour, du {{from}} au {{to}}",
+      "PEAK": "Jour de pointe",
+      "AVERAGE": "Moyenne quotidienne",
+      "AVERAGE_RATE": "Taux global",
+      "BY_WEEKDAY": "Moyenne par jour de la semaine",
+      "IN_PROGRESS": "aujourd’hui jusqu’ici",
+      "PARTIAL_HINT": "Pointillés : aujourd’hui, encore en cours",
+      "LESS": "Moins",
+      "MORE": "Plus"
+    }
   },
   "SCHEDULERS": {
     "TITLE": "Planificateurs",
@@ -558,6 +575,32 @@
       "LIMIT_REACHED": "Limite atteinte",
       "ENDED": "Terminé",
       "IDLE": "Non planifié"
+    },
+    "VIEW": {
+      "LABEL": "Vue",
+      "TABLE": "Tableau",
+      "TIMELINE": "Chronologie"
+    },
+    "TIMELINE": {
+      "LABEL": "Chronologie des planificateurs",
+      "ZOOM": "Zoom de la chronologie",
+      "ZOOM_DAY": "Jour",
+      "ZOOM_WEEK": "Semaine",
+      "ZOOM_MONTH": "Mois",
+      "NOW": "Maintenant",
+      "LEGEND": "Légende",
+      "NEXT_RUN": "Prochaine exécution",
+      "UPCOMING": "Exécution à venir",
+      "LAST_RUN": "Dernière exécution",
+      "OVERLAPS": "Chevauchements",
+      "OVERLAP": "{{total}} planificateurs démarrent dans la même minute",
+      "DENSE": "S’exécute toutes les {{interval}}",
+      "RUNS_IN_VIEW": "{{total}} exécutions affichées",
+      "NO_RUNS": "Aucune exécution sur cette période",
+      "NEXT_ONLY": "Seule la prochaine exécution est affichée : ce motif utilise une syntaxe que la chronologie ne développe pas.",
+      "SHOW_ALL": "Afficher les {{total}} planificateurs",
+      "ROW_LABEL": "{{id}} ({{schedule}}), prochaine exécution {{next}}",
+      "IN_VIEW": "Affichées"
     }
   },
   "HEADER": {

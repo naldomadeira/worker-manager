@@ -493,7 +493,24 @@
       "CONFIRM_CLEAR": "All {{size}} of recorded history will be deleted for every queue. This cannot be undone. Recording continues, so new data starts accumulating from the next snapshot."
     },
     "SUBTITLE": "Completed and failed jobs across every queue, day by day.",
-    "TREND": "Trend"
+    "TREND": "Trend",
+    "ACTIVITY": {
+      "TITLE": "Daily activity",
+      "DESCRIPTION": "Jobs per day across every queue, one cell per day.",
+      "MEASURE": "Activity measure",
+      "MODE_COMPLETED": "Completed",
+      "MODE_FAILED": "Failed",
+      "MODE_FAILURE_RATE": "Failure rate",
+      "GRAPH_LABEL": "{{measure}} per day, {{from}} to {{to}}",
+      "PEAK": "Peak day",
+      "AVERAGE": "Daily average",
+      "AVERAGE_RATE": "Overall rate",
+      "BY_WEEKDAY": "Average by weekday",
+      "IN_PROGRESS": "today so far",
+      "PARTIAL_HINT": "Dashed: today, still in progress",
+      "LESS": "Less",
+      "MORE": "More"
+    }
   },
   "SCHEDULERS": {
     "TITLE": "Schedulers",
@@ -555,6 +572,32 @@
       "LIMIT_REACHED": "Limit reached",
       "ENDED": "Ended",
       "IDLE": "Not scheduled"
+    },
+    "VIEW": {
+      "LABEL": "View",
+      "TABLE": "Table",
+      "TIMELINE": "Timeline"
+    },
+    "TIMELINE": {
+      "LABEL": "Scheduler timeline",
+      "ZOOM": "Timeline zoom",
+      "ZOOM_DAY": "Day",
+      "ZOOM_WEEK": "Week",
+      "ZOOM_MONTH": "Month",
+      "NOW": "Now",
+      "LEGEND": "Legend",
+      "NEXT_RUN": "Next run",
+      "UPCOMING": "Upcoming run",
+      "LAST_RUN": "Last run",
+      "OVERLAPS": "Overlaps",
+      "OVERLAP": "{{total}} schedulers start in the same minute",
+      "DENSE": "Runs every {{interval}}",
+      "RUNS_IN_VIEW": "{{total}} runs in view",
+      "NO_RUNS": "No runs in this window",
+      "NEXT_ONLY": "Only the next run is shown: this pattern uses syntax the timeline does not expand.",
+      "SHOW_ALL": "Show all {{total}} schedulers",
+      "ROW_LABEL": "{{id}} ({{schedule}}), next run {{next}}",
+      "IN_VIEW": "In view"
     }
   },
   "HEADER": {

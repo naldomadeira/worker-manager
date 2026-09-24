@@ -324,10 +324,30 @@ const shots = [
     },
   },
   {
+    name: 'schedulers-timeline',
+    path: 'job-schedulers',
+    settings: { schedulersView: 'timeline', schedulersTimelineZoom: 'day' },
+    async run(page) {
+      await page.getByRole('region', { name: 'Scheduler timeline' }).waitFor({ timeout: TIMEOUT });
+      return page.locator('[data-slot=card]').first();
+    },
+  },
+  {
     name: 'historical-metrics-page',
     path: 'metrics-history',
     async run(page) {
       await page.getByRole('heading', { name: 'By queue' }).waitFor({ timeout: TIMEOUT });
+    },
+  },
+  {
+    name: 'metrics-activity',
+    path: 'metrics-history',
+    async run(page) {
+      await page.getByRole('button', { name: '90d' }).click();
+      const card = page.getByTestId('daily-activity');
+      await card.getByRole('heading', { name: 'Daily activity' }).waitFor({ timeout: TIMEOUT });
+      await settle(page);
+      return card;
     },
   },
   {

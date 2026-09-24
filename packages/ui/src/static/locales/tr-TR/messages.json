@@ -493,7 +493,24 @@
       "CONFIRM_CLEAR": "Her kuyruk için kaydedilmiş geçmişin tamamı ({{size}}) silinecektir. Bu işlem geri alınamaz. Kayıt devam eder, bu nedenle bir sonraki anlık görüntüden itibaren yeni veriler birikmeye başlar."
     },
     "SUBTITLE": "Tüm kuyruklardaki tamamlanan ve başarısız işler, gün gün.",
-    "TREND": "Eğilim"
+    "TREND": "Eğilim",
+    "ACTIVITY": {
+      "TITLE": "Günlük etkinlik",
+      "DESCRIPTION": "Tüm kuyruklarda günlük iş sayısı, her gün için bir hücre.",
+      "MEASURE": "Etkinlik ölçüsü",
+      "MODE_COMPLETED": "Tamamlanan",
+      "MODE_FAILED": "Başarısız",
+      "MODE_FAILURE_RATE": "Hata oranı",
+      "GRAPH_LABEL": "{{from}} – {{to}} arası günlük {{measure}}",
+      "PEAK": "En yoğun gün",
+      "AVERAGE": "Günlük ortalama",
+      "AVERAGE_RATE": "Genel oran",
+      "BY_WEEKDAY": "Haftanın gününe göre ortalama",
+      "IN_PROGRESS": "bugün şu ana kadar",
+      "PARTIAL_HINT": "Kesikli: bugün, henüz sürüyor",
+      "LESS": "Az",
+      "MORE": "Çok"
+    }
   },
   "SCHEDULERS": {
     "TITLE": "Zamanlayıcılar",
@@ -555,6 +572,32 @@
       "LIMIT_REACHED": "Sınıra ulaşıldı",
       "ENDED": "Sona erdi",
       "IDLE": "Planlanmadı"
+    },
+    "VIEW": {
+      "LABEL": "Görünüm",
+      "TABLE": "Tablo",
+      "TIMELINE": "Zaman çizelgesi"
+    },
+    "TIMELINE": {
+      "LABEL": "Zamanlayıcı zaman çizelgesi",
+      "ZOOM": "Zaman çizelgesi yakınlaştırması",
+      "ZOOM_DAY": "Gün",
+      "ZOOM_WEEK": "Hafta",
+      "ZOOM_MONTH": "Ay",
+      "NOW": "Şimdi",
+      "LEGEND": "Açıklama",
+      "NEXT_RUN": "Sonraki çalışma",
+      "UPCOMING": "Yaklaşan çalışma",
+      "LAST_RUN": "Son çalışma",
+      "OVERLAPS": "Çakışmalar",
+      "OVERLAP": "{{total}} zamanlayıcı aynı dakikada başlıyor",
+      "DENSE": "Her {{interval}} çalışır",
+      "RUNS_IN_VIEW": "Görünümde {{total}} çalışma",
+      "NO_RUNS": "Bu aralıkta çalışma yok",
+      "NEXT_ONLY": "Yalnızca sonraki çalışma gösteriliyor: bu desen zaman çizelgesinin açamadığı bir sözdizimi kullanıyor.",
+      "SHOW_ALL": "{{total}} zamanlayıcının tümünü göster",
+      "ROW_LABEL": "{{id}} ({{schedule}}), sonraki çalışma {{next}}",
+      "IN_VIEW": "Görünümde"
     }
   },
   "HEADER": {

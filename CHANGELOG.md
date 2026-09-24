@@ -1,3 +1,20 @@
+### [v1.2.0](https://github.com/naldomadeira/worker-manager/compare/v1.1.0...v1.2.0)
+
+> 2026-09-24
+
+### Features
+- ui: the Job schedulers page has a **Table | Timeline** toggle. The timeline draws one row per
+  scheduler, grouped by queue, with its next run, the runs after it and its last run over a day,
+  week or month, a "now" line, and an **Overlaps** lane for minutes in which several schedulers
+  start at once. Cron patterns are expanded in the browser, in the scheduler's time zone, by a
+  small built-in parser, so no cron library is added to the bundle. Adapted from Kibo UI's Gantt,
+  read-only and without its drag-and-drop dependencies.
+- ui: the Metrics history page has a **Daily activity** card: the daily completed and failed
+  totals as a contribution graph (a strip for 7 and 30 days, a week grid for 90), switchable to
+  failed jobs or the failure rate, with the peak day, the daily average and an average per
+  weekday. Adapted from Kibo UI's Contribution Graph, coloured from the status tokens and
+  localized with the board's language.
+
 ### [v1.1.0](https://github.com/naldomadeira/worker-manager/compare/v1.0.1...v1.1.0)
 
 > 2026-09-24

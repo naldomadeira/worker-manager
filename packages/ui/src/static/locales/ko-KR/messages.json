@@ -487,7 +487,24 @@
       "CONFIRM_CLEAR": "모든 큐에 대해 기록된 {{size}}의 내역이 삭제됩니다. 이 작업은 되돌릴 수 없습니다. 기록은 계속되므로 다음 스냅샷부터 새 데이터가 누적됩니다."
     },
     "SUBTITLE": "모든 큐의 완료 및 실패한 작업을 일별로 보여줍니다.",
-    "TREND": "추세"
+    "TREND": "추세",
+    "ACTIVITY": {
+      "TITLE": "일별 활동",
+      "DESCRIPTION": "모든 큐의 일별 작업 수, 하루에 한 칸.",
+      "MEASURE": "활동 지표",
+      "MODE_COMPLETED": "완료됨",
+      "MODE_FAILED": "실패",
+      "MODE_FAILURE_RATE": "실패율",
+      "GRAPH_LABEL": "{{from}}~{{to}} 일별 {{measure}}",
+      "PEAK": "최다 일",
+      "AVERAGE": "일 평균",
+      "AVERAGE_RATE": "전체 비율",
+      "BY_WEEKDAY": "요일별 평균",
+      "IN_PROGRESS": "오늘(집계 중)",
+      "PARTIAL_HINT": "점선: 오늘, 아직 진행 중",
+      "LESS": "적음",
+      "MORE": "많음"
+    }
   },
   "SCHEDULERS": {
     "TITLE": "스케줄러",
@@ -549,6 +566,32 @@
       "LIMIT_REACHED": "한도 도달",
       "ENDED": "종료됨",
       "IDLE": "예약 안 됨"
+    },
+    "VIEW": {
+      "LABEL": "보기",
+      "TABLE": "표",
+      "TIMELINE": "타임라인"
+    },
+    "TIMELINE": {
+      "LABEL": "스케줄러 타임라인",
+      "ZOOM": "타임라인 확대/축소",
+      "ZOOM_DAY": "일",
+      "ZOOM_WEEK": "주",
+      "ZOOM_MONTH": "월",
+      "NOW": "지금",
+      "LEGEND": "범례",
+      "NEXT_RUN": "다음 실행",
+      "UPCOMING": "예정된 실행",
+      "LAST_RUN": "마지막 실행",
+      "OVERLAPS": "겹침",
+      "OVERLAP": "스케줄러 {{total}}개가 같은 분에 시작합니다",
+      "DENSE": "{{interval}}마다 실행",
+      "RUNS_IN_VIEW": "표시 범위 내 실행 {{total}}회",
+      "NO_RUNS": "이 기간에는 실행이 없습니다",
+      "NEXT_ONLY": "다음 실행만 표시됩니다: 이 패턴은 타임라인이 펼칠 수 없는 구문을 사용합니다.",
+      "SHOW_ALL": "스케줄러 {{total}}개 모두 보기",
+      "ROW_LABEL": "{{id}} ({{schedule}}), 다음 실행 {{next}}",
+      "IN_VIEW": "표시 범위"
     }
   },
   "HEADER": {

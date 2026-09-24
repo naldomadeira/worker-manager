@@ -7,6 +7,15 @@
 > só para transições que a API já oferece (retry de failed, promote de delayed, remove).
 
 
+> **Adotados (v1.2.0):** **Contribution Graph** (card "Daily activity" da página Metrics history)
+> e **Gantt** (visão "Timeline" da página Job schedulers), em `packages/ui/src/components/ui/`.
+> Ambos foram escritos a partir do JSON do registry, sem o CLI, e adaptados: cores dos tokens
+> `--status-*` via `color-mix` (claro/escuro), rótulos `Intl` no idioma do board, tooltips do
+> nosso shadcn `Tooltip`, navegação por teclado. O Gantt virou somente leitura: saíram arrastar,
+> redimensionar, menus de contexto e rolagem infinita, e com eles `@dnd-kit/*`, `jotai`,
+> `lodash.throttle`, `@uidotdev/usehooks` e os itens `card`/`context-menu`; ganhou zoom por hora
+> (dia/semana/mês) e marcador de "agora". Nenhuma dependência nova (só `date-fns`, que já existia).
+
 ## 1. Resumo
 
 Kibo UI é um registro customizado de componentes composáveis, acessíveis e extensíveis construído sobre shadcn/ui, React, TypeScript, Tailwind CSS e Radix UI. Fornece componentes de nível superior como Gantt, Kanban, calendários e editores de código—reduzindo boilerplate sem sacrificar flexibilidade. Instala-se via `npx kibo-ui add <componente>` ou `npx shadcn add` com URL do registry. Licença MIT, mantido pela comunidade no repositório github.com/shadcnblocks/kibo com 3.8K stars.

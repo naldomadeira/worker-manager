@@ -496,7 +496,24 @@
       "CONFIRM_CLEAR": "Todo o {{size}} do histórico registrado será excluído para todas as filas. Isso não pode ser desfeito. A gravação continua, então novos dados começarão a se acumular a partir do próximo snapshot."
     },
     "SUBTITLE": "Jobs concluídos e com falha de todas as filas, dia a dia.",
-    "TREND": "Tendência"
+    "TREND": "Tendência",
+    "ACTIVITY": {
+      "TITLE": "Atividade diária",
+      "DESCRIPTION": "Jobs por dia em todas as filas, uma célula por dia.",
+      "MEASURE": "Medida de atividade",
+      "MODE_COMPLETED": "Concluídos",
+      "MODE_FAILED": "Falhos",
+      "MODE_FAILURE_RATE": "Taxa de falha",
+      "GRAPH_LABEL": "{{measure}} por dia, de {{from}} a {{to}}",
+      "PEAK": "Dia de pico",
+      "AVERAGE": "Média diária",
+      "AVERAGE_RATE": "Taxa geral",
+      "BY_WEEKDAY": "Média por dia da semana",
+      "IN_PROGRESS": "hoje até agora",
+      "PARTIAL_HINT": "Tracejado: hoje, ainda em andamento",
+      "LESS": "Menos",
+      "MORE": "Mais"
+    }
   },
   "SCHEDULERS": {
     "TITLE": "Agendamentos",
@@ -558,6 +575,32 @@
       "LIMIT_REACHED": "Limite atingido",
       "ENDED": "Encerrado",
       "IDLE": "Não agendado"
+    },
+    "VIEW": {
+      "LABEL": "Visualização",
+      "TABLE": "Tabela",
+      "TIMELINE": "Linha do tempo"
+    },
+    "TIMELINE": {
+      "LABEL": "Linha do tempo dos agendamentos",
+      "ZOOM": "Zoom da linha do tempo",
+      "ZOOM_DAY": "Dia",
+      "ZOOM_WEEK": "Semana",
+      "ZOOM_MONTH": "Mês",
+      "NOW": "Agora",
+      "LEGEND": "Legenda",
+      "NEXT_RUN": "Próxima execução",
+      "UPCOMING": "Execução futura",
+      "LAST_RUN": "Última execução",
+      "OVERLAPS": "Sobreposições",
+      "OVERLAP": "{{total}} agendamentos começam no mesmo minuto",
+      "DENSE": "Executa a cada {{interval}}",
+      "RUNS_IN_VIEW": "{{total}} execuções no período",
+      "NO_RUNS": "Nenhuma execução neste período",
+      "NEXT_ONLY": "Só a próxima execução é exibida: este padrão usa uma sintaxe que a linha do tempo não expande.",
+      "SHOW_ALL": "Mostrar todos os {{total}} agendamentos",
+      "ROW_LABEL": "{{id}} ({{schedule}}), próxima execução {{next}}",
+      "IN_VIEW": "No período"
     }
   },
   "HEADER": {

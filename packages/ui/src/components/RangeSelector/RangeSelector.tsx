@@ -9,6 +9,8 @@ interface RangeSelectorProps<T extends string> {
   onChange: (range: T) => void;
   getLabel: (range: T) => string;
   className?: string;
+  /** Names the group for assistive tech when no visible label sits next to it. */
+  'aria-label'?: string;
 }
 
 /** Spring for the thumb gliding between segments; shared with the chart tab control. */
@@ -27,6 +29,7 @@ export const RangeSelector = <T extends string>({
   onChange,
   getLabel,
   className,
+  'aria-label': ariaLabel,
 }: RangeSelectorProps<T>) => {
   const thumbId = useId();
   const reduceMotion = useReducedMotion();
@@ -36,6 +39,7 @@ export const RangeSelector = <T extends string>({
       type="multiple"
       // A set of mutually exclusive options, not a toolbar of commands.
       role="group"
+      aria-label={ariaLabel}
       spacing={0.5}
       size="sm"
       value={[value]}
