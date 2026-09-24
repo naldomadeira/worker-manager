@@ -1,11 +1,10 @@
 import type { BaseAdapter } from '@worker-manager/api/baseAdapter';
 import type { MetricsType } from '@worker-manager/api/typings/app';
-import { isCluster, resolveClient, type MetricsClient, type MetricsConnection } from './connection';
-import { metricsToMinutePoints } from './dataMapping';
-import { HistoryStore, type Retention } from './HistoryStore';
-import { metricsKeys, resolveNamespace } from './keys';
+import type { MetricsConnection } from './connection';
+import { metricsToMinutePoints, type MinutePoint } from './dataMapping';
 import { LatencySampler } from './LatencySampler';
-import { LatencyStore } from './LatencyStore';
+import { RedisMetricsStore } from './RedisMetricsStore';
+import type { CounterStore, MetricsStore, Retention } from './store';
 
 const METRICS: MetricsType[] = ['completed', 'failed'];
 const MS_PER_MINUTE = 60000;
@@ -19,12 +18,8 @@ const MINUTES_PER_DAY = 1440;
  */
 export const DEFAULT_RETENTION: Retention = { minutes: 7, hours: 90, days: 90 };
 
-export interface MetricsRecorderOptions {
-  /**
-   * A function is resolved on every tick, for a board whose queue set changes while it
-   * runs. An array is read once, at construction.
-   */
-  queues: BaseAdapter[] | (() => BaseAdapter[]);
+interface RedisOptions {
+  /** Redis. Shorthand for `store: new RedisMetricsStore({ connection, prefix })`. */
   connection: MetricsConnection;
   /**
    * Redis key namespace, defaulting to `bull-board:metrics`. Set it to separate two boards
@@ -36,6 +31,27 @@ export interface MetricsRecorderOptions {
    * tag to choose the slot yourself.
    */
   prefix?: string;
+  store?: never;
+}
+
+interface StoreOptions {
+  /**
+   * Where history is written, e.g. `new PostgresMetricsStore({ connection, migrate: true })`
+   * for a board with no Redis. The recorder never closes a store it was handed.
+   */
+  store: MetricsStore;
+  connection?: never;
+  prefix?: never;
+}
+
+export type MetricsRecorderOptions = RecorderBaseOptions & (RedisOptions | StoreOptions);
+
+interface RecorderBaseOptions {
+  /**
+   * A function is resolved on every tick, for a board whose queue set changes while it
+   * runs. An array is read once, at construction.
+   */
+  queues: BaseAdapter[] | (() => BaseAdapter[]);
   /** Per-resolution retention in days. Unspecified tiers fall back to the defaults. */
   retention?: Partial<Retention>;
   /**
@@ -68,6 +84,12 @@ export interface MetricsRecorderOptions {
    * wire this to your logger to tell an empty chart from a broken one.
    */
   onLatencyError?: (error: unknown, queueName: string) => void;
+  /**
+   * Notified when a scheduled snapshot fails, say because the store is unreachable. The
+   * timer keeps running and the next tick retries; without a listener the failure is
+   * dropped rather than surfacing as an unhandled rejection.
+   */
+  onSnapshotError?: (error: unknown) => void;
 }
 
 export function resolveRetention(opts: {
@@ -87,9 +109,9 @@ export function resolveRetention(opts: {
 
 export class MetricsRecorder {
   private readonly resolveQueues: () => BaseAdapter[];
-  private readonly store: HistoryStore;
-  private readonly redis: MetricsClient;
-  private readonly ownsRedis: boolean;
+  private readonly store: CounterStore;
+  /** Set only when the recorder built the store itself, from a `connection`. */
+  private readonly ownedStore: MetricsStore | null;
   private readonly intervalMs: number;
   private readonly lastMinute = new Map<string, number>();
   private timer: ReturnType<typeof setInterval> | null = null;
@@ -97,22 +119,23 @@ export class MetricsRecorder {
   private stopped = false;
   readonly latencyEnabled: boolean;
   private readonly latencySampler: LatencySampler | null;
+  private readonly onSnapshotError?: (error: unknown) => void;
 
   constructor(opts: MetricsRecorderOptions) {
     const { queues } = opts;
     this.resolveQueues = typeof queues === 'function' ? queues : () => queues;
     this.intervalMs = opts.snapshotIntervalMs ?? 60000;
-    const { client, owned } = resolveClient(opts.connection);
-    this.redis = client;
-    this.ownsRedis = owned;
-    const keys = metricsKeys(resolveNamespace(opts.prefix, isCluster(client)));
-    this.store = new HistoryStore({ redis: this.redis, keys, retention: resolveRetention(opts) });
+    const store =
+      opts.store ?? new RedisMetricsStore({ connection: opts.connection, prefix: opts.prefix });
+    this.ownedStore = opts.store ? null : store;
+    const retention = resolveRetention(opts);
+    this.store = store.counterStore(retention);
+    this.onSnapshotError = opts.onSnapshotError;
     this.latencyEnabled = opts.latency !== false;
     this.latencySampler = this.latencyEnabled
       ? new LatencySampler({
-          redis: this.redis,
-          keys,
-          store: new LatencyStore({ redis: this.redis, keys, retention: resolveRetention(opts) }),
+          redis: store.jobClient ?? undefined,
+          store: store.latencyStore(retention),
           tickMs: this.intervalMs,
           maxSamplesPerTick: opts.maxLatencySamplesPerTick,
           safetyMarginMs: opts.latencySafetyMarginMs,
@@ -129,25 +152,34 @@ export class MetricsRecorder {
     if (this.timer) {
       return;
     }
-    this.timer = setInterval(() => {
-      void this.snapshot();
-    }, this.intervalMs);
+    this.timer = setInterval(() => this.scheduledSnapshot(), this.intervalMs);
     // Do not keep the event loop alive solely for the recorder.
     if (typeof this.timer.unref === 'function') {
       this.timer.unref();
     }
-    void this.snapshot();
+    this.scheduledSnapshot();
   }
 
+  /** Stops the timer and closes a connection the recorder opened. A store handed in stays open. */
   stop(): void {
     if (this.timer) {
       clearInterval(this.timer);
       this.timer = null;
     }
-    if (this.ownsRedis && !this.stopped) {
-      this.redis.disconnect();
+    if (this.ownedStore && !this.stopped) {
+      void this.ownedStore.close();
     }
     this.stopped = true;
+  }
+
+  private scheduledSnapshot(): void {
+    this.snapshot().catch((error) => {
+      try {
+        this.onSnapshotError?.(error);
+      } catch {
+        // A throwing reporter must not turn a contained failure into an unhandled one.
+      }
+    });
   }
 
   async snapshot(): Promise<void> {
@@ -204,6 +236,7 @@ export class MetricsRecorder {
       Math.floor(Date.now() / MS_PER_MINUTE) - this.store.retention.minutes * MINUTES_PER_DAY;
 
     let newest = seenUpTo;
+    const fresh: MinutePoint[] = [];
     for (const point of points) {
       if (point.minute <= seenUpTo) {
         break; // points are newest-first; everything older is already stored
@@ -211,11 +244,14 @@ export class MetricsRecorder {
       if (point.minute < oldestWritable) {
         break; // ...and everything past here is older still
       }
-      await this.store.upsertMinute(name, metric, point.minute, point.value);
+      fresh.push(point);
       if (point.minute > newest) {
         newest = point.minute;
       }
     }
+    // One call per queue and metric, so a SQL store can make it one transaction. The
+    // watermark only moves once the write has landed.
+    await this.store.upsertMinutes(name, metric, fresh);
     this.lastMinute.set(cursorKey, newest);
   }
 }

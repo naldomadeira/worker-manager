@@ -57,7 +57,12 @@ export const queueDefaultJobOptionsSchema = v.looseObject({
 });
 
 export const queueWorkerSchema = v.object({
-  id: v.pipe(v.string(), v.description('Redis client id of the worker connection.')),
+  id: v.pipe(
+    v.string(),
+    v.description(
+      'Id of the worker connection: the Redis client id, or the PostgreSQL backend pid.'
+    )
+  ),
   name: v.pipe(
     v.nullable(v.string()),
     v.description('The name the worker was created with, or null for an unnamed worker.')

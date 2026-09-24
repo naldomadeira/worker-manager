@@ -222,7 +222,7 @@ export async function run(
 
     const close = async () => {
       closing = true;
-      history?.stop();
+      await history?.stop();
       if (rescanTimer) clearTimeout(rescanTimer);
       await closeWithGrace(server.close(), SHUTDOWN_GRACE_MS, () => {
         log.warn(
@@ -268,7 +268,7 @@ export async function run(
 
   const close = async () => {
     closing = true;
-    history?.stop();
+    await history?.stop();
     if (rescanTimer) clearTimeout(rescanTimer);
     await closeWithGrace(server.close(), SHUTDOWN_GRACE_MS, () => {
       log.warn(
@@ -411,18 +411,17 @@ async function runPostgresOnly(
   { beforeReady }: { beforeReady?: (close: () => Promise<void>) => void }
 ): Promise<RunningBoard> {
   const onWarning = (message: string) => log.warn(message);
-  if (config.history) {
-    log.warn(
-      '--history records into Redis, which is not configured; it is ignored for PostgreSQL-only boards.'
-    );
-  }
+  // No Redis to keep history in, so it goes into the same database as the queues.
+  const history = config.history
+    ? createHistory({ postgres: config.postgres!, config: config.history, onWarning })
+    : null;
 
   const serverAdapter = new ExpressAdapter();
   serverAdapter.setBasePath(config.basePath);
   const board = createBullBoard({
     queues: [],
     serverAdapter,
-    options: { uiConfig: config.uiConfig },
+    options: { uiConfig: config.uiConfig, historyProvider: history?.provider },
   });
   const postgres: PostgresSource = createPostgresSource({
     config: config.postgres!,
@@ -444,10 +443,23 @@ async function runPostgresOnly(
   try {
     count = await scan();
   } catch (error) {
+    await history?.stop();
     await postgres.close().catch(() => undefined);
     throw new Error(
       `Could not connect to PostgreSQL at ${postgres.label}: ${describeError(error as Error)}`
     );
+  }
+
+  if (history) {
+    history.start(() => registry.adapters());
+    if (config.history?.record) {
+      await warnIfCountersUnavailable(registry.adapters(), onWarning);
+    } else {
+      log.warn(
+        'Historical metrics are served read-only: this process records nothing, so the charts ' +
+          'show only what another process has already recorded.'
+      );
+    }
   }
 
   const server = await startServer(config, { serverAdapter });
@@ -466,6 +478,7 @@ async function runPostgresOnly(
   const close = async () => {
     closing = true;
     if (rescanTimer) clearTimeout(rescanTimer);
+    await history?.stop();
     await closeWithGrace(server.close(), SHUTDOWN_GRACE_MS, () => server.closeAllConnections());
     await closeWithGrace(registry.close(), SHUTDOWN_GRACE_MS, () =>
       log.warn(`Closing queues did not finish within ${SHUTDOWN_GRACE_MS}ms; continuing shutdown.`)
@@ -477,6 +490,7 @@ async function runPostgresOnly(
 
   log.log(`bull-board listening on ${server.url}`);
   log.log(`Postgres: ${postgres.label} (schema ${config.postgres!.schema})`);
+  if (history) log.log(`History: ${history.label}`);
   if (count === 0) {
     log.log(
       'No PostgreSQL queues found yet. ' +

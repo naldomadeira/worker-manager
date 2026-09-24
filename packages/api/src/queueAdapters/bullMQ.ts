@@ -35,7 +35,14 @@ interface VersionedQueue {
 }
 
 interface QueryablePool {
-  query(sql: string): Promise<{ rows: Record<string, any>[] }>;
+  query(sql: string, params?: unknown[]): Promise<{ rows: Record<string, any>[] }>;
+}
+
+/** The slice of BullMQ v6's PostgreSQL backend the metrics anchor reads through. */
+interface PostgresMetricsBackend {
+  queueName?: string;
+  connection?: { pool?: QueryablePool };
+  query?: QueryablePool['query'];
 }
 
 interface RateLimitedQueue {
@@ -52,6 +59,21 @@ type FlowProducerWithBackend = new (
 // One producer per connection, however many adapters share it: each producer pins listeners on
 // the client (or backend) and is never closed, so the entry must die with the connection.
 const flowProducerCache = new WeakMap<object, FlowProducer>();
+
+// BullMQ's PostgreSQL getMetrics reports meta.prevTS and prevCount as 0 although it stores
+// both, which leaves the in-progress minute out of the chart and its buckets unanchored.
+const POSTGRES_METRICS_ANCHOR_SQL =
+  'SELECT prev_ts, prev_count FROM metrics WHERE queue = $1 AND kind = $2';
+
+// BullMQ's PostgreSQL client list carries nothing but `application_name`, so the address,
+// session id and age a worker row shows are read from the same view it queries.
+const POSTGRES_SESSIONS_SQL = `
+  SELECT pid, application_name,
+         coalesce(host(client_addr) || ':' || client_port, '[local]') AS addr,
+         extract(epoch from now() - backend_start)::int AS age
+    FROM pg_stat_activity
+   WHERE datname = current_database() AND application_name <> ''
+`;
 
 const POSTGRES_STATS_SQL = `
   SELECT split_part(current_setting('server_version'), ' ', 1) AS version,
@@ -122,11 +144,31 @@ export class BullMQAdapter extends BaseAdapter {
   }
 
   public async getWorkers(): Promise<QueueWorker[] | null> {
-    const clients = await this.queue.getWorkers();
+    const clients = (await this.queue.getWorkers()) as unknown as Record<string, string>[];
+    const pool = (this.queue as unknown as VersionedQueue).getBackend?.()?.connection?.pool;
+
     return this.normalizeWorkers(
-      clients as unknown as Record<string, string>[],
+      pool ? await this.withPostgresSessions(pool, clients) : clients,
       WORKER_NAME_SEPARATOR
     );
+  }
+
+  private async withPostgresSessions(
+    pool: QueryablePool,
+    clients: Record<string, string>[]
+  ): Promise<Record<string, string>[]> {
+    // BullMQ already matched the sessions that belong to this queue; only their details are added.
+    const names = new Set(clients.map((client) => client.rawname));
+    const { rows } = await pool.query(POSTGRES_SESSIONS_SQL);
+
+    return rows
+      .filter((row) => names.has(row.application_name))
+      .map((row) => ({
+        id: String(row.pid),
+        rawname: String(row.application_name),
+        addr: String(row.addr),
+        age: String(row.age),
+      }));
   }
 
   public async clean(jobStatus: JobCleanStatus, graceTimeMs: number): Promise<void> {
@@ -157,7 +199,37 @@ export class BullMQAdapter extends BaseAdapter {
   // bullmq 5.56, the peer floor, returns these as raw Redis strings despite typing them number[].
   public async getMetrics(type: MetricsType, start?: number, end?: number): Promise<QueueMetrics> {
     const metrics = await this.queue.getMetrics(type, start, end);
-    return { ...metrics, data: metrics.data.map((point) => +point || 0) };
+    const meta = { ...metrics.meta, ...(await this.postgresMetricsAnchor(type)) };
+    return { ...metrics, meta, data: metrics.data.map((point) => +point || 0) };
+  }
+
+  /**
+   * The minute anchor BullMQ's PostgreSQL backend keeps but does not return. Best effort: the
+   * table is BullMQ's own schema, so anything unexpected leaves getMetrics' answer untouched.
+   */
+  private async postgresMetricsAnchor(
+    type: MetricsType
+  ): Promise<{ prevTS: number; prevCount: number } | undefined> {
+    const backend = (this.queue as unknown as VersionedQueue).getBackend?.() as
+      | PostgresMetricsBackend
+      | undefined;
+    if (!backend?.connection?.pool || typeof backend.query !== 'function') {
+      return undefined;
+    }
+
+    try {
+      const { rows } = await backend.query(POSTGRES_METRICS_ANCHOR_SQL, [
+        backend.queueName ?? this.queue.name,
+        type,
+      ]);
+      const row = rows[0];
+      if (!row || row.prev_ts == null) {
+        return undefined;
+      }
+      return { prevTS: Number(row.prev_ts), prevCount: Number(row.prev_count) };
+    } catch {
+      return undefined;
+    }
   }
 
   public isPaused(): Promise<boolean> {

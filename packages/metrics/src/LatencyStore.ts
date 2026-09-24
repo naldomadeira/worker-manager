@@ -1,9 +1,9 @@
 import type { MetricsClient } from './connection';
 import { BUCKET_COUNT, mergeVectors, packVector, unpackVector } from './histogram';
-import type { Retention } from './HistoryStore';
 import { GLOBAL_QUEUE, minuteToDay, shiftDay, type MetricsKeys } from './keys';
+import type { LatencyMetric, LatencyStorage, Retention } from './store';
 
-export type LatencyMetric = 'runtime' | 'waittime';
+export type { LatencyMetric } from './store';
 
 export const QUEUE_AGE_METRIC = 'queueage';
 
@@ -159,7 +159,12 @@ end
 return 1
 `;
 
-export class LatencyStore {
+/** Compare and delete, so a lease that already expired and was retaken is left alone. */
+const RELEASE_LEASE = `if redis.call('GET', KEYS[1]) == ARGV[1] then return redis.call('DEL', KEYS[1]) end
+       return 0`;
+
+/** The Redis `LatencyStorage`: packed vectors in hour and totals hashes, one EVAL per write. */
+export class LatencyStore implements LatencyStorage {
   private readonly redis: MetricsClient;
   private readonly keys: MetricsKeys;
   readonly retention: Retention;
@@ -267,6 +272,24 @@ export class LatencyStore {
       }
     }
     return out;
+  }
+
+  async acquireLease(queue: string, holder: string, ttlMs: number): Promise<boolean> {
+    const held = await this.redis.set(this.keys.lease(queue), holder, 'PX', ttlMs, 'NX');
+    return held === 'OK';
+  }
+
+  async releaseLease(queue: string, holder: string): Promise<void> {
+    await this.redis.eval(RELEASE_LEASE, 1, this.keys.lease(queue), holder);
+  }
+
+  async readWatermark(queue: string): Promise<number | null> {
+    const raw = await this.redis.get(this.keys.watermark(queue));
+    return raw ? Number(raw) : null;
+  }
+
+  async writeWatermark(queue: string, ms: number, ttlSeconds: number): Promise<void> {
+    await this.redis.set(this.keys.watermark(queue), String(ms), 'EX', ttlSeconds);
   }
 
   /** Epoch ms for an absolute hour index, for building response timestamps. */

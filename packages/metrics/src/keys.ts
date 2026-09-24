@@ -3,6 +3,8 @@ export const GLOBAL_QUEUE = '__global__';
 /** Marks the hourly rollup key so it can't be mistaken for a minute-level day hash. */
 export const HOUR_TIER = 'hour';
 
+export const DAY_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+
 const MS_PER_MINUTE = 60000;
 const MS_PER_DAY = 86400000;
 const MINUTES_PER_HOUR = 60;
@@ -11,7 +13,7 @@ function pad(n: number): string {
   return n < 10 ? `0${n}` : String(n);
 }
 
-function msToDay(ms: number): string {
+export function msToDay(ms: number): string {
   const d = new Date(ms);
   return `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())}`;
 }
@@ -32,6 +34,15 @@ export function shiftDay(day: string, offsetDays: number): string {
 export function dayToStartMs(day: string): number {
   const [y, m, d] = day.split('-').map(Number);
   return Date.UTC(y, m - 1, d);
+}
+
+/** Days since the epoch, the integer form of an ISO day that SQL buckets use. */
+export function dayToIndex(day: string): number {
+  return Math.floor(dayToStartMs(day) / MS_PER_DAY);
+}
+
+export function indexToDay(index: number): string {
+  return msToDay(index * MS_PER_DAY);
 }
 
 export function dayRange(fromMs: number, toMs: number): string[] {
@@ -88,4 +99,15 @@ export function metricsKeys(namespace: string): MetricsKeys {
     watermark: (queue) => `${namespace}:${queue}:latency:watermark`,
     scanPattern: `${namespace}:*`,
   };
+}
+
+/** An ISO `YYYY-MM-DD` day, validated, from a day string or a Date (UTC). */
+export function toDay(value: Date | string): string {
+  if (typeof value === 'string') {
+    if (!DAY_PATTERN.test(value)) {
+      throw new Error(`Expected a YYYY-MM-DD day or a Date, got "${value}"`);
+    }
+    return value;
+  }
+  return value.toISOString().slice(0, 10);
 }

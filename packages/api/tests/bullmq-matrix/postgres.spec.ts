@@ -89,6 +89,109 @@ if (!runnable) {
       expect(res.body.mode).toBeUndefined();
     });
 
+    it('serves the live throughput metrics a metrics-enabled worker records', async () => {
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const { Worker, QueueEvents, createPostgresBackend } = require('bullmq');
+      const events = new QueueEvents(
+        queue.name,
+        { connection: POSTGRES_URL } as any,
+        createPostgresBackend
+      );
+      const worker = new Worker(
+        queue.name,
+        async (job: { data: { fail?: boolean } }) => {
+          if (job.data.fail) throw new Error('boom');
+          return 'ok';
+        },
+        { connection: POSTGRES_URL, metrics: { maxDataPoints: 60 } } as any,
+        createPostgresBackend
+      );
+
+      try {
+        await events.waitUntilReady();
+        await worker.waitUntilReady();
+
+        const finished = new Promise<void>((resolve) => {
+          let seen = 0;
+          const tick = () => ++seen === 5 && resolve();
+          worker.on('completed', tick);
+          worker.on('failed', tick);
+        });
+        await queue.addBulk([
+          { name: 'ok', data: {} },
+          { name: 'ok', data: {} },
+          { name: 'ok', data: {} },
+          { name: 'ko', data: { fail: true } },
+          { name: 'ko', data: { fail: true } },
+        ]);
+        await finished;
+        // The per-minute point is written by a separate, best-effort query after the finish.
+        await new Promise((resolve) => setTimeout(resolve, 500));
+
+        const res = await setupBoard().get(`/api/queues/${queue.name}/metrics`).expect(200);
+        const { completed, failed } = res.body;
+
+        expect(completed.meta.count).toBe(3);
+        expect(failed.meta.count).toBe(2);
+        // BullMQ only pushes a per-minute point once a later minute finishes a job, so jobs from
+        // the current minute live in `count - prevCount`. The PostgreSQL backend reports that
+        // anchor as 0 on its own; the adapter reads it back so the chart can place them.
+        const now = Date.now();
+        for (const series of [completed, failed]) {
+          expect(series.meta.prevTS).toBeGreaterThan(now - 60_000);
+          expect(series.meta.prevTS).toBeLessThanOrEqual(now);
+          expect(series.data.every((p: unknown) => typeof p === 'number')).toBe(true);
+        }
+        const recorded = (m: typeof completed) =>
+          m.meta.count - m.meta.prevCount + m.data.reduce((a: number, b: number) => a + b, 0);
+        expect(recorded(completed)).toBe(3);
+        expect(recorded(failed)).toBe(2);
+      } finally {
+        await worker.close();
+        await events.close();
+      }
+    });
+
+    it('drives the workers badge from the sessions postgres reports', async () => {
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const { Worker, createPostgresBackend } = require('bullmq');
+      const board = setupBoard();
+      const hasWorkers = async () => {
+        const res = await board.get('/api/queues').expect(200);
+        return res.body.queues.find((q: { name: string }) => q.name === queue.name).hasWorkers;
+      };
+
+      expect(await hasWorkers()).toBe(false);
+
+      const worker = new Worker(
+        queue.name,
+        async () => 'ok',
+        { connection: POSTGRES_URL, name: 'pg-worker' } as any,
+        createPostgresBackend
+      );
+      try {
+        await worker.waitUntilReady();
+        let workers: Record<string, unknown>[] = [];
+        for (let attempt = 0; attempt < 40 && !workers.length; attempt++) {
+          workers = (await board.get(`/api/queues/${queue.name}/workers`).expect(200)).body.workers;
+          if (!workers.length) await new Promise((resolve) => setTimeout(resolve, 100));
+        }
+
+        // BullMQ's own client list has only the session name; the rest comes from pg_stat_activity.
+        expect(workers).toEqual([
+          {
+            id: expect.stringMatching(/^\d+$/),
+            name: 'pg-worker',
+            addr: expect.any(String),
+            age: expect.any(Number),
+          },
+        ]);
+        expect(await hasWorkers()).toBe(true);
+      } finally {
+        await worker.close();
+      }
+    });
+
     it('reports a job as not being part of a flow, same as on Redis', async () => {
       const job = await queue.add('solo', {});
 

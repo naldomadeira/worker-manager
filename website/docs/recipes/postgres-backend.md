@@ -92,6 +92,29 @@ createBullBoard({
 
 The datastore details panel describes the first registered queue, so put the one you care about first if you mix them.
 
-## Not covered
+## Historical metrics
 
-[`@worker-manager/metrics`](/recipes/historical-metrics) is Redis-only. It scans Redis sorted sets directly to build throughput and latency history, so it has no Postgres implementation yet. Everything else on the board works.
+[`@worker-manager/metrics`](/recipes/historical-metrics) records PostgreSQL-backed queues like Redis ones: counters from the queue's metrics, latency and queue age from BullMQ's `job` table. Its history can live in PostgreSQL too, so a board with no Redis at all still gets the 7, 30 and 90 day charts and the storage panel:
+
+```js
+const {
+  MetricsRecorder,
+  PostgresMetricsHistoryProvider,
+  PostgresMetricsStore,
+} = require('@worker-manager/metrics');
+
+const store = new PostgresMetricsStore({ connection, schema: 'bullmq', migrate: true });
+const recorder = new MetricsRecorder({ queues: [new BullMQAdapter(emails)], store });
+recorder.start();
+
+createBullBoard({
+  queues: [new BullMQAdapter(emails)],
+  serverAdapter,
+  options: {
+    uiConfig: { showMetrics: true },
+    historyProvider: new PostgresMetricsHistoryProvider({ store }),
+  },
+});
+```
+
+The tables are prefixed `bull_board_metrics_` and sit next to BullMQ's in the same schema here; see [PostgreSQL storage](/recipes/historical-metrics#postgresql-storage) for the schema, migrations and sizing. With the CLI, `--postgres ... --history` does the same with no code.

@@ -8,7 +8,11 @@ export interface FileHistoryConfig {
   enabled?: boolean;
   /** Write snapshots from this process. Defaults to true unless the board is read-only. */
   record?: boolean;
-  /** Redis key namespace for the recorded history. Defaults to `bull-board:metrics`. */
+  /**
+   * Redis key namespace for the recorded history. Defaults to `bull-board:metrics`. Redis
+   * only: a PostgreSQL-only board keeps its history in `bull_board_metrics_*` tables in the
+   * BullMQ schema.
+   */
   prefix?: string;
   retentionDays?: number;
   retention?: Partial<Retention>;

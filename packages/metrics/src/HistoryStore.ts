@@ -1,14 +1,9 @@
 import type { MetricsClient } from './connection';
+import type { MinutePoint } from './dataMapping';
 import { GLOBAL_QUEUE, minuteToDay, minuteToHour, shiftDay, type MetricsKeys } from './keys';
+import type { CounterStore, Retention } from './store';
 
-export interface Retention {
-  /** Days of minute-level detail. Doubles as the recorder's catch-up window. */
-  minutes: number;
-  /** Days of hourly rollup. */
-  hours: number;
-  /** Days of daily totals, which is what the shipped charts read. */
-  days: number;
-}
+export type { Retention } from './store';
 
 /**
  * Atomic, idempotent upsert of one minute bucket into all three resolutions at once.
@@ -84,7 +79,8 @@ function ttl(days: number): string {
   return String(Math.max(1, Math.floor(days * SECONDS_PER_DAY)));
 }
 
-export class HistoryStore {
+/** The Redis `CounterStore`: one hash per queue, metric and day, rolled up by one EVAL. */
+export class HistoryStore implements CounterStore {
   private readonly redis: MetricsClient;
   private readonly keys: MetricsKeys;
   readonly retention: Retention;
@@ -119,6 +115,29 @@ export class HistoryStore {
       ttl(this.retention.days),
       shiftDay(day, -this.retention.days)
     );
+  }
+
+  /** One EVAL per minute, in order, exactly as a caller looping `upsertMinute` would. */
+  async upsertMinutes(queue: string, metric: string, points: MinutePoint[]): Promise<void> {
+    for (const point of points) {
+      await this.upsertMinute(queue, metric, point.minute, point.value);
+    }
+  }
+
+  async readDailyTotals(queue: string, metric: string, days: string[]): Promise<(number | null)[]> {
+    const raw = await this.readDailyTotalsRaw(queue, metric, days);
+    return raw.map((value) => (value == null ? null : Number(value) || 0));
+  }
+
+  async readHours(queue: string, metric: string, days: string[]): Promise<Record<string, number>> {
+    const out: Record<string, number> = {};
+    const perDay = await Promise.all(days.map((day) => this.readDayHours(queue, metric, day)));
+    for (const hours of perDay) {
+      for (const field of Object.keys(hours)) {
+        out[field] = (out[field] ?? 0) + hours[field];
+      }
+    }
+    return out;
   }
 
   /**

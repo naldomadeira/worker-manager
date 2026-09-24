@@ -99,14 +99,14 @@ if (!POSTGRES_URL) {
       }, 'jobs did not complete on the PostgreSQL backend');
     }
 
-    it('records nothing while the PostgreSQL backend reports no buffer anchor', async () => {
+    it('records the counters once the adapter anchors the PostgreSQL buffer', async () => {
       await runJobs(3);
       await forceMetricsFlush();
       await runJobs(1);
 
       const metrics = await adapter.getMetrics('completed');
       expect(metrics.data.length).toBeGreaterThan(0);
-      expect(metrics.meta.prevTS).toBe(0);
+      expect(metrics.meta.prevTS).toBeGreaterThan(0);
 
       const recorder = new MetricsRecorder({
         queues: [adapter],
@@ -118,24 +118,26 @@ if (!POSTGRES_URL) {
 
       const store = new HistoryStore({ redis, keys: testKeys, retention: RETENTION });
       const today = minuteToDay(Date.now() / 60000);
-      expect(await store.readDailyTotalsRaw(name, 'completed', [today])).toEqual([null]);
+      const yesterday = minuteToDay(Date.now() / 60000 - 1440);
+      const totals = await store.readDailyTotals(name, 'completed', [yesterday, today]);
+      expect(totals.reduce<number>((sum, value) => sum + (value ?? 0), 0)).toBe(3);
     });
 
-    it('samples no latency at all rather than a zero backlog', async () => {
+    it('samples the backlog from the job table rather than reading Redis keys', async () => {
       await queue.addBulk(Array.from({ length: 3 }, (_, i) => ({ name: 'job', data: { i } })));
       expect((await adapter.getJobCounts()).waiting).toBe(3);
       expect(LatencySampler.supports(adapter)).toBe(true);
+      await new Promise((resolve) => setTimeout(resolve, 1100));
 
-      const sampler = new LatencySampler({
-        redis,
-        keys: testKeys,
-        store: new LatencyStore({ redis, keys: testKeys, retention: RETENTION }),
-        tickMs: 60000,
-        safetyMarginMs: 0,
-      });
+      const store = new LatencyStore({ redis, keys: testKeys, retention: RETENTION });
+      const sampler = new LatencySampler({ redis, store, tickMs: 60000, safetyMarginMs: 0 });
       await sampler.sample(adapter);
 
-      expect(await redis.keys(`${DEFAULT_NAMESPACE}:${name}*`)).toEqual([]);
+      const today = minuteToDay(Date.now() / 60000);
+      const ages = await store.readQueueAge(name, 'day', [today]);
+      expect(ages[today]).toBeGreaterThanOrEqual(1000);
+      // Nothing was read from, or written under, BullMQ-style keys for this queue.
+      expect(await redis.keys(`bull:${queue.name}*`)).toEqual([]);
     });
   });
 }

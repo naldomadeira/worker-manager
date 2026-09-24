@@ -1,6 +1,6 @@
 {
   "name": "bull-board-with-koa",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Example of how to use Hapi.js server with bull-board",
   "main": "index.js",
   "scripts": {
@@ -10,7 +10,7 @@
   "author": "naldomadeira",
   "license": "ISC",
   "dependencies": {
-    "@worker-manager/koa": "^1.0.1",
+    "@worker-manager/koa": "^1.1.0",
     "bullmq": "^5.81.3",
     "koa": "^3.1.2",
     "koa-router": "^13.0.1"

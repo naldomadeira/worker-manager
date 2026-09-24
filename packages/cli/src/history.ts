@@ -1,51 +1,105 @@
 import type { BaseAdapter } from '@worker-manager/api/baseAdapter';
 import type { MetricsHistoryProvider } from '@worker-manager/api/typings/app';
-import { MetricsRecorder, RedisMetricsHistoryProvider } from '@worker-manager/metrics';
-import type { HistoryConfig } from './config/types';
+import {
+  MetricsRecorder,
+  PostgresMetricsHistoryProvider,
+  PostgresMetricsStore,
+  RedisMetricsHistoryProvider,
+  type MetricsStore,
+} from '@worker-manager/metrics';
+import type { HistoryConfig, PostgresConfig } from './config/types';
 import { describeError } from './describeError';
 import type { RedisClient } from './redisClient';
 
 export interface HistoryRuntime {
   provider: MetricsHistoryProvider;
+  /** Where the history is kept, for the startup log. */
+  label: string;
   start(queues: () => BaseAdapter[]): void;
-  stop(): void;
+  stop(): Promise<void>;
 }
 
-export interface HistoryDeps {
-  client: RedisClient;
+/**
+ * Exactly one of the two. Next to Redis the history stays in Redis, as it always has; a
+ * PostgreSQL-only board keeps it in PostgreSQL instead.
+ */
+export type HistoryBackend = { client: RedisClient } | { postgres: PostgresConfig };
+
+export type HistoryDeps = HistoryBackend & {
   config: HistoryConfig;
   onWarning(message: string): void;
+};
+
+/**
+ * The metrics tables go into BullMQ's own schema, under the package's table prefix. That is
+ * the one schema the board's database role is already known to be able to create tables in,
+ * which `public` no longer is by default since PostgreSQL 15.
+ */
+function createPostgresStore(
+  postgres: PostgresConfig,
+  config: HistoryConfig,
+  onWarning: (message: string) => void
+): PostgresMetricsStore {
+  return new PostgresMetricsStore({
+    connection: { ...postgres.connection, max: 2 },
+    schema: postgres.schema,
+    // A read-only board writes nothing, schema included: another process has to have recorded
+    // (and so migrated) before it has anything to show.
+    migrate: config.record,
+    onError: (error) => onWarning(`History database error: ${describeError(error)}`),
+  });
 }
 
-export function createHistory({ client, config, onWarning }: HistoryDeps): HistoryRuntime {
-  const shared = {
-    prefix: config.prefix,
-    retentionDays: config.retentionDays,
-    retention: config.retention,
-  };
-  const provider = new RedisMetricsHistoryProvider({ connection: client, ...shared });
+export function createHistory(deps: HistoryDeps): HistoryRuntime {
+  const { config, onWarning } = deps;
+  const shared = { retentionDays: config.retentionDays, retention: config.retention };
+
+  let provider: MetricsHistoryProvider & { disconnect(): void | Promise<void> };
+  let store: MetricsStore | null = null;
+  let label: string;
+  if ('client' in deps) {
+    provider = new RedisMetricsHistoryProvider({
+      connection: deps.client,
+      prefix: config.prefix,
+      ...shared,
+    });
+    label = 'Redis';
+  } else {
+    const pgStore = createPostgresStore(deps.postgres, config, onWarning);
+    store = pgStore;
+    provider = new PostgresMetricsHistoryProvider({ store: pgStore, ...shared });
+    label = `PostgreSQL (schema ${pgStore.tables.schema}, tables ${pgStore.tables.prefix}*)`;
+  }
   let recorder: MetricsRecorder | null = null;
 
   return {
     provider,
+    label,
     start(queues) {
       if (!config.record || recorder) return;
 
+      const target =
+        'client' in deps
+          ? { connection: deps.client, prefix: config.prefix }
+          : { store: store as MetricsStore };
       recorder = new MetricsRecorder({
         queues,
-        connection: client,
+        ...target,
         ...shared,
         latency: config.latency,
         snapshotIntervalMs: config.snapshotIntervalMs,
         onLatencyError: (error, queueName) =>
           onWarning(`Latency sampling failed for "${queueName}": ${describeError(error as Error)}`),
+        onSnapshotError: (error) =>
+          onWarning(`Recording history failed: ${describeError(error as Error)}`),
       });
       recorder.start();
     },
-    stop() {
+    async stop() {
       recorder?.stop();
       recorder = null;
-      provider.disconnect();
+      await provider.disconnect();
+      await store?.close().catch(() => undefined);
     },
   };
 }

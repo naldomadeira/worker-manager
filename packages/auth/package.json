@@ -1,6 +1,6 @@
 {
   "name": "@worker-manager/auth",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Framework-agnostic authentication middleware (Basic and Keycloak/OIDC) for the Worker Manager dashboard.",
   "keywords": [
     "auth",

@@ -42,7 +42,8 @@ export const NATIVE_WINDOW = 60;
  * Native 60m path. Convert a BullMQ getMetrics result into a 60-length per-minute
  * array, newest bucket last. data[i] maps to a minute via prevTS; the live
  * (in-progress) minute is count - prevCount.
- * BullMQ's PostgreSQL backend reports both as 0: unanchored buffers end now, live stays 0.
+ * BullMQ's PostgreSQL backend reports both as 0; the adapter reads the real anchor back, and
+ * where it cannot (older servers) an unanchored buffer ends now and live stays 0.
  */
 export function toNativeSeries(
   metrics: QueueMetricsData | null | undefined,

@@ -123,6 +123,37 @@ if (!POSTGRES_URL) {
       expect(names).toEqual([name]);
     });
 
+    it('records --history into PostgreSQL on a board with no Redis', async () => {
+      board = await start(['--postgres', POSTGRES_URL, '--queues', name, '--history']);
+
+      const html = await (await fetch(board.url)).text();
+      expect(html).toContain('"hasHistoryProvider":true');
+
+      // The recorder's first tick samples the waiting job's age into the metrics tables.
+      let queues: { queue: string }[] = [];
+      for (let i = 0; i < 100 && !queues.some((q) => q.queue === name); i++) {
+        const usage = await fetch(`${board.url}/api/metrics/history/usage`);
+        expect(usage.status).toBe(200);
+        queues = ((await usage.json()) as { queues: { queue: string }[] }).queues;
+        if (!queues.some((q) => q.queue === name)) await new Promise((r) => setTimeout(r, 100));
+      }
+      expect(queues.map((q) => q.queue)).toContain(name);
+
+      const to = Date.now();
+      const history = await fetch(
+        `${board.url}/api/metrics/history?queue=${encodeURIComponent(name)}&from=${to - 86400000}&to=${to}`
+      );
+      expect(history.status).toBe(200);
+
+      // Cleared through the board, so reruns start from nothing.
+      const purge = await fetch(`${board.url}/api/metrics/history/purge`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ queue: name }),
+      });
+      expect(purge.status).toBeLessThan(300);
+    });
+
     it('serves PostgreSQL queues next to Redis ones', async () => {
       board = await start([
         '--postgres',

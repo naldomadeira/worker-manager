@@ -10,8 +10,9 @@ import { connection } from './connection';
 // the constructed client's negotiated option -- no server round-trip is needed, so they don't
 // depend on the Redis version under test.
 
-// The `redis` field is private; the tests reach it to inspect the resolved options.
-const protocolOf = (owner: { redis: Redis }): number | undefined => owner.redis.options.protocol;
+// The store the class opened is private; the tests reach it to inspect the resolved options.
+const protocolOf = (owner: { redis: Redis }): number | undefined =>
+  (owner as unknown as { ownedStore: { redis: Redis } }).ownedStore.redis.options.protocol;
 
 describe('RESP2 guardrail on the options-construction path', () => {
   describe('defaults an owned connection to protocol 2', () => {

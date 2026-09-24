@@ -2,11 +2,11 @@
 
 > Applies to: BullMQ only.
 >
-> Beta: this feature ships in the opt-in `@worker-manager/metrics` package. It is safe to run, but the API and Redis storage layout may still change in a minor release while it settles, so pin an exact version if you depend on the storage format.
+> Beta: this feature ships in the opt-in `@worker-manager/metrics` package. It is safe to run, but the API and the Redis and PostgreSQL storage layouts may still change in a minor release while it settles, so pin an exact version if you depend on the storage format.
 
 Worker Manager is a viewer, not a monitor, and its built-in throughput chart reflects that: it reads BullMQ's native `queue.getMetrics()`, a per-minute ring buffer capped at `maxDataPoints`, scoped to a single queue, and only as deep as that buffer's window. Restart the buffer's window, or just wait long enough, and the older points are gone. There's no long history and no cross-queue total, because BullMQ was never asked to keep one.
 
-`@worker-manager/metrics` is an opt-in companion package that fills that gap. It doesn't replace the live chart, it adds a second, longer-retention path behind it: a recorder that snapshots the native metrics into Redis before they roll off, and a history provider you register with `createBullBoard` that lets the UI read them back.
+`@worker-manager/metrics` is an opt-in companion package that fills that gap. It doesn't replace the live chart, it adds a second, longer-retention path behind it: a recorder that snapshots the native metrics into Redis (or [PostgreSQL](#postgresql-storage)) before they roll off, and a history provider you register with `createBullBoard` that lets the UI read them back.
 
 ## How it fits together
 
@@ -14,7 +14,7 @@ Two pieces, living in two different places.
 
 `MetricsRecorder` runs in your own always-on process, typically wherever your workers already live. On an interval, it reads each queue's native completed/failed per-minute metrics and writes them into long-retention Redis buckets: a daily rollup per queue, plus a cross-queue global rollup. Writes are idempotent by minute, so it's safe to run the recorder in several processes, or restart it, without double-counting. There's no singleton to coordinate and no leader election.
 
-`RedisMetricsHistoryProvider` runs wherever you build the board. You pass it to `createBullBoard({ options: { historyProvider } })`. The core itself only defines the `MetricsHistoryProvider` interface and stays stateless: registering a provider just turns on one additional read endpoint that delegates to it. `@worker-manager/metrics` is the batteries-included Redis implementation, but if you already have a metrics store of your own, you can implement the interface directly instead of adopting this package. With no provider configured, nothing about the board changes.
+`RedisMetricsHistoryProvider` runs wherever you build the board. You pass it to `createBullBoard({ options: { historyProvider } })`. The core itself only defines the `MetricsHistoryProvider` interface and stays stateless: registering a provider just turns on one additional read endpoint that delegates to it. `@worker-manager/metrics` is the batteries-included implementation, with Redis and PostgreSQL storage, but if you already have a metrics store of your own, you can implement the interface directly instead of adopting this package. With no provider configured, nothing about the board changes.
 
 ## Without an app: the CLI and the Docker image
 
@@ -25,6 +25,8 @@ npx @worker-manager/cli --redis redis://localhost:6379 --history
 docker run --rm -p 127.0.0.1:3000:3000 ghcr.io/naldomadeira/worker-manager \
   --redis redis://redis:6379 --history
 ```
+
+On a PostgreSQL-only board (`--postgres` with no Redis) the history goes into [PostgreSQL](#postgresql-storage), in `bull_board_metrics_*` tables in the BullMQ schema, created on start unless the board is `--read-only`.
 
 The flag turns on `showMetrics` as well, so the range selector appears on queue pages and not only on the Metrics history page. `--history-retention-days` sets the window; per-tier retention, the snapshot interval and `latency: false` go in the CLI's config file under a `history` key. `--read-only` keeps the provider and drops the recorder, which is what you want when your workers already record and the CLI is only there to read.
 
@@ -47,7 +49,78 @@ If metrics aren't enabled on the workers, `queue.getMetrics()` returns nothing, 
 
 ## PostgreSQL-backed queues
 
-BullMQ 6 can back a queue with PostgreSQL instead of Redis, and the recorder stores no history for those queues. Counter metrics come back from `queue.getMetrics()` with `prevTS` reported as 0, and since that timestamp is the only thing dating the per-minute buffer, the points cannot be placed on a timeline and are dropped rather than guessed at. The column exists in the backend's own schema and is maintained there, so this may well resolve upstream. Latency sampling reads BullMQ's sorted sets and job hashes straight out of Redis, and a PostgreSQL queue has none of them, so those queues are skipped rather than sampled as a permanently empty backlog. Both are silent, and the charts render empty the same way they do for a queue whose workers have no `metrics` option. Redis-backed queues record normally on a board that also carries PostgreSQL ones.
+BullMQ 6 can back a queue with PostgreSQL instead of Redis, and the recorder records those queues like any other. Counter metrics come from `queue.getMetrics()`, whose per-minute buffer the adapter dates from BullMQ's own `metrics` table, since BullMQ's PostgreSQL backend reports `prevTS` as 0. Latency and queue age are read from BullMQ's `job` table through the queue's own pool: finished jobs by finish time, which BullMQ indexes, and the oldest waiting job from a few probes on the ready index rather than a scan of the backlog. A paused or prioritized job is an ordinary `waiting` row there, so both count towards the queue age, as they do on Redis.
+
+Where a queue lives and where its history is stored are independent. On a board that also has Redis, PostgreSQL queues record into Redis next to the Redis ones. On a board with no Redis at all, the history goes into PostgreSQL too.
+
+## PostgreSQL storage
+
+For a deployment that runs BullMQ 6 entirely on PostgreSQL, `PostgresMetricsStore` keeps the history in the same database. It has the same tiers, retention, cross-queue rollup, latency histograms and queue-age gauge as Redis, behind the same provider contract, so the charts and the storage panel behave identically. `pg` is an optional peer dependency of the package; install it only for this.
+
+```ts
+import {
+  MetricsRecorder,
+  PostgresMetricsHistoryProvider,
+  PostgresMetricsStore,
+} from '@worker-manager/metrics';
+
+const store = new PostgresMetricsStore({
+  connection: process.env.DATABASE_URL, // or a pg.Pool, or a pool config
+  schema: 'bullmq', // default: a pool config's `schema`, then `public`
+  migrate: true, // create or upgrade the tables on first use
+});
+
+// In the process where your workers run:
+const recorder = new MetricsRecorder({ queues, store, retentionDays: 90 });
+recorder.start();
+
+// Where you build the board:
+createBullBoard({
+  queues,
+  serverAdapter,
+  options: {
+    uiConfig: { showMetrics: true },
+    historyProvider: new PostgresMetricsHistoryProvider({ store, retentionDays: 90 }),
+  },
+});
+
+// On shutdown:
+recorder.stop();
+await store.close(); // ends the pool only if the store created it
+```
+
+`connection` takes what BullMQ's PostgreSQL backend takes, so the object you already give BullMQ can be reused, `schema` key included. The recorder and the provider never close a store they were handed; the provider can also be given `{ connection, schema, tablePrefix, migrate }` directly, in which case it owns the store and `await provider.disconnect()` closes it. `new MetricsHistoryAdmin({ store })` gives the same `stats()` and `purge()` as on Redis. Pass `onSnapshotError` to the recorder to hear about a tick that failed because the database was unreachable; the next tick simply retries.
+
+### Tables and migrations
+
+Four tables in `schema`, each named with `tablePrefix` (default `bull_board_metrics_`), which is also how two boards share one database:
+
+| Table | Holds |
+| --- | --- |
+| `bull_board_metrics_counters` | completed/failed sums per minute, hour and day, and the queue-age max per hour and day |
+| `bull_board_metrics_histograms` | runtime and waittime bucket counts per hour and day |
+| `bull_board_metrics_sampler_state` | each queue's sampling lease and watermark |
+| `bull_board_metrics_meta` | the schema version |
+
+Rows are keyed by `(queue, metric, tier, bucket)`, where `bucket` is a UTC minute, hour or day index and `__global__` is the cross-queue rollup.
+
+`migrate: true` creates whatever is missing on first use, in one transaction behind an advisory lock, so several processes starting together is fine. It creates the schema only if it does not exist, so an existing schema needs no database-level privilege. Without `migrate`, the first query checks the version and fails with instructions. Where the application role has no DDL rights, run the migration as a deploy step:
+
+```ts
+import { migratePostgresMetrics } from '@worker-manager/metrics';
+
+await migratePostgresMetrics({ connection: process.env.DATABASE_URL, schema: 'bullmq' });
+```
+
+### Same guarantees, in SQL
+
+Every snapshot of a queue's metric is one transaction that diffs the incoming minutes against the stored minute rows and adds only the difference to the hour and day rows and to `__global__`, under an advisory lock on that queue and metric. Re-snapshotting after a restart, or from a second recorder, adds nothing, exactly as the Redis script does. The sampling lease is an upsert that only replaces an expired lease, on the database clock, so two recorders never sample the same queue on the same tick. Instead of TTLs, each writer deletes rows past each tier's window once a day. Autovacuum reclaims the space.
+
+### Sizing
+
+A PostgreSQL row costs more than a Redis hash field: about 180 bytes per minute or hour counter and about 300 bytes per histogram row, indexes included. A queue busy every minute takes about 250 KB per metric per day of minute detail, or roughly 6.5 MB per busy queue at the default retention across counters, histograms and the gauge, plus the same once for the cross-queue rollup. That is several times the Redis figures in [Storage footprint](#storage-footprint), and the minute window is still the one to tune.
+
+In the storage panel, `keys` counts rows and `bytes` is the tables' actual on-disk size (`pg_total_relation_size`, indexes and TOAST included) split between queues and tiers in proportion to their rows' size, so the per-queue figures add up to what the tables occupy.
 
 ## Job latency
 
@@ -89,7 +162,7 @@ A latency tick that fails is swallowed rather than propagated, so a broken scan 
 yarn add @worker-manager/metrics
 ```
 
-`ioredis` is a peer dependency; you already have it if you're using BullMQ.
+`ioredis` is a peer dependency; you already have it if you're using BullMQ. For [PostgreSQL storage](#postgresql-storage), add `pg` as well.
 
 ## Set up the recorder
 

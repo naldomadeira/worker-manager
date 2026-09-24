@@ -59,22 +59,21 @@ describe('telling a client from connection options', () => {
     const foreign = clientFromASecondIoredisCopy();
 
     const admin = new MetricsHistoryAdmin({ connection: foreign }) as unknown as {
-      redis: Redis;
-      ownsRedis: boolean;
+      ownedStore: { redis: Redis; ownsClient: boolean };
     };
 
-    expect(admin.redis).toBe(foreign);
-    expect(admin.ownsRedis).toBe(false);
+    expect(admin.ownedStore.redis).toBe(foreign);
+    expect(admin.ownedStore.ownsClient).toBe(false);
   });
 
   it('still builds and owns a client when given plain options', () => {
     const admin = new MetricsHistoryAdmin({
       connection: { ...connection, lazyConnect: true },
-    }) as unknown as { redis: Redis; ownsRedis: boolean };
+    }) as unknown as { ownedStore: { redis: Redis; ownsClient: boolean } };
 
-    expect(admin.ownsRedis).toBe(true);
-    expect(admin.redis.options.port).toBe(connection.port);
+    expect(admin.ownedStore.ownsClient).toBe(true);
+    expect(admin.ownedStore.redis.options.port).toBe(connection.port);
 
-    admin.redis.disconnect();
+    admin.ownedStore.redis.disconnect();
   });
 });

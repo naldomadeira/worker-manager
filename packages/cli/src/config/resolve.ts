@@ -149,7 +149,8 @@ function resolveHistory({
   if (!enabled) return null;
 
   return {
-    // Recording writes to Redis, which is what --read-only says not to do.
+    // Recording writes to the datastore (Redis, or PostgreSQL on a PostgreSQL-only board),
+    // which is what --read-only says not to do.
     record: fileHistory.record ?? !readOnly,
     prefix: fileHistory.prefix,
     retentionDays:

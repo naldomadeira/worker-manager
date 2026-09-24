@@ -713,7 +713,7 @@ describe('MetricsRecorder', () => {
 
     it('disconnects the redis client it opened itself', async () => {
       const owning = new MetricsRecorder({ queues: [new BullMQAdapter(queue)], connection });
-      const own: Redis = (owning as any).redis;
+      const own: Redis = (owning as any).ownedStore.redis;
       await own.ping();
 
       owning.stop();
@@ -731,7 +731,7 @@ describe('MetricsRecorder', () => {
 
     it('is safe to stop twice, leaving no reconnect timer behind', async () => {
       const owning = new MetricsRecorder({ queues: [new BullMQAdapter(queue)], connection });
-      const own: Redis = (owning as any).redis;
+      const own: Redis = (owning as any).ownedStore.redis;
       await own.ping();
       const disconnect = jest.spyOn(own, 'disconnect');
 

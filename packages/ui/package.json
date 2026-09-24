@@ -1,6 +1,6 @@
 {
   "name": "@worker-manager/ui",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "A Dashboard UI built on top of bull or bullmq.",
   "keywords": [
     "bull",
@@ -36,7 +36,7 @@
     "gen:jsonSchema:bull": "npx ts-json-schema-generator --path '../../node_modules/bull/*.ts' --type 'Bull.JobOptions' --out './src/schemas/bull/jobOptions.json'"
   },
   "dependencies": {
-    "@worker-manager/api": "1.0.1"
+    "@worker-manager/api": "1.1.0"
   },
   "devDependencies": {
     "@codemirror/autocomplete": "^6.20.3",

@@ -1,3 +1,22 @@
+### [v1.1.0](https://github.com/naldomadeira/worker-manager/compare/v1.0.1...v1.1.0)
+
+> 2026-09-24
+
+### Features
+- metrics: historical metrics can be stored in PostgreSQL. `PostgresMetricsStore` and
+  `PostgresMetricsHistoryProvider` record and serve the same 7/30/90 day throughput, latency
+  percentiles, queue age, storage usage and purge as the Redis provider, so a board that runs
+  entirely on PostgreSQL (BullMQ v6) gets the full Metrics history page. `pg` is an optional peer.
+- metrics: `MetricsRecorder` and `MetricsHistoryAdmin` accept a `store`; the Redis `connection`
+  option keeps working unchanged. A failed tick is reported through `onSnapshotError`.
+- cli: `--postgres` with `--history` and no Redis records history into PostgreSQL.
+
+### Bug Fixes
+- api: live throughput charts of PostgreSQL-backed queues place their points correctly (BullMQ
+  v6's Postgres `getMetrics` reports no previous timestamp; the adapter now reads it back).
+- api: connected workers of PostgreSQL-backed queues are reported, so the workers badge and
+  panel work there too.
+
 ### [v1.0.1](https://github.com/naldomadeira/worker-manager/compare/v1.0.0...v1.0.1)
 
 > 2026-09-24

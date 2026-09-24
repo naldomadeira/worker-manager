@@ -1,6 +1,6 @@
 {
   "name": "bull-board-nextjs-app-example",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "private": true,
   "description": "Example of how to install bull-board in a Next.js App Router project (deployable to Vercel)",
   "author": "naldomadeira",
@@ -12,8 +12,8 @@
     "worker": "tsx watch worker.ts"
   },
   "dependencies": {
-    "@worker-manager/api": "^1.0.1",
-    "@worker-manager/hono": "^1.0.1",
+    "@worker-manager/api": "^1.1.0",
+    "@worker-manager/hono": "^1.1.0",
     "@hono/node-server": "^1.13.7",
     "bullmq": "^5.56.4",
     "hono": "^4.6.14",

@@ -12,6 +12,11 @@ const testKeys = metricsKeys(DEFAULT_NAMESPACE);
 
 const QUEUE = 'LatencySamplerQueue';
 
+/** The store with its first write, taking the lease, failing the way a lost Redis does. */
+function failingLease(store: LatencyStore, error: Error): LatencyStore {
+  return Object.assign(Object.create(store), { acquireLease: () => Promise.reject(error) });
+}
+
 describe('LatencySampler', () => {
   let redis: Redis;
   let queue: Queue;
@@ -301,9 +306,9 @@ describe('LatencySampler', () => {
     const boom = new Error('redis is gone');
     const seen: { error: unknown; queue: string }[] = [];
     const failing = new LatencySampler({
-      redis: { set: () => Promise.reject(boom) } as never,
+      redis,
       keys: testKeys,
-      store,
+      store: failingLease(store, boom),
       tickMs: 60_000,
       onError: (error, queueName) => seen.push({ error, queue: queueName }),
     });
@@ -315,9 +320,9 @@ describe('LatencySampler', () => {
 
   it('stays contained when onError itself throws', async () => {
     const failing = new LatencySampler({
-      redis: { set: () => Promise.reject(new Error('redis is gone')) } as never,
+      redis,
       keys: testKeys,
-      store,
+      store: failingLease(store, new Error('redis is gone')),
       tickMs: 60_000,
       onError: () => {
         throw new Error('reporter is gone too');
