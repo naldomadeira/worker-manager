@@ -1,6 +1,6 @@
 {
   "name": "@worker-manager/express",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "An Express.js server adapter for the Worker Manager dashboard.",
   "keywords": [
     "bull",
@@ -29,8 +29,8 @@
     "test": "jest"
   },
   "dependencies": {
-    "@worker-manager/api": "1.0.0",
-    "@worker-manager/ui": "1.0.0",
+    "@worker-manager/api": "1.0.1",
+    "@worker-manager/ui": "1.0.1",
     "ejs": "^6.0.1",
     "express": "^5.2.1"
   },
@@ -38,7 +38,7 @@
     "@types/ejs": "^3.1.5",
     "@types/express": "^5.0.6",
     "@types/supertest": "^7.2.1",
-    "@worker-manager/test-utils": "1.0.0",
+    "@worker-manager/test-utils": "1.0.1",
     "bullmq": "^5.81.3",
     "express-v4": "npm:express@^4",
     "express-v5": "npm:express@^5",

@@ -1,7 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { ChevronDown, LogOut, ShieldCheck } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import {
   DropdownMenu,
@@ -12,6 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { UserAvatar } from '../UserAvatar/UserAvatar';
 
 export interface AuthUser {
   username: string;
@@ -84,11 +84,7 @@ export const UserMenu = () => {
           aria-label={t('USER.MENU')}
           className="group flex items-center gap-1.5 rounded-full p-0.5 pr-1.5 outline-none transition-colors animate-in fade-in-0 hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50 aria-expanded:bg-muted"
         >
-          <Avatar className="size-7">
-            <AvatarFallback className="bg-linear-to-br from-primary/80 to-chart-2/80 text-[0.65rem] font-semibold text-primary-foreground">
-              {initials}
-            </AvatarFallback>
-          </Avatar>
+          <UserAvatar seed={user.username} initials={initials} className="size-7 text-sm" />
           <span className="hidden max-w-32 truncate text-sm font-medium lg:inline">
             {displayName}
           </span>
@@ -100,11 +96,7 @@ export const UserMenu = () => {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-64">
         <DropdownMenuLabel className="flex items-center gap-3 p-2 font-normal">
-          <Avatar className="size-10">
-            <AvatarFallback className="bg-linear-to-br from-primary/80 to-chart-2/80 text-sm font-semibold text-primary-foreground">
-              {initials}
-            </AvatarFallback>
-          </Avatar>
+          <UserAvatar seed={user.username} initials={initials} className="size-10 text-base" />
           <span className="grid min-w-0 flex-1 leading-tight">
             <span className="truncate text-sm font-medium text-foreground">{displayName}</span>
             <span className="truncate text-xs text-muted-foreground">

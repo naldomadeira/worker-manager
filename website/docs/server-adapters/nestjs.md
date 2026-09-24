@@ -221,7 +221,12 @@ Such a queue has no Redis connection and usually no DI token, so pass the instan
 import { Queue, createPostgresBackend } from 'bullmq'; // bullmq@6, plus the `pg` package
 import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 
-const invoices = new Queue('invoices', { connection: process.env.POSTGRES_URL }, createPostgresBackend);
+const invoices = new Queue(
+  'invoices',
+  // `migrate: true` creates BullMQ's schema on first connect; see the PostgreSQL recipe.
+  { connection: { connectionString: process.env.POSTGRES_URL, migrate: true } },
+  createPostgresBackend
+);
 
 @Module({
   imports: [
@@ -233,9 +238,21 @@ const invoices = new Queue('invoices', { connection: process.env.POSTGRES_URL },
 export class AppModule {}
 ```
 
+`@nestjs/bullmq` has no way to pass a backend factory, so PostgreSQL queues and their workers
+are created with `bullmq` directly, as above, rather than through `BullModule.registerQueue` and
+`@Processor`. Redis queues can keep using `@nestjs/bullmq` in the same app; if your Redis queues
+must stay on BullMQ v5, install v6 under an alias for the Postgres ones
+(`"bullmq-v6": "npm:bullmq@^6"`, then `import { Queue } from 'bullmq-v6'`).
+
 If the queue is created inside a provider instead, inject the board with `@InjectBullBoard()` and
 call `board.addQueue(new BullMQAdapter(queue))` from `onModuleInit`. Redis and PostgreSQL queues can share one board; the datastore panel reports
 Postgres stats for the Postgres queue.
+
+### Running next to @bull-board/nestjs
+
+Migrating one service at a time? Worker Manager's module registers its providers under its own
+DI tokens (`worker_manager_*`) since 1.0.1, so the legacy `@bull-board/nestjs` module and this one
+can be imported in the same app on different routes, each with its own `forFeature` queues.
 
 You can inject the board instance anywhere:
 

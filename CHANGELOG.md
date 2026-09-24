@@ -1,3 +1,23 @@
+### [v1.0.1](https://github.com/naldomadeira/worker-manager/compare/v1.0.0...v1.0.1)
+
+> 2026-09-24
+
+### Bug Fixes
+- nestjs: register providers under `worker_manager_*` tokens instead of the legacy
+  `bull_board_*` ones, so an app can mount @bull-board/nestjs and Worker Manager side by side
+  while it migrates.
+- ui: long deduplication and group ids truncate with an ellipsis instead of being clipped on
+  both sides of their pill.
+- ui: the default brand is the Worker Manager mark instead of a "WM" monogram, and the user
+  menu shows a generated avatar per person.
+
+### Documentation
+- PostgreSQL: a fresh database needs `migrate: true` (or migrations run once), workers take the
+  same backend factory, and the throughput chart needs worker `metrics`.
+- NestJS: PostgreSQL queues are created with `bullmq` directly (`@nestjs/bullmq` has no backend
+  factory), and the module can run next to @bull-board/nestjs.
+- docs/proposals/kibo-ui.md: an evaluation of Kibo UI components for the dashboard.
+
 ### [v1.0.0](https://github.com/naldomadeira/worker-manager/releases/tag/v1.0.0)
 
 > 2026-09-24

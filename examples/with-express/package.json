@@ -1,6 +1,6 @@
 {
   "name": "bull-board-express-example",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Example of how to install bull-board on existing Express server",
   "main": "index.js",
   "scripts": {
@@ -10,8 +10,8 @@
   "author": "naldomadeira",
   "license": "ISC",
   "dependencies": {
-    "@worker-manager/api": "^1.0.0",
-    "@worker-manager/express": "^1.0.0",
+    "@worker-manager/api": "^1.0.1",
+    "@worker-manager/express": "^1.0.1",
     "bullmq": "^5.80.9",
     "express": "^5.2.1"
   }

@@ -1,6 +1,6 @@
 {
   "name": "bull-board-with-hapi",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Example of how to use Hapi.js with auth server with bull-board",
   "main": "index.js",
   "scripts": {
@@ -10,7 +10,7 @@
   "author": "naldomadeira",
   "license": "ISC",
   "dependencies": {
-    "@worker-manager/hapi": "^1.0.0",
+    "@worker-manager/hapi": "^1.0.1",
     "@hapi/basic": "^7.0.2",
     "@hapi/hapi": "^21.3.10",
     "bullmq": "^5.81.3"

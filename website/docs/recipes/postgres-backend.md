@@ -30,6 +30,28 @@ app.use('/admin/queues', serverAdapter.getRouter());
 app.listen(3000);
 ```
 
+::: warning A fresh database needs its schema
+BullMQ refuses to start against a database it has not migrated, with
+`SchemaMigrationRequiredError: PostgreSQL schema "bullmq" is not initialized`. Either run its
+migrations once as a deploy step, or let the connection apply them on first connect. That
+takes the object form of the connection, which is also where a custom `schema` goes:
+
+```js
+const connection = {
+  connectionString: 'postgres://user:password@localhost:5432/bullmq',
+  schema: 'bullmq', // optional, the default
+  migrate: true,
+};
+```
+
+Workers need the same connection and the same `createPostgresBackend` factory as their queue.
+:::
+
+::: tip The throughput chart needs worker metrics
+`uiConfig.showMetrics` charts BullMQ's own per-minute metrics, which workers only collect when
+asked: `new Worker(name, processor, { connection, metrics: { maxDataPoints: MetricsTime.ONE_WEEK } }, createPostgresBackend)`.
+:::
+
 That is the whole difference: the third argument on `Queue`. `BullMQAdapter` takes the queue as it always has.
 
 ::: tip

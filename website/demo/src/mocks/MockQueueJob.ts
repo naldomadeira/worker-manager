@@ -53,7 +53,7 @@ export class MockQueueJob implements QueueJob {
       processedBy: this.demo.processedBy ?? null,
       delay: this.demo.delay,
       timestamp: this.demo.timestamp,
-      failedReason: this.demo.failedReason,
+      failedReason: this.demo.failedReason ?? '',
       stacktrace: this.demo.stacktrace,
       data: this.demo.data,
       returnvalue: this.demo.returnValue,

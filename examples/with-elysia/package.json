@@ -1,7 +1,7 @@
 {
   "name": "bull-board-with-elysia",
   "type": "module",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Example of how to use Elysia server with bull-board",
   "module": "index.ts",
   "scripts": {
@@ -13,7 +13,7 @@
   "author": "kravetsone",
   "license": "ISC",
   "dependencies": {
-    "@worker-manager/elysia": "^1.0.0",
+    "@worker-manager/elysia": "^1.0.1",
     "bullmq": "^5.73.5",
     "elysia": "^1.4.28"
   }

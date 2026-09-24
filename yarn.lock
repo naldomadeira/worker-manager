@@ -7423,7 +7423,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@worker-manager/api@npm:1.0.0, @worker-manager/api@npm:^1.0.0, @worker-manager/api@workspace:*, @worker-manager/api@workspace:packages/api":
+"@worker-manager/api@npm:1.0.1, @worker-manager/api@npm:^1.0.1, @worker-manager/api@workspace:*, @worker-manager/api@workspace:packages/api":
   version: 0.0.0-use.local
   resolution: "@worker-manager/api@workspace:packages/api"
   dependencies:
@@ -7447,7 +7447,7 @@ __metadata:
     typescript: "npm:^5.9.3"
     valibot: "npm:^1.5.0"
   peerDependencies:
-    "@worker-manager/ui": 1.0.0
+    "@worker-manager/ui": 1.0.1
     bull: ^4.16.5
     bullmq: ^5.56.0 || ^6.0.0
   peerDependenciesMeta:
@@ -7458,7 +7458,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@worker-manager/auth@npm:1.0.0, @worker-manager/auth@workspace:*, @worker-manager/auth@workspace:packages/auth":
+"@worker-manager/auth@npm:1.0.1, @worker-manager/auth@workspace:*, @worker-manager/auth@workspace:packages/auth":
   version: 0.0.0-use.local
   resolution: "@worker-manager/auth@workspace:packages/auth"
   dependencies:
@@ -7476,9 +7476,9 @@ __metadata:
   resolution: "@worker-manager/bun@workspace:packages/bun"
   dependencies:
     "@types/ejs": "npm:^3.1.5"
-    "@worker-manager/api": "npm:1.0.0"
-    "@worker-manager/test-utils": "npm:1.0.0"
-    "@worker-manager/ui": "npm:1.0.0"
+    "@worker-manager/api": "npm:1.0.1"
+    "@worker-manager/test-utils": "npm:1.0.1"
+    "@worker-manager/ui": "npm:1.0.1"
     bullmq: "npm:^5.81.3"
     bun-types: "npm:^1.4.0"
     ejs: "npm:^6.0.1"
@@ -7496,10 +7496,10 @@ __metadata:
     "@types/pg": "npm:^8.23.1"
     "@types/redis-parser": "npm:^3.0.3"
     "@types/supertest": "npm:^7.2.1"
-    "@worker-manager/api": "npm:1.0.0"
-    "@worker-manager/auth": "npm:1.0.0"
-    "@worker-manager/express": "npm:1.0.0"
-    "@worker-manager/metrics": "npm:1.0.0"
+    "@worker-manager/api": "npm:1.0.1"
+    "@worker-manager/auth": "npm:1.0.1"
+    "@worker-manager/express": "npm:1.0.1"
+    "@worker-manager/metrics": "npm:1.0.1"
     bull: "npm:^4.16.5"
     bullmq: "npm:^5.81.3"
     bullmq-v6: "npm:bullmq@^6"
@@ -7540,9 +7540,9 @@ __metadata:
   dependencies:
     "@types/ejs": "npm:^3.1.5"
     "@types/node": "npm:^22.20.1"
-    "@worker-manager/api": "npm:1.0.0"
-    "@worker-manager/test-utils": "npm:1.0.0"
-    "@worker-manager/ui": "npm:1.0.0"
+    "@worker-manager/api": "npm:1.0.1"
+    "@worker-manager/test-utils": "npm:1.0.1"
+    "@worker-manager/ui": "npm:1.0.1"
     bullmq: "npm:^5.81.3"
     ejs: "npm:^6.0.1"
     elysia: "npm:^1.4.30"
@@ -7554,16 +7554,16 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@worker-manager/express@npm:1.0.0, @worker-manager/express@npm:^1.0.0, @worker-manager/express@workspace:*, @worker-manager/express@workspace:packages/express":
+"@worker-manager/express@npm:1.0.1, @worker-manager/express@npm:^1.0.1, @worker-manager/express@workspace:*, @worker-manager/express@workspace:packages/express":
   version: 0.0.0-use.local
   resolution: "@worker-manager/express@workspace:packages/express"
   dependencies:
     "@types/ejs": "npm:^3.1.5"
     "@types/express": "npm:^5.0.6"
     "@types/supertest": "npm:^7.2.1"
-    "@worker-manager/api": "npm:1.0.0"
-    "@worker-manager/test-utils": "npm:1.0.0"
-    "@worker-manager/ui": "npm:1.0.0"
+    "@worker-manager/api": "npm:1.0.1"
+    "@worker-manager/test-utils": "npm:1.0.1"
+    "@worker-manager/ui": "npm:1.0.1"
     bullmq: "npm:^5.81.3"
     ejs: "npm:^6.0.1"
     express: "npm:^5.2.1"
@@ -7575,15 +7575,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@worker-manager/fastify@npm:^1.0.0, @worker-manager/fastify@workspace:packages/fastify":
+"@worker-manager/fastify@npm:^1.0.1, @worker-manager/fastify@workspace:packages/fastify":
   version: 0.0.0-use.local
   resolution: "@worker-manager/fastify@workspace:packages/fastify"
   dependencies:
     "@fastify/static": "npm:^10.1.3"
     "@fastify/view": "npm:^12.0.0"
-    "@worker-manager/api": "npm:1.0.0"
-    "@worker-manager/test-utils": "npm:1.0.0"
-    "@worker-manager/ui": "npm:1.0.0"
+    "@worker-manager/api": "npm:1.0.1"
+    "@worker-manager/test-utils": "npm:1.0.1"
+    "@worker-manager/ui": "npm:1.0.1"
     bullmq: "npm:^5.81.3"
     ejs: "npm:^6.0.1"
     fastify: "npm:^5.12.1"
@@ -7599,9 +7599,9 @@ __metadata:
     "@types/ejs": "npm:^3.1.5"
     "@types/jest": "npm:^30.0.0"
     "@types/supertest": "npm:^7.2.1"
-    "@worker-manager/api": "npm:1.0.0"
-    "@worker-manager/test-utils": "npm:1.0.0"
-    "@worker-manager/ui": "npm:1.0.0"
+    "@worker-manager/api": "npm:1.0.1"
+    "@worker-manager/test-utils": "npm:1.0.1"
+    "@worker-manager/ui": "npm:1.0.1"
     bullmq: "npm:^5.81.3"
     ejs: "npm:^6.0.1"
     h3: "npm:^1.15.11 || ^2.0.0"
@@ -7620,9 +7620,9 @@ __metadata:
     "@hapi/hapi": "npm:^21.4.10"
     "@hapi/inert": "npm:^7.1.2"
     "@hapi/vision": "npm:^7.0.3"
-    "@worker-manager/api": "npm:1.0.0"
-    "@worker-manager/test-utils": "npm:1.0.0"
-    "@worker-manager/ui": "npm:1.0.0"
+    "@worker-manager/api": "npm:1.0.1"
+    "@worker-manager/test-utils": "npm:1.0.1"
+    "@worker-manager/ui": "npm:1.0.1"
     bullmq: "npm:^5.81.3"
     ejs: "npm:^6.0.1"
     jest: "npm:^30.4.2"
@@ -7636,9 +7636,9 @@ __metadata:
   dependencies:
     "@cloudflare/workers-types": "npm:^4.20260702.1"
     "@hono/node-server": "npm:^2.1.1"
-    "@worker-manager/api": "npm:1.0.0"
-    "@worker-manager/test-utils": "npm:1.0.0"
-    "@worker-manager/ui": "npm:1.0.0"
+    "@worker-manager/api": "npm:1.0.1"
+    "@worker-manager/test-utils": "npm:1.0.1"
+    "@worker-manager/ui": "npm:1.0.1"
     bullmq: "npm:^5.81.3"
     ejs: "npm:^6.0.1"
     hono: "npm:^4.13.5"
@@ -7661,9 +7661,9 @@ __metadata:
     "@types/koa-static": "npm:^4.0.4"
     "@types/koa-views": "npm:^7.0.0"
     "@types/supertest": "npm:^7.2.1"
-    "@worker-manager/api": "npm:1.0.0"
-    "@worker-manager/test-utils": "npm:1.0.0"
-    "@worker-manager/ui": "npm:1.0.0"
+    "@worker-manager/api": "npm:1.0.1"
+    "@worker-manager/test-utils": "npm:1.0.1"
+    "@worker-manager/ui": "npm:1.0.1"
     bullmq: "npm:^5.81.3"
     ejs: "npm:^6.0.1"
     jest: "npm:^30.4.2"
@@ -7675,13 +7675,13 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@worker-manager/metrics@npm:1.0.0, @worker-manager/metrics@workspace:packages/metrics":
+"@worker-manager/metrics@npm:1.0.1, @worker-manager/metrics@workspace:packages/metrics":
   version: 0.0.0-use.local
   resolution: "@worker-manager/metrics@workspace:packages/metrics"
   dependencies:
     "@types/jest": "npm:^30.0.0"
     "@types/node": "npm:^22.20.1"
-    "@worker-manager/api": "npm:1.0.0"
+    "@worker-manager/api": "npm:1.0.1"
     bullmq: "npm:^5.81.3"
     bullmq-v6: "npm:bullmq@^6"
     ioredis: "npm:^6.0.0"
@@ -7705,10 +7705,10 @@ __metadata:
     "@nestjs/platform-fastify": "npm:^11.2.6"
     "@types/node": "npm:^22.20.1"
     "@types/supertest": "npm:^7.2.1"
-    "@worker-manager/api": "npm:^1.0.0"
-    "@worker-manager/auth": "npm:1.0.0"
-    "@worker-manager/express": "npm:^1.0.0"
-    "@worker-manager/fastify": "npm:^1.0.0"
+    "@worker-manager/api": "npm:^1.0.1"
+    "@worker-manager/auth": "npm:1.0.1"
+    "@worker-manager/express": "npm:^1.0.1"
+    "@worker-manager/fastify": "npm:^1.0.1"
     "@worker-manager/test-utils": "workspace:*"
     bull: "npm:^4.16.5"
     bullmq: "npm:^5.81.3"
@@ -7736,9 +7736,9 @@ __metadata:
     "@nestjs/bull-shared": ^10.0.0 || ^11.0.0 || ^12.0.0
     "@nestjs/common": ^9.0.0 || ^10.0.0 || ^11.0.0 || ^12.0.0
     "@nestjs/core": ^9.0.0 || ^10.0.0 || ^11.0.0 || ^12.0.0
-    "@worker-manager/api": ^1.0.0
-    "@worker-manager/express": ^1.0.0
-    "@worker-manager/fastify": ^1.0.0
+    "@worker-manager/api": ^1.0.1
+    "@worker-manager/express": ^1.0.1
+    "@worker-manager/fastify": ^1.0.1
     reflect-metadata: ^0.1.13 || ^0.2.0
     rxjs: ^7.8.1
   peerDependenciesMeta:
@@ -7788,17 +7788,17 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@worker-manager/test-utils@npm:1.0.0, @worker-manager/test-utils@workspace:*, @worker-manager/test-utils@workspace:packages/test-utils":
+"@worker-manager/test-utils@npm:1.0.1, @worker-manager/test-utils@workspace:*, @worker-manager/test-utils@workspace:packages/test-utils":
   version: 0.0.0-use.local
   resolution: "@worker-manager/test-utils@workspace:packages/test-utils"
   dependencies:
-    "@worker-manager/api": "npm:1.0.0"
+    "@worker-manager/api": "npm:1.0.1"
   peerDependencies:
     bullmq: ^5.56.0 || ^6.0.0
   languageName: unknown
   linkType: soft
 
-"@worker-manager/ui@npm:1.0.0, @worker-manager/ui@workspace:*, @worker-manager/ui@workspace:packages/ui":
+"@worker-manager/ui@npm:1.0.1, @worker-manager/ui@workspace:*, @worker-manager/ui@workspace:packages/ui":
   version: 0.0.0-use.local
   resolution: "@worker-manager/ui@workspace:packages/ui"
   dependencies:
@@ -7825,7 +7825,7 @@ __metadata:
     "@types/react": "npm:^19.2.18"
     "@types/react-dom": "npm:^19.2.4"
     "@types/react-router-dom": "npm:^5.3.3"
-    "@worker-manager/api": "npm:1.0.0"
+    "@worker-manager/api": "npm:1.0.1"
     "@xyflow/react": "npm:^12.11.6"
     axios: "npm:^1.20.0"
     class-variance-authority: "npm:^0.7.1"

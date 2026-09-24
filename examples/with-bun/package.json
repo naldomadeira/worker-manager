@@ -1,7 +1,7 @@
 {
   "name": "bull-board-with-bun",
   "type": "module",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Example of how to use Bun's native server with bull-board",
   "module": "index.ts",
   "scripts": {
@@ -10,8 +10,8 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@worker-manager/api": "^1.0.0",
-    "@worker-manager/bun": "^1.0.0",
+    "@worker-manager/api": "^1.0.1",
+    "@worker-manager/bun": "^1.0.1",
     "bullmq": "^5.81.3"
   },
   "devDependencies": {

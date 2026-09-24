@@ -63,7 +63,10 @@ export const JobCard = ({
     job.isFailed && !greenStatuses.includes(status as any) ? STATUSES.failed : status;
   const tone = statusTone(displayStatus);
   const isRunning = displayStatus === STATUSES.active;
-  const pill = 'h-5 max-w-56 truncate rounded-md px-1.5 font-mono text-[0.6875rem] font-normal';
+  // `justify-start` + a truncating inner span: the badge is a centred inline-flex, so a long value
+  // (a deduplication id, a group id) would otherwise overflow both ends with no ellipsis.
+  const pill =
+    'h-5 max-w-56 justify-start rounded-md px-1.5 font-mono text-[0.6875rem] font-normal';
 
   const title = (
     <>
@@ -110,7 +113,7 @@ export const JobCard = ({
 
             {job.groupId != null && (
               <Badge variant="secondary" className={pill} title={`Group: ${job.groupId}`}>
-                group: {job.groupId}
+                <span className="min-w-0 truncate">group: {job.groupId}</span>
               </Badge>
             )}
 
@@ -122,7 +125,9 @@ export const JobCard = ({
 
             {job.deduplicationId != null && (
               <Badge variant="secondary" className={pill} title={job.deduplicationId}>
-                {t('JOB.DIAGNOSTICS.DEDUPLICATED', { id: job.deduplicationId })}
+                <span className="min-w-0 truncate">
+                  {t('JOB.DIAGNOSTICS.DEDUPLICATED', { id: job.deduplicationId })}
+                </span>
               </Badge>
             )}
 

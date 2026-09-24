@@ -1,5 +1,8 @@
-export const BULL_BOARD_OPTIONS = 'bull_board_options';
-export const BULL_BOARD_QUEUES = 'bull_board_queues';
-export const BULL_BOARD_ADAPTER = 'bull_board_adapter';
-export const BULL_BOARD_INSTANCE = 'bull_board_instance';
+// Distinct from @bull-board/nestjs's `bull_board_*` tokens: both root modules are global, so
+// shared names would let one board's providers shadow the other's in an app that mounts the
+// legacy bull-board and Worker Manager side by side while it migrates.
+export const BULL_BOARD_OPTIONS = 'worker_manager_options';
+export const BULL_BOARD_QUEUES = 'worker_manager_queues';
+export const BULL_BOARD_ADAPTER = 'worker_manager_adapter';
+export const BULL_BOARD_INSTANCE = 'worker_manager_instance';
 export const DEFAULT_BULL_BOARD_ROUTE = '/queues';
