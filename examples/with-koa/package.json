@@ -10,7 +10,7 @@
   "author": "naldomadeira",
   "license": "ISC",
   "dependencies": {
-    "@worker-manager/koa": "^9.10.0",
+    "@worker-manager/koa": "^1.0.0",
     "bullmq": "^5.81.3",
     "koa": "^3.1.2",
     "koa-router": "^13.0.1"

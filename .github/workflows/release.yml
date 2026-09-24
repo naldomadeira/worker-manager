@@ -60,27 +60,50 @@ jobs:
           REDIS_HOST: localhost
           REDIS_PORT: 6379
 
+      # The first Worker Manager release has no earlier tag, and changelogithub would then list
+      # the whole upstream bull-board history. Start from the last upstream commit instead.
+      - name: Resolve the changelog start
+        id: changelog
+        run: |
+          if previous=$(git describe --tags --abbrev=0 --match 'v*' HEAD^ 2>/dev/null); then
+            echo "from=$previous" >> "$GITHUB_OUTPUT"
+          else
+            echo "from=13f8309a" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Generate release notes
         id: release-notes
         run: |
-          body=$(npx changelogithub --dry 2>&1)
+          body=$(npx changelogithub --dry --from "${{ steps.changelog.outputs.from }}" 2>&1)
           prs=$(echo "$body" | grep -oP 'issues/\K\d+' | sort -un | tr '\n' ' ')
           echo "prs=$prs" >> "$GITHUB_OUTPUT"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish to GitHub
-        run: npx changelogithub
+        run: npx changelogithub --from "${{ steps.changelog.outputs.from }}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish to npm
+        # Trusted publishing: npm exchanges the workflow's OIDC token for a publish credential,
+        # so there is no NPM_TOKEN secret. Private workspaces are skipped, and a version that is
+        # already on the registry is skipped too, so a failed run can simply be re-run.
         run: |
+          npm install -g npm@latest
           for pkg in packages/*/; do
-            echo "Publishing $pkg..."
-            cd "$pkg"
-            npm publish --provenance --access public
-            cd ../..
+            name=$(node -p "require('./${pkg}package.json').name")
+            version=$(node -p "require('./${pkg}package.json').version")
+            if [ "$(node -p "require('./${pkg}package.json').private === true")" = "true" ]; then
+              echo "Skipping private $name"
+              continue
+            fi
+            if npm view "$name@$version" version > /dev/null 2>&1; then
+              echo "$name@$version is already published"
+              continue
+            fi
+            echo "Publishing $name@$version..."
+            (cd "$pkg" && npm publish --provenance --access public)
           done
 
       - name: Comment on released PRs
@@ -89,9 +112,10 @@ jobs:
         run: |
           for pr in ${{ steps.release-notes.outputs.prs }}; do
             existing=$(gh issue view "$pr" --json comments --jq \
-              '.comments[].body | select(startswith("Released in"))' 2>/dev/null)
+              '.comments[].body | select(startswith("Released in"))' 2>/dev/null || true)
             if [ -z "$existing" ]; then
-              gh issue comment "$pr" --body "Released in \`${{ github.ref_name }}\` 🚀"
+              gh issue comment "$pr" --body "Released in \`${{ github.ref_name }}\` 🚀" \
+                || echo "Could not comment on #$pr (not an issue or PR in this repository)"
             fi
           done
 

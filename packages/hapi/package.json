@@ -1,7 +1,7 @@
 {
   "name": "@worker-manager/hapi",
-  "version": "9.10.1",
-  "description": "A Hapi.js server adapter for Bull-Board dashboard.",
+  "version": "1.0.0",
+  "description": "A Hapi.js server adapter for the Worker Manager dashboard.",
   "keywords": [
     "bull",
     "bullmq",
@@ -32,13 +32,13 @@
   "dependencies": {
     "@hapi/inert": "^7.1.2",
     "@hapi/vision": "^7.0.3",
-    "@worker-manager/api": "9.10.1",
-    "@worker-manager/ui": "9.10.1",
+    "@worker-manager/api": "1.0.0",
+    "@worker-manager/ui": "1.0.0",
     "ejs": "^6.0.1"
   },
   "devDependencies": {
     "@hapi/hapi": "^21.4.10",
-    "@worker-manager/test-utils": "9.10.1",
+    "@worker-manager/test-utils": "1.0.0",
     "bullmq": "^5.81.3",
     "jest": "^30.4.2",
     "ts-jest": "^29.4.12"

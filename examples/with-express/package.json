@@ -10,8 +10,8 @@
   "author": "naldomadeira",
   "license": "ISC",
   "dependencies": {
-    "@worker-manager/api": "^9.10.0",
-    "@worker-manager/express": "^9.10.0",
+    "@worker-manager/api": "^1.0.0",
+    "@worker-manager/express": "^1.0.0",
     "bullmq": "^5.80.9",
     "express": "^5.2.1"
   }

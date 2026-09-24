@@ -14,9 +14,9 @@
     "start:prod": "node dist/main"
   },
   "dependencies": {
-    "@worker-manager/api": "^9.10.0",
-    "@worker-manager/express": "^9.10.0",
-    "@worker-manager/nestjs": "^9.10.0",
+    "@worker-manager/api": "^1.0.0",
+    "@worker-manager/express": "^1.0.0",
+    "@worker-manager/nestjs": "^1.0.0",
     "@nestjs/bullmq": "^11.0.2",
     "@nestjs/common": "^11.0.16",
     "@nestjs/core": "^11.1.28",

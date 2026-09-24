@@ -1,7 +1,7 @@
 {
   "name": "@worker-manager/metrics",
-  "version": "9.10.1",
-  "description": "Opt-in long-retention historical job metrics recorder and provider for bull-board.",
+  "version": "1.0.0",
+  "description": "Opt-in long-retention historical job metrics recorder and provider for Worker Manager.",
   "keywords": [
     "bull",
     "bullmq",
@@ -32,7 +32,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@worker-manager/api": "9.10.1"
+    "@worker-manager/api": "1.0.0"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",

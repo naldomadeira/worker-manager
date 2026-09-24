@@ -10,7 +10,7 @@
   "author": "naldomadeira",
   "license": "ISC",
   "dependencies": {
-    "@worker-manager/hono": "^9.10.0",
+    "@worker-manager/hono": "^1.0.0",
     "@hono/node-server": "^1.19.15",
     "bullmq": "^5.81.3",
     "hono": "^4.12.34"

@@ -12,8 +12,8 @@
     "worker": "tsx watch worker.ts"
   },
   "dependencies": {
-    "@worker-manager/api": "^9.10.0",
-    "@worker-manager/hono": "^9.10.0",
+    "@worker-manager/api": "^1.0.0",
+    "@worker-manager/hono": "^1.0.0",
     "@hono/node-server": "^1.13.7",
     "bullmq": "^5.56.4",
     "hono": "^4.6.14",

@@ -1,12 +1,12 @@
 {
   "name": "@worker-manager/test-utils",
-  "version": "9.10.1",
+  "version": "1.0.0",
   "private": true,
   "license": "MIT",
   "main": "src/index.ts",
   "types": "src/index.ts",
   "dependencies": {
-    "@worker-manager/api": "9.10.1"
+    "@worker-manager/api": "1.0.0"
   },
   "peerDependencies": {
     "bullmq": "^5.56.0 || ^6.0.0"

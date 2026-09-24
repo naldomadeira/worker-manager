@@ -10,7 +10,7 @@
   "author": "naldomadeira",
   "license": "ISC",
   "dependencies": {
-    "@worker-manager/express": "^9.10.0",
+    "@worker-manager/express": "^1.0.0",
     "bullmq": "^5.80.9",
     "cookie-parser": "^1.4.7",
     "csrf-csrf": "^4.0.3",

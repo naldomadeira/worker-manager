@@ -12,8 +12,8 @@
     "worker": "tsx watch worker.ts"
   },
   "dependencies": {
-    "@worker-manager/api": "^9.10.0",
-    "@worker-manager/express": "^9.10.0",
+    "@worker-manager/api": "^1.0.0",
+    "@worker-manager/express": "^1.0.0",
     "bullmq": "^5.56.4",
     "express": "^5.2.0",
     "next": "^15.0.0",

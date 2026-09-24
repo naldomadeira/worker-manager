@@ -6,8 +6,8 @@
   "keywords": [],
   "license": "UNLICENSED",
   "dependencies": {
-    "@worker-manager/api": "^9.10.0",
-    "@worker-manager/express": "^9.10.0",
+    "@worker-manager/api": "^1.0.0",
+    "@worker-manager/express": "^1.0.0",
     "bullmq": "^5.59.0",
     "sails": "^1.5.10"
   },

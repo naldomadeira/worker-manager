@@ -1,3 +1,27 @@
+### [v1.0.0](https://github.com/naldomadeira/worker-manager/releases/tag/v1.0.0)
+
+> 2026-09-24
+
+First release of Worker Manager under the `@worker-manager/*` scope. Migrating from bull-board is
+a scope rename (`@bull-board/*` → `@worker-manager/*`): public APIs keep their names.
+
+### Features
+- New interface on shadcn/ui and Tailwind CSS v4: collapsible sidebar, command palette, KPI
+  tiles, animated status bars and transitions, light / dark / system themes.
+- `@worker-manager/auth`: built-in HTTP Basic and Keycloak (OIDC + PKCE, encrypted session
+  cookie, bearer tokens, required roles) authentication, with the signed-in user in the header.
+- `@worker-manager/nestjs`: `auth`, `enabled`, `readOnly`, root-level `queues`, `uiConfig` /
+  `title` / `logo` / `theme` shortcuts, adapter auto-detection and `forRootAsync` with
+  `useClass` / `useExisting`.
+- `@worker-manager/cli`: Keycloak auth and `--postgres` for BullMQ v6 queues stored in
+  PostgreSQL.
+- Playground app (Redis, PostgreSQL, Keycloak) with a smoke test for every auth mode.
+
+---
+
+The entries below are the upstream [bull-board](https://github.com/felixmosh/bull-board) history
+this fork starts from.
+
 ### [v9.10.1](https://github.com/felixmosh/bull-board/compare/v9.10.0...v9.10.1)
 
 > 2026-09-12
