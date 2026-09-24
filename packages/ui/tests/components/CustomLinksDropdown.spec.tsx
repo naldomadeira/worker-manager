@@ -3,10 +3,14 @@ import type { UIConfig } from '@worker-manager/api/typings/app';
 import { CustomLinksDropdown } from '../../src/components/CustomLinksDropdown/CustomLinksDropdown';
 import { render } from '../testUtils';
 
+// Radix menus open on pointerdown (a mouse press), not on click.
+const openMenu = (trigger: HTMLElement) =>
+  fireEvent.pointerDown(trigger, { button: 0, ctrlKey: false, pointerType: 'mouse' });
+
 async function openDropdown(options: UIConfig['miscLinks']) {
   render(<CustomLinksDropdown className="trigger" options={options} />);
 
-  fireEvent.click(screen.getAllByRole('button')[0]);
+  openMenu(screen.getAllByRole('button')[0]);
   await waitFor(() => expect(screen.getByRole('menu')).toBeTruthy());
 }
 

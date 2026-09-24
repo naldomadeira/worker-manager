@@ -1,9 +1,13 @@
-import { Select } from '@base-ui/react/select';
-import cn from 'clsx';
-import { CheckIcon } from '../../Icons/Check';
-import { ChevronDown } from '../../Icons/ChevronDown';
+import { useId, useState } from 'react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { cn } from '@/lib/utils';
 import { Field } from '../Field/Field';
-import s from './SelectField.module.css';
 
 export interface SelectItem {
   text: string;
@@ -21,9 +25,16 @@ interface SelectFieldProps {
   onChange?: (value: string) => void;
   required?: boolean;
   disabled?: boolean;
+  placeholder?: string;
   'aria-label'?: string;
   'aria-labelledby'?: string;
 }
+
+// Radix reserves the empty string for "nothing selected", but an empty value is a real option
+// here (e.g. "All queues"), so it travels through the primitive under a sentinel.
+const EMPTY = '__wm_empty__';
+const encode = (value: string | undefined) => (value === '' ? EMPTY : value);
+const decode = (value: string) => (value === EMPTY ? '' : value);
 
 export const SelectField = ({
   label,
@@ -36,51 +47,56 @@ export const SelectField = ({
   onChange,
   required,
   disabled,
+  placeholder,
   'aria-label': ariaLabel,
   'aria-labelledby': ariaLabelledBy,
-}: SelectFieldProps) => (
-  <Field label={label}>
-    <Select.Root
-      id={id}
-      name={name}
-      items={options.map(({ text, value: optionValue }) => ({ label: text, value: optionValue }))}
-      value={value}
-      defaultValue={defaultValue}
-      onValueChange={(next) => onChange?.(next as string)}
-      required={required}
-      disabled={disabled}
-    >
-      <Select.Trigger
-        className={cn(s.trigger, { [s.labelled]: !!label }, className)}
-        aria-label={ariaLabel}
-        aria-labelledby={ariaLabelledBy}
+}: SelectFieldProps) => {
+  const generatedId = useId();
+  const controlId = id ?? generatedId;
+  const [uncontrolled, setUncontrolled] = useState(defaultValue);
+  const current = value !== undefined ? value : uncontrolled;
+  const hasOption = options.some((option) => option.value === current);
+
+  return (
+    <Field label={label} htmlFor={controlId}>
+      <Select
+        value={hasOption ? encode(current) : ''}
+        onValueChange={(next) => {
+          const decoded = decode(next);
+          setUncontrolled(decoded);
+          onChange?.(decoded);
+        }}
+        required={required}
+        disabled={disabled}
       >
-        <Select.Value className={s.value} />
-        <Select.Icon className={s.icon}>
-          <ChevronDown />
-        </Select.Icon>
-      </Select.Trigger>
-      <Select.Portal>
-        {/* Base UI defaults to laying the selected item over the trigger, which on the twelve
-            entry language list means a popup taller than the modal it opens in. Anchored below
-            the trigger instead, so the popup can scroll inside its own max-height. */}
-        <Select.Positioner className={s.positioner} sideOffset={4} alignItemWithTrigger={false}>
-          <Select.Popup className={s.popup}>
-            <Select.List>
-              {options.map((option) => (
-                <Select.Item key={option.value} value={option.value} className={s.item}>
-                  {/* Kept mounted so the check column exists on every row: without it the
-                      unselected rows lose their first grid cell and their labels wrap. */}
-                  <Select.ItemIndicator className={s.indicator} keepMounted>
-                    <CheckIcon />
-                  </Select.ItemIndicator>
-                  <Select.ItemText>{option.text}</Select.ItemText>
-                </Select.Item>
-              ))}
-            </Select.List>
-          </Select.Popup>
-        </Select.Positioner>
-      </Select.Portal>
-    </Select.Root>
-  </Field>
-);
+        <SelectTrigger
+          id={controlId}
+          aria-label={ariaLabel}
+          aria-labelledby={ariaLabelledBy}
+          className={cn(
+            'h-9 w-full min-w-0 bg-background shadow-xs data-[size=default]:h-9 [&>svg]:transition-transform [&>svg]:duration-200 data-[state=open]:[&>svg]:rotate-180',
+            className
+          )}
+        >
+          <SelectValue placeholder={placeholder} />
+        </SelectTrigger>
+        {/* Anchored below the trigger rather than laid over it, so a long list (the twelve
+            languages) scrolls inside its own max height instead of outgrowing the modal. */}
+        <SelectContent
+          position="popper"
+          sideOffset={4}
+          className="max-h-72 min-w-(--radix-select-trigger-width)"
+        >
+          {options.map((option) => (
+            <SelectItem key={option.value} value={encode(option.value)!}>
+              {option.text}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+      {/* The submitted value, decoded, since the primitive's own form input would carry the
+          sentinel for an empty option. */}
+      {!!name && <input type="hidden" name={name} value={current ?? ''} />}
+    </Field>
+  );
+};

@@ -1,13 +1,12 @@
 import type { AppQueue } from '@worker-manager/api/typings/app';
 import { useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
+import { Card } from '@/components/ui/card';
 import { useSettingsStore } from '../../hooks/useSettings';
 import { useUIConfig } from '../../hooks/useUIConfig';
-import { Card } from '../Card/Card';
 import { HistoryMetricsView } from './HistoryMetricsView/HistoryMetricsView';
 import { MetricsHeader } from './MetricsHeader/MetricsHeader';
 import { NativeMetricsView } from './NativeMetricsView/NativeMetricsView';
-import s from './QueueMetrics.module.css';
 
 interface QueueMetricsProps {
   queue: AppQueue;
@@ -32,7 +31,7 @@ export const QueueMetrics = ({ queue }: QueueMetricsProps) => {
   const showChartTabs = hasHistoryProvider && hasLatencyHistory;
 
   return (
-    <Card className={s.metricsCard}>
+    <Card className="mb-4 gap-4 px-4 py-4 shadow-xs animate-fade-in-up sm:px-5">
       <MetricsHeader
         collapsed={collapsed}
         onToggle={() => setSettings({ collapseMetrics: !collapsed })}
@@ -41,12 +40,15 @@ export const QueueMetrics = ({ queue }: QueueMetricsProps) => {
         onRangeChange={setRange}
         showChartTabs={showChartTabs}
       />
-      {!collapsed &&
-        (historyEnabled ? (
-          <HistoryMetricsView queueName={queue.name} range={range} />
-        ) : (
-          <NativeMetricsView queueName={queue.name} showChartTabs={showChartTabs} />
-        ))}
+      {!collapsed && (
+        <div className="flex flex-col gap-4 animate-in duration-300 fade-in-0 slide-in-from-top-1">
+          {historyEnabled ? (
+            <HistoryMetricsView queueName={queue.name} range={range} />
+          ) : (
+            <NativeMetricsView queueName={queue.name} showChartTabs={showChartTabs} />
+          )}
+        </div>
+      )}
     </Card>
   );
 };

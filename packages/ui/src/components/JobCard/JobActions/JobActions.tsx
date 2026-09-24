@@ -1,8 +1,10 @@
 import { STATUSES } from '@worker-manager/api/constants/statuses';
 import type { Status } from '@worker-manager/api/typings/app';
 import { useTranslation } from 'react-i18next';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 import { dynamicTranslationKey } from '../../../utils/dynamicTranslationKey';
-import { Button } from '../../Button/Button';
+import { HintTooltip } from '../../HintTooltip/HintTooltip';
 import { ClockIcon } from '../../Icons/Clock';
 import { DuplicateIcon } from '../../Icons/Duplicate';
 import { PriorityIcon } from '../../Icons/Priority';
@@ -11,8 +13,6 @@ import { RemoveChildrenIcon } from '../../Icons/RemoveChildren';
 import { RetryIcon } from '../../Icons/Retry';
 import { TrashIcon } from '../../Icons/Trash';
 import { UpdateIcon } from '../../Icons/UpdateIcon';
-import { Tooltip } from '../../Tooltip/Tooltip';
-import s from './JobActions.module.css';
 
 interface JobActionsProps {
   status: Status;
@@ -101,16 +101,28 @@ export const JobActions = ({ actions, status, allowRetries }: JobActionsProps) =
   }
 
   return (
-    <ul className={s.jobActions}>
-      {buttons.map((type) => (
-        <li key={type.titleKey}>
-          <Tooltip title={t(dynamicTranslationKey(`JOB.ACTIONS.${type.titleKey}`))}>
-            <Button onClick={actions[type.actionKey]} className={s.button}>
-              <type.Icon />
-            </Button>
-          </Tooltip>
-        </li>
-      ))}
+    <ul className="m-0 flex list-none items-center gap-0.5 p-0">
+      {buttons.map((type) => {
+        const title = t(dynamicTranslationKey(`JOB.ACTIONS.${type.titleKey}`));
+        return (
+          <li key={type.titleKey}>
+            <HintTooltip title={title}>
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                aria-label={title}
+                onClick={actions[type.actionKey]}
+                className={cn(
+                  'text-muted-foreground hover:text-foreground [&_svg]:size-4',
+                  type.actionKey === 'cleanJob' && 'hover:bg-destructive/10 hover:text-destructive'
+                )}
+              >
+                <type.Icon />
+              </Button>
+            </HintTooltip>
+          </li>
+        );
+      })}
     </ul>
   );
 };

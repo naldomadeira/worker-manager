@@ -1,11 +1,10 @@
+import { ChevronDown } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { cn } from '@/lib/utils';
 import { useSettingsStore } from '../../../hooks/useSettings';
-import { ChevronDown } from '../../Icons/ChevronDown';
 import { MetricsChartTabSelector } from '../../MetricsChartTabs/MetricsChartTabs';
 import { RangeSelector } from '../../RangeSelector/RangeSelector';
 import type { Range } from '../QueueMetrics';
-import parentStyles from '../QueueMetrics.module.css';
-import s from './MetricsHeader.module.css';
 
 const RANGES: Range[] = ['60m', '7d', '30d', '90d'];
 
@@ -46,35 +45,40 @@ export const MetricsHeader = ({
   const isLatencyView = showChartTabs && activeTab === 'latency';
 
   return (
-    <div className={parentStyles.header}>
+    <div className="flex flex-wrap items-center justify-between gap-3">
       <button
         type="button"
-        className={s.collapseToggle}
+        className="group/toggle -m-1 inline-flex items-center gap-2.5 rounded-lg p-1 text-foreground outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
         aria-expanded={!collapsed}
         onClick={onToggle}
         title={collapsed ? t('METRICS.SHOW') : t('METRICS.HIDE')}
       >
-        <span className={s.chevronChip}>
-          <ChevronDown className={collapsed ? s.chevronCollapsed : s.chevron} />
+        <span className="inline-flex size-6 items-center justify-center rounded-md border bg-background text-muted-foreground shadow-xs transition-colors group-hover/toggle:bg-state-hover group-hover/toggle:text-foreground">
+          <ChevronDown
+            aria-hidden="true"
+            className={cn('size-3.5 transition-transform duration-200', collapsed && '-rotate-90')}
+          />
         </span>
-        <h3 className={parentStyles.title}>
+        <h3 className="m-0 text-sm font-semibold whitespace-nowrap">
           {t(isLatencyView ? 'LATENCY.TITLE' : 'METRICS.TITLE')}
         </h3>
       </button>
-      {!collapsed && (showChartTabs || showRangeSelector) && (
-        <div className={s.headerActions}>
-          {showChartTabs && <MetricsChartTabSelector className={s.control} />}
-          {showRangeSelector && (
-            <RangeSelector
-              ranges={RANGES}
-              value={range}
-              onChange={onRangeChange}
-              getLabel={(r) => t(RANGE_LABEL_KEYS[r])}
-              className={s.control}
-            />
-          )}
-        </div>
-      )}
+      {!collapsed &&
+        (showChartTabs || showRangeSelector) && (
+          // Deliberately wider than the range selector's own internal gap, so the two controls
+          // read as separate groups instead of one long segmented control.
+          <div className="ml-auto flex flex-wrap items-center gap-2.5 animate-in fade-in-0">
+            {showChartTabs && <MetricsChartTabSelector />}
+            {showRangeSelector && (
+              <RangeSelector
+                ranges={RANGES}
+                value={range}
+                onChange={onRangeChange}
+                getLabel={(r) => t(RANGE_LABEL_KEYS[r])}
+              />
+            )}
+          </div>
+        )}
     </div>
   );
 };

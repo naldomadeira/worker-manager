@@ -1,12 +1,12 @@
 import type { AppJob } from '@worker-manager/api/typings/app';
 import { FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Field, FieldLabel } from '@/components/ui/field';
 import { useActiveQueue } from '../../hooks/useActiveQueue';
 import { useJob } from '../../hooks/useJob';
 import { useQueues } from '../../hooks/useQueues';
-import { Button } from '../Button/Button';
-import { JsonField } from '../Form/JsonField/JsonField';
-import { Modal } from '../Modal/Modal';
+import { FormDialog } from '../FormDialog/FormDialog';
+import { JsonEditor } from '../JsonEditor/JsonEditor';
 
 export interface UpdateJobModalProps {
   open: boolean;
@@ -46,25 +46,19 @@ export const UpdateJobDataModal = ({ open, onClose, job }: UpdateJobModalProps) 
   };
 
   return (
-    <Modal
-      width="small"
+    <FormDialog
+      size="lg"
       open={open}
       onClose={onClose}
       title={t('UPDATE_JOB_DATA.TITLE')}
-      actionButton={
-        <Button type="submit" theme="primary" form="edit-job-data-form">
-          {t('UPDATE_JOB_DATA.UPDATE')}
-        </Button>
-      }
+      formId="edit-job-data-form"
+      submitLabel={t('UPDATE_JOB_DATA.UPDATE')}
+      onSubmit={updateJobData}
     >
-      <form id="edit-job-data-form" onSubmit={updateJobData}>
-        <JsonField
-          label={t('UPDATE_JOB_DATA.JOB_DATA')}
-          value={job?.data || {}}
-          id="job-data"
-          name="jobData"
-        />
-      </form>
-    </Modal>
+      <Field>
+        <FieldLabel htmlFor="job-data">{t('UPDATE_JOB_DATA.JOB_DATA')}</FieldLabel>
+        <JsonEditor doc={job?.data || {}} id="job-data" name="jobData" />
+      </Field>
+    </FormDialog>
   );
 };

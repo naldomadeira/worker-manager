@@ -1,26 +1,39 @@
+import { PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { useSettingsStore } from '../../hooks/useSettings';
-import { Button } from '../Button/Button';
-import { SidebarIcon } from '../Icons/Sidebar';
-import s from './SidebarToggle.module.css';
+import { Button } from '@/components/ui/button';
+import { useSidebar } from '@/components/ui/sidebar';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { cn } from '@/lib/utils';
 
-export const SidebarToggle = () => {
+/** Collapses the sidebar to icons on desktop and opens it as a drawer on mobile. */
+export const SidebarToggle = ({ className }: { className?: string }) => {
   const { t } = useTranslation();
-  const collapsed = useSettingsStore((state) => state.sidebarCollapsed);
-  const setSettings = useSettingsStore((state) => state.setSettings);
+  const { state, isMobile, openMobile, toggleSidebar } = useSidebar();
 
-  const label = collapsed ? t('MENU.EXPAND_SIDEBAR') : t('MENU.COLLAPSE_SIDEBAR');
+  const expanded = isMobile ? openMobile : state === 'expanded';
+  const label = isMobile
+    ? t('HEADER.OPEN_MENU')
+    : expanded
+      ? t('MENU.COLLAPSE_SIDEBAR')
+      : t('MENU.EXPAND_SIDEBAR');
+  const Icon = expanded && !isMobile ? PanelLeftClose : PanelLeftOpen;
 
   return (
-    <Button
-      className={s.toggle}
-      onClick={() => setSettings({ sidebarCollapsed: !collapsed })}
-      aria-expanded={!collapsed}
-      aria-controls="bull-board-sidebar"
-      aria-label={label}
-      title={label}
-    >
-      <SidebarIcon className={s.icon} />
-    </Button>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button
+          variant="ghost"
+          size="icon-sm"
+          className={cn('text-muted-foreground hover:text-foreground', className)}
+          onClick={toggleSidebar}
+          aria-expanded={expanded}
+          aria-controls="bull-board-sidebar"
+          aria-label={label}
+        >
+          <Icon aria-hidden="true" className="transition-transform duration-200" />
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent side="bottom">{label}</TooltipContent>
+    </Tooltip>
   );
 };

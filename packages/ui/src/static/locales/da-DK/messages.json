@@ -10,7 +10,10 @@
     "EXPAND_SIDEBAR": "Udvid sidepanel",
     "COLLAPSE_SIDEBAR": "Skjul sidepanel",
     "METRICS_HISTORY": "Metrikhistorik",
-    "SCHEDULERS": "Planlægninger"
+    "SCHEDULERS": "Planlægninger",
+    "NAVIGATION": "Navigation",
+    "FILTER_EMPTY": "Ingen køer matcher dit filter",
+    "RELEASES": "Udgivelsesnoter"
   },
   "DASHBOARD": {
     "JOBS_COUNT_one": "{{count}} Job",
@@ -25,13 +28,25 @@
       "WAITING": "Ventende Jobs",
       "ACTIVE": "Aktive Jobs",
       "COMPLETED": "Gennemførte Jobs",
-      "ALPHABETICAL": "Alfabetisk (A-Z)"
+      "ALPHABETICAL": "Alfabetisk (A-Z)",
+      "ASC": "Stigende",
+      "DESC": "Faldende"
     },
     "VIEW": {
       "TITLE": "Visning",
       "FLAT": "Flad",
       "GROUPED": "Grupperet"
-    }
+    },
+    "KPI": {
+      "QUEUES": "Køer",
+      "PAUSED": "{{count}} på pause",
+      "ALL_RUNNING": "Alle kører",
+      "SHARE": "{{percent}} % af jobs"
+    },
+    "CLEAR_SEARCH": "Ryd søgning",
+    "EMPTY_STATE_SEARCH": "Ingen kø matcher “{{term}}”.",
+    "CLEAR_FILTERS": "Ryd filtre",
+    "BULK_ACTIONS": "Massehandlinger"
   },
   "JOB": {
     "DELAY_CHANGED": "*Forsinkelse ændret; den nye køretid er i øjeblikket ukendt",
@@ -108,7 +123,11 @@
     "NO_ERRORS": "Ingen fejl registreret",
     "NO_LOGS": "Ingen logs tilgængelige",
     "LOGS": {
-      "FILTER_PLACEHOLDER": "Filtre"
+      "FILTER_PLACEHOLDER": "Filtre",
+      "FOLLOW": "Følg nye loglinjer",
+      "FOLLOW_SHORT": "Følg",
+      "FULLSCREEN": "Skift fuldskærm",
+      "LINES": "{{shown}} af {{total}} linjer"
     },
     "ACTIONS": {
       "PROMOTE": "Forfrem",
@@ -136,7 +155,9 @@
       "LOGS": "Logs",
       "ERROR": "Fejl",
       "TIMELINE": "Tidslinje"
-    }
+    },
+    "EXPAND": "Udvid job",
+    "COLLAPSE": "Skjul job"
   },
   "QUEUE": {
     "NOT_FOUND": "Kø ikke fundet",
@@ -183,7 +204,8 @@
       },
       "PAUSE_GROUP": "Pause alle køer i gruppen",
       "RESUME_GROUP": "Genoptag alle køer i gruppen",
-      "GROUP_ACTIONS": "Gruppehandlinger"
+      "GROUP_ACTIONS": "Gruppehandlinger",
+      "QUEUE_ACTIONS": "Køhandlinger"
     },
     "STATUS": {
       "ALL": "Alle",
@@ -227,8 +249,12 @@
       "CONNECTED": "tilsluttet {{since}}",
       "EMPTY": "Intet forbruger denne kø.",
       "EMPTY_HINT": "Kontrollér at en worker-proces kører og peger på den samme Redis.",
-      "EMPTY_PAUSED": "Denne kø er sat på pause, så der forventes ingen workers."
-    }
+      "EMPTY_PAUSED": "Denne kø er sat på pause, så der forventes ingen workers.",
+      "COLUMN_WORKER": "Worker",
+      "COLUMN_ADDRESS": "Adresse",
+      "COLUMN_CONNECTED": "Forbundet"
+    },
+    "RANGE": "{{start}}–{{end}} af {{total}}"
   },
   "METRICS": {
     "TITLE": "Gennemløb (jobs / min)",
@@ -256,7 +282,8 @@
     "TAB_LATENCY": "Forsinkelse",
     "P95_RUN_TIME": "Køretid p95",
     "P95_WAIT_TIME": "Ventetid p95",
-    "NOT_AVAILABLE": "n/a"
+    "NOT_AVAILABLE": "n/a",
+    "TREND_LABEL": "{{value}} i forhold til første halvdel af perioden"
   },
   "LATENCY": {
     "TITLE": "Jobforsinkelse",
@@ -303,7 +330,9 @@
     "UP_TIME": "Oppetid",
     "ERROR": {
       "MEMORY_USAGE": "Kunne ikke hente hukommelsesstatistikker"
-    }
+    },
+    "LIVE": "Live",
+    "MEMORY_USED_OF": "{{used}} af {{total}}"
   },
   "SETTINGS": {
     "TITLE": "Indstillinger",
@@ -378,7 +407,9 @@
     "JOB_DATA": "Jobdata"
   },
   "CLIPBOARD": {
-    "COPY_FAILED": "Kunne ikke kopiere til udklipsholder. Din browser understøtter muligvis ikke denne funktion, eller siden serveres ikke over HTTPS."
+    "COPY_FAILED": "Kunne ikke kopiere til udklipsholder. Din browser understøtter muligvis ikke denne funktion, eller siden serveres ikke over HTTPS.",
+    "COPY": "Kopiér til udklipsholder",
+    "COPIED": "Kopieret"
   },
   "ERRORS": {
     "FORBIDDEN": "Forbidden",
@@ -420,6 +451,7 @@
     "REDIS_STATS_UNAVAILABLE": "Redis-oplysninger er ikke tilgængelige for denne køs backend",
     "REDIS_UNAVAILABLE": "bull-board kan ikke få forbindelse til Redis. Åbn dashboardet for at se detaljer.",
     "STATUS_NOT_RETRIABLE": "\"{{status}}\" er ikke en status, der kan prøves igen",
+    "UNAUTHORIZED": "Du skal logge ind for at få adgang til dette board",
     "WORKERS_DISABLED": "Worker-rapportering er deaktiveret",
     "INVALID_METRIC": "Ugyldig metrik"
   },
@@ -459,7 +491,9 @@
       "CONFIRM_TITLE": "Slet registreret metrikhistorik?",
       "CONFIRM_TRIM": "Alt registreret før {{date}} vil blive slettet, og de sidste {{range}} beholdes. Dette kan ikke fortrydes, og de slettede dage vises ikke længere i nogen diagrammer.",
       "CONFIRM_CLEAR": "Al {{size}} registreret historik vil blive slettet for hver kø. Dette kan ikke fortrydes. Optagelsen fortsætter, så nye data begynder at akkumulere fra næste snapshot."
-    }
+    },
+    "SUBTITLE": "Fuldførte og mislykkede jobs på tværs af alle køer, dag for dag.",
+    "TREND": "Tendens"
   },
   "SCHEDULERS": {
     "TITLE": "Planlægninger",
@@ -475,7 +509,8 @@
       "SCHEDULE": "Tidsplan",
       "NEXT_RUN": "Næste kørsel",
       "LAST_RUN": "Seneste kørsel",
-      "RUNS": "Kørsler"
+      "RUNS": "Kørsler",
+      "STATUS": "Status"
     },
     "INTERVAL": {
       "MILLISECONDS": "{{count}}ms",
@@ -514,6 +549,44 @@
       "EVERY": "Interval (ms)",
       "LIMIT": "Maks. kørsler",
       "END_DATE": "Slutdato"
+    },
+    "STATUS": {
+      "ACTIVE": "Planlagt",
+      "LIMIT_REACHED": "Grænse nået",
+      "ENDED": "Afsluttet",
+      "IDLE": "Ikke planlagt"
     }
+  },
+  "HEADER": {
+    "SEARCH": "Søg",
+    "DOCS": "Dokumentation",
+    "FULLSCREEN": "Skift fuld skærm",
+    "LINKS": "Links",
+    "BREADCRUMB": "Brødkrummesti",
+    "OPEN_MENU": "Åbn navigation"
+  },
+  "COMMAND": {
+    "TITLE": "Kommandopalet",
+    "DESCRIPTION": "Gå til en kø eller side",
+    "PLACEHOLDER": "Søg i køer og sider…",
+    "EMPTY": "Ingen resultater fundet.",
+    "PAGES": "Sider",
+    "QUEUES": "Køer",
+    "THEME": "Tema"
+  },
+  "USER": {
+    "MENU": "Konto",
+    "SIGN_OUT": "Log ud",
+    "ROLES": "Roller",
+    "SIGNED_IN_WITH": "Logget ind med {{strategy}}"
+  },
+  "TOAST": {
+    "REGION_LABEL": "Notifikationer"
+  },
+  "PAGINATION": {
+    "LABEL": "Sideinddeling",
+    "PREVIOUS": "Forrige side",
+    "NEXT": "Næste side",
+    "PAGE": "Side {{page}}"
   }
 }

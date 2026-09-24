@@ -10,7 +10,10 @@
     "EXPAND_SIDEBAR": "サイドバーを展開",
     "COLLAPSE_SIDEBAR": "サイドバーを折りたたむ",
     "METRICS_HISTORY": "メトリクス履歴",
-    "SCHEDULERS": "スケジューラー"
+    "SCHEDULERS": "スケジューラー",
+    "NAVIGATION": "ナビゲーション",
+    "FILTER_EMPTY": "フィルターに一致するキューはありません",
+    "RELEASES": "リリースノート"
   },
   "DASHBOARD": {
     "JOBS_COUNT": "{{count}} ジョブ",
@@ -24,13 +27,25 @@
       "WAITING": "待機中ジョブ",
       "ACTIVE": "実行中ジョブ",
       "COMPLETED": "完了したジョブ",
-      "ALPHABETICAL": "アルファベット順 (A-Z)"
+      "ALPHABETICAL": "アルファベット順 (A-Z)",
+      "ASC": "昇順",
+      "DESC": "降順"
     },
     "VIEW": {
       "TITLE": "表示",
       "FLAT": "フラット",
       "GROUPED": "グループ"
-    }
+    },
+    "KPI": {
+      "QUEUES": "キュー",
+      "PAUSED": "{{count}} 件一時停止中",
+      "ALL_RUNNING": "すべて実行中",
+      "SHARE": "ジョブの {{percent}}%"
+    },
+    "CLEAR_SEARCH": "検索をクリア",
+    "EMPTY_STATE_SEARCH": "「{{term}}」に一致するキューはありません。",
+    "CLEAR_FILTERS": "フィルターをクリア",
+    "BULK_ACTIONS": "一括操作"
   },
   "JOB": {
     "DELAY_CHANGED": "*遅延が変更されました; 新しい実行時間は現在不明です",
@@ -107,7 +122,11 @@
     "NO_ERRORS": "エラーは記録されていません",
     "NO_LOGS": "ログがありません",
     "LOGS": {
-      "FILTER_PLACEHOLDER": "フィルター"
+      "FILTER_PLACEHOLDER": "フィルター",
+      "FOLLOW": "新しいログ行を追跡",
+      "FOLLOW_SHORT": "追跡",
+      "FULLSCREEN": "全画面表示を切り替え",
+      "LINES": "{{total}} 行中 {{shown}} 行"
     },
     "ACTIONS": {
       "PROMOTE": "昇格",
@@ -135,7 +154,9 @@
       "LOGS": "ログ",
       "ERROR": "エラー",
       "TIMELINE": "タイムライン"
-    }
+    },
+    "EXPAND": "ジョブを展開",
+    "COLLAPSE": "ジョブを折りたたむ"
   },
   "QUEUE": {
     "NOT_FOUND": "キューが見つかりません",
@@ -182,7 +203,8 @@
       },
       "PAUSE_GROUP": "グループ内のすべてのキューを一時停止",
       "RESUME_GROUP": "グループ内のすべてのキューを再開",
-      "GROUP_ACTIONS": "グループアクション"
+      "GROUP_ACTIONS": "グループアクション",
+      "QUEUE_ACTIONS": "キューの操作"
     },
     "STATUS": {
       "ALL": "すべて",
@@ -226,8 +248,12 @@
       "CONNECTED": "{{since}}に接続",
       "EMPTY": "このキューを処理しているものがありません。",
       "EMPTY_HINT": "ワーカープロセスが起動し、同じ Redis を参照しているか確認してください。",
-      "EMPTY_PAUSED": "このキューは一時停止中のため、ワーカーは不要です。"
-    }
+      "EMPTY_PAUSED": "このキューは一時停止中のため、ワーカーは不要です。",
+      "COLUMN_WORKER": "ワーカー",
+      "COLUMN_ADDRESS": "アドレス",
+      "COLUMN_CONNECTED": "接続"
+    },
+    "RANGE": "{{total}} 件中 {{start}}–{{end}}"
   },
   "METRICS": {
     "TITLE": "スループット (ジョブ/分)",
@@ -255,7 +281,8 @@
     "TAB_LATENCY": "レイテンシ",
     "P95_RUN_TIME": "実行時間 p95",
     "P95_WAIT_TIME": "待機時間 p95",
-    "NOT_AVAILABLE": "なし"
+    "NOT_AVAILABLE": "なし",
+    "TREND_LABEL": "期間の前半と比べて {{value}}"
   },
   "LATENCY": {
     "TITLE": "ジョブレイテンシ",
@@ -300,7 +327,9 @@
     "UP_TIME": "稼働時間",
     "ERROR": {
       "MEMORY_USAGE": "メモリ統計を取得できませんでした"
-    }
+    },
+    "LIVE": "ライブ",
+    "MEMORY_USED_OF": "{{used}} / {{total}}"
   },
   "SETTINGS": {
     "TITLE": "設定",
@@ -374,7 +403,9 @@
     "JOB_DATA": "ジョブデータ"
   },
   "CLIPBOARD": {
-    "COPY_FAILED": "クリップボードへのコピーに失敗しました。お使いのブラウザがこの機能をサポートしていないか、ページがHTTPSで提供されていない可能性があります。"
+    "COPY_FAILED": "クリップボードへのコピーに失敗しました。お使いのブラウザがこの機能をサポートしていないか、ページがHTTPSで提供されていない可能性があります。",
+    "COPY": "クリップボードにコピー",
+    "COPIED": "コピーしました"
   },
   "ERRORS": {
     "FORBIDDEN": "Forbidden",
@@ -416,6 +447,7 @@
     "REDIS_STATS_UNAVAILABLE": "このキューのバックエンドでは Redis の詳細を利用できません",
     "REDIS_UNAVAILABLE": "bull-board が Redis に接続できません。詳細はダッシュボードを開いて確認してください。",
     "STATUS_NOT_RETRIABLE": "\"{{status}}\" は再試行できるステータスではありません",
+    "UNAUTHORIZED": "このボードにアクセスするにはサインインが必要です",
     "WORKERS_DISABLED": "ワーカーの表示は無効です",
     "INVALID_METRIC": "無効なメトリクス"
   },
@@ -455,7 +487,9 @@
       "CONFIRM_TITLE": "記録されたメトリクス履歴を削除しますか？",
       "CONFIRM_TRIM": "{{date}}より前に記録されたすべてのデータが削除され、最後の{{range}}のみ保持されます。この操作は元に戻せず、削除された日付はチャートに表示されなくなります。",
       "CONFIRM_CLEAR": "すべてのキューの記録履歴{{size}}が削除されます。この操作は元に戻せません。記録は継続されるため、次のスナップショットから新しいデータの蓄積が開始されます。"
-    }
+    },
+    "SUBTITLE": "すべてのキューの完了・失敗ジョブを日ごとに表示します。",
+    "TREND": "推移"
   },
   "SCHEDULERS": {
     "TITLE": "スケジューラー",
@@ -471,7 +505,8 @@
       "SCHEDULE": "スケジュール",
       "NEXT_RUN": "次回実行",
       "LAST_RUN": "前回実行",
-      "RUNS": "実行回数"
+      "RUNS": "実行回数",
+      "STATUS": "ステータス"
     },
     "INTERVAL": {
       "MILLISECONDS": "{{count}}ms",
@@ -510,6 +545,44 @@
       "EVERY": "間隔（ミリ秒）",
       "LIMIT": "最大実行回数",
       "END_DATE": "終了日"
+    },
+    "STATUS": {
+      "ACTIVE": "スケジュール済み",
+      "LIMIT_REACHED": "上限に到達",
+      "ENDED": "終了",
+      "IDLE": "未スケジュール"
     }
+  },
+  "HEADER": {
+    "SEARCH": "検索",
+    "DOCS": "ドキュメント",
+    "FULLSCREEN": "全画面表示の切り替え",
+    "LINKS": "リンク",
+    "BREADCRUMB": "パンくずリスト",
+    "OPEN_MENU": "ナビゲーションを開く"
+  },
+  "COMMAND": {
+    "TITLE": "コマンドパレット",
+    "DESCRIPTION": "キューまたはページに移動",
+    "PLACEHOLDER": "キューとページを検索…",
+    "EMPTY": "結果が見つかりません。",
+    "PAGES": "ページ",
+    "QUEUES": "キュー",
+    "THEME": "テーマ"
+  },
+  "USER": {
+    "MENU": "アカウント",
+    "SIGN_OUT": "サインアウト",
+    "ROLES": "ロール",
+    "SIGNED_IN_WITH": "{{strategy}} でサインイン中"
+  },
+  "TOAST": {
+    "REGION_LABEL": "通知"
+  },
+  "PAGINATION": {
+    "LABEL": "ページ送り",
+    "PREVIOUS": "前のページ",
+    "NEXT": "次のページ",
+    "PAGE": "{{page}} ページ"
   }
 }

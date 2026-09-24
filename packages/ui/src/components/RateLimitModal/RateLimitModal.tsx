@@ -1,13 +1,13 @@
 import type { AppQueue } from '@worker-manager/api/typings/app';
+import { TimerIcon } from 'lucide-react';
 import { FormEvent, RefObject, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Button } from '@/components/ui/button';
+import { Field, FieldDescription, FieldGroup, FieldLabel } from '@/components/ui/field';
+import { Input } from '@/components/ui/input';
 import { useQueueRateLimit } from '../../hooks/useQueueRateLimit';
 import { useQueues } from '../../hooks/useQueues';
-import { Button } from '../Button/Button';
-import { InputField } from '../Form/InputField/InputField';
-import { RateLimitIcon } from '../Icons/RateLimit';
 import { Modal } from '../Modal/Modal';
-import s from './RateLimitModal.module.css';
 
 export interface RateLimitModalProps {
   open: boolean;
@@ -59,26 +59,31 @@ export const RateLimitModal = ({ open, onClose, queue, finalFocus }: RateLimitMo
       title={t('RATE_LIMIT.TITLE')}
       finalFocus={finalFocus}
       actionButton={
-        <Button type="submit" theme="primary" form="rate-limit-form" disabled={loading}>
+        <Button type="submit" form="rate-limit-form" disabled={loading}>
           {t('RATE_LIMIT.SAVE')}
         </Button>
       }
     >
-      <form id="rate-limit-form" onSubmit={handleSubmit}>
-        <p className={s.intro}>{t('RATE_LIMIT.DESCRIPTION')}</p>
+      <form id="rate-limit-form" onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <p className="m-0 text-sm leading-relaxed text-muted-foreground">
+          {t('RATE_LIMIT.DESCRIPTION')}
+        </p>
 
         {queue.activeRateLimitTtl > 0 && (
-          <div className={s.active}>
-            <RateLimitIcon />
-            <span className={s.activeText}>
+          <div
+            role="status"
+            className="flex items-center gap-3 rounded-lg border border-status-delayed/30 bg-status-delayed/10 px-3 py-2 text-sm text-status-delayed animate-in fade-in-0 slide-in-from-top-1"
+          >
+            <TimerIcon aria-hidden="true" className="size-4 shrink-0" />
+            <span className="flex-1 font-medium">
               {t('RATE_LIMIT.ACTIVE_FOR', {
                 seconds: Math.ceil(queue.activeRateLimitTtl / 1000),
               })}
             </span>
             <Button
               type="button"
-              compact
-              theme="basic"
+              size="xs"
+              variant="outline"
               onClick={async () => {
                 await actions.releaseQueueRateLimit(queue.name)();
                 onClose();
@@ -89,31 +94,40 @@ export const RateLimitModal = ({ open, onClose, queue, finalFocus }: RateLimitMo
           </div>
         )}
 
-        <div className={s.fields}>
-          <div>
-            <InputField
-              label={t('RATE_LIMIT.MAX')}
+        <FieldGroup className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <Field>
+            <FieldLabel htmlFor="rate-limit-max">{t('RATE_LIMIT.MAX')}</FieldLabel>
+            <Input
               id="rate-limit-max"
               name="max"
               type="number"
+              inputMode="numeric"
               autoFocus
               min={1}
+              className="font-mono tabular-nums"
               value={max}
-              onChange={(e) => setMax((e.target as HTMLInputElement).value)}
+              onChange={(e) => setMax(e.target.value)}
             />
-          </div>
-          <div>
-            <InputField
-              label={t('RATE_LIMIT.DURATION')}
+          </Field>
+          <Field>
+            <FieldLabel htmlFor="rate-limit-duration">{t('RATE_LIMIT.DURATION')}</FieldLabel>
+            <Input
               id="rate-limit-duration"
               name="duration"
               type="number"
+              inputMode="numeric"
               min={1}
+              className="font-mono tabular-nums"
               value={duration}
-              onChange={(e) => setDuration((e.target as HTMLInputElement).value)}
+              onChange={(e) => setDuration(e.target.value)}
             />
-          </div>
-        </div>
+          </Field>
+        </FieldGroup>
+        {rateLimit && (
+          <FieldDescription className="font-mono text-xs">
+            {t('RATE_LIMIT.VALUE', { max: rateLimit.max, duration: rateLimit.duration })}
+          </FieldDescription>
+        )}
       </form>
     </Modal>
   );

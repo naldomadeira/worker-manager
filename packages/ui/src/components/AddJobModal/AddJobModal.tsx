@@ -1,17 +1,23 @@
 import type { AppJob, AppQueue } from '@worker-manager/api/typings/app';
 import { FormEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { useActiveQueue } from '../../hooks/useActiveQueue';
 import { useQueueJobDataSchema } from '../../hooks/useQueueJobDataSchema';
 import { useQueues } from '../../hooks/useQueues';
 import bullJobOptionsSchema from '../../schemas/bull/jobOptions.json';
 import bullMQJobOptionsSchema from '../../schemas/bullmq/jobOptions.json';
 import { jobDataFromSchema } from '../../utils/jobDataFromSchema';
-import { Button } from '../Button/Button';
-import { InputField } from '../Form/InputField/InputField';
-import { JsonField } from '../Form/JsonField/JsonField';
-import { SelectField } from '../Form/SelectField/SelectField';
-import { Modal } from '../Modal/Modal';
+import { FormDialog } from '../FormDialog/FormDialog';
+import { JsonEditor } from '../JsonEditor/JsonEditor';
 
 export interface AddJobModalProps {
   open: boolean;
@@ -61,52 +67,67 @@ export const AddJobModal = ({ open, onClose, job, queue: queueProp }: AddJobModa
   };
 
   return (
-    <Modal
-      width="small"
+    <FormDialog
+      size="lg"
       open={open}
       onClose={onClose}
       title={t('ADD_JOB.TITLE', { context: job ? 'duplicate' : undefined })}
-      actionButton={
-        <Button type="submit" theme="primary" form="add-job-form">
-          {t(`ADD_JOB.${job ? 'DUPLICATE' : 'ADD'}`)}
-        </Button>
-      }
+      formId="add-job-form"
+      submitLabel={t(`ADD_JOB.${job ? 'DUPLICATE' : 'ADD'}`)}
+      onSubmit={addJob}
     >
-      <form id="add-job-form" onSubmit={addJob}>
-        <SelectField
-          label={t('ADD_JOB.QUEUE_NAME')}
-          id="queue-name"
-          options={(queues || []).map((queue) => ({
-            text: queue.name,
-            value: queue.name,
-          }))}
-          name="queueName"
-          value={selectedQueue.name || ''}
-          onChange={(value) => setSelectedQueue(queues.find((q) => q.name === value)!)}
-        />
-        <InputField
-          label={t('ADD_JOB.JOB_NAME')}
-          id="job-name"
-          name="jobName"
-          defaultValue={job?.name}
-          placeholder="__default__"
-        />
-        <JsonField
-          key={`job-data-${selectedQueue.name}-${jobDataSchemaLoading ? 'loading' : 'ready'}`}
-          label={t('ADD_JOB.JOB_DATA')}
-          id="job-data"
-          name="jobData"
-          schema={jobDataSchema ?? undefined}
-          value={job?.data ?? jobDataFromSchema(jobDataSchema ?? undefined)}
-        />
-        <JsonField
-          label={t('ADD_JOB.JOB_OPTIONS')}
-          id="job-options"
-          name="jobOptions"
-          schema={jobOptionsSchema[selectedQueue.type]}
-          value={job?.opts}
-        />
-      </form>
-    </Modal>
+      <FieldGroup className="gap-4">
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Field>
+            <FieldLabel htmlFor="queue-name">{t('ADD_JOB.QUEUE_NAME')}</FieldLabel>
+            <Select
+              value={selectedQueue.name || ''}
+              onValueChange={(value) => setSelectedQueue(queues.find((q) => q.name === value)!)}
+            >
+              <SelectTrigger id="queue-name" className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent position="popper" className="max-h-72">
+                {(queues || []).map((queue) => (
+                  <SelectItem key={queue.name} value={queue.name}>
+                    {queue.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <input type="hidden" name="queueName" value={selectedQueue.name || ''} />
+          </Field>
+          <Field>
+            <FieldLabel htmlFor="job-name">{t('ADD_JOB.JOB_NAME')}</FieldLabel>
+            <Input
+              id="job-name"
+              name="jobName"
+              defaultValue={job?.name}
+              placeholder="__default__"
+              className="font-mono"
+            />
+          </Field>
+        </div>
+        <Field>
+          <FieldLabel htmlFor="job-data">{t('ADD_JOB.JOB_DATA')}</FieldLabel>
+          <JsonEditor
+            key={`job-data-${selectedQueue.name}-${jobDataSchemaLoading ? 'loading' : 'ready'}`}
+            id="job-data"
+            name="jobData"
+            schema={jobDataSchema ?? undefined}
+            doc={job?.data ?? jobDataFromSchema(jobDataSchema ?? undefined) ?? {}}
+          />
+        </Field>
+        <Field>
+          <FieldLabel htmlFor="job-options">{t('ADD_JOB.JOB_OPTIONS')}</FieldLabel>
+          <JsonEditor
+            id="job-options"
+            name="jobOptions"
+            schema={jobOptionsSchema[selectedQueue.type]}
+            doc={job?.opts || {}}
+          />
+        </Field>
+      </FieldGroup>
+    </FormDialog>
   );
 };

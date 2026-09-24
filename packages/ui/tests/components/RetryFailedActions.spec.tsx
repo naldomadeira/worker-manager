@@ -46,7 +46,10 @@ async function openMenu(element: React.ReactElement) {
   const api = { getQueues: jest.fn(() => Promise.resolve<GetQueuesResponse>({ queues: [] })) };
   const { Wrapper } = createWrapper({ api });
   render(element, { wrapper: Wrapper });
-  fireEvent.click(screen.getAllByRole('button')[0]);
+  // Radix menus open on pointerdown (what a real click starts with), not on the click itself.
+  const trigger = screen.getAllByRole('button')[0];
+  fireEvent.pointerDown(trigger, { button: 0, ctrlKey: false, pointerType: 'mouse' });
+  fireEvent.click(trigger);
   await waitFor(() => expect(screen.getByRole('menu')).toBeTruthy());
 }
 

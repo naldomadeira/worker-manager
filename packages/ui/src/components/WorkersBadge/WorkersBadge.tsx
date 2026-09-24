@@ -1,10 +1,10 @@
 import type { AppQueue } from '@worker-manager/api/typings/app';
+import { UserRoundXIcon } from 'lucide-react';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Badge } from '@/components/ui/badge';
 import { useModal } from '../../hooks/useModal';
-import { WorkersIcon } from '../Icons/Workers';
 import { Tooltip } from '../Tooltip/Tooltip';
-import s from './WorkersBadge.module.css';
 
 const QueueInfoModalLazy = React.lazy(() =>
   import('../QueueInfoModal/QueueInfoModal').then(({ QueueInfoModal }) => ({
@@ -32,16 +32,17 @@ export const WorkersBadge = ({ queue }: { queue: AppQueue }) => {
 
   return (
     <>
-      <Tooltip title={description} className={s.badgeWrap}>
-        <button
-          type="button"
-          aria-label={description}
-          className={s.workersBadge}
-          onClick={() => modal.open('workers')}
+      <Tooltip title={description} className="relative z-10 inline-flex items-center">
+        <Badge
+          asChild
+          variant="secondary"
+          className="bg-status-waiting/15 text-status-waiting transition-colors hover:bg-status-waiting/25 focus-visible:ring-status-waiting/40"
         >
-          <WorkersIcon />
-          {t('QUEUE.WORKERS.NONE')}
-        </button>
+          <button type="button" aria-label={description} onClick={() => modal.open('workers')}>
+            <UserRoundXIcon aria-hidden="true" />
+            {t('QUEUE.WORKERS.NONE')}
+          </button>
+        </Badge>
       </Tooltip>
       <Suspense fallback={null}>
         {modal.isMounted('workers') && (

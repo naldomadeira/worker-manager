@@ -8,7 +8,7 @@ interface JsonFieldProps extends Omit<HTMLProps<HTMLInputElement>, 'value' | 're
 }
 
 export const JsonField = ({ label, id, value, ...rest }: JsonFieldProps) => (
-  <Field label={label}>
+  <Field label={label} htmlFor={id}>
     <JsonEditor doc={value || {}} id={id} {...rest} />
   </Field>
 );

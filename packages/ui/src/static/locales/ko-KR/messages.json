@@ -10,7 +10,10 @@
     "EXPAND_SIDEBAR": "사이드바 펼치기",
     "COLLAPSE_SIDEBAR": "사이드바 접기",
     "METRICS_HISTORY": "메트릭 기록",
-    "SCHEDULERS": "스케줄러"
+    "SCHEDULERS": "스케줄러",
+    "NAVIGATION": "탐색",
+    "FILTER_EMPTY": "필터와 일치하는 큐가 없습니다",
+    "RELEASES": "릴리스 노트"
   },
   "DASHBOARD": {
     "JOBS_COUNT": "{{count}}개의 작업",
@@ -23,13 +26,25 @@
       "WAITING": "대기 중인 작업",
       "ACTIVE": "활성 작업",
       "COMPLETED": "완료된 작업",
-      "ALPHABETICAL": "알파벳순 (A-Z)"
+      "ALPHABETICAL": "알파벳순 (A-Z)",
+      "ASC": "오름차순",
+      "DESC": "내림차순"
     },
     "VIEW": {
       "TITLE": "보기",
       "FLAT": "평면",
       "GROUPED": "그룹화"
-    }
+    },
+    "KPI": {
+      "QUEUES": "큐",
+      "PAUSED": "{{count}}개 일시 중지됨",
+      "ALL_RUNNING": "모두 실행 중",
+      "SHARE": "작업의 {{percent}}%"
+    },
+    "CLEAR_SEARCH": "검색 지우기",
+    "EMPTY_STATE_SEARCH": "“{{term}}”와 일치하는 큐가 없습니다.",
+    "CLEAR_FILTERS": "필터 지우기",
+    "BULK_ACTIONS": "일괄 작업"
   },
   "JOB": {
     "DELAY_CHANGED": "*지연 시간이 변경되었습니다. 새로운 실행 시간은 현재 알 수 없습니다",
@@ -106,7 +121,11 @@
     "NO_ERRORS": "기록된 오류가 없습니다",
     "NO_LOGS": "로그를 사용할 수 없습니다",
     "LOGS": {
-      "FILTER_PLACEHOLDER": "필터"
+      "FILTER_PLACEHOLDER": "필터",
+      "FOLLOW": "새 로그 줄 따라가기",
+      "FOLLOW_SHORT": "따라가기",
+      "FULLSCREEN": "전체 화면 전환",
+      "LINES": "{{total}}줄 중 {{shown}}줄"
     },
     "ACTIONS": {
       "PROMOTE": "승격",
@@ -134,7 +153,9 @@
       "LOGS": "로그",
       "ERROR": "오류",
       "TIMELINE": "타임라인"
-    }
+    },
+    "EXPAND": "작업 펼치기",
+    "COLLAPSE": "작업 접기"
   },
   "QUEUE": {
     "NOT_FOUND": "큐를 찾을 수 없습니다",
@@ -181,7 +202,8 @@
       },
       "PAUSE_GROUP": "그룹의 모든 큐 일시 중지",
       "RESUME_GROUP": "그룹의 모든 큐 재개",
-      "GROUP_ACTIONS": "그룹 작업"
+      "GROUP_ACTIONS": "그룹 작업",
+      "QUEUE_ACTIONS": "큐 작업"
     },
     "STATUS": {
       "ALL": "전체",
@@ -225,8 +247,12 @@
       "CONNECTED": "{{since}} 연결됨",
       "EMPTY": "이 큐를 처리하는 워커가 없습니다.",
       "EMPTY_HINT": "워커 프로세스가 실행 중이고 동일한 Redis를 바라보는지 확인하세요.",
-      "EMPTY_PAUSED": "이 큐는 일시 정지 상태이므로 워커가 없어도 됩니다."
-    }
+      "EMPTY_PAUSED": "이 큐는 일시 정지 상태이므로 워커가 없어도 됩니다.",
+      "COLUMN_WORKER": "워커",
+      "COLUMN_ADDRESS": "주소",
+      "COLUMN_CONNECTED": "연결됨"
+    },
+    "RANGE": "{{total}}개 중 {{start}}–{{end}}"
   },
   "METRICS": {
     "TITLE": "처리량 (작업/분)",
@@ -254,7 +280,8 @@
     "TAB_LATENCY": "지연 시간",
     "P95_RUN_TIME": "실행 시간 p95",
     "P95_WAIT_TIME": "대기 시간 p95",
-    "NOT_AVAILABLE": "없음"
+    "NOT_AVAILABLE": "없음",
+    "TREND_LABEL": "기간 전반부 대비 {{value}}"
   },
   "LATENCY": {
     "TITLE": "작업 지연 시간",
@@ -299,7 +326,9 @@
     "UP_TIME": "가동 시간",
     "ERROR": {
       "MEMORY_USAGE": "메모리 통계를 가져올 수 없습니다"
-    }
+    },
+    "LIVE": "실시간",
+    "MEMORY_USED_OF": "{{used}} / {{total}}"
   },
   "SETTINGS": {
     "TITLE": "설정",
@@ -372,7 +401,9 @@
     "JOB_DATA": "작업 데이터"
   },
   "CLIPBOARD": {
-    "COPY_FAILED": "클립보드에 복사하지 못했습니다. 브라우저가 이 기능을 지원하지 않거나 페이지가 HTTPS를 통해 제공되지 않을 수 있습니다."
+    "COPY_FAILED": "클립보드에 복사하지 못했습니다. 브라우저가 이 기능을 지원하지 않거나 페이지가 HTTPS를 통해 제공되지 않을 수 있습니다.",
+    "COPY": "클립보드에 복사",
+    "COPIED": "복사됨"
   },
   "ERRORS": {
     "FORBIDDEN": "Forbidden",
@@ -414,6 +445,7 @@
     "REDIS_STATS_UNAVAILABLE": "이 큐의 백엔드에서는 Redis 세부 정보를 사용할 수 없습니다",
     "REDIS_UNAVAILABLE": "bull-board가 Redis에 연결할 수 없습니다. 자세한 내용은 대시보드를 여세요.",
     "STATUS_NOT_RETRIABLE": "\"{{status}}\"은(는) 재시도할 수 있는 상태가 아닙니다",
+    "UNAUTHORIZED": "이 보드에 접근하려면 로그인해야 합니다",
     "WORKERS_DISABLED": "워커 정보 표시가 비활성화되어 있습니다",
     "INVALID_METRIC": "잘못된 메트릭"
   },
@@ -453,7 +485,9 @@
       "CONFIRM_TITLE": "기록된 메트릭 내역을 삭제하시겠습니까?",
       "CONFIRM_TRIM": "{{date}} 이전에 기록된 모든 데이터가 삭제되고 마지막 {{range}}만 유지됩니다. 이 작업은 되돌릴 수 없으며 삭제된 일자는 차트에 더 이상 표시되지 않습니다.",
       "CONFIRM_CLEAR": "모든 큐에 대해 기록된 {{size}}의 내역이 삭제됩니다. 이 작업은 되돌릴 수 없습니다. 기록은 계속되므로 다음 스냅샷부터 새 데이터가 누적됩니다."
-    }
+    },
+    "SUBTITLE": "모든 큐의 완료 및 실패한 작업을 일별로 보여줍니다.",
+    "TREND": "추세"
   },
   "SCHEDULERS": {
     "TITLE": "스케줄러",
@@ -469,7 +503,8 @@
       "SCHEDULE": "일정",
       "NEXT_RUN": "다음 실행",
       "LAST_RUN": "마지막 실행",
-      "RUNS": "실행 횟수"
+      "RUNS": "실행 횟수",
+      "STATUS": "상태"
     },
     "INTERVAL": {
       "MILLISECONDS": "{{count}}ms",
@@ -508,6 +543,44 @@
       "EVERY": "간격 (ms)",
       "LIMIT": "최대 실행 횟수",
       "END_DATE": "종료 날짜"
+    },
+    "STATUS": {
+      "ACTIVE": "예약됨",
+      "LIMIT_REACHED": "한도 도달",
+      "ENDED": "종료됨",
+      "IDLE": "예약 안 됨"
     }
+  },
+  "HEADER": {
+    "SEARCH": "검색",
+    "DOCS": "문서",
+    "FULLSCREEN": "전체 화면 전환",
+    "LINKS": "링크",
+    "BREADCRUMB": "이동 경로",
+    "OPEN_MENU": "탐색 열기"
+  },
+  "COMMAND": {
+    "TITLE": "명령 팔레트",
+    "DESCRIPTION": "큐 또는 페이지로 이동",
+    "PLACEHOLDER": "큐 및 페이지 검색…",
+    "EMPTY": "결과가 없습니다.",
+    "PAGES": "페이지",
+    "QUEUES": "큐",
+    "THEME": "테마"
+  },
+  "USER": {
+    "MENU": "계정",
+    "SIGN_OUT": "로그아웃",
+    "ROLES": "역할",
+    "SIGNED_IN_WITH": "{{strategy}}(으)로 로그인됨"
+  },
+  "TOAST": {
+    "REGION_LABEL": "알림"
+  },
+  "PAGINATION": {
+    "LABEL": "페이지 탐색",
+    "PREVIOUS": "이전 페이지",
+    "NEXT": "다음 페이지",
+    "PAGE": "{{page}}페이지"
   }
 }

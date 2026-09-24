@@ -10,7 +10,10 @@
     "EXPAND_SIDEBAR": "Seitenleiste ausklappen",
     "COLLAPSE_SIDEBAR": "Seitenleiste einklappen",
     "METRICS_HISTORY": "Metrikverlauf",
-    "SCHEDULERS": "Zeitpläne"
+    "SCHEDULERS": "Zeitpläne",
+    "NAVIGATION": "Navigation",
+    "FILTER_EMPTY": "Keine Warteschlangen entsprechen deinem Filter",
+    "RELEASES": "Versionshinweise"
   },
   "DASHBOARD": {
     "JOBS_COUNT_one": "{{count}} Job",
@@ -25,13 +28,25 @@
       "WAITING": "Wartende Jobs",
       "ACTIVE": "Aktive Jobs",
       "COMPLETED": "Abgeschlossene Jobs",
-      "ALPHABETICAL": "Alphabetisch (A-Z)"
+      "ALPHABETICAL": "Alphabetisch (A-Z)",
+      "ASC": "Aufsteigend",
+      "DESC": "Absteigend"
     },
     "VIEW": {
       "TITLE": "Ansicht",
       "FLAT": "Flach",
       "GROUPED": "Gruppiert"
-    }
+    },
+    "KPI": {
+      "QUEUES": "Queues",
+      "PAUSED": "{{count}} pausiert",
+      "ALL_RUNNING": "Alle laufen",
+      "SHARE": "{{percent}} % der Jobs"
+    },
+    "CLEAR_SEARCH": "Suche löschen",
+    "EMPTY_STATE_SEARCH": "Keine Queue passt zu „{{term}}“.",
+    "CLEAR_FILTERS": "Filter zurücksetzen",
+    "BULK_ACTIONS": "Massenaktionen"
   },
   "JOB": {
     "DELAY_CHANGED": "*Verzögerung geändert; die neue Ausführungszeit ist derzeit unbekannt",
@@ -108,7 +123,11 @@
     "NO_ERRORS": "Keine Fehler aufgezeichnet",
     "NO_LOGS": "Keine Logs verfügbar",
     "LOGS": {
-      "FILTER_PLACEHOLDER": "Filter"
+      "FILTER_PLACEHOLDER": "Filter",
+      "FOLLOW": "Neuen Logzeilen folgen",
+      "FOLLOW_SHORT": "Folgen",
+      "FULLSCREEN": "Vollbild umschalten",
+      "LINES": "{{shown}} von {{total}} Zeilen"
     },
     "ACTIONS": {
       "PROMOTE": "Hochstufen",
@@ -136,7 +155,9 @@
       "LOGS": "Logs",
       "ERROR": "Fehler",
       "TIMELINE": "Zeitverlauf"
-    }
+    },
+    "EXPAND": "Job aufklappen",
+    "COLLAPSE": "Job zuklappen"
   },
   "QUEUE": {
     "NOT_FOUND": "Warteschlange nicht gefunden",
@@ -183,7 +204,8 @@
       },
       "PAUSE_GROUP": "Alle Warteschlangen in Gruppe pausieren",
       "RESUME_GROUP": "Alle Warteschlangen in Gruppe fortsetzen",
-      "GROUP_ACTIONS": "Gruppenaktionen"
+      "GROUP_ACTIONS": "Gruppenaktionen",
+      "QUEUE_ACTIONS": "Queue-Aktionen"
     },
     "STATUS": {
       "ALL": "Alle",
@@ -227,8 +249,12 @@
       "CONNECTED": "verbunden {{since}}",
       "EMPTY": "Diese Queue wird von niemandem verarbeitet.",
       "EMPTY_HINT": "Prüfe, ob ein Worker-Prozess läuft und auf dasselbe Redis zeigt.",
-      "EMPTY_PAUSED": "Diese Queue ist pausiert, es werden keine Worker erwartet."
-    }
+      "EMPTY_PAUSED": "Diese Queue ist pausiert, es werden keine Worker erwartet.",
+      "COLUMN_WORKER": "Worker",
+      "COLUMN_ADDRESS": "Adresse",
+      "COLUMN_CONNECTED": "Verbunden"
+    },
+    "RANGE": "{{start}}–{{end}} von {{total}}"
   },
   "METRICS": {
     "TITLE": "Durchsatz (Jobs / Min.)",
@@ -256,7 +282,8 @@
     "TAB_LATENCY": "Latenz",
     "P95_RUN_TIME": "Laufzeit p95",
     "P95_WAIT_TIME": "Wartezeit p95",
-    "NOT_AVAILABLE": "k. A."
+    "NOT_AVAILABLE": "k. A.",
+    "TREND_LABEL": "{{value}} gegenüber der ersten Hälfte des Zeitraums"
   },
   "LATENCY": {
     "TITLE": "Job-Latenz",
@@ -303,7 +330,9 @@
     "UP_TIME": "Betriebszeit",
     "ERROR": {
       "MEMORY_USAGE": "Speicherstatistiken konnten nicht abgerufen werden"
-    }
+    },
+    "LIVE": "Live",
+    "MEMORY_USED_OF": "{{used}} von {{total}}"
   },
   "SETTINGS": {
     "TITLE": "Einstellungen",
@@ -378,7 +407,9 @@
     "JOB_DATA": "Job-Daten"
   },
   "CLIPBOARD": {
-    "COPY_FAILED": "Kopieren in die Zwischenablage fehlgeschlagen. Ihr Browser unterstützt diese Funktion möglicherweise nicht oder die Seite wird nicht über HTTPS bereitgestellt."
+    "COPY_FAILED": "Kopieren in die Zwischenablage fehlgeschlagen. Ihr Browser unterstützt diese Funktion möglicherweise nicht oder die Seite wird nicht über HTTPS bereitgestellt.",
+    "COPY": "In die Zwischenablage kopieren",
+    "COPIED": "Kopiert"
   },
   "ERRORS": {
     "FORBIDDEN": "Forbidden",
@@ -420,6 +451,7 @@
     "REDIS_STATS_UNAVAILABLE": "Redis-Details sind für das Backend dieser Warteschlange nicht verfügbar",
     "REDIS_UNAVAILABLE": "bull-board kann keine Verbindung zu Redis herstellen. Öffnen Sie das Dashboard für Details.",
     "STATUS_NOT_RETRIABLE": "\"{{status}}\" ist kein wiederholbarer Status",
+    "UNAUTHORIZED": "Du musst dich anmelden, um auf dieses Board zuzugreifen",
     "WORKERS_DISABLED": "Worker-Berichte sind deaktiviert",
     "INVALID_METRIC": "Ungültige Metrik"
   },
@@ -459,7 +491,9 @@
       "CONFIRM_TITLE": "Aufgezeichnete Metrikverlaufsdaten löschen?",
       "CONFIRM_TRIM": "Alle vor {{date}} aufgezeichneten Daten werden gelöscht, wobei die letzten {{range}} erhalten bleiben. Dies kann nicht rückgängig gemacht werden, und die gelöschten Tage werden in keinem Diagramm mehr angezeigt.",
       "CONFIRM_CLEAR": "Der gesamte aufgezeichnete Verlauf ({{size}}) wird für jede Warteschlange gelöscht. Dies kann nicht rückgängig gemacht werden. Die Aufzeichnung wird fortgesetzt, sodass ab dem nächsten Snapshot neue Daten gesammelt werden."
-    }
+    },
+    "SUBTITLE": "Abgeschlossene und fehlgeschlagene Jobs aller Queues, Tag für Tag.",
+    "TREND": "Trend"
   },
   "SCHEDULERS": {
     "TITLE": "Zeitpläne",
@@ -475,7 +509,8 @@
       "SCHEDULE": "Plan",
       "NEXT_RUN": "Nächster Lauf",
       "LAST_RUN": "Letzter Lauf",
-      "RUNS": "Läufe"
+      "RUNS": "Läufe",
+      "STATUS": "Status"
     },
     "INTERVAL": {
       "MILLISECONDS": "{{count}}ms",
@@ -514,6 +549,44 @@
       "EVERY": "Intervall (ms)",
       "LIMIT": "Maximale Läufe",
       "END_DATE": "Enddatum"
+    },
+    "STATUS": {
+      "ACTIVE": "Geplant",
+      "LIMIT_REACHED": "Limit erreicht",
+      "ENDED": "Beendet",
+      "IDLE": "Nicht geplant"
     }
+  },
+  "HEADER": {
+    "SEARCH": "Suchen",
+    "DOCS": "Dokumentation",
+    "FULLSCREEN": "Vollbild umschalten",
+    "LINKS": "Links",
+    "BREADCRUMB": "Brotkrümelnavigation",
+    "OPEN_MENU": "Navigation öffnen"
+  },
+  "COMMAND": {
+    "TITLE": "Befehlspalette",
+    "DESCRIPTION": "Zu einer Warteschlange oder Seite springen",
+    "PLACEHOLDER": "Warteschlangen und Seiten durchsuchen…",
+    "EMPTY": "Keine Ergebnisse gefunden.",
+    "PAGES": "Seiten",
+    "QUEUES": "Warteschlangen",
+    "THEME": "Design"
+  },
+  "USER": {
+    "MENU": "Konto",
+    "SIGN_OUT": "Abmelden",
+    "ROLES": "Rollen",
+    "SIGNED_IN_WITH": "Angemeldet mit {{strategy}}"
+  },
+  "TOAST": {
+    "REGION_LABEL": "Benachrichtigungen"
+  },
+  "PAGINATION": {
+    "LABEL": "Seitennavigation",
+    "PREVIOUS": "Vorherige Seite",
+    "NEXT": "Nächste Seite",
+    "PAGE": "Seite {{page}}"
   }
 }

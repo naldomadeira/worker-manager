@@ -1,22 +1,23 @@
-import { Collapsible } from '@base-ui/react/collapsible';
 import { STATUSES } from '@worker-manager/api/constants/statuses';
 import type { AppJob, Status } from '@worker-manager/api/typings/app';
-import cn from 'clsx';
+import { ChevronDown } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Collapsible, CollapsibleContent } from '@/components/ui/collapsible';
+import { cn } from '@/lib/utils';
 import { useMobileQuery } from '../../hooks/useMobileQuery';
 import { useSettingsStore } from '../../hooks/useSettings';
-import { Button } from '../Button/Button';
-import { Card } from '../Card/Card';
-import { ChevronDown } from '../Icons/ChevronDown';
-import { ChevronUp } from '../Icons/ChevronUp';
+import { HintTooltip } from '../HintTooltip/HintTooltip';
 import { UpRightFromSquareSolid } from '../Icons/UpRightFromSquare';
+import { statusTone } from '../StatusTone/statusTone';
 import { Details } from './Details/Details';
 import { JobActions } from './JobActions/JobActions';
 import { Progress } from './Progress/Progress';
 import { Timeline } from './Timeline/Timeline';
-import s from './JobCard.module.css';
 
 interface JobCardProps {
   job: AppJob;
@@ -58,127 +59,171 @@ export const JobCard = ({
   const idPrefix = /^\d+$/.test(`${job.id}`) ? '#' : '';
   const isShortId = `${job.id}`.length <= 8;
 
+  const displayStatus =
+    job.isFailed && !greenStatuses.includes(status as any) ? STATUSES.failed : status;
+  const tone = statusTone(displayStatus);
+  const isRunning = displayStatus === STATUSES.active;
+  const pill = 'h-5 max-w-56 truncate rounded-md px-1.5 font-mono text-[0.6875rem] font-normal';
+
+  const title = (
+    <>
+      <span className="shrink-0 font-mono text-xs text-muted-foreground tracking-tight">
+        {idPrefix}
+        {job.id}
+      </span>
+      {isShortId && (
+        <span className="truncate text-[0.9375rem] font-semibold text-foreground">{job.name}</span>
+      )}
+    </>
+  );
+
   return (
-    <Collapsible.Root open={isExpandedCard} render={<Card className={s.card} />}>
-      <div className={s.header}>
-        <div className={s.titleWithLink}>
-          {jobUrl ? (
-            <Link className={s.jobLink} to={jobUrl}>
-              <span className={s.jobId}>
-                {idPrefix}
-                {job.id}
-              </span>
-              {isShortId && <span className={s.jobNameInline}>{job.name}</span>}
-            </Link>
-          ) : (
-            <>
-              <span
-                className={s.statusDot}
-                style={{ backgroundColor: `var(--status-${status})` }}
-              />
-              <span className={s.jobId}>
-                {idPrefix}
-                {job.id}
-              </span>
-              {isShortId && <span className={s.jobNameInline}>{job.name}</span>}
-            </>
-          )}
-
-          {job.groupId != null && (
-            <span className={s.groupPill} title={`Group: ${job.groupId}`}>
-              group: {job.groupId}
-            </span>
-          )}
-
-          {job.priority != null && (
-            <span className={s.groupPill}>
-              {t('JOB.DIAGNOSTICS.PRIORITY', { priority: job.priority })}
-            </span>
-          )}
-
-          {job.deduplicationId != null && (
-            <span className={s.groupPill} title={job.deduplicationId}>
-              {t('JOB.DIAGNOSTICS.DEDUPLICATED', { id: job.deduplicationId })}
-            </span>
-          )}
-
-          {job.stalledCounter != null && (
-            <span className={cn(s.groupPill, s.warnPill)}>
-              {t('JOB.DIAGNOSTICS.STALLED', { times: job.stalledCounter })}
-            </span>
-          )}
-
-          {job.attemptsStarted != null && (
-            <span className={s.groupPill}>
-              {t('JOB.DIAGNOSTICS.ATTEMPTS_STARTED', { starts: job.attemptsStarted })}
-            </span>
-          )}
-
-          {job.deferredFailure != null && (
-            <span className={cn(s.groupPill, s.warnPill)} title={job.deferredFailure}>
-              {t('JOB.DIAGNOSTICS.WILL_FAIL')}
-            </span>
-          )}
-
-          {job.externalUrl && (
-            <a
-              className={s.externalLink}
-              href={job.externalUrl.href}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {job.externalUrl.displayText ?? <UpRightFromSquareSolid />}
-            </a>
-          )}
-        </div>
-
-        <div className={s.headerActions}>
-          {!readOnlyMode && (
-            <JobActions status={status} actions={actions} allowRetries={allowRetries} />
-          )}
-          {showCollapseExpandBtn && (
-            <Button className={s.collapseBtn} onClick={() => setLocalCollapse(!isExpandedCard)}>
-              {isExpandedCard ? <ChevronUp /> : <ChevronDown />}
-            </Button>
-          )}
-        </div>
-      </div>
-
-      <Collapsible.Panel render={<div className={s.details} />}>
-        {!isMobile && (
-          <div className={s.sideInfo}>
-            <Timeline job={job} status={status} />
-          </div>
-        )}
-
-        <div className={s.contentWrapper}>
-          {!isShortId && (
-            <h5 className={s.jobName}>
-              {job.name}
-              {job.attempts > 1 && <span>{t('JOB.ATTEMPTS', { attempts: job.attempts })}</span>}
-              {!!job.opts?.repeat?.count && (
-                <span>
-                  {t(`JOB.REPEAT${!!job.opts?.repeat?.limit ? '_WITH_LIMIT' : ''}`, {
-                    count: job.opts.repeat.count,
-                    limit: job.opts?.repeat?.limit,
-                  })}
-                </span>
+    <Collapsible open={isExpandedCard} asChild>
+      <Card
+        data-status={displayStatus}
+        className="group/job relative gap-0 overflow-visible py-0 shadow-xs transition-shadow duration-200 hover:shadow-md"
+      >
+        <span
+          aria-hidden
+          className={cn('absolute inset-y-3 left-0 w-[3px] rounded-r-full', tone.dot)}
+        />
+        <div className="flex w-full items-center justify-between gap-3 py-3 pr-3 pl-5">
+          <div className="flex min-w-0 flex-wrap items-center gap-x-2.5 gap-y-1.5">
+            <span
+              aria-hidden
+              className={cn(
+                'size-2 shrink-0 rounded-full',
+                tone.dot,
+                isRunning && 'animate-pulse-ring text-status-active'
               )}
-            </h5>
-          )}
+            />
+            {jobUrl ? (
+              <Link
+                className="flex min-w-0 items-baseline gap-2 rounded-sm outline-none hover:[&>span:last-child]:underline hover:[&>span:last-child]:underline-offset-4 focus-visible:ring-3 focus-visible:ring-ring/50"
+                to={jobUrl}
+              >
+                {title}
+              </Link>
+            ) : (
+              <span className="flex min-w-0 items-baseline gap-2">{title}</span>
+            )}
 
-          <div className={s.content}>
-            <Details status={status} job={job} actions={actions} withTimeline={isMobile} />
+            {job.groupId != null && (
+              <Badge variant="secondary" className={pill} title={`Group: ${job.groupId}`}>
+                group: {job.groupId}
+              </Badge>
+            )}
+
+            {job.priority != null && (
+              <Badge variant="secondary" className={pill}>
+                {t('JOB.DIAGNOSTICS.PRIORITY', { priority: job.priority })}
+              </Badge>
+            )}
+
+            {job.deduplicationId != null && (
+              <Badge variant="secondary" className={pill} title={job.deduplicationId}>
+                {t('JOB.DIAGNOSTICS.DEDUPLICATED', { id: job.deduplicationId })}
+              </Badge>
+            )}
+
+            {job.stalledCounter != null && (
+              <Badge className={cn(pill, 'bg-status-failed/12 text-status-failed')}>
+                {t('JOB.DIAGNOSTICS.STALLED', { times: job.stalledCounter })}
+              </Badge>
+            )}
+
+            {job.attemptsStarted != null && (
+              <Badge variant="secondary" className={pill}>
+                {t('JOB.DIAGNOSTICS.ATTEMPTS_STARTED', { starts: job.attemptsStarted })}
+              </Badge>
+            )}
+
+            {job.deferredFailure != null && (
+              <Badge
+                className={cn(pill, 'bg-status-failed/12 text-status-failed')}
+                title={job.deferredFailure}
+              >
+                {t('JOB.DIAGNOSTICS.WILL_FAIL')}
+              </Badge>
+            )}
+
+            {job.externalUrl && (
+              <a
+                className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-xs text-muted-foreground transition-colors hover:bg-state-hover hover:text-foreground [&_svg]:size-3"
+                href={job.externalUrl.href}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {job.externalUrl.displayText ?? <UpRightFromSquareSolid />}
+              </a>
+            )}
           </div>
-          <Progress
-            progress={job.progress}
-            status={
-              job.isFailed && !greenStatuses.includes(status as any) ? STATUSES.failed : status
-            }
-            className={s.progress}
-          />
+
+          <div className="flex shrink-0 items-center gap-1">
+            {!readOnlyMode && (
+              <JobActions status={status} actions={actions} allowRetries={allowRetries} />
+            )}
+            {showCollapseExpandBtn && (
+              <HintTooltip title={t(isExpandedCard ? 'JOB.COLLAPSE' : 'JOB.EXPAND')}>
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  aria-expanded={isExpandedCard}
+                  aria-label={t(isExpandedCard ? 'JOB.COLLAPSE' : 'JOB.EXPAND')}
+                  className="text-muted-foreground"
+                  onClick={() => setLocalCollapse(!isExpandedCard)}
+                >
+                  <ChevronDown
+                    className={cn(
+                      'transition-transform duration-200',
+                      isExpandedCard && 'rotate-180'
+                    )}
+                  />
+                </Button>
+              </HintTooltip>
+            )}
+          </div>
         </div>
-      </Collapsible.Panel>
-    </Collapsible.Root>
+
+        <CollapsibleContent className="overflow-hidden data-open:animate-collapsible-down data-closed:animate-collapsible-up">
+          <div
+            className={cn(
+              'grid gap-5 border-t px-5 py-4',
+              !isMobile && 'grid-cols-[11rem_minmax(0,1fr)] gap-6'
+            )}
+          >
+            {!isMobile && (
+              <aside className="border-r pr-5">
+                <Timeline job={job} status={status} />
+              </aside>
+            )}
+
+            <div className="flex min-w-0 flex-col gap-3">
+              {!isShortId && (
+                <h5 className="m-0 flex min-w-0 flex-wrap items-baseline gap-x-3 text-[0.9375rem] leading-snug font-semibold">
+                  <span className="truncate">{job.name}</span>
+                  {job.attempts > 1 && (
+                    <span className="text-xs font-normal text-muted-foreground">
+                      {t('JOB.ATTEMPTS', { attempts: job.attempts })}
+                    </span>
+                  )}
+                  {!!job.opts?.repeat?.count && (
+                    <span className="text-xs font-normal text-muted-foreground">
+                      {t(`JOB.REPEAT${!!job.opts?.repeat?.limit ? '_WITH_LIMIT' : ''}`, {
+                        count: job.opts.repeat.count,
+                        limit: job.opts?.repeat?.limit,
+                      })}
+                    </span>
+                  )}
+                </h5>
+              )}
+              <Progress progress={job.progress} status={displayStatus} />
+
+              <Details status={status} job={job} actions={actions} withTimeline={isMobile} />
+            </div>
+          </div>
+        </CollapsibleContent>
+      </Card>
+    </Collapsible>
   );
 };

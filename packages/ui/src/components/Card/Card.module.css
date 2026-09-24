@@ -1,8 +1,0 @@
-.card {
-  background-color: var(--card);
-  box-shadow: 0 0 0 1px var(--border);
-  border-radius: var(--radius-lg);
-  padding: var(--card-padding);
-  display: flex;
-  min-width: 0;
-}

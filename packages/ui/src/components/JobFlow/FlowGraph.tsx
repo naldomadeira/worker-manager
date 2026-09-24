@@ -9,13 +9,14 @@ import {
 } from '@xyflow/react';
 import { Crosshair, Maximize, Minus, Plus } from 'lucide-react';
 import { useRef, useState } from 'react';
+import type { CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FlowDetailsPanel } from './FlowDetailsPanel';
 import { FlowJobNode } from './FlowJobNode';
 import type { FlowGraphNode, FlowJobNodeData } from './flowLayout';
 import { layoutFlow, nodeKey, shapeSignature } from './flowLayout';
+import { stateColor } from './flowStates';
 import { useFlowExpansion } from './useFlowExpansion';
-import styles from './FlowGraph.module.css';
 import '@xyflow/react/dist/style.css';
 
 const nodeTypes = { jobNode: FlowJobNode };
@@ -57,6 +58,39 @@ function findByKey(node: FlowNode, key: string): FlowNode | null {
 }
 
 const ICON_SIZE = 15;
+
+/** xyflow reads its colours from these custom properties; mapping them onto the theme tokens
+ * keeps the canvas, controls and minimap in step with light and dark mode. */
+const flowTheme = {
+  '--xy-background-color': 'var(--background)',
+  '--xy-background-pattern-color': 'color-mix(in oklab, var(--muted-foreground) 35%, transparent)',
+  '--xy-node-background-color': 'transparent',
+  '--xy-node-border': 'none',
+  '--xy-node-border-radius': 'var(--radius-xl)',
+  '--xy-node-boxshadow-hover': 'none',
+  '--xy-node-boxshadow-selected': 'none',
+  '--xy-edge-stroke': 'color-mix(in oklab, var(--muted-foreground) 45%, transparent)',
+  '--xy-edge-stroke-selected': 'var(--primary)',
+  '--xy-attribution-background-color': 'transparent',
+  '--xy-controls-button-background-color': 'var(--card)',
+  '--xy-controls-button-background-color-hover': 'var(--muted)',
+  '--xy-controls-button-color': 'var(--foreground)',
+  '--xy-controls-button-color-hover': 'var(--foreground)',
+  '--xy-controls-button-border-color': 'var(--border)',
+  '--xy-minimap-background-color': 'var(--card)',
+  '--xy-minimap-mask-background-color': 'color-mix(in oklab, var(--background) 55%, transparent)',
+  '--xy-minimap-mask-stroke-color': 'var(--primary)',
+} as CSSProperties;
+
+const canvasClassName = [
+  'relative h-[360px] min-h-80 min-w-0 overflow-hidden rounded-xl border min-[1100px]:h-full',
+  '[&_.react-flow__controls]:overflow-hidden [&_.react-flow__controls]:rounded-lg [&_.react-flow__controls]:border [&_.react-flow__controls]:shadow-sm',
+  '[&_.react-flow__controls-button]:size-7 [&_.react-flow__controls-button]:transition-colors',
+  '[&_.react-flow__controls-button_svg]:max-h-none! [&_.react-flow__controls-button_svg]:max-w-none! [&_.react-flow__controls-button_svg]:fill-none! [&_.react-flow__controls-button_svg]:stroke-current',
+  '[&_.react-flow__minimap]:overflow-hidden [&_.react-flow__minimap]:rounded-lg [&_.react-flow__minimap]:border [&_.react-flow__minimap]:shadow-sm',
+  '[&_.react-flow__node]:rounded-xl [&_.react-flow__node:focus-visible]:outline-none [&_.react-flow__node:focus-visible]:ring-3 [&_.react-flow__node:focus-visible]:ring-ring/50',
+  '[&_.react-flow__edge-path]:transition-[stroke]',
+].join(' ');
 
 const FlowControls = ({
   focusNodeId,
@@ -157,19 +191,20 @@ const FlowGraph = ({ root, activeJob }: FlowGraphProps) => {
   };
 
   return (
-    <div className={styles.layout}>
-      <div className={styles.panelSlot}>
+    <div className="grid h-full min-h-0 grid-cols-1 gap-3 min-[1100px]:grid-cols-[minmax(0,1fr)_20rem]">
+      <div className="order-2 flex min-h-0 min-w-0 min-[1100px]:order-none min-[1100px]:col-start-2 min-[1100px]:row-start-1">
         {selected ? (
-          <FlowDetailsPanel node={selected} />
+          <FlowDetailsPanel key={nodeKey(selected)} node={selected} />
         ) : (
-          <aside className={styles.panel}>
-            <p className={styles.panelEmpty}>{t('JOB.FLOW.NO_SELECTION')}</p>
+          <aside className="flex flex-1 items-center justify-center rounded-xl border border-dashed bg-muted/30 p-6 text-center text-[0.8125rem] text-muted-foreground">
+            <p>{t('JOB.FLOW.NO_SELECTION')}</p>
           </aside>
         )}
       </div>
-      <div className={styles.canvasSlot}>
-        <div className={styles.canvas}>
+      <div className="min-w-0 min-[1100px]:col-start-1 min-[1100px]:row-start-1">
+        <div className={canvasClassName}>
           <ReactFlow
+            style={flowTheme}
             nodes={nodes}
             edges={laidOut.edges}
             nodeTypes={nodeTypes}
@@ -194,21 +229,22 @@ const FlowGraph = ({ root, activeJob }: FlowGraphProps) => {
               }
             }}
           >
-            <Background />
+            <Background gap={18} size={1.2} />
             <FlowControls
               focusNodeId={focusable}
               onFocus={() => focusable && setSelectedKey(focusable)}
             />
             {nodes.length >= MINIMAP_FROM_NODES && (
               <MiniMap
-                className={styles.minimap}
+                className="m-3!"
                 style={{ width: MINIMAP_WIDTH, height: MINIMAP_HEIGHT }}
                 pannable
                 zoomable
                 nodeStrokeWidth={12}
-                nodeClassName={(node) =>
-                  `bb-flow-mini bb-flow-mini-${(node.data as unknown as FlowJobNodeData).node.state}`
+                nodeColor={(node) =>
+                  stateColor((node.data as unknown as FlowJobNodeData).node.state)
                 }
+                nodeStrokeColor="transparent"
               />
             )}
           </ReactFlow>

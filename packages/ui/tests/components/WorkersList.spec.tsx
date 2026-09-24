@@ -34,7 +34,9 @@ describe('WorkersList', () => {
   it('renders a row per connected worker', () => {
     renderList([worker(), worker({ id: '43', addr: '172.20.0.1:55487' })]);
 
-    expect(screen.getAllByRole('listitem')).toHaveLength(2);
+    // The list is a table now: count the body rows, not the header row.
+    const bodyRows = screen.getAllByRole('row').filter((row) => row.closest('tbody'));
+    expect(bodyRows).toHaveLength(2);
   });
 
   it('explains what to check when nothing is consuming the queue', () => {

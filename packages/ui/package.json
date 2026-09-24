@@ -39,7 +39,6 @@
     "@worker-manager/api": "9.10.1"
   },
   "devDependencies": {
-    "@base-ui/react": "^1.7.0",
     "@codemirror/autocomplete": "^6.20.3",
     "@codemirror/commands": "^6.11.0",
     "@codemirror/lang-json": "^6.0.2",
@@ -62,7 +61,6 @@
     "@types/jest": "^30.0.0",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
-    "@types/react-paginate": "^7.1.4",
     "@types/react-router-dom": "^5.3.3",
     "@xyflow/react": "^12.11.6",
     "axios": "^1.20.0",
@@ -90,7 +88,6 @@
     "react-dom": "^19.2.8",
     "react-i18next": "^17.0.12",
     "react-json-view-lite": "^2.5.0",
-    "react-paginate": "^8.3.0",
     "react-router-dom": "^5.3.4",
     "recharts": "^3.10.1",
     "sonner": "^2.0.8",

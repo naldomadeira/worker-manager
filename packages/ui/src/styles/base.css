@@ -1,157 +1,45 @@
-body {
-  background: var(--background);
-  font-family: var(--font-sans);
-  font-weight: 400;
-  line-height: 1.25em;
-  margin: 0;
-  font-size: 15px;
-  color: var(--foreground);
-  -webkit-font-smoothing: antialiased;
-
-  &.preload * {
-    transition: none !important;
-  }
-}
-
-html,
-body {
-  height: 100%;
-}
-
-* {
-  box-sizing: border-box;
-}
-
-#root {
-  height: inherit;
-}
-
-small {
-  font-size: 0.833em;
-  opacity: 0.85;
-}
-
-code,
-kbd,
-pre,
-samp {
-  font-family: var(--font-mono);
-}
-
-main {
-  min-height: 100%;
-  transition: padding-left 200ms ease;
-}
-
-body[data-sidebar-collapsed='true'] main {
-  padding-left: 0;
-}
-
-main > div {
-  padding: var(--body-padding);
-}
-
-.header-title-group {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  min-width: 0;
-  overflow: hidden;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  main {
-    transition: none;
-  }
-}
-
-/* Mobile styles */
-@media (max-width: 768px) {
+/*
+ * Global rules Tailwind's preflight and `styles/tailwind.css` do not already cover. Kept in the
+ * base layer so any utility class still wins over them.
+ */
+@layer base {
   html,
   body {
-    overflow-x: hidden;
+    height: 100%;
   }
-}
 
-button {
-  font-family: inherit;
-}
+  #root {
+    height: inherit;
+  }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-weight: 500;
-}
+  /* index.html ships body.preload so the first paint does not animate every transition in. */
+  body.preload * {
+    transition: none !important;
+  }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-article,
-li {
-  margin: 0;
-  line-height: 1.5em;
-}
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-weight: 500;
+    line-height: 1.5em;
+  }
 
-:focus-visible {
-  outline: 3px solid color-mix(in srgb, var(--ring) 20%, transparent);
-  box-shadow: 0 0 0 1px var(--ring);
-  outline-offset: 1px;
-}
+  small {
+    font-size: 0.833em;
+    opacity: 0.85;
+  }
 
-::selection {
-  background: color-mix(in srgb, var(--primary) 22%, transparent);
-}
+  ::selection {
+    background: color-mix(in srgb, var(--primary) 22%, transparent);
+  }
 
-[multiple],
-input[type='date'],
-input[type='datetime-local'],
-input[type='email'],
-input[type='month'],
-input[type='number'],
-input[type='password'],
-input[type='search'],
-input[type='tel'],
-input[type='text'],
-input[type='time'],
-input[type='url'],
-input[type='week'],
-textarea {
-  appearance: none;
-  background-color: var(--background);
-  border: 1px var(--input) solid;
-  border-radius: var(--radius);
-  padding: 0.5rem 0.75rem;
-  font-size: 0.9375rem;
-  line-height: 1.5rem;
-  font-family: inherit;
-  font-weight: inherit;
-  color: var(--foreground);
-  margin: 0;
-  transition:
-    border-color 0.15s ease-out,
-    box-shadow 0.15s ease-out;
-}
-
-input[type='date']:focus,
-input[type='datetime-local']:focus,
-input[type='email']:focus,
-input[type='month']:focus,
-input[type='number']:focus,
-input[type='password']:focus,
-input[type='search']:focus,
-input[type='tel']:focus,
-input[type='text']:focus,
-input[type='time']:focus,
-input[type='url']:focus,
-input[type='week']:focus,
-textarea:focus {
-  outline: none;
-  border-color: var(--ring);
-  box-shadow: var(--shadow-ring);
+  @media (max-width: 768px) {
+    html,
+    body {
+      overflow-x: hidden;
+    }
+  }
 }

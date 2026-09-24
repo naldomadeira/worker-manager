@@ -10,7 +10,10 @@
     "EXPAND_SIDEBAR": "Expandir barra lateral",
     "COLLAPSE_SIDEBAR": "Colapsar barra lateral",
     "METRICS_HISTORY": "Historial de métricas",
-    "SCHEDULERS": "Programaciones"
+    "SCHEDULERS": "Programaciones",
+    "NAVIGATION": "Navegación",
+    "FILTER_EMPTY": "Ninguna cola coincide con tu filtro",
+    "RELEASES": "Notas de la versión"
   },
   "DASHBOARD": {
     "JOBS_COUNT_one": "{{count}} Tarea",
@@ -26,13 +29,25 @@
       "WAITING": "Trabajos en espera",
       "ACTIVE": "Trabajos activos",
       "COMPLETED": "Trabajos completados",
-      "ALPHABETICAL": "Alfabético (A-Z)"
+      "ALPHABETICAL": "Alfabético (A-Z)",
+      "ASC": "Ascendente",
+      "DESC": "Descendente"
     },
     "VIEW": {
       "TITLE": "Vista",
       "FLAT": "Plano",
       "GROUPED": "Agrupado"
-    }
+    },
+    "KPI": {
+      "QUEUES": "Colas",
+      "PAUSED": "{{count}} en pausa",
+      "ALL_RUNNING": "Todas en ejecución",
+      "SHARE": "{{percent}}% de los trabajos"
+    },
+    "CLEAR_SEARCH": "Borrar búsqueda",
+    "EMPTY_STATE_SEARCH": "Ninguna cola coincide con «{{term}}».",
+    "CLEAR_FILTERS": "Borrar filtros",
+    "BULK_ACTIONS": "Acciones masivas"
   },
   "JOB": {
     "DELAY_CHANGED": "*Retraso modificado; el nuevo tiempo de ejecución es actualmente desconocido",
@@ -109,7 +124,11 @@
     "NO_ERRORS": "No se registraron errores",
     "NO_LOGS": "No hay registros disponibles",
     "LOGS": {
-      "FILTER_PLACEHOLDER": "Filtros"
+      "FILTER_PLACEHOLDER": "Filtros",
+      "FOLLOW": "Seguir las nuevas líneas del log",
+      "FOLLOW_SHORT": "Seguir",
+      "FULLSCREEN": "Alternar pantalla completa",
+      "LINES": "{{shown}} de {{total}} líneas"
     },
     "ACTIONS": {
       "PROMOTE": "Promover",
@@ -137,7 +156,9 @@
       "LOGS": "Registros",
       "ERROR": "Error",
       "TIMELINE": "Línea de tiempo"
-    }
+    },
+    "EXPAND": "Expandir trabajo",
+    "COLLAPSE": "Contraer trabajo"
   },
   "QUEUE": {
     "NOT_FOUND": "Cola no encontrada",
@@ -184,7 +205,8 @@
       },
       "PAUSE_GROUP": "Pausar todas las colas del grupo",
       "RESUME_GROUP": "Reanudar todas las colas del grupo",
-      "GROUP_ACTIONS": "Acciones de grupo"
+      "GROUP_ACTIONS": "Acciones de grupo",
+      "QUEUE_ACTIONS": "Acciones de la cola"
     },
     "STATUS": {
       "ALL": "Todas",
@@ -228,8 +250,12 @@
       "CONNECTED": "conectado {{since}}",
       "EMPTY": "Nada está consumiendo esta cola.",
       "EMPTY_HINT": "Comprueba que haya un proceso worker en marcha y apuntando al mismo Redis.",
-      "EMPTY_PAUSED": "Esta cola está pausada, así que no se esperan workers."
-    }
+      "EMPTY_PAUSED": "Esta cola está pausada, así que no se esperan workers.",
+      "COLUMN_WORKER": "Worker",
+      "COLUMN_ADDRESS": "Dirección",
+      "COLUMN_CONNECTED": "Conectado"
+    },
+    "RANGE": "{{start}}–{{end}} de {{total}}"
   },
   "METRICS": {
     "TITLE": "Rendimiento (trabajos / min)",
@@ -257,7 +283,8 @@
     "TAB_LATENCY": "Latencia",
     "P95_RUN_TIME": "Ejecución p95",
     "P95_WAIT_TIME": "Espera p95",
-    "NOT_AVAILABLE": "n/d"
+    "NOT_AVAILABLE": "n/d",
+    "TREND_LABEL": "{{value}} frente a la primera mitad del periodo"
   },
   "LATENCY": {
     "TITLE": "Latencia de trabajos",
@@ -305,7 +332,9 @@
     "UP_TIME": "Tiempo de actividad",
     "ERROR": {
       "MEMORY_USAGE": "No se pudieron recuperar las estadísticas de memoria"
-    }
+    },
+    "LIVE": "En vivo",
+    "MEMORY_USED_OF": "{{used}} de {{total}}"
   },
   "SETTINGS": {
     "TITLE": "Configuración",
@@ -381,7 +410,9 @@
     "JOB_DATA": "Datos de la tarea"
   },
   "CLIPBOARD": {
-    "COPY_FAILED": "No se pudo copiar al portapapeles. Es posible que tu navegador no admita esta función o que la página no se sirva a través de HTTPS."
+    "COPY_FAILED": "No se pudo copiar al portapapeles. Es posible que tu navegador no admita esta función o que la página no se sirva a través de HTTPS.",
+    "COPY": "Copiar al portapapeles",
+    "COPIED": "Copiado"
   },
   "ERRORS": {
     "FORBIDDEN": "Forbidden",
@@ -423,6 +454,7 @@
     "REDIS_STATS_UNAVAILABLE": "Los detalles de Redis no están disponibles para el backend de esta cola",
     "REDIS_UNAVAILABLE": "bull-board no puede conectarse a Redis. Abre el panel para ver los detalles.",
     "STATUS_NOT_RETRIABLE": "\"{{status}}\" no es un estado reintentable",
+    "UNAUTHORIZED": "Debes iniciar sesión para acceder a este panel",
     "WORKERS_DISABLED": "El informe de workers está desactivado",
     "INVALID_METRIC": "Métrica no válida"
   },
@@ -462,7 +494,9 @@
       "CONFIRM_TITLE": "¿Eliminar el historial de métricas registrado?",
       "CONFIRM_TRIM": "Todo lo registrado antes de {{date}} se eliminará, conservando el último {{range}}. Esto no se puede deshacer y los días eliminados ya no aparecerán en ningún gráfico.",
       "CONFIRM_CLEAR": "Se eliminarán todos los {{size}} del historial registrado de todas las colas. Esto no se puede deshacer. La grabación continúa, por lo que los nuevos datos comenzarán a acumularse a partir de la siguiente instantánea."
-    }
+    },
+    "SUBTITLE": "Trabajos completados y fallidos de todas las colas, día a día.",
+    "TREND": "Tendencia"
   },
   "SCHEDULERS": {
     "TITLE": "Programaciones",
@@ -478,7 +512,8 @@
       "SCHEDULE": "Horario",
       "NEXT_RUN": "Próxima ejecución",
       "LAST_RUN": "Última ejecución",
-      "RUNS": "Ejecuciones"
+      "RUNS": "Ejecuciones",
+      "STATUS": "Estado"
     },
     "INTERVAL": {
       "MILLISECONDS": "{{count}}ms",
@@ -517,6 +552,44 @@
       "EVERY": "Intervalo (ms)",
       "LIMIT": "Ejecuciones máximas",
       "END_DATE": "Fecha de fin"
+    },
+    "STATUS": {
+      "ACTIVE": "Programado",
+      "LIMIT_REACHED": "Límite alcanzado",
+      "ENDED": "Finalizado",
+      "IDLE": "Sin programar"
     }
+  },
+  "HEADER": {
+    "SEARCH": "Buscar",
+    "DOCS": "Documentación",
+    "FULLSCREEN": "Alternar pantalla completa",
+    "LINKS": "Enlaces",
+    "BREADCRUMB": "Ruta de navegación",
+    "OPEN_MENU": "Abrir navegación"
+  },
+  "COMMAND": {
+    "TITLE": "Paleta de comandos",
+    "DESCRIPTION": "Ir a una cola o página",
+    "PLACEHOLDER": "Buscar colas y páginas…",
+    "EMPTY": "No se encontraron resultados.",
+    "PAGES": "Páginas",
+    "QUEUES": "Colas",
+    "THEME": "Tema"
+  },
+  "USER": {
+    "MENU": "Cuenta",
+    "SIGN_OUT": "Cerrar sesión",
+    "ROLES": "Roles",
+    "SIGNED_IN_WITH": "Sesión iniciada con {{strategy}}"
+  },
+  "TOAST": {
+    "REGION_LABEL": "Notificaciones"
+  },
+  "PAGINATION": {
+    "LABEL": "Paginación",
+    "PREVIOUS": "Página anterior",
+    "NEXT": "Página siguiente",
+    "PAGE": "Página {{page}}"
   }
 }

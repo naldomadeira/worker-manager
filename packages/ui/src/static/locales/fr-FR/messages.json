@@ -10,7 +10,10 @@
     "EXPAND_SIDEBAR": "Développer la barre latérale",
     "COLLAPSE_SIDEBAR": "Réduire la barre latérale",
     "METRICS_HISTORY": "Historique des métriques",
-    "SCHEDULERS": "Planificateurs"
+    "SCHEDULERS": "Planificateurs",
+    "NAVIGATION": "Navigation",
+    "FILTER_EMPTY": "Aucune file ne correspond à votre filtre",
+    "RELEASES": "Notes de version"
   },
   "DASHBOARD": {
     "JOBS_COUNT_one": "{{count}} Tâche",
@@ -26,13 +29,25 @@
       "WAITING": "Tâches en attente",
       "ACTIVE": "Tâches actives",
       "COMPLETED": "Tâches terminées",
-      "ALPHABETICAL": "Alphabétique (A-Z)"
+      "ALPHABETICAL": "Alphabétique (A-Z)",
+      "ASC": "Croissant",
+      "DESC": "Décroissant"
     },
     "VIEW": {
       "TITLE": "Vue",
       "FLAT": "Plat",
       "GROUPED": "Groupé"
-    }
+    },
+    "KPI": {
+      "QUEUES": "Files",
+      "PAUSED": "{{count}} en pause",
+      "ALL_RUNNING": "Toutes actives",
+      "SHARE": "{{percent}} % des tâches"
+    },
+    "CLEAR_SEARCH": "Effacer la recherche",
+    "EMPTY_STATE_SEARCH": "Aucune file ne correspond à « {{term}} ».",
+    "CLEAR_FILTERS": "Effacer les filtres",
+    "BULK_ACTIONS": "Actions groupées"
   },
   "JOB": {
     "DELAY_CHANGED": "*Délai modifié; le nouveau temps d'exécution est actuellement inconnu",
@@ -109,7 +124,11 @@
     "NO_ERRORS": "Aucune erreur enregistrée",
     "NO_LOGS": "Aucun journal disponible",
     "LOGS": {
-      "FILTER_PLACEHOLDER": "Filtres"
+      "FILTER_PLACEHOLDER": "Filtres",
+      "FOLLOW": "Suivre les nouvelles lignes du journal",
+      "FOLLOW_SHORT": "Suivre",
+      "FULLSCREEN": "Basculer en plein écran",
+      "LINES": "{{shown}} sur {{total}} lignes"
     },
     "ACTIONS": {
       "PROMOTE": "Promouvoir",
@@ -137,7 +156,9 @@
       "LOGS": "Journaux",
       "ERROR": "Erreur",
       "TIMELINE": "Chronologie"
-    }
+    },
+    "EXPAND": "Déplier la tâche",
+    "COLLAPSE": "Replier la tâche"
   },
   "QUEUE": {
     "NOT_FOUND": "File non trouvée",
@@ -184,7 +205,8 @@
       },
       "PAUSE_GROUP": "Mettre en pause toutes les files du groupe",
       "RESUME_GROUP": "Reprendre toutes les files du groupe",
-      "GROUP_ACTIONS": "Actions de groupe"
+      "GROUP_ACTIONS": "Actions de groupe",
+      "QUEUE_ACTIONS": "Actions de la file"
     },
     "STATUS": {
       "ALL": "Toutes",
@@ -228,8 +250,12 @@
       "CONNECTED": "connecté {{since}}",
       "EMPTY": "Rien ne consomme cette file.",
       "EMPTY_HINT": "Vérifiez qu'un processus worker tourne et pointe vers le même Redis.",
-      "EMPTY_PAUSED": "Cette file est en pause, aucun worker n'est attendu."
-    }
+      "EMPTY_PAUSED": "Cette file est en pause, aucun worker n'est attendu.",
+      "COLUMN_WORKER": "Worker",
+      "COLUMN_ADDRESS": "Adresse",
+      "COLUMN_CONNECTED": "Connecté"
+    },
+    "RANGE": "{{start}}–{{end}} sur {{total}}"
   },
   "METRICS": {
     "TITLE": "Débit (jobs / min)",
@@ -257,7 +283,8 @@
     "TAB_LATENCY": "Latence",
     "P95_RUN_TIME": "Exécution p95",
     "P95_WAIT_TIME": "Attente p95",
-    "NOT_AVAILABLE": "n/d"
+    "NOT_AVAILABLE": "n/d",
+    "TREND_LABEL": "{{value}} par rapport à la première moitié de la période"
   },
   "LATENCY": {
     "TITLE": "Latence des jobs",
@@ -305,7 +332,9 @@
     "UP_TIME": "Temps de fonctionnement",
     "ERROR": {
       "MEMORY_USAGE": "Impossible de récupérer les statistiques de la mémoire"
-    }
+    },
+    "LIVE": "En direct",
+    "MEMORY_USED_OF": "{{used}} sur {{total}}"
   },
   "SETTINGS": {
     "TITLE": "Paramètres",
@@ -381,7 +410,9 @@
     "JOB_DATA": "Données de tâche"
   },
   "CLIPBOARD": {
-    "COPY_FAILED": "Échec de la copie dans le presse-papiers. Votre navigateur peut ne pas prendre en charge cette fonctionnalité ou la page n'est pas servie via HTTPS."
+    "COPY_FAILED": "Échec de la copie dans le presse-papiers. Votre navigateur peut ne pas prendre en charge cette fonctionnalité ou la page n'est pas servie via HTTPS.",
+    "COPY": "Copier dans le presse-papiers",
+    "COPIED": "Copié"
   },
   "ERRORS": {
     "FORBIDDEN": "Forbidden",
@@ -423,6 +454,7 @@
     "REDIS_STATS_UNAVAILABLE": "Les détails Redis ne sont pas disponibles pour le backend de cette file",
     "REDIS_UNAVAILABLE": "bull-board ne parvient pas à joindre Redis. Ouvrez le tableau de bord pour plus de détails.",
     "STATUS_NOT_RETRIABLE": "\"{{status}}\" n'est pas un état relançable",
+    "UNAUTHORIZED": "Vous devez vous connecter pour accéder à ce tableau de bord",
     "WORKERS_DISABLED": "Le rapport des workers est désactivé",
     "INVALID_METRIC": "Métrique invalide"
   },
@@ -462,7 +494,9 @@
       "CONFIRM_TITLE": "Supprimer l'historique des métriques enregistré ?",
       "CONFIRM_TRIM": "Tout ce qui a été enregistré avant {{date}} sera supprimé, en conservant les {{range}} derniers. Cette action est irréversible et les jours supprimés n'apparaîtront plus dans aucun graphique.",
       "CONFIRM_CLEAR": "La totalité des {{size}} de l'historique enregistré sera supprimée pour chaque file. Cette action est irréversible. L'enregistrement continue, donc les nouvelles données recommencent à s'accumuler à partir de la prochaine capture."
-    }
+    },
+    "SUBTITLE": "Tâches terminées et échouées de toutes les files, jour par jour.",
+    "TREND": "Tendance"
   },
   "SCHEDULERS": {
     "TITLE": "Planificateurs",
@@ -478,7 +512,8 @@
       "SCHEDULE": "Planification",
       "NEXT_RUN": "Prochaine exécution",
       "LAST_RUN": "Dernière exécution",
-      "RUNS": "Exécutions"
+      "RUNS": "Exécutions",
+      "STATUS": "Statut"
     },
     "INTERVAL": {
       "MILLISECONDS": "{{count}}ms",
@@ -517,6 +552,44 @@
       "EVERY": "Intervalle (ms)",
       "LIMIT": "Exécutions maximales",
       "END_DATE": "Date de fin"
+    },
+    "STATUS": {
+      "ACTIVE": "Planifié",
+      "LIMIT_REACHED": "Limite atteinte",
+      "ENDED": "Terminé",
+      "IDLE": "Non planifié"
     }
+  },
+  "HEADER": {
+    "SEARCH": "Rechercher",
+    "DOCS": "Documentation",
+    "FULLSCREEN": "Basculer en plein écran",
+    "LINKS": "Liens",
+    "BREADCRUMB": "Fil d'Ariane",
+    "OPEN_MENU": "Ouvrir la navigation"
+  },
+  "COMMAND": {
+    "TITLE": "Palette de commandes",
+    "DESCRIPTION": "Aller à une file ou une page",
+    "PLACEHOLDER": "Rechercher des files et des pages…",
+    "EMPTY": "Aucun résultat.",
+    "PAGES": "Pages",
+    "QUEUES": "Files",
+    "THEME": "Thème"
+  },
+  "USER": {
+    "MENU": "Compte",
+    "SIGN_OUT": "Se déconnecter",
+    "ROLES": "Rôles",
+    "SIGNED_IN_WITH": "Connecté via {{strategy}}"
+  },
+  "TOAST": {
+    "REGION_LABEL": "Notifications"
+  },
+  "PAGINATION": {
+    "LABEL": "Pagination",
+    "PREVIOUS": "Page précédente",
+    "NEXT": "Page suivante",
+    "PAGE": "Page {{page}}"
   }
 }

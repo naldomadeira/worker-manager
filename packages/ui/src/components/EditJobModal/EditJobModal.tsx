@@ -1,9 +1,9 @@
 import type { AppJob } from '@worker-manager/api/typings/app';
 import { FormEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button } from '../Button/Button';
-import { InputField } from '../Form/InputField/InputField';
-import { Modal } from '../Modal/Modal';
+import { Field, FieldLabel } from '@/components/ui/field';
+import { Input } from '@/components/ui/input';
+import { FormDialog } from '../FormDialog/FormDialog';
 
 const PRIORITY_LIMIT = 2 ** 21 - 1;
 
@@ -45,43 +45,44 @@ export const EditJobModal = ({ open, job, field, onClose, onSubmit }: EditJobMod
   };
 
   return (
-    <Modal
-      width="small"
+    <FormDialog
       open={open}
       onClose={onClose}
       title={t(field === 'delay' ? 'JOB.EDIT.DELAY_TITLE' : 'JOB.EDIT.PRIORITY_TITLE')}
-      actionButton={
-        <Button type="submit" theme="primary" form="edit-job-form">
-          {t('JOB.EDIT.SAVE')}
-        </Button>
-      }
+      description={t(field === 'delay' ? 'JOB.EDIT.DELAY_HINT' : 'JOB.EDIT.PRIORITY_HINT')}
+      formId="edit-job-form"
+      submitLabel={t('JOB.EDIT.SAVE')}
+      onSubmit={handleSubmit}
     >
-      <form id="edit-job-form" onSubmit={handleSubmit}>
-        <p>{t(field === 'delay' ? 'JOB.EDIT.DELAY_HINT' : 'JOB.EDIT.PRIORITY_HINT')}</p>
-        {field === 'delay' ? (
-          <InputField
-            label={t('JOB.EDIT.RUN_AT')}
+      {field === 'delay' ? (
+        <Field>
+          <FieldLabel htmlFor="edit-job-run-at">{t('JOB.EDIT.RUN_AT')}</FieldLabel>
+          <Input
             id="edit-job-run-at"
             name="runAt"
             type="datetime-local"
             autoFocus
+            className="font-mono tabular-nums"
             value={value}
-            onChange={(e) => setValue((e.target as HTMLInputElement).value)}
+            onChange={(e) => setValue(e.target.value)}
           />
-        ) : (
-          <InputField
-            label={t('JOB.EDIT.PRIORITY')}
+        </Field>
+      ) : (
+        <Field>
+          <FieldLabel htmlFor="edit-job-priority">{t('JOB.EDIT.PRIORITY')}</FieldLabel>
+          <Input
             id="edit-job-priority"
             name="priority"
             type="number"
             min={0}
             max={PRIORITY_LIMIT}
             autoFocus
+            className="font-mono tabular-nums"
             value={value}
-            onChange={(e) => setValue((e.target as HTMLInputElement).value)}
+            onChange={(e) => setValue(e.target.value)}
           />
-        )}
-      </form>
-    </Modal>
+        </Field>
+      )}
+    </FormDialog>
   );
 };

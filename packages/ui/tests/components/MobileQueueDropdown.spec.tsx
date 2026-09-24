@@ -6,6 +6,10 @@ import { MobileQueueDropdown } from '../../src/components/Header/MobileQueueDrop
 import { useSettingsStore } from '../../src/hooks/useSettings';
 import { createWrapper, makeQueue, render } from '../testUtils';
 
+// Radix menus open on pointerdown (a mouse press), not on click.
+const openMenu = (trigger: HTMLElement) =>
+  fireEvent.pointerDown(trigger, { button: 0, ctrlKey: false, pointerType: 'mouse' });
+
 beforeEach(() => {
   useSettingsStore.setState({ pollingInterval: 0, jobsPerPage: 10 });
 });
@@ -27,7 +31,7 @@ async function openDropdown({
 
   render(<MobileQueueDropdown />, { wrapper: Wrapper });
   await waitFor(() => expect(getQueues).toHaveBeenCalled());
-  fireEvent.click(screen.getAllByRole('button')[0]);
+  openMenu(screen.getAllByRole('button')[0]);
   await waitFor(() => expect(screen.getByRole('menu')).toBeTruthy());
 
   return { history };

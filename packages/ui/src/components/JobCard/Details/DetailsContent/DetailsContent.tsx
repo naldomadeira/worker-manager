@@ -1,15 +1,15 @@
 import type { AppJob, Status } from '@worker-manager/api/typings/app';
+import { ChevronDown } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 import { TabsType } from '../../../../hooks/useDetailsTabs';
 import { useSettingsStore } from '../../../../hooks/useSettings';
-import { Button } from '../../../Button/Button';
 import { CollapsibleJSON } from '../../../CollapsibleJSON/CollapsibleJSON';
 import { Highlight } from '../../../Highlight/Highlight';
-import { ChevronDown } from '../../../Icons/ChevronDown';
 import { Timeline } from '../../Timeline/Timeline';
 import { JobLogs } from './JobLogs/JobLogs';
-import s from './DetailsContent.module.css';
 
 interface DetailsContentProps {
   job: AppJob;
@@ -19,6 +19,26 @@ interface DetailsContentProps {
     getJobLogs: () => Promise<string[]>;
   };
 }
+
+const Reveal = ({ onClick, children }: { onClick: () => void; children: React.ReactNode }) => (
+  <div className="flex items-center justify-center p-6">
+    <Button variant="outline" size="sm" onClick={onClick}>
+      {children}
+      <ChevronDown data-icon="inline-end" />
+    </Button>
+  </div>
+);
+
+const Notice = ({ tone, children }: { tone?: 'error'; children: React.ReactNode }) => (
+  <div
+    className={cn(
+      'p-3 whitespace-pre-wrap',
+      tone === 'error' ? 'font-mono text-xs text-destructive' : 'text-muted-foreground'
+    )}
+  >
+    {children}
+  </div>
+);
 
 export const DetailsContent = ({ selectedTab, job, actions, status }: DetailsContentProps) => {
   const { t } = useTranslation();
@@ -42,9 +62,9 @@ export const DetailsContent = ({ selectedTab, job, actions, status }: DetailsCon
     case 'Data':
       if (collapseJobData && !collapseState.data) {
         return (
-          <Button onClick={() => setCollapse({ ...collapseState, data: true })}>
-            {t('JOB.SHOW_DATA_BTN')} <ChevronDown />
-          </Button>
+          <Reveal onClick={() => setCollapse({ ...collapseState, data: true })}>
+            {t('JOB.SHOW_DATA_BTN')}
+          </Reveal>
         );
       }
       return useCollapsibleJson ? (
@@ -64,13 +84,13 @@ export const DetailsContent = ({ selectedTab, job, actions, status }: DetailsCon
         job.progress === null ||
         job.progress === undefined
       ) {
-        return <div className="error">{t('JOB.NO_PROGRESS')}</div>;
+        return <Notice>{t('JOB.NO_PROGRESS')}</Notice>;
       }
       // For objects or strings, display as JSON
       return collapseJobProgress && !collapseState.progress ? (
-        <Button onClick={() => setCollapse({ ...collapseState, progress: true })}>
-          {t('JOB.SHOW_PROGRESS_BTN')} <ChevronDown />
-        </Button>
+        <Reveal onClick={() => setCollapse({ ...collapseState, progress: true })}>
+          {t('JOB.SHOW_PROGRESS_BTN')}
+        </Reveal>
       ) : useCollapsibleJson ? (
         <CollapsibleJSON data={job.progress} defaultCollapseDepth={defaultCollapseDepth} />
       ) : (
@@ -79,9 +99,9 @@ export const DetailsContent = ({ selectedTab, job, actions, status }: DetailsCon
     case 'Options':
       if (collapseJobOptions && !collapseState.options) {
         return (
-          <Button onClick={() => setCollapse({ ...collapseState, options: true })}>
-            {t('JOB.SHOW_OPTIONS_BTN')} <ChevronDown />
-          </Button>
+          <Reveal onClick={() => setCollapse({ ...collapseState, options: true })}>
+            {t('JOB.SHOW_OPTIONS_BTN')}
+          </Reveal>
         );
       }
       return useCollapsibleJson ? (
@@ -92,29 +112,29 @@ export const DetailsContent = ({ selectedTab, job, actions, status }: DetailsCon
     case 'Error':
       if (stacktrace.length === 0) {
         if (failedReason) {
-          return <div className="error">{failedReason}</div>;
+          return <Notice tone="error">{failedReason}</Notice>;
         }
 
         return job.deferredFailure ? (
-          <div className="error">
+          <Notice tone="error">
             {t('JOB.DIAGNOSTICS.WILL_FAIL_WITH_REASON', { reason: job.deferredFailure })}
-          </div>
+          </Notice>
         ) : (
-          <div className="error">{t('JOB.NO_ERRORS')}</div>
+          <Notice>{t('JOB.NO_ERRORS')}</Notice>
         );
       }
 
       return collapseJobError && !collapseState.error ? (
-        <Button onClick={() => setCollapse({ ...collapseState, error: true })}>
-          {t('JOB.SHOW_ERRORS_BTN')} <ChevronDown />
-        </Button>
+        <Reveal onClick={() => setCollapse({ ...collapseState, error: true })}>
+          {t('JOB.SHOW_ERRORS_BTN')}
+        </Reveal>
       ) : (
         <Highlight language="stacktrace" key="stacktrace" text={stacktrace.join('\n')} />
       );
     case 'Logs':
       return <JobLogs actions={actions} job={job} />;
     case 'Timeline':
-      return <Timeline job={job} status={status} className={s.timeline} />;
+      return <Timeline job={job} status={status} className="max-w-md p-4" />;
     default:
       return null;
   }

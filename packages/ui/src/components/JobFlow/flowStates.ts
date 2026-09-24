@@ -1,16 +1,14 @@
-import styles from './FlowGraph.module.css';
+import type { CSSProperties } from 'react';
+import { statusTone } from '../StatusTone/statusTone';
 
-const stateClass: Record<string, string> = {
-  completed: styles.stateCompleted,
-  failed: styles.stateFailed,
-  delayed: styles.stateDelayed,
-  active: styles.stateActive,
-  waiting: styles.stateWaiting,
-  'waiting-children': styles.stateWaitingChildren,
-  paused: styles.statePaused,
-  prioritized: styles.statePrioritized,
-};
+/**
+ * The status colour of a flow node, as a CSS value. Nodes, badges and the minimap all read it
+ * through the `--node-state` custom property, so one inline style themes a whole node.
+ */
+export function stateColor(state: string): string {
+  return statusTone(state).color;
+}
 
-export function stateClassName(state: string): string {
-  return stateClass[state] || styles.stateDefault;
+export function stateStyle(state: string): CSSProperties {
+  return { '--node-state': stateColor(state) } as CSSProperties;
 }

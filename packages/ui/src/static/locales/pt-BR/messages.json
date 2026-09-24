@@ -10,7 +10,10 @@
     "EXPAND_SIDEBAR": "Expandir barra lateral",
     "COLLAPSE_SIDEBAR": "Recolher barra lateral",
     "METRICS_HISTORY": "Histórico de métricas",
-    "SCHEDULERS": "Agendamentos"
+    "SCHEDULERS": "Agendamentos",
+    "NAVIGATION": "Navegação",
+    "FILTER_EMPTY": "Nenhuma fila corresponde ao filtro",
+    "RELEASES": "Notas de versão"
   },
   "DASHBOARD": {
     "JOBS_COUNT_one": "{{count}} Tarefa",
@@ -26,13 +29,25 @@
       "WAITING": "Trabalhos em espera",
       "ACTIVE": "Trabalhos ativos",
       "COMPLETED": "Trabalhos concluídos",
-      "ALPHABETICAL": "Alfabético (A-Z)"
+      "ALPHABETICAL": "Alfabético (A-Z)",
+      "ASC": "Crescente",
+      "DESC": "Decrescente"
     },
     "VIEW": {
       "TITLE": "Exibir",
       "FLAT": "Plano",
       "GROUPED": "Agrupado"
-    }
+    },
+    "KPI": {
+      "QUEUES": "Filas",
+      "PAUSED": "{{count}} pausadas",
+      "ALL_RUNNING": "Todas em execução",
+      "SHARE": "{{percent}}% dos jobs"
+    },
+    "CLEAR_SEARCH": "Limpar busca",
+    "EMPTY_STATE_SEARCH": "Nenhuma fila corresponde a “{{term}}”.",
+    "CLEAR_FILTERS": "Limpar filtros",
+    "BULK_ACTIONS": "Ações em massa"
   },
   "JOB": {
     "DELAY_CHANGED": "*Atraso alterado; o novo horário de execução ainda é desconhecido",
@@ -109,7 +124,11 @@
     "NO_ERRORS": "Nenhum erro registrado",
     "NO_LOGS": "Nenhum log disponível",
     "LOGS": {
-      "FILTER_PLACEHOLDER": "Filtros"
+      "FILTER_PLACEHOLDER": "Filtros",
+      "FOLLOW": "Acompanhar novas linhas do log",
+      "FOLLOW_SHORT": "Acompanhar",
+      "FULLSCREEN": "Alternar tela cheia",
+      "LINES": "{{shown}} de {{total}} linhas"
     },
     "ACTIONS": {
       "PROMOTE": "Promover",
@@ -137,7 +156,9 @@
       "LOGS": "Logs",
       "ERROR": "Erros",
       "TIMELINE": "Linha do tempo"
-    }
+    },
+    "EXPAND": "Expandir job",
+    "COLLAPSE": "Recolher job"
   },
   "QUEUE": {
     "NOT_FOUND": "Fila não encontrada",
@@ -184,7 +205,8 @@
       },
       "PAUSE_GROUP": "Pausar todas as filas do grupo",
       "RESUME_GROUP": "Retomar todas as filas do grupo",
-      "GROUP_ACTIONS": "Ações do grupo"
+      "GROUP_ACTIONS": "Ações do grupo",
+      "QUEUE_ACTIONS": "Ações da fila"
     },
     "STATUS": {
       "ALL": "Todos",
@@ -228,8 +250,12 @@
       "CONNECTED": "conectado {{since}}",
       "EMPTY": "Nada está consumindo esta fila.",
       "EMPTY_HINT": "Verifique se um processo worker está rodando e apontando para o mesmo Redis.",
-      "EMPTY_PAUSED": "Esta fila está pausada, então nenhum worker é esperado."
-    }
+      "EMPTY_PAUSED": "Esta fila está pausada, então nenhum worker é esperado.",
+      "COLUMN_WORKER": "Worker",
+      "COLUMN_ADDRESS": "Endereço",
+      "COLUMN_CONNECTED": "Conectado"
+    },
+    "RANGE": "{{start}}–{{end}} de {{total}}"
   },
   "METRICS": {
     "TITLE": "Taxa de transferência (trabalhos / min)",
@@ -257,7 +283,8 @@
     "TAB_LATENCY": "Latência",
     "P95_RUN_TIME": "Execução p95",
     "P95_WAIT_TIME": "Espera p95",
-    "NOT_AVAILABLE": "n/d"
+    "NOT_AVAILABLE": "n/d",
+    "TREND_LABEL": "{{value}} em relação à primeira metade do período"
   },
   "LATENCY": {
     "TITLE": "Latência dos jobs",
@@ -305,7 +332,9 @@
     "UP_TIME": "Tempo de atividade",
     "ERROR": {
       "MEMORY_USAGE": "Não foi possível recuperar estatísticas de memória"
-    }
+    },
+    "LIVE": "Ao vivo",
+    "MEMORY_USED_OF": "{{used}} de {{total}}"
   },
   "SETTINGS": {
     "TITLE": "Configurações",
@@ -381,7 +410,9 @@
     "JOB_DATA": "Dados do tarefa"
   },
   "CLIPBOARD": {
-    "COPY_FAILED": "Falha ao copiar para a área de transferência. Seu navegador pode não suportar este recurso ou a página não está sendo servida via HTTPS."
+    "COPY_FAILED": "Falha ao copiar para a área de transferência. Seu navegador pode não suportar este recurso ou a página não está sendo servida via HTTPS.",
+    "COPY": "Copiar para a área de transferência",
+    "COPIED": "Copiado"
   },
   "ERRORS": {
     "FORBIDDEN": "Forbidden",
@@ -423,6 +454,7 @@
     "REDIS_STATS_UNAVAILABLE": "Os detalhes do Redis não estão disponíveis para o backend desta fila",
     "REDIS_UNAVAILABLE": "O bull-board não consegue se conectar ao Redis. Abra o painel para ver os detalhes.",
     "STATUS_NOT_RETRIABLE": "\"{{status}}\" não é um estado que possa ser repetido",
+    "UNAUTHORIZED": "Você precisa entrar para acessar este painel",
     "WORKERS_DISABLED": "O relatório de workers está desativado",
     "INVALID_METRIC": "Métrica inválida"
   },
@@ -462,7 +494,9 @@
       "CONFIRM_TITLE": "Excluir histórico de métricas registrado?",
       "CONFIRM_TRIM": "Tudo registrado antes de {{date}} será excluído, mantendo os últimos {{range}}. Isso não pode ser desfeito, e os dias excluídos não aparecerão mais em nenhum gráfico.",
       "CONFIRM_CLEAR": "Todo o {{size}} do histórico registrado será excluído para todas as filas. Isso não pode ser desfeito. A gravação continua, então novos dados começarão a se acumular a partir do próximo snapshot."
-    }
+    },
+    "SUBTITLE": "Jobs concluídos e com falha de todas as filas, dia a dia.",
+    "TREND": "Tendência"
   },
   "SCHEDULERS": {
     "TITLE": "Agendamentos",
@@ -478,7 +512,8 @@
       "SCHEDULE": "Programação",
       "NEXT_RUN": "Próxima execução",
       "LAST_RUN": "Última execução",
-      "RUNS": "Execuções"
+      "RUNS": "Execuções",
+      "STATUS": "Status"
     },
     "INTERVAL": {
       "MILLISECONDS": "{{count}}ms",
@@ -517,6 +552,44 @@
       "EVERY": "Intervalo (ms)",
       "LIMIT": "Execuções máximas",
       "END_DATE": "Data final"
+    },
+    "STATUS": {
+      "ACTIVE": "Agendado",
+      "LIMIT_REACHED": "Limite atingido",
+      "ENDED": "Encerrado",
+      "IDLE": "Não agendado"
     }
+  },
+  "HEADER": {
+    "SEARCH": "Buscar",
+    "DOCS": "Documentação",
+    "FULLSCREEN": "Alternar tela cheia",
+    "LINKS": "Links",
+    "BREADCRUMB": "Trilha de navegação",
+    "OPEN_MENU": "Abrir navegação"
+  },
+  "COMMAND": {
+    "TITLE": "Paleta de comandos",
+    "DESCRIPTION": "Ir para uma fila ou página",
+    "PLACEHOLDER": "Buscar filas e páginas…",
+    "EMPTY": "Nenhum resultado encontrado.",
+    "PAGES": "Páginas",
+    "QUEUES": "Filas",
+    "THEME": "Tema"
+  },
+  "USER": {
+    "MENU": "Conta",
+    "SIGN_OUT": "Sair",
+    "ROLES": "Papéis",
+    "SIGNED_IN_WITH": "Conectado via {{strategy}}"
+  },
+  "TOAST": {
+    "REGION_LABEL": "Notificações"
+  },
+  "PAGINATION": {
+    "LABEL": "Paginação",
+    "PREVIOUS": "Página anterior",
+    "NEXT": "Próxima página",
+    "PAGE": "Página {{page}}"
   }
 }

@@ -1,19 +1,39 @@
-import { Dialog } from '@base-ui/react/dialog';
-import cn from 'clsx';
 import React, { PropsWithChildren } from 'react';
 import { useTranslation } from 'react-i18next';
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { cn } from '@/lib/utils';
 import { Button } from '../Button/Button';
-import s from './Modal.module.css';
 
-interface ModalProps {
+export interface ModalProps {
   open: boolean;
   title?: string;
   width?: 'small' | 'medium' | 'wide';
+  /** Rendered in the sticky footer, to the right of the close button. */
   actionButton?: React.ReactNode;
+  /** Receives focus when the modal closes, instead of the element that opened it. */
   finalFocus?: React.RefObject<HTMLElement | null>;
+  className?: string;
   onClose(): void;
 }
 
+const widths: Record<NonNullable<ModalProps['width']>, string> = {
+  small: 'sm:max-w-[550px]',
+  medium: 'sm:max-w-[650px]',
+  wide: 'sm:max-w-[850px]',
+};
+
+/**
+ * Modal dialog with a fixed header and footer around a scrolling body, so long forms keep their
+ * submit button in reach. Zooms and fades in over a blurred backdrop.
+ */
 export const Modal = ({
   open,
   title,
@@ -22,31 +42,43 @@ export const Modal = ({
   width,
   actionButton,
   finalFocus,
+  className,
 }: PropsWithChildren<ModalProps>) => {
   const { t } = useTranslation();
-  const closeOnOpenChange = (open: boolean) => {
-    if (!open) {
-      onClose();
-    }
-  };
 
   return (
-    <Dialog.Root open={open} modal={true} onOpenChange={closeOnOpenChange}>
-      <Dialog.Portal>
-        <Dialog.Backdrop className={s.overlay} />
-        <div className={s.contentWrapper}>
-          <Dialog.Popup className={cn(s.content, s[width || ''])} finalFocus={finalFocus}>
-            {!!title && <Dialog.Title>{title}</Dialog.Title>}
-            <Dialog.Description render={<div className={s.description} />}>
-              {children}
-            </Dialog.Description>
-            <div className={s.actions}>
-              {actionButton}
-              <Dialog.Close render={<Button theme="basic">{t('MODAL.CLOSE_BTN')}</Button>} />
-            </div>
-          </Dialog.Popup>
-        </div>
-      </Dialog.Portal>
-    </Dialog.Root>
+    <Dialog open={open} modal onOpenChange={(isOpen) => !isOpen && onClose()}>
+      <DialogContent
+        showCloseButton={false}
+        onCloseAutoFocus={(event) => {
+          if (finalFocus?.current) {
+            event.preventDefault();
+            finalFocus.current.focus();
+          }
+        }}
+        className={cn(
+          'flex max-h-[calc(100dvh-2rem)] flex-col gap-0 overflow-hidden p-0',
+          widths[width || 'small'],
+          className
+        )}
+      >
+        <DialogHeader className={cn('shrink-0 px-5 pt-5', !title && 'sr-only')}>
+          <DialogTitle className="text-lg leading-tight font-semibold tracking-tight">
+            {title}
+          </DialogTitle>
+        </DialogHeader>
+        <DialogDescription asChild>
+          <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4 text-sm text-foreground">
+            {children}
+          </div>
+        </DialogDescription>
+        <DialogFooter className="m-0 shrink-0 rounded-b-xl px-5 py-3.5">
+          <DialogClose asChild>
+            <Button theme="basic">{t('MODAL.CLOSE_BTN')}</Button>
+          </DialogClose>
+          {actionButton}
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 };

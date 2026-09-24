@@ -10,7 +10,10 @@
     "EXPAND_SIDEBAR": "Expand sidebar",
     "COLLAPSE_SIDEBAR": "Collapse sidebar",
     "METRICS_HISTORY": "Metrics history",
-    "SCHEDULERS": "Schedulers"
+    "SCHEDULERS": "Schedulers",
+    "NAVIGATION": "Navigation",
+    "FILTER_EMPTY": "No queues match your filter",
+    "RELEASES": "Release notes"
   },
   "DASHBOARD": {
     "JOBS_COUNT_one": "{{count}} Job",
@@ -25,13 +28,25 @@
       "WAITING": "Waiting Jobs",
       "ACTIVE": "Active Jobs",
       "COMPLETED": "Completed Jobs",
-      "ALPHABETICAL": "Alphabetical (A-Z)"
+      "ALPHABETICAL": "Alphabetical (A-Z)",
+      "ASC": "Ascending",
+      "DESC": "Descending"
     },
     "VIEW": {
       "TITLE": "View",
       "FLAT": "Flat",
       "GROUPED": "Grouped"
-    }
+    },
+    "KPI": {
+      "QUEUES": "Queues",
+      "PAUSED": "{{count}} paused",
+      "ALL_RUNNING": "All running",
+      "SHARE": "{{percent}}% of jobs"
+    },
+    "CLEAR_SEARCH": "Clear search",
+    "EMPTY_STATE_SEARCH": "No queue matches “{{term}}”.",
+    "CLEAR_FILTERS": "Clear filters",
+    "BULK_ACTIONS": "Bulk actions"
   },
   "JOB": {
     "DELAY_CHANGED": "*Delay changed; the new run time is currently unknown",
@@ -108,7 +123,11 @@
     "NO_ERRORS": "No errors recorded",
     "NO_LOGS": "No logs available",
     "LOGS": {
-      "FILTER_PLACEHOLDER": "Filters"
+      "FILTER_PLACEHOLDER": "Filters",
+      "FOLLOW": "Follow new log lines",
+      "FOLLOW_SHORT": "Follow",
+      "FULLSCREEN": "Toggle fullscreen",
+      "LINES": "{{shown}} of {{total}} lines"
     },
     "ACTIONS": {
       "PROMOTE": "Promote",
@@ -136,7 +155,9 @@
       "LOGS": "Logs",
       "ERROR": "Error",
       "TIMELINE": "Timeline"
-    }
+    },
+    "EXPAND": "Expand job",
+    "COLLAPSE": "Collapse job"
   },
   "QUEUE": {
     "NOT_FOUND": "Queue Not found",
@@ -183,7 +204,8 @@
       },
       "PAUSE_GROUP": "Pause all queues in group",
       "RESUME_GROUP": "Resume all queues in group",
-      "GROUP_ACTIONS": "Group actions"
+      "GROUP_ACTIONS": "Group actions",
+      "QUEUE_ACTIONS": "Queue actions"
     },
     "STATUS": {
       "ALL": "All",
@@ -227,8 +249,12 @@
       "CONNECTED": "connected {{since}}",
       "EMPTY": "Nothing is consuming this queue.",
       "EMPTY_HINT": "Check that a worker process is running and pointed at the same Redis.",
-      "EMPTY_PAUSED": "This queue is paused, so no workers are expected."
-    }
+      "EMPTY_PAUSED": "This queue is paused, so no workers are expected.",
+      "COLUMN_WORKER": "Worker",
+      "COLUMN_ADDRESS": "Address",
+      "COLUMN_CONNECTED": "Connected"
+    },
+    "RANGE": "{{start}}–{{end}} of {{total}}"
   },
   "METRICS": {
     "TITLE": "Throughput (jobs / min)",
@@ -256,7 +282,8 @@
     "TAB_LATENCY": "Latency",
     "P95_RUN_TIME": "Run p95",
     "P95_WAIT_TIME": "Wait p95",
-    "NOT_AVAILABLE": "n/a"
+    "NOT_AVAILABLE": "n/a",
+    "TREND_LABEL": "{{value}} vs. the first half of this range"
   },
   "LATENCY": {
     "TITLE": "Job latency",
@@ -303,7 +330,9 @@
     "UP_TIME": "Uptime",
     "ERROR": {
       "MEMORY_USAGE": "Could not retrieve memory statistics"
-    }
+    },
+    "LIVE": "Live",
+    "MEMORY_USED_OF": "{{used}} of {{total}}"
   },
   "SETTINGS": {
     "TITLE": "Settings",
@@ -378,7 +407,9 @@
     "JOB_DATA": "Job data"
   },
   "CLIPBOARD": {
-    "COPY_FAILED": "Failed to copy to clipboard. Your browser may not support this feature or the page is not served over HTTPS."
+    "COPY_FAILED": "Failed to copy to clipboard. Your browser may not support this feature or the page is not served over HTTPS.",
+    "COPY": "Copy to clipboard",
+    "COPIED": "Copied"
   },
   "ERRORS": {
     "FORBIDDEN": "Forbidden",
@@ -420,6 +451,7 @@
     "REDIS_STATS_UNAVAILABLE": "Redis details are not available for this queue's backend",
     "REDIS_UNAVAILABLE": "bull-board cannot reach Redis. Open the dashboard for details.",
     "STATUS_NOT_RETRIABLE": "\"{{status}}\" is not a retriable status",
+    "UNAUTHORIZED": "You need to sign in to access this board",
     "WORKERS_DISABLED": "Worker reporting is disabled",
     "INVALID_METRIC": "Invalid metric"
   },
@@ -459,7 +491,9 @@
       "CONFIRM_TITLE": "Delete recorded metrics history?",
       "CONFIRM_TRIM": "Everything recorded before {{date}} will be deleted, keeping the last {{range}}. This cannot be undone, and the deleted days will no longer appear in any chart.",
       "CONFIRM_CLEAR": "All {{size}} of recorded history will be deleted for every queue. This cannot be undone. Recording continues, so new data starts accumulating from the next snapshot."
-    }
+    },
+    "SUBTITLE": "Completed and failed jobs across every queue, day by day.",
+    "TREND": "Trend"
   },
   "SCHEDULERS": {
     "TITLE": "Schedulers",
@@ -475,7 +509,8 @@
       "SCHEDULE": "Schedule",
       "NEXT_RUN": "Next run",
       "LAST_RUN": "Last run",
-      "RUNS": "Runs"
+      "RUNS": "Runs",
+      "STATUS": "Status"
     },
     "INTERVAL": {
       "MILLISECONDS": "{{count}}ms",
@@ -514,6 +549,44 @@
       "EVERY": "Interval (ms)",
       "LIMIT": "Max runs",
       "END_DATE": "End date"
+    },
+    "STATUS": {
+      "ACTIVE": "Scheduled",
+      "LIMIT_REACHED": "Limit reached",
+      "ENDED": "Ended",
+      "IDLE": "Not scheduled"
     }
+  },
+  "HEADER": {
+    "SEARCH": "Search",
+    "DOCS": "Documentation",
+    "FULLSCREEN": "Toggle full screen",
+    "LINKS": "Links",
+    "BREADCRUMB": "Breadcrumb",
+    "OPEN_MENU": "Open navigation"
+  },
+  "COMMAND": {
+    "TITLE": "Command palette",
+    "DESCRIPTION": "Jump to a queue or page",
+    "PLACEHOLDER": "Search queues and pages…",
+    "EMPTY": "No results found.",
+    "PAGES": "Pages",
+    "QUEUES": "Queues",
+    "THEME": "Theme"
+  },
+  "USER": {
+    "MENU": "Account",
+    "SIGN_OUT": "Sign out",
+    "ROLES": "Roles",
+    "SIGNED_IN_WITH": "Signed in with {{strategy}}"
+  },
+  "TOAST": {
+    "REGION_LABEL": "Notifications"
+  },
+  "PAGINATION": {
+    "LABEL": "Pagination",
+    "PREVIOUS": "Previous page",
+    "NEXT": "Next page",
+    "PAGE": "Page {{page}}"
   }
 }

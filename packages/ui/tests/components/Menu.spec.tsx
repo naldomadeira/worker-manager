@@ -1,6 +1,7 @@
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 import type { GetQueuesResponse } from '@worker-manager/api/typings/responses';
 import { Menu } from '../../src/components/Menu/Menu';
+import { SidebarProvider } from '../../src/components/ui/sidebar';
 import { useMenuState } from '../../src/hooks/useMenuState';
 import { useSettingsStore } from '../../src/hooks/useSettings';
 import { createWrapper, render, makeQueue } from '../testUtils';
@@ -16,6 +17,16 @@ beforeEach(() => {
   useMenuState.setState({ state: {} });
 });
 
+// The sidebar reads its expanded state from the shell's SidebarProvider, as it does in the app.
+function renderInShell(Wrapper: ReturnType<typeof createWrapper>['Wrapper']) {
+  render(
+    <SidebarProvider>
+      <Menu />
+    </SidebarProvider>,
+    { wrapper: Wrapper }
+  );
+}
+
 function renderMenu(hasHistoryProvider: boolean | undefined, jobSchedulerCount = 0) {
   const getQueues = jest.fn(() =>
     Promise.resolve<GetQueuesResponse>({ queues: [makeQueue('test', { jobSchedulerCount })] })
@@ -26,7 +37,7 @@ function renderMenu(hasHistoryProvider: boolean | undefined, jobSchedulerCount =
     api,
     uiConfig: hasHistoryProvider === undefined ? {} : { hasHistoryProvider },
   });
-  render(<Menu />, { wrapper: Wrapper });
+  renderInShell(Wrapper);
   return api;
 }
 
@@ -70,7 +81,7 @@ it('collapses and reopens a queue group when its header is clicked', async () =>
     Promise.resolve<GetQueuesResponse>({ queues: [makeQueue('billing.invoices')] })
   );
   const { Wrapper } = createWrapper({ api: { getQueues }, uiConfig: {} });
-  render(<Menu />, { wrapper: Wrapper });
+  renderInShell(Wrapper);
 
   const group = await screen.findByText('billing');
   expect(screen.queryByText('invoices')).toBeTruthy();
@@ -87,7 +98,7 @@ it('drives expand-all and collapse-all from the current group state', async () =
     Promise.resolve<GetQueuesResponse>({ queues: [makeQueue('billing.invoices')] })
   );
   const { Wrapper } = createWrapper({ api: { getQueues }, uiConfig: {} });
-  render(<Menu />, { wrapper: Wrapper });
+  renderInShell(Wrapper);
 
   const expand = await screen.findByTitle('MENU.EXPAND_ALL');
   const collapse = screen.getByTitle('MENU.COLLAPSE_ALL');

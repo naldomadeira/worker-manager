@@ -5,12 +5,9 @@ import { BrowserRouter } from 'react-router-dom';
 import { App } from './App';
 import { ApiContext } from './hooks/useApi';
 import './styles/tailwind.css';
-import './index.css';
 import { useSettingsStore } from './hooks/useSettings';
 import { UIConfigContext } from './hooks/useUIConfig';
 import { Api } from './services/Api';
-import './theme.css';
-import './hljs.css';
 import { initI18n } from './services/i18n';
 import { applyThemeOverrides } from './utils/themeOverrides';
 

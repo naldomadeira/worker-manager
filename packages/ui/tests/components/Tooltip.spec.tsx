@@ -3,6 +3,9 @@ import userEvent from '@testing-library/user-event';
 import { Tooltip } from '../../src/components/Tooltip/Tooltip';
 import { render } from '../testUtils';
 
+// Radix mirrors the tooltip text into a visually hidden `role="tooltip"` node for screen
+// readers, so the text appears twice while open; the role is the stable handle.
+
 it('opens on hover and names the trigger', async () => {
   const user = userEvent.setup();
   render(
@@ -13,7 +16,7 @@ it('opens on hover and names the trigger', async () => {
 
   await user.hover(screen.getByRole('button', { name: 'Retry' }));
 
-  await waitFor(() => expect(screen.getByText('Retry this job')).toBeTruthy());
+  await waitFor(() => expect(screen.getByRole('tooltip').textContent).toBe('Retry this job'));
 });
 
 it('opens on keyboard focus', async () => {
@@ -26,7 +29,7 @@ it('opens on keyboard focus', async () => {
 
   await user.tab();
 
-  await waitFor(() => expect(screen.getByText('Retry this job')).toBeTruthy());
+  await waitFor(() => expect(screen.getByRole('tooltip').textContent).toBe('Retry this job'));
 });
 
 it('closes on escape', async () => {
@@ -38,9 +41,10 @@ it('closes on escape', async () => {
   );
 
   await user.hover(screen.getByRole('button', { name: 'Retry' }));
-  await waitFor(() => expect(screen.getByText('Retry this job')).toBeTruthy());
+  await waitFor(() => expect(screen.getByRole('tooltip').textContent).toBe('Retry this job'));
 
   await user.keyboard('{Escape}');
 
-  await waitFor(() => expect(screen.queryByText('Retry this job')).toBeNull());
+  await waitFor(() => expect(screen.queryByRole('tooltip')).toBeNull());
+  expect(screen.queryByText('Retry this job')).toBeNull();
 });

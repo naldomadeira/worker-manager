@@ -1,9 +1,10 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { cn } from '@/lib/utils';
+import { toastManager } from '../../services/toastManager';
 import { Button } from '../Button/Button';
 import { CheckIcon } from '../Icons/Check';
 import { CopyIcon } from '../Icons/Copy';
-import s from './CopyButton.module.css';
 
 interface CopyButtonProps {
   textToCopy: string;
@@ -11,10 +12,18 @@ interface CopyButtonProps {
   tabIndex?: number;
 }
 
+/** Icon button that copies text, swapping to an animated check for a moment once it did. */
 export const CopyButton = ({ textToCopy, className, tabIndex }: CopyButtonProps) => {
   const { t } = useTranslation();
   const [copied, setCopied] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(
+    () => () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    },
+    []
+  );
 
   const handleCopy = useCallback(async () => {
     try {
@@ -23,17 +32,37 @@ export const CopyButton = ({ textToCopy, className, tabIndex }: CopyButtonProps)
       if (timerRef.current) clearTimeout(timerRef.current);
       timerRef.current = setTimeout(() => setCopied(false), 1500);
     } catch (_err) {
-      alert(t('CLIPBOARD.COPY_FAILED'));
+      toastManager.add({ type: 'error', title: t('CLIPBOARD.COPY_FAILED') });
     }
   }, [textToCopy, t]);
 
+  const label = copied ? t('CLIPBOARD.COPIED') : t('CLIPBOARD.COPY');
+
   return (
     <Button
+      compact
       onClick={handleCopy}
-      className={`${s.copyBtn} ${copied ? s.copied : ''} ${className || ''}`}
       tabIndex={tabIndex}
+      aria-label={label}
+      title={label}
+      data-copied={copied || undefined}
+      className={cn('relative size-7 min-w-7 overflow-hidden', className)}
     >
-      {copied ? <CheckIcon /> : <CopyIcon />}
+      <span className="sr-only" aria-live="polite">
+        {copied ? t('CLIPBOARD.COPIED') : ''}
+      </span>
+      <CopyIcon
+        className={cn(
+          'absolute size-4 transition-all duration-200',
+          copied ? 'scale-50 rotate-[-45deg] opacity-0' : 'scale-100 rotate-0 opacity-100'
+        )}
+      />
+      <CheckIcon
+        className={cn(
+          'absolute size-4 text-status-completed! transition-all duration-200',
+          copied ? 'scale-100 rotate-0 opacity-100' : 'scale-50 rotate-45 opacity-0'
+        )}
+      />
     </Button>
   );
 };

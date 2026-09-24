@@ -9,7 +9,6 @@ import {
   toNativeRows,
   toNativeSeries,
 } from '../../ThroughputAreaChart/throughputSeries';
-import s from '../QueueMetrics.module.css';
 
 interface NativeMetricsViewProps {
   queueName: string;
@@ -28,7 +27,11 @@ export const NativeMetricsView = ({ queueName, showChartTabs }: NativeMetricsVie
   const activeTab = useSettingsStore((state) => state.metricsChartTab);
 
   if (showChartTabs && activeTab === 'latency') {
-    return <p className={s.empty}>{t('LATENCY.HOURLY_GRANULARITY_ONLY')}</p>;
+    return (
+      <p className="m-0 py-2 text-sm text-muted-foreground">
+        {t('LATENCY.HOURLY_GRANULARITY_ONLY')}
+      </p>
+    );
   }
 
   const now = Date.now();
@@ -44,7 +47,7 @@ export const NativeMetricsView = ({ queueName, showChartTabs }: NativeMetricsVie
   );
 
   if (!hasMetrics) {
-    return <p className={s.empty}>{t('METRICS.EMPTY')}</p>;
+    return <p className="m-0 py-2 text-sm text-muted-foreground">{t('METRICS.EMPTY')}</p>;
   }
 
   const nativeRows = toNativeRows(completed, failed);

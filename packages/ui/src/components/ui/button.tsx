@@ -18,6 +18,10 @@ const buttonVariants = cva(
         destructive:
           'bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40',
         link: 'text-primary underline-offset-4 hover:underline',
+        success:
+          'bg-status-completed/10 text-status-completed hover:bg-status-completed/20 focus-visible:border-status-completed/40 focus-visible:ring-status-completed/20 dark:bg-status-completed/20 dark:hover:bg-status-completed/30',
+        warning:
+          'bg-status-delayed/10 text-status-delayed hover:bg-status-delayed/20 focus-visible:border-status-delayed/40 focus-visible:ring-status-delayed/20 dark:bg-status-delayed/20 dark:hover:bg-status-delayed/30',
       },
       size: {
         default:

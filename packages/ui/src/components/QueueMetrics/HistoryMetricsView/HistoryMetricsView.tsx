@@ -4,14 +4,15 @@ import { useLatencyMetrics } from '../../../hooks/useLatencyMetrics';
 import { useRangeWindow } from '../../../hooks/useRangeWindow';
 import { useSettingsStore } from '../../../hooks/useSettings';
 import { useUIConfig } from '../../../hooks/useUIConfig';
+import { isPartialBucket } from '../../../utils/partialBucket';
 import { LatencyChart } from '../../LatencyChart/LatencyChart';
 import { formatDuration } from '../../LatencyChart/latencySeries';
 import { MetricsChartPane } from '../../MetricsChartTabs/MetricsChartTabs';
+import { halfOverHalfTrend } from '../../MetricsSummary/formatNumber';
 import { MetricsSummary, StatTile } from '../../MetricsSummary/MetricsSummary';
 import { ThroughputAreaChart } from '../../ThroughputAreaChart/ThroughputAreaChart';
 import { sum, toHistoryRows } from '../../ThroughputAreaChart/throughputSeries';
 import type { Range } from '../QueueMetrics';
-import s from '../QueueMetrics.module.css';
 
 const RANGE_DAYS: Record<Exclude<Range, '60m'>, number> = {
   '7d': 7,
@@ -68,15 +69,24 @@ export const HistoryMetricsView = ({ queueName, range }: HistoryMetricsViewProps
   const rows = toHistoryRows(completed, failed);
 
   if (rows.length === 0) {
-    return <p className={s.empty}>{t('METRICS.HISTORY_EMPTY')}</p>;
+    return <p className="m-0 py-2 text-sm text-muted-foreground">{t('METRICS.HISTORY_EMPTY')}</p>;
   }
 
   if (loading) {
     return null;
   }
 
-  const dailyCompletedTotal = sum(rows.map((row) => row.completed)).toLocaleString();
-  const dailyFailedTotal = sum(rows.map((row) => row.failed)).toLocaleString();
+  const dailyCompletedTotal = sum(rows.map((row) => row.completed));
+  const dailyFailedTotal = sum(rows.map((row) => row.failed));
+  const isLastPartial = isPartialBucket(rows[rows.length - 1].x, 'day');
+  const completedTrend = halfOverHalfTrend(
+    rows.map((row) => row.completed),
+    isLastPartial
+  );
+  const failedTrend = halfOverHalfTrend(
+    rows.map((row) => row.failed),
+    isLastPartial
+  );
   const p95RunTime = runP95Points[0]?.values['95'];
   const p95WaitTime = waitP95Points[0]?.values['95'];
 
@@ -105,11 +115,14 @@ export const HistoryMetricsView = ({ queueName, range }: HistoryMetricsViewProps
             value={dailyCompletedTotal}
             label={t('METRICS.DAILY_COMPLETED')}
             dotColor="var(--status-completed)"
+            trend={completedTrend}
           />
           <StatTile
             value={dailyFailedTotal}
             label={t('METRICS.DAILY_FAILED')}
             dotColor="var(--status-failed)"
+            trend={failedTrend}
+            trendPolarity="up-is-bad"
           />
         </MetricsSummary>
       )}

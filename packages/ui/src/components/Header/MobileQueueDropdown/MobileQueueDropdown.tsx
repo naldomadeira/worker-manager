@@ -1,15 +1,21 @@
-import { Menu } from '@base-ui/react/menu';
-import cn from 'clsx';
+import { ChevronsUpDown } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useHistory, useLocation } from 'react-router-dom';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { cn } from '@/lib/utils';
 import { useActiveQueueName } from '../../../hooks/useActiveQueueName';
 import { useQueues } from '../../../hooks/useQueues';
 import { useUIConfig } from '../../../hooks/useUIConfig';
 import { links } from '../../../utils/links';
-import { DropdownContent } from '../../DropdownContent/DropdownContent';
-import { ChevronDown } from '../../Icons/ChevronDown';
-import select from '../../Form/SelectField/SelectField.module.css';
-import s from './MobileQueueDropdown.module.css';
+
+const activeItem =
+  'bg-state-selected font-medium text-state-selected-foreground focus:bg-state-selected-hover';
 
 export const MobileQueueDropdown = () => {
   const { t } = useTranslation();
@@ -22,7 +28,7 @@ export const MobileQueueDropdown = () => {
   const currentQueue = queues?.find((queue) => queue.name === activeQueueName);
   const showJobSchedulers = queues?.some((queue) => queue.jobSchedulerCount > 0);
 
-  /* The sidebar is gone at this width, so its nav links have nowhere else to live. */
+  /* A quick switcher for small screens, next to the sidebar drawer. */
   const pages = [
     { path: '/', label: t('MENU.OVERVIEW'), show: true },
     {
@@ -46,52 +52,54 @@ export const MobileQueueDropdown = () => {
   };
 
   return (
-    <Menu.Root>
-      <Menu.Trigger className={cn(select.trigger, s.trigger)}>
-        <span className={s.currentQueue}>{displayName}</span>
-        <span className={select.icon}>
-          <ChevronDown />
-        </span>
-      </Menu.Trigger>
+    <DropdownMenu modal={false}>
+      <DropdownMenuTrigger
+        className={cn(
+          'flex h-9 w-full items-center justify-between gap-2 rounded-lg border border-input bg-background px-3 text-left text-sm font-medium shadow-xs outline-none transition-colors',
+          'hover:bg-muted focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 aria-expanded:bg-muted dark:bg-input/30'
+        )}
+      >
+        <span className="min-w-0 truncate">{displayName}</span>
+        <ChevronsUpDown aria-hidden="true" className="size-4 shrink-0 text-muted-foreground" />
+      </DropdownMenuTrigger>
 
-      <Menu.Portal>
-        <Menu.Positioner sideOffset={5} style={{ zIndex: 100 }}>
-          <DropdownContent className={s.content}>
-            {pages.map((page) => (
-              <Menu.Item
-                key={page.path}
-                className={cn(s.item, { [s.active]: activePage?.path === page.path })}
-                onClick={() => history.push(page.path)}
+      <DropdownMenuContent
+        align="start"
+        className="max-h-[60vh] w-(--radix-dropdown-menu-trigger-width) overflow-y-auto"
+      >
+        {pages.map((page) => (
+          <DropdownMenuItem
+            key={page.path}
+            className={cn(activePage?.path === page.path && activeItem)}
+            onSelect={() => history.push(page.path)}
+          >
+            {page.label}
+          </DropdownMenuItem>
+        ))}
+
+        {queues && queues.length > 0 && (
+          <>
+            <DropdownMenuSeparator />
+            {queues.map((queue) => (
+              <DropdownMenuItem
+                key={queue.name}
+                className={cn(queue.name === activeQueueName && activeItem)}
+                onSelect={() => handleQueueSelect(queue.name)}
               >
-                {page.label}
-              </Menu.Item>
-            ))}
-
-            {queues && queues.length > 0 && (
-              <>
-                <Menu.Separator className={s.separator} />
-                {queues.map((queue) => (
-                  <Menu.Item
-                    key={queue.name}
-                    className={cn(s.item, { [s.active]: queue.name === activeQueueName })}
-                    onClick={() => handleQueueSelect(queue.name)}
-                  >
-                    <span className={s.queueName}>{queue.name}</span>
-                    {queue.counts && (
-                      <span className={s.queueStats}>
-                        {Object.values(queue.counts).reduce(
-                          (acc: number, val: any) => acc + (val || 0),
-                          0
-                        )}
-                      </span>
+                <span className="min-w-0 flex-1 truncate">{queue.name}</span>
+                {queue.counts && (
+                  <span className="ml-auto shrink-0 rounded-full bg-muted px-1.5 text-xs leading-5 text-muted-foreground tabular-nums">
+                    {Object.values(queue.counts).reduce(
+                      (acc: number, val: any) => acc + (val || 0),
+                      0
                     )}
-                  </Menu.Item>
-                ))}
-              </>
-            )}
-          </DropdownContent>
-        </Menu.Positioner>
-      </Menu.Portal>
-    </Menu.Root>
+                  </span>
+                )}
+              </DropdownMenuItem>
+            ))}
+          </>
+        )}
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };

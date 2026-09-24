@@ -15,6 +15,18 @@ const badgeVariants = cva(
         outline: 'border-border text-foreground [a]:hover:bg-muted [a]:hover:text-muted-foreground',
         ghost: 'hover:bg-muted hover:text-muted-foreground dark:hover:bg-muted/50',
         link: 'text-primary underline-offset-4 hover:underline',
+        success: 'bg-status-completed/12 text-status-completed dark:bg-status-completed/20',
+        warning: 'bg-status-delayed/12 text-status-delayed dark:bg-status-delayed/20',
+        failed: 'bg-status-failed/12 text-status-failed dark:bg-status-failed/20',
+        completed: 'bg-status-completed/12 text-status-completed dark:bg-status-completed/20',
+        waiting: 'bg-status-waiting/12 text-status-waiting dark:bg-status-waiting/20',
+        'waiting-children':
+          'bg-status-waiting-children/12 text-status-waiting-children dark:bg-status-waiting-children/20',
+        prioritized:
+          'bg-status-prioritized/12 text-status-prioritized dark:bg-status-prioritized/20',
+        active: 'bg-status-active/12 text-status-active dark:bg-status-active/20',
+        delayed: 'bg-status-delayed/12 text-status-delayed dark:bg-status-delayed/20',
+        paused: 'bg-status-paused/12 text-status-paused dark:bg-status-paused/20',
       },
     },
     defaultVariants: {

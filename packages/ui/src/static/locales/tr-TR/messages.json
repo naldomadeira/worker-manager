@@ -10,7 +10,10 @@
     "EXPAND_SIDEBAR": "Kenar çubuğunu genişlet",
     "COLLAPSE_SIDEBAR": "Kenar çubuğunu daralt",
     "METRICS_HISTORY": "Metrik geçmişi",
-    "SCHEDULERS": "Zamanlayıcılar"
+    "SCHEDULERS": "Zamanlayıcılar",
+    "NAVIGATION": "Gezinme",
+    "FILTER_EMPTY": "Filtrenizle eşleşen kuyruk yok",
+    "RELEASES": "Sürüm notları"
   },
   "DASHBOARD": {
     "JOBS_COUNT_one": "{{count}} iş",
@@ -25,13 +28,25 @@
       "WAITING": "Bekleyen işler",
       "ACTIVE": "İşlenen işler",
       "COMPLETED": "Tamamlanan işler",
-      "ALPHABETICAL": "Alfabetik (A-Z)"
+      "ALPHABETICAL": "Alfabetik (A-Z)",
+      "ASC": "Artan",
+      "DESC": "Azalan"
     },
     "VIEW": {
       "TITLE": "Görünüm",
       "FLAT": "Düz liste",
       "GROUPED": "Gruplandırılmış"
-    }
+    },
+    "KPI": {
+      "QUEUES": "Kuyruklar",
+      "PAUSED": "{{count}} duraklatıldı",
+      "ALL_RUNNING": "Tümü çalışıyor",
+      "SHARE": "İşlerin %{{percent}} kadarı"
+    },
+    "CLEAR_SEARCH": "Aramayı temizle",
+    "EMPTY_STATE_SEARCH": "“{{term}}” ile eşleşen kuyruk yok.",
+    "CLEAR_FILTERS": "Filtreleri temizle",
+    "BULK_ACTIONS": "Toplu işlemler"
   },
   "JOB": {
     "DELAY_CHANGED": "*Gecikme süresi değişti; yeni çalışma zamanı henüz hesaplanamadı.",
@@ -108,7 +123,11 @@
     "NO_ERRORS": "Kaydedilmiş hata bulunmuyor.",
     "NO_LOGS": "Kayıt bulunmuyor.",
     "LOGS": {
-      "FILTER_PLACEHOLDER": "Kayıtları filtrele"
+      "FILTER_PLACEHOLDER": "Kayıtları filtrele",
+      "FOLLOW": "Yeni günlük satırlarını takip et",
+      "FOLLOW_SHORT": "Takip et",
+      "FULLSCREEN": "Tam ekranı aç/kapat",
+      "LINES": "{{total}} satırdan {{shown}}"
     },
     "ACTIONS": {
       "PROMOTE": "Şimdi sıraya al",
@@ -136,7 +155,9 @@
       "LOGS": "Kayıtlar",
       "ERROR": "Hata",
       "TIMELINE": "Zaman çizelgesi"
-    }
+    },
+    "EXPAND": "İşi genişlet",
+    "COLLAPSE": "İşi daralt"
   },
   "QUEUE": {
     "NOT_FOUND": "Kuyruk bulunamadı.",
@@ -183,7 +204,8 @@
       },
       "PAUSE_GROUP": "Gruptaki tüm kuyrukları duraklat",
       "RESUME_GROUP": "Gruptaki tüm kuyrukları devam ettir",
-      "GROUP_ACTIONS": "Grup işlemleri"
+      "GROUP_ACTIONS": "Grup işlemleri",
+      "QUEUE_ACTIONS": "Kuyruk işlemleri"
     },
     "STATUS": {
       "ALL": "Tümü",
@@ -227,8 +249,12 @@
       "CONNECTED": "{{since}} bağlandı",
       "EMPTY": "Bu kuyruğu tüketen hiçbir şey yok.",
       "EMPTY_HINT": "Bir worker sürecinin çalıştığını ve aynı Redis'i işaret ettiğini kontrol edin.",
-      "EMPTY_PAUSED": "Bu kuyruk duraklatıldı, bu yüzden worker beklenmiyor."
-    }
+      "EMPTY_PAUSED": "Bu kuyruk duraklatıldı, bu yüzden worker beklenmiyor.",
+      "COLUMN_WORKER": "Worker",
+      "COLUMN_ADDRESS": "Adres",
+      "COLUMN_CONNECTED": "Bağlandı"
+    },
+    "RANGE": "{{total}} içinden {{start}}–{{end}}"
   },
   "METRICS": {
     "TITLE": "İşleme hızı (iş/dk)",
@@ -256,7 +282,8 @@
     "TAB_LATENCY": "Gecikme",
     "P95_RUN_TIME": "Çalışma süresi p95",
     "P95_WAIT_TIME": "Bekleme süresi p95",
-    "NOT_AVAILABLE": "yok"
+    "NOT_AVAILABLE": "yok",
+    "TREND_LABEL": "Dönemin ilk yarısına göre {{value}}"
   },
   "LATENCY": {
     "TITLE": "İş gecikmesi",
@@ -303,7 +330,9 @@
     "UP_TIME": "Çalışma süresi",
     "ERROR": {
       "MEMORY_USAGE": "Bellek istatistikleri alınamadı."
-    }
+    },
+    "LIVE": "Canlı",
+    "MEMORY_USED_OF": "{{used}} / {{total}}"
   },
   "SETTINGS": {
     "TITLE": "Ayarlar",
@@ -378,7 +407,9 @@
     "JOB_DATA": "İş verisi"
   },
   "CLIPBOARD": {
-    "COPY_FAILED": "Panoya kopyalanamadı. Tarayıcınız bu özelliği desteklemiyor veya sayfa HTTPS üzerinden sunulmuyor olabilir."
+    "COPY_FAILED": "Panoya kopyalanamadı. Tarayıcınız bu özelliği desteklemiyor veya sayfa HTTPS üzerinden sunulmuyor olabilir.",
+    "COPY": "Panoya kopyala",
+    "COPIED": "Kopyalandı"
   },
   "ERRORS": {
     "FORBIDDEN": "Forbidden",
@@ -420,6 +451,7 @@
     "REDIS_STATS_UNAVAILABLE": "Bu kuyruğun arka ucu için Redis ayrıntıları kullanılamıyor",
     "REDIS_UNAVAILABLE": "bull-board Redis'e bağlanamıyor. Ayrıntılar için panoyu açın.",
     "STATUS_NOT_RETRIABLE": "\"{{status}}\" yeniden denenebilir bir durum değil",
+    "UNAUTHORIZED": "Bu panoya erişmek için oturum açmanız gerekiyor",
     "WORKERS_DISABLED": "Worker raporlaması devre dışı",
     "INVALID_METRIC": "Geçersiz metrik"
   },
@@ -459,7 +491,9 @@
       "CONFIRM_TITLE": "Kaydedilmiş metrik geçmişi silinsin mi?",
       "CONFIRM_TRIM": "{{date}} tarihinden önce kaydedilen her şey silinecek ve yalnızca son {{range}} değer korunacaktır. Bu işlem geri alınamaz ve silinen günler artık hiçbir grafikte görünmez.",
       "CONFIRM_CLEAR": "Her kuyruk için kaydedilmiş geçmişin tamamı ({{size}}) silinecektir. Bu işlem geri alınamaz. Kayıt devam eder, bu nedenle bir sonraki anlık görüntüden itibaren yeni veriler birikmeye başlar."
-    }
+    },
+    "SUBTITLE": "Tüm kuyruklardaki tamamlanan ve başarısız işler, gün gün.",
+    "TREND": "Eğilim"
   },
   "SCHEDULERS": {
     "TITLE": "Zamanlayıcılar",
@@ -475,7 +509,8 @@
       "SCHEDULE": "Zamanlama",
       "NEXT_RUN": "Sonraki çalışma",
       "LAST_RUN": "Son çalışma",
-      "RUNS": "Çalışmalar"
+      "RUNS": "Çalışmalar",
+      "STATUS": "Durum"
     },
     "INTERVAL": {
       "MILLISECONDS": "{{count}}ms",
@@ -514,6 +549,44 @@
       "EVERY": "Aralık (ms)",
       "LIMIT": "En fazla çalışma",
       "END_DATE": "Bitiş tarihi"
+    },
+    "STATUS": {
+      "ACTIVE": "Planlandı",
+      "LIMIT_REACHED": "Sınıra ulaşıldı",
+      "ENDED": "Sona erdi",
+      "IDLE": "Planlanmadı"
     }
+  },
+  "HEADER": {
+    "SEARCH": "Ara",
+    "DOCS": "Belgeler",
+    "FULLSCREEN": "Tam ekranı aç/kapat",
+    "LINKS": "Bağlantılar",
+    "BREADCRUMB": "İçerik haritası",
+    "OPEN_MENU": "Gezinmeyi aç"
+  },
+  "COMMAND": {
+    "TITLE": "Komut paleti",
+    "DESCRIPTION": "Bir kuyruğa veya sayfaya git",
+    "PLACEHOLDER": "Kuyruklarda ve sayfalarda ara…",
+    "EMPTY": "Sonuç bulunamadı.",
+    "PAGES": "Sayfalar",
+    "QUEUES": "Kuyruklar",
+    "THEME": "Tema"
+  },
+  "USER": {
+    "MENU": "Hesap",
+    "SIGN_OUT": "Oturumu kapat",
+    "ROLES": "Roller",
+    "SIGNED_IN_WITH": "{{strategy}} ile oturum açıldı"
+  },
+  "TOAST": {
+    "REGION_LABEL": "Bildirimler"
+  },
+  "PAGINATION": {
+    "LABEL": "Sayfalama",
+    "PREVIOUS": "Önceki sayfa",
+    "NEXT": "Sonraki sayfa",
+    "PAGE": "Sayfa {{page}}"
   }
 }

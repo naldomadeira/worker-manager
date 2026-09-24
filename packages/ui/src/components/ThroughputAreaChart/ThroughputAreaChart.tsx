@@ -12,9 +12,21 @@ import {
 } from 'recharts';
 import type { TooltipContentProps } from 'recharts';
 import { isPartialBucket } from '../../utils/partialBucket';
+import {
+  CHART_AXIS_TICK,
+  CHART_CURSOR,
+  CHART_GRID,
+  ChartContainer,
+  ChartLegend,
+  ChartLegendItem,
+  ChartTooltipCard,
+  ChartTooltipItem,
+  ChartTooltipNote,
+  chartActiveDot,
+  useChartAnimation,
+} from '../ChartContainer/ChartContainer';
 import { withPartialThroughputTail } from './throughputSeries';
 import type { ThroughputPlotRow, ThroughputRow } from './throughputSeries';
-import s from './ThroughputAreaChart.module.css';
 
 export interface ThroughputAreaChartProps {
   data: ThroughputRow[];
@@ -35,6 +47,9 @@ export interface ThroughputAreaChartProps {
   granularity?: MetricsHistoryGranularity;
 }
 
+const COMPLETED_COLOR = 'var(--status-completed)';
+const FAILED_COLOR = 'var(--status-failed)';
+
 const compactNumber = (value: number): string => {
   if (value >= 1000) {
     return `${(value / 1000).toFixed(value >= 10000 ? 0 : 1)}k`;
@@ -52,10 +67,10 @@ export const ThroughputAreaChart = ({
   formatXTick,
   granularity,
 }: ThroughputAreaChartProps) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const animation = useChartAnimation();
   const completedGradientId = `${idPrefix}-completed`;
   const failedGradientId = `${idPrefix}-failed`;
-  const axisTick = { fill: 'var(--muted-foreground)', fontSize: 11 };
 
   // See LatencyChart for the same treatment: the last bucket of the current period only
   // covers however much of it has elapsed so far, so its closing segment is split off and
@@ -67,21 +82,13 @@ export const ThroughputAreaChart = ({
     [data, isLastPartial]
   );
 
-  // Static swatches, not toggles -- there is nothing to hide behind them, unlike the latency
-  // legend's per-percentile buttons. Mirrors LatencyChart's legend position (below the stat
-  // tiles, above the chart) so throughput and latency read as one consistent layout.
-  const legend = data.length > 0 && (
-    <div className={s.legend}>
-      <span className={s.legendItem}>
-        <span className={s.legendSwatch} style={{ backgroundColor: 'var(--status-completed)' }} />
-        {t('METRICS.COMPLETED')}
-      </span>
-      <span className={s.legendItem}>
-        <span className={s.legendSwatch} style={{ backgroundColor: 'var(--status-failed)' }} />
-        {t('METRICS.FAILED')}
-      </span>
-    </div>
-  );
+  const formatCount = (value: number) => {
+    try {
+      return value.toLocaleString(i18n.language);
+    } catch {
+      return value.toLocaleString();
+    }
+  };
 
   const renderTooltip = ({ active, payload }: TooltipContentProps) => {
     if (!active || !payload || payload.length === 0) {
@@ -99,35 +106,46 @@ export const ThroughputAreaChart = ({
     const isPartialPoint = isLastPartial && point.x === lastRow?.x;
 
     return (
-      <div className={s.tooltip}>
-        <div className={s.tooltipTime}>{formatTooltipLabel(row)}</div>
-        <div className={s.tooltipRow}>
-          <span
-            className={s.tooltipSwatch}
-            style={{ backgroundColor: 'var(--status-completed)' }}
-          />
-          <span className={s.tooltipName}>{t('METRICS.COMPLETED')}</span>
-          <span className={s.tooltipValue}>
-            {row.completed.toLocaleString()}
-            {valueUnit ? <span className={s.tooltipUnit}>{valueUnit}</span> : null}
-          </span>
-        </div>
-        <div className={s.tooltipRow}>
-          <span className={s.tooltipSwatch} style={{ backgroundColor: 'var(--status-failed)' }} />
-          <span className={s.tooltipName}>{t('METRICS.FAILED')}</span>
-          <span className={s.tooltipValue}>
-            {row.failed.toLocaleString()}
-            {valueUnit ? <span className={s.tooltipUnit}>{valueUnit}</span> : null}
-          </span>
-        </div>
-        {isPartialPoint && <div className={s.tooltipNote}>{t('METRICS.PARTIAL_PERIOD')}</div>}
-      </div>
+      <ChartTooltipCard label={formatTooltipLabel(row)}>
+        <ChartTooltipItem
+          color={COMPLETED_COLOR}
+          name={t('METRICS.COMPLETED')}
+          value={formatCount(row.completed)}
+          unit={valueUnit}
+        />
+        <ChartTooltipItem
+          color={FAILED_COLOR}
+          name={t('METRICS.FAILED')}
+          value={formatCount(row.failed)}
+          unit={valueUnit}
+        />
+        {isPartialPoint && <ChartTooltipNote>{t('METRICS.PARTIAL_PERIOD')}</ChartTooltipNote>}
+      </ChartTooltipCard>
     );
   };
 
+  const areaProps = (color: string, gradientId: string) => ({
+    type: 'monotone' as const,
+    stroke: color,
+    strokeWidth: 2,
+    fill: `url(#${gradientId})`,
+    dot: false,
+    activeDot: chartActiveDot(color),
+    connectNulls: false,
+    ...animation,
+  });
+
   return (
-    <div className={s.chart}>
-      {legend}
+    <ChartContainer>
+      {/* Static swatches, not toggles -- there is nothing to hide behind them, unlike the
+          latency legend's per-percentile buttons. Mirrors LatencyChart's legend position so
+          throughput and latency read as one consistent layout. */}
+      {data.length > 0 && (
+        <ChartLegend>
+          <ChartLegendItem color={COMPLETED_COLOR}>{t('METRICS.COMPLETED')}</ChartLegendItem>
+          <ChartLegendItem color={FAILED_COLOR}>{t('METRICS.FAILED')}</ChartLegendItem>
+        </ChartLegend>
+      )}
       <ResponsiveContainer width="100%" height={height}>
         <AreaChart
           data={plotData}
@@ -139,22 +157,22 @@ export const ThroughputAreaChart = ({
         >
           <defs>
             <linearGradient id={completedGradientId} x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="var(--status-completed)" stopOpacity={0.35} />
-              <stop offset="100%" stopColor="var(--status-completed)" stopOpacity={0} />
+              <stop offset="0%" stopColor={COMPLETED_COLOR} stopOpacity={0.4} />
+              <stop offset="60%" stopColor={COMPLETED_COLOR} stopOpacity={0.12} />
+              <stop offset="100%" stopColor={COMPLETED_COLOR} stopOpacity={0} />
             </linearGradient>
             <linearGradient id={failedGradientId} x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="var(--status-failed)" stopOpacity={0.35} />
-              <stop offset="100%" stopColor="var(--status-failed)" stopOpacity={0} />
+              <stop offset="0%" stopColor={FAILED_COLOR} stopOpacity={0.4} />
+              <stop offset="60%" stopColor={FAILED_COLOR} stopOpacity={0.12} />
+              <stop offset="100%" stopColor={FAILED_COLOR} stopOpacity={0} />
             </linearGradient>
           </defs>
-          {showAxis ? (
-            <CartesianGrid vertical={false} stroke="var(--border)" strokeOpacity={0.5} />
-          ) : null}
+          {showAxis ? <CartesianGrid {...CHART_GRID} /> : null}
           {showAxis ? (
             <XAxis
               dataKey="x"
-              tick={axisTick}
-              tickMargin={8}
+              tick={CHART_AXIS_TICK}
+              tickMargin={10}
               minTickGap={48}
               axisLine={false}
               tickLine={false}
@@ -166,7 +184,7 @@ export const ThroughputAreaChart = ({
           {showAxis ? (
             <YAxis
               width={44}
-              tick={axisTick}
+              tick={CHART_AXIS_TICK}
               axisLine={false}
               tickLine={false}
               allowDecimals={false}
@@ -176,66 +194,28 @@ export const ThroughputAreaChart = ({
           ) : (
             <YAxis hide domain={[0, 'dataMax']} />
           )}
-          <Tooltip
-            content={renderTooltip}
-            cursor={{ stroke: 'var(--muted-foreground)', strokeWidth: 1, strokeOpacity: 0.6 }}
-            isAnimationActive={false}
-          />
-          <Area
-            type="monotone"
-            dataKey="completed"
-            stroke="var(--status-completed)"
-            strokeWidth={1.5}
-            fill={`url(#${completedGradientId})`}
-            dot={false}
-            activeDot={{ r: 3, strokeWidth: 0 }}
-            isAnimationActive={false}
-            connectNulls={false}
-          />
-          <Area
-            type="monotone"
-            dataKey="failed"
-            stroke="var(--status-failed)"
-            strokeWidth={1.5}
-            fill={`url(#${failedGradientId})`}
-            dot={false}
-            activeDot={{ r: 3, strokeWidth: 0 }}
-            isAnimationActive={false}
-            connectNulls={false}
-          />
+          <Tooltip content={renderTooltip} cursor={CHART_CURSOR} isAnimationActive={false} />
+          <Area dataKey="completed" {...areaProps(COMPLETED_COLOR, completedGradientId)} />
+          <Area dataKey="failed" {...areaProps(FAILED_COLOR, failedGradientId)} />
           {isLastPartial && (
             <>
               {/* The closing segment of an in-progress bucket, redrawn dashed. Its data only
                 covers the last two points (see withPartialThroughputTail), picking up exactly
                 where each solid area above stops. */}
               <Area
-                type="monotone"
                 dataKey="completedTail"
-                stroke="var(--status-completed)"
-                strokeWidth={1.5}
                 strokeDasharray="4 3"
-                fill={`url(#${completedGradientId})`}
-                dot={false}
-                activeDot={{ r: 3, strokeWidth: 0 }}
-                isAnimationActive={false}
-                connectNulls={false}
+                {...areaProps(COMPLETED_COLOR, completedGradientId)}
               />
               <Area
-                type="monotone"
                 dataKey="failedTail"
-                stroke="var(--status-failed)"
-                strokeWidth={1.5}
                 strokeDasharray="4 3"
-                fill={`url(#${failedGradientId})`}
-                dot={false}
-                activeDot={{ r: 3, strokeWidth: 0 }}
-                isAnimationActive={false}
-                connectNulls={false}
+                {...areaProps(FAILED_COLOR, failedGradientId)}
               />
             </>
           )}
         </AreaChart>
       </ResponsiveContainer>
-    </div>
+    </ChartContainer>
   );
 };

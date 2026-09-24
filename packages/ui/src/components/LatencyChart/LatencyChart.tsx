@@ -16,6 +16,20 @@ import { useLatencyMetrics } from '../../hooks/useLatencyMetrics';
 import { useSettingsStore } from '../../hooks/useSettings';
 import { isPartialBucket } from '../../utils/partialBucket';
 import {
+  CHART_AXIS_TICK,
+  CHART_CURSOR,
+  CHART_GRID,
+  ChartContainer,
+  ChartIndicator,
+  ChartLegend,
+  ChartTooltipCard,
+  ChartTooltipItem,
+  ChartTooltipNote,
+  ChartTooltipSeparator,
+  chartActiveDot,
+  useChartAnimation,
+} from '../ChartContainer/ChartContainer';
+import {
   clampLatencyRowsToLogFloor,
   computeLatencyAxisDomain,
   computeLogTicks,
@@ -27,7 +41,6 @@ import {
   withPartialLatencyTail,
 } from './latencySeries';
 import type { LatencyRow, LatencySeriesKey } from './latencySeries';
-import s from './LatencyChart.module.css';
 
 export interface LatencyChartProps {
   queue?: string;
@@ -42,7 +55,7 @@ export interface LatencyChartProps {
 /**
  * Hue carries the metric (run vs wait), line weight carries the percentile rank: p50 thinnest,
  * p99 heaviest. Each ramp's colour also runs from pale/low-contrast (p50) to dark/high-contrast
- * (p99), so severity reads even when weight alone is hard to judge at a glance. See index.css
+ * (p99), so severity reads even when weight alone is hard to judge at a glance. See theme.css
  * for the --latency-* custom properties and why light/dark ramp in opposite directions.
  *
  * `as const` so each `labelKey` keeps its literal type: `t()` is typed against the en-US key
@@ -131,6 +144,7 @@ export const LatencyChart = ({
   const { t } = useTranslation();
   const enabledSeries = useSettingsStore((state) => state.latencyChartSeries);
   const setSettings = useSettingsStore((state) => state.setSettings);
+  const animation = useChartAnimation();
 
   const toggleSeries = (key: LatencySeriesKey) => {
     setSettings({
@@ -223,8 +237,6 @@ export const LatencyChart = ({
   const loading = runLoading || waitLoading || queueAgeLoading || completedLoading;
   const hasCompletions = completed.some((point) => point.value > 0);
 
-  const axisTick = { fill: 'var(--muted-foreground)', fontSize: 11 };
-
   const formatXTick = (x: number) =>
     granularity === 'hour'
       ? new Date(x).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })
@@ -254,8 +266,7 @@ export const LatencyChart = ({
     const queueAgeValue = row.queueAge ?? row.queueAgeTail;
 
     return (
-      <div className={s.tooltip}>
-        <div className={s.tooltipTime}>{formatTooltipLabel(row.x)}</div>
+      <ChartTooltipCard label={formatTooltipLabel(row.x)}>
         {(['run', 'wait'] as const).map((group) => {
           const groupSeries = visibleSeries.filter((meta) => meta.group === group);
           if (groupSeries.length === 0) {
@@ -273,34 +284,33 @@ export const LatencyChart = ({
                   return null;
                 }
                 return (
-                  <div className={s.tooltipRow} key={key}>
-                    <span
-                      className={s.tooltipSwatch}
-                      style={{ backgroundColor: `var(${colorVar})` }}
-                    />
-                    <span className={s.tooltipName}>{t(labelKey)}</span>
-                    <span className={s.tooltipValue}>{formatDuration(value)}</span>
-                  </div>
+                  <ChartTooltipItem
+                    key={key}
+                    color={`var(${colorVar})`}
+                    name={t(labelKey)}
+                    value={formatDuration(value)}
+                  />
                 );
               })}
               {showLowConfidence && (
-                <div className={s.tooltipNote}>{t('LATENCY.LOW_CONFIDENCE', { count })}</div>
+                <ChartTooltipNote>{t('LATENCY.LOW_CONFIDENCE', { count })}</ChartTooltipNote>
               )}
             </Fragment>
           );
         })}
         {isQueueAgeEnabled && queueAgeValue !== undefined && (
           <>
-            <div className={s.tooltipDivider} />
-            <div className={s.tooltipRow}>
-              <span className={`${s.tooltipSwatch} ${s.tooltipSwatchDashed}`} />
-              <span className={s.tooltipName}>{t('LATENCY.QUEUE_AGE')}</span>
-              <span className={s.tooltipValue}>{formatDuration(queueAgeValue)}</span>
-            </div>
+            <ChartTooltipSeparator />
+            <ChartTooltipItem
+              color="var(--status-delayed)"
+              variant="dashed"
+              name={t('LATENCY.QUEUE_AGE')}
+              value={formatDuration(queueAgeValue)}
+            />
           </>
         )}
-        {isPartialPoint && <div className={s.tooltipNote}>{t('METRICS.PARTIAL_PERIOD')}</div>}
-      </div>
+        {isPartialPoint && <ChartTooltipNote>{t('METRICS.PARTIAL_PERIOD')}</ChartTooltipNote>}
+      </ChartTooltipCard>
     );
   };
 
@@ -308,12 +318,21 @@ export const LatencyChart = ({
     return null;
   }
 
+  // Real buttons, not divs with onClick, so every series toggle is keyboard reachable. A
+  // toggled-off series stays legible (it's still clickable) but visibly recedes.
+  const legendButtonClass =
+    'inline-flex h-6 items-center gap-1.5 rounded-full border border-transparent px-2 text-xs text-muted-foreground transition-[color,background-color,border-color,opacity] outline-none hover:bg-state-hover hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 aria-pressed:border-border aria-pressed:bg-background aria-pressed:text-foreground aria-pressed:shadow-xs data-[enabled=false]:opacity-55 dark:aria-pressed:bg-input/30';
+
   const legendGroup = (
     group: 'run' | 'wait',
     labelKey: 'LATENCY.GROUP_RUN' | 'LATENCY.GROUP_WAIT'
   ) => (
-    <div className={s.legendGroup}>
-      <span className={s.legendGroupLabel}>{t(labelKey)}</span>
+    <div className="flex flex-wrap items-center gap-1">
+      {/* Reinforces hue = metric with a text label too, so the grouping doesn't rely on colour
+          alone. */}
+      <span className="mr-0.5 text-[0.68rem] font-semibold tracking-wide text-muted-foreground uppercase">
+        {t(labelKey)}
+      </span>
       {LATENCY_SERIES_META.filter((meta) => meta.group === group).map(
         ({ key, colorVar, labelKey: seriesLabelKey, shortLabelKey, strokeWidth }) => {
           const enabled = enabledSeries.includes(key);
@@ -321,16 +340,15 @@ export const LatencyChart = ({
             <button
               type="button"
               key={key}
-              className={s.legendItem}
+              className={legendButtonClass}
               aria-pressed={enabled}
               aria-label={t(seriesLabelKey)}
               data-enabled={enabled}
               onClick={() => toggleSeries(key)}
             >
-              <span
-                className={s.legendSwatch}
-                style={{ backgroundColor: `var(${colorVar})`, height: `${strokeWidth}px` }}
-              />
+              {/* Line-weight swatch: its height mirrors the series' actual stroke width, so
+                  the legend teaches the "heavier line = higher percentile" encoding. */}
+              <ChartIndicator color={`var(${colorVar})`} variant="line" thickness={strokeWidth} />
               {t(shortLabelKey)}
             </button>
           );
@@ -339,30 +357,40 @@ export const LatencyChart = ({
     </div>
   );
 
+  const visiblePlotOrder = PLOT_ORDER.filter((meta) => enabledSeries.includes(meta.key));
+
   return (
-    <div className={s.chart}>
+    <ChartContainer>
       {/* No title here: the card header one level up carries "Job latency" while this tab is
           active (see MetricsHeader), so repeating it here would put the words on screen twice. */}
       {rows.length > 0 && (
-        <div className={s.legend}>
+        <ChartLegend className="gap-x-4">
           {legendGroup('run', 'LATENCY.GROUP_RUN')}
           {legendGroup('wait', 'LATENCY.GROUP_WAIT')}
           <button
             type="button"
-            className={s.legendItem}
+            className={legendButtonClass}
             aria-pressed={isQueueAgeEnabled}
             data-enabled={isQueueAgeEnabled}
             onClick={() => toggleSeries('queueAge')}
           >
-            <span className={`${s.legendSwatch} ${s.legendSwatchDashed}`} />
+            {/* A hollow dashed square, never a filled bar, so queue age never reads as a
+                fourth percentile alongside the solid run/wait weight ramps. */}
+            <ChartIndicator color="var(--status-delayed)" variant="dashed" />
             {t('LATENCY.QUEUE_AGE')}
           </button>
-          {isLogAxis && <span className={s.scaleNote}>({t('LATENCY.LOG_SCALE_NOTE')})</span>}
-        </div>
+          {/* Qualifies the whole Y axis, not any one series. An unlabelled log axis reads as
+              far flatter than the underlying change. */}
+          {isLogAxis && (
+            <span className="ml-auto rounded-full bg-muted px-2 py-0.5 text-[0.68rem] text-muted-foreground italic">
+              {t('LATENCY.LOG_SCALE_NOTE')}
+            </span>
+          )}
+        </ChartLegend>
       )}
 
       {rows.length === 0 ? (
-        <p className={s.empty}>
+        <p className="m-0 py-6 text-center text-sm text-muted-foreground">
           {t(hasCompletions ? 'LATENCY.EMPTY_NO_DATA' : 'LATENCY.EMPTY_NO_COMPLETIONS')}
         </p>
       ) : (
@@ -382,11 +410,11 @@ export const LatencyChart = ({
                 </linearGradient>
               ))}
             </defs>
-            <CartesianGrid vertical={false} stroke="var(--border)" strokeOpacity={0.5} />
+            <CartesianGrid {...CHART_GRID} />
             <XAxis
               dataKey="x"
-              tick={axisTick}
-              tickMargin={8}
+              tick={CHART_AXIS_TICK}
+              tickMargin={10}
               minTickGap={48}
               axisLine={false}
               tickLine={false}
@@ -394,7 +422,7 @@ export const LatencyChart = ({
             />
             <YAxis
               width={48}
-              tick={axisTick}
+              tick={CHART_AXIS_TICK}
               axisLine={false}
               tickLine={false}
               scale={isLogAxis ? 'log' : 'linear'}
@@ -403,26 +431,21 @@ export const LatencyChart = ({
               allowDataOverflow={isLogAxis}
               tickFormatter={formatDuration}
             />
-            <Tooltip
-              content={renderTooltip}
-              cursor={{ stroke: 'var(--muted-foreground)', strokeWidth: 1, strokeOpacity: 0.6 }}
-              isAnimationActive={false}
-            />
-            {PLOT_ORDER.filter((meta) => enabledSeries.includes(meta.key)).map(
-              ({ key, colorVar, strokeWidth }) => (
-                <Line
-                  key={key}
-                  type="monotone"
-                  dataKey={key}
-                  stroke={`url(#${idPrefix}-${key})`}
-                  strokeWidth={strokeWidth}
-                  dot={false}
-                  activeDot={{ r: 3, strokeWidth: 0, fill: `var(${colorVar})` }}
-                  isAnimationActive={false}
-                  connectNulls={false}
-                />
-              )
-            )}
+            <Tooltip content={renderTooltip} cursor={CHART_CURSOR} isAnimationActive={false} />
+            {visiblePlotOrder.map(({ key, colorVar, strokeWidth }) => (
+              <Line
+                key={key}
+                type="monotone"
+                dataKey={key}
+                stroke={`url(#${idPrefix}-${key})`}
+                strokeWidth={strokeWidth}
+                strokeLinecap="round"
+                dot={false}
+                activeDot={chartActiveDot(`var(${colorVar})`)}
+                connectNulls={false}
+                {...animation}
+              />
+            ))}
             {isQueueAgeEnabled && (
               <Line
                 type="monotone"
@@ -431,31 +454,29 @@ export const LatencyChart = ({
                 strokeWidth={1.5}
                 strokeDasharray="4 3"
                 dot={false}
-                activeDot={{ r: 3, strokeWidth: 0, fill: 'var(--status-delayed)' }}
-                isAnimationActive={false}
+                activeDot={chartActiveDot('var(--status-delayed)')}
                 connectNulls={false}
+                {...animation}
               />
             )}
             {/* The closing segment of an in-progress bucket, redrawn dashed. Its data only
                 covers the last two points (see withPartialLatencyTail), picking up exactly
                 where each solid line above stops. */}
             {isLastPartial &&
-              PLOT_ORDER.filter((meta) => enabledSeries.includes(meta.key)).map(
-                ({ key, colorVar, strokeWidth }) => (
-                  <Line
-                    key={`${key}-tail`}
-                    type="monotone"
-                    dataKey={`${key}Tail`}
-                    stroke={`url(#${idPrefix}-${key})`}
-                    strokeWidth={strokeWidth}
-                    strokeDasharray="4 3"
-                    dot={false}
-                    activeDot={{ r: 3, strokeWidth: 0, fill: `var(${colorVar})` }}
-                    isAnimationActive={false}
-                    connectNulls={false}
-                  />
-                )
-              )}
+              visiblePlotOrder.map(({ key, colorVar, strokeWidth }) => (
+                <Line
+                  key={`${key}-tail`}
+                  type="monotone"
+                  dataKey={`${key}Tail`}
+                  stroke={`url(#${idPrefix}-${key})`}
+                  strokeWidth={strokeWidth}
+                  strokeDasharray="4 3"
+                  dot={false}
+                  activeDot={chartActiveDot(`var(${colorVar})`)}
+                  connectNulls={false}
+                  {...animation}
+                />
+              ))}
             {isQueueAgeEnabled && isLastPartial && (
               <Line
                 type="monotone"
@@ -464,14 +485,14 @@ export const LatencyChart = ({
                 strokeWidth={1.5}
                 strokeDasharray="4 3"
                 dot={false}
-                activeDot={{ r: 3, strokeWidth: 0, fill: 'var(--status-delayed)' }}
-                isAnimationActive={false}
+                activeDot={chartActiveDot('var(--status-delayed)')}
                 connectNulls={false}
+                {...animation}
               />
             )}
           </LineChart>
         </ResponsiveContainer>
       )}
-    </div>
+    </ChartContainer>
   );
 };

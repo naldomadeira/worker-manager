@@ -1,25 +1,33 @@
-import { Menu } from '@base-ui/react/menu';
 import { STATUSES } from '@worker-manager/api/constants/statuses';
 import type { AppQueue } from '@worker-manager/api/typings/app';
+import {
+  EllipsisVerticalIcon,
+  GaugeIcon,
+  PauseIcon,
+  PlayIcon,
+  PlusIcon,
+  RotateCcwIcon,
+  TimerIcon,
+  Trash2Icon,
+  TriangleAlertIcon,
+} from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { cn } from '@/lib/utils';
 import { QueueActions } from '../../../typings/app';
 import { canRetryFailedJobs } from '../../utils/failedRetries';
-import { Button } from '../Button/Button';
-import { DropdownContent } from '../DropdownContent/DropdownContent';
-import { AddIcon } from '../Icons/Add';
-import { ConcurrencyIcon } from '../Icons/Concurrency';
-import { EllipsisVerticalIcon } from '../Icons/EllipsisVertical';
-import { ObliterateIcon } from '../Icons/Obliterate';
-import { PauseIcon } from '../Icons/Pause';
-import { PlayIcon } from '../Icons/Play';
-import { RateLimitIcon } from '../Icons/RateLimit';
-import { RetryIcon } from '../Icons/Retry';
-import { TrashIcon } from '../Icons/Trash';
-import s from './QueueDropdownActions.module.css';
 
 export const QueueDropdownActions = ({
   queue,
   actions,
+  className,
 }: {
   queue: AppQueue;
   actions: Omit<QueueActions, 'addJob'> & {
@@ -27,72 +35,78 @@ export const QueueDropdownActions = ({
     onConcurrency?: () => void;
     onRateLimit?: () => void;
   };
+  className?: string;
 }) => {
   const { t } = useTranslation();
+  const showConcurrency = queue.type === 'bullmq' && !!actions.onConcurrency;
+  const showRateLimit = queue.supportsGlobalRateLimit && !!actions.onRateLimit;
 
   return (
-    <Menu.Root>
-      <Menu.Trigger
-        render={
-          <Button className={s.trigger}>
-            <EllipsisVerticalIcon />
-          </Button>
-        }
-      />
+    // Not modal: several items open a dialog of their own, and a modal menu handing focus back
+    // to its trigger while that dialog mounts leaves the page inert.
+    <DropdownMenu modal={false}>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="ghost"
+          size="icon-sm"
+          aria-label={t('QUEUE.ACTIONS.QUEUE_ACTIONS')}
+          className={cn('text-muted-foreground hover:text-foreground max-md:size-10', className)}
+        >
+          <EllipsisVerticalIcon />
+        </Button>
+      </DropdownMenuTrigger>
 
-      <Menu.Portal>
-        <Menu.Positioner align="end" style={{ zIndex: 100 }}>
-          <DropdownContent>
-            <Menu.Item onClick={actions.addJob}>
-              <AddIcon />
-              {t('QUEUE.ACTIONS.ADD_JOB')}
-            </Menu.Item>
-            {canRetryFailedJobs(queue) && (
-              <Menu.Item onClick={actions.retryAll(queue.name, STATUSES.failed)}>
-                <RetryIcon />
-                {t('QUEUE.ACTIONS.RETRY_ALL_FAILED', { count: queue.counts.failed })}
-              </Menu.Item>
-            )}
-            <Menu.Item
-              onClick={
-                queue.isPaused ? actions.resumeQueue(queue.name) : actions.pauseQueue(queue.name)
-              }
-            >
-              {queue.isPaused ? (
-                <>
-                  <PlayIcon />
-                  {t('QUEUE.ACTIONS.RESUME')}
-                </>
-              ) : (
-                <>
-                  <PauseIcon />
-                  {t('QUEUE.ACTIONS.PAUSE')}
-                </>
-              )}
-            </Menu.Item>
-            {queue.type === 'bullmq' && !!actions.onConcurrency && (
-              <Menu.Item onClick={actions.onConcurrency}>
-                <ConcurrencyIcon />
-                {t('QUEUE.ACTIONS.SET_CONCURRENCY')}
-              </Menu.Item>
-            )}
-            {queue.supportsGlobalRateLimit && !!actions.onRateLimit && (
-              <Menu.Item onClick={actions.onRateLimit}>
-                <RateLimitIcon />
-                {t('QUEUE.ACTIONS.SET_RATE_LIMIT')}
-              </Menu.Item>
-            )}
-            <Menu.Item onClick={actions.emptyQueue(queue.name)}>
-              <TrashIcon />
-              {t('QUEUE.ACTIONS.EMPTY')}
-            </Menu.Item>
-            <Menu.Item onClick={actions.obliterateQueue(queue.name)} className={s.danger}>
-              <ObliterateIcon />
-              {t('QUEUE.ACTIONS.OBLITERATE')}
-            </Menu.Item>
-          </DropdownContent>
-        </Menu.Positioner>
-      </Menu.Portal>
-    </Menu.Root>
+      <DropdownMenuContent align="end" className="min-w-52">
+        <DropdownMenuItem onClick={actions.addJob}>
+          <PlusIcon />
+          {t('QUEUE.ACTIONS.ADD_JOB')}
+        </DropdownMenuItem>
+        {canRetryFailedJobs(queue) && (
+          <DropdownMenuItem onClick={actions.retryAll(queue.name, STATUSES.failed)}>
+            <RotateCcwIcon />
+            {t('QUEUE.ACTIONS.RETRY_ALL_FAILED', { count: queue.counts.failed })}
+          </DropdownMenuItem>
+        )}
+        <DropdownMenuItem
+          onClick={
+            queue.isPaused ? actions.resumeQueue(queue.name) : actions.pauseQueue(queue.name)
+          }
+        >
+          {queue.isPaused ? (
+            <>
+              <PlayIcon />
+              {t('QUEUE.ACTIONS.RESUME')}
+            </>
+          ) : (
+            <>
+              <PauseIcon />
+              {t('QUEUE.ACTIONS.PAUSE')}
+            </>
+          )}
+        </DropdownMenuItem>
+        {(showConcurrency || showRateLimit) && <DropdownMenuSeparator />}
+        {showConcurrency && (
+          <DropdownMenuItem onClick={actions.onConcurrency}>
+            <GaugeIcon />
+            {t('QUEUE.ACTIONS.SET_CONCURRENCY')}
+          </DropdownMenuItem>
+        )}
+        {showRateLimit && (
+          <DropdownMenuItem onClick={actions.onRateLimit}>
+            <TimerIcon />
+            {t('QUEUE.ACTIONS.SET_RATE_LIMIT')}
+          </DropdownMenuItem>
+        )}
+        <DropdownMenuSeparator />
+        <DropdownMenuItem variant="destructive" onClick={actions.emptyQueue(queue.name)}>
+          <Trash2Icon />
+          {t('QUEUE.ACTIONS.EMPTY')}
+        </DropdownMenuItem>
+        <DropdownMenuItem variant="destructive" onClick={actions.obliterateQueue(queue.name)}>
+          <TriangleAlertIcon />
+          {t('QUEUE.ACTIONS.OBLITERATE')}
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };

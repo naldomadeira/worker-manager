@@ -1,17 +1,36 @@
-import { Switch, type SwitchRootProps } from '@base-ui/react/switch';
+import React, { useId } from 'react';
+import { Switch } from '@/components/ui/switch';
 import { Field } from '../Field/Field';
-import s from './SwitchField.module.css';
 
-interface SwitchFieldProps extends SwitchRootProps {
+type SwitchProps = React.ComponentProps<typeof Switch>;
+
+interface SwitchFieldProps extends SwitchProps {
   label?: string;
   id?: string;
   description?: string;
 }
 
-export const SwitchField = ({ label, id, description, ...switchProps }: SwitchFieldProps) => (
-  <Field label={label} inline={true} description={description}>
-    <Switch.Root id={id} {...switchProps} className={s.switch}>
-      <Switch.Thumb className={s.thumb} />
-    </Switch.Root>
-  </Field>
-);
+export const SwitchField = ({
+  label,
+  id,
+  description,
+  className,
+  ...switchProps
+}: SwitchFieldProps) => {
+  const generatedId = useId();
+  const controlId = id ?? generatedId;
+  const descriptionId = description ? `${controlId}-description` : undefined;
+
+  return (
+    <Field
+      label={label}
+      inline={true}
+      description={description}
+      htmlFor={controlId}
+      descriptionId={descriptionId}
+      className={className}
+    >
+      <Switch id={controlId} aria-describedby={descriptionId} className="mt-px" {...switchProps} />
+    </Field>
+  );
+};

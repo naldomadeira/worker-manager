@@ -1,8 +1,16 @@
-import cn from 'clsx';
+import { ArrowLeft } from 'lucide-react';
+import { motion, useReducedMotion } from 'motion/react';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useHistory } from 'react-router-dom';
-import { ArrowLeftIcon } from '../../components/Icons/ArrowLeft';
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from '@/components/ui/breadcrumb';
 import { JobCard } from '../../components/JobCard/JobCard';
 import { JobFlow } from '../../components/JobFlow/JobFlow';
 import { Loader } from '../../components/Loader/Loader';
@@ -12,7 +20,6 @@ import { useJob } from '../../hooks/useJob';
 import { useModal } from '../../hooks/useModal';
 import { useSelectedStatuses } from '../../hooks/useSelectedStatuses';
 import { links } from '../../utils/links';
-import buttonS from '../../components/Button/Button.module.css';
 
 const AddJobModalLazy = React.lazy(() =>
   import('../../components/AddJobModal/AddJobModal').then(({ AddJobModal }) => ({
@@ -42,13 +49,22 @@ export const JobPage = () => {
   const { job, status, actions, loading, isTransitioning } = useJob();
   const selectedStatuses = useSelectedStatuses();
   const modal = useModal<'updateJobData' | 'addJob' | 'rescheduleJob' | 'reprioritiseJob'>();
+  const reduceMotion = useReducedMotion();
 
   if (!queue) {
-    return <section>{t('QUEUE.NOT_FOUND')}</section>;
+    return (
+      <section className="py-10 text-center text-sm text-muted-foreground">
+        {t('QUEUE.NOT_FOUND')}
+      </section>
+    );
   }
 
   if (!job) {
-    return <section>{loading ? <Loader /> : t('JOB.NOT_FOUND')}</section>;
+    return (
+      <section className="py-10 text-center text-sm text-muted-foreground">
+        {loading ? <Loader /> : t('JOB.NOT_FOUND')}
+      </section>
+    );
   }
 
   const cleanJob = async () => {
@@ -56,41 +72,64 @@ export const JobPage = () => {
     history.replace(links.queuePage(queue.name, selectedStatuses));
   };
 
+  const idPrefix = /^\d+$/.test(`${job.id}`) ? '#' : '';
+  const queueUrl = links.queuePage(queue.name, selectedStatuses);
+
   return (
-    <section>
+    <section className="flex flex-col gap-4">
       <StickyHeader
         actions={
-          <Link
-            className={cn(buttonS.button, buttonS.default)}
-            to={links.queuePage(queue.name, selectedStatuses)}
-            style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4em' }}
-          >
-            <ArrowLeftIcon />
-            {queue.name}
-          </Link>
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink asChild>
+                  <Link
+                    to={queueUrl}
+                    className="inline-flex items-center gap-1.5 rounded-md px-1.5 py-1 font-medium hover:bg-state-hover"
+                  >
+                    <ArrowLeft className="size-3.5" />
+                    {queue.displayName ?? queue.name}
+                  </Link>
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage className="font-mono text-xs">
+                  {idPrefix}
+                  {job.id}
+                </BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
         }
       />
       {isTransitioning ? (
         <Loader />
       ) : (
-        <JobCard
+        <motion.div
           key={job.id}
-          job={job}
-          status={status}
-          actions={{
-            cleanJob,
-            promoteJob: actions.promoteJob(queue.name)(job),
-            retryJob: actions.retryJob(queue.name)(job),
-            getJobLogs: actions.getJobLogs(queue.name)(job),
-            removeUnprocessedChildren: actions.removeUnprocessedChildren(queue.name)(job),
-            updateJobData: () => modal.open('updateJobData'),
-            duplicateJob: () => modal.open('addJob'),
-            rescheduleJob: () => modal.open('rescheduleJob'),
-            reprioritiseJob: () => modal.open('reprioritiseJob'),
-          }}
-          readOnlyMode={queue.readOnlyMode}
-          allowRetries={(job.isFailed || queue.allowCompletedRetries) && queue.allowRetries}
-        />
+          initial={reduceMotion ? false : { opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <JobCard
+            job={job}
+            status={status}
+            actions={{
+              cleanJob,
+              promoteJob: actions.promoteJob(queue.name)(job),
+              retryJob: actions.retryJob(queue.name)(job),
+              getJobLogs: actions.getJobLogs(queue.name)(job),
+              removeUnprocessedChildren: actions.removeUnprocessedChildren(queue.name)(job),
+              updateJobData: () => modal.open('updateJobData'),
+              duplicateJob: () => modal.open('addJob'),
+              rescheduleJob: () => modal.open('rescheduleJob'),
+              reprioritiseJob: () => modal.open('reprioritiseJob'),
+            }}
+            readOnlyMode={queue.readOnlyMode}
+            allowRetries={(job.isFailed || queue.allowCompletedRetries) && queue.allowRetries}
+          />
+        </motion.div>
       )}
       <JobFlow />
       <Suspense fallback={null}>

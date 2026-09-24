@@ -1,43 +1,39 @@
-import { Toast } from '@base-ui/react/toast';
 import { useTranslation } from 'react-i18next';
-import { TOAST_TIMEOUT, toastManager } from '../../services/toastManager';
-import { CheckIcon } from '../Icons/Check';
-import { CloseIcon } from '../Icons/Close';
-import { InfoIcon } from '../Icons/Info';
-import s from './Toaster.module.css';
+import { Toaster as UIToaster } from '@/components/ui/sonner';
 
-const ToastIcon = ({ type }: { type?: string }) => {
-  if (type === 'loading') {
-    return <span className={s.spinner} />;
-  }
-
-  return type === 'success' ? <CheckIcon /> : <InfoIcon />;
-};
-
-const ToastList = () => {
+/**
+ * The app-wide toast outlet. Toasts are raised imperatively through `toastManager`
+ * (services/toastManager.ts) and rendered here by sonner, stacked bottom right with swipe to
+ * dismiss and animated enter/exit.
+ */
+export const Toaster = () => {
   const { t } = useTranslation();
-  const { toasts } = Toast.useToastManager();
 
-  return toasts.map((toast) => (
-    <Toast.Root key={toast.id} toast={toast} className={s.toast} data-type={toast.type}>
-      <span className={s.icon}>
-        <ToastIcon type={toast.type} />
-      </span>
-      <Toast.Title className={s.title} />
-      <Toast.Description className={s.description} />
-      <Toast.Close className={s.close} aria-label={t('MODAL.CLOSE_BTN')}>
-        <CloseIcon />
-      </Toast.Close>
-    </Toast.Root>
-  ));
+  return (
+    <UIToaster
+      position="bottom-right"
+      closeButton
+      visibleToasts={5}
+      gap={8}
+      containerAriaLabel={t('TOAST.REGION_LABEL')}
+      toastOptions={{
+        closeButtonAriaLabel: t('MODAL.CLOSE_BTN'),
+        classNames: {
+          toast:
+            'cn-toast group/toast !items-start !gap-2.5 !rounded-xl !border-border !bg-popover !text-popover-foreground !shadow-popover',
+          title: '!font-medium !leading-snug',
+          description: '!text-muted-foreground !leading-snug [overflow-wrap:anywhere]',
+          icon: '!mt-0.5',
+          success: '[&_[data-icon]]:!text-status-completed',
+          error:
+            '!border-status-failed/30 [&_[data-icon]]:!text-status-failed before:absolute before:inset-y-3 before:left-0 before:w-0.5 before:rounded-full before:bg-status-failed',
+          warning: '[&_[data-icon]]:!text-status-delayed',
+          info: '[&_[data-icon]]:!text-status-active',
+          loading: '[&_[data-icon]]:!text-muted-foreground',
+          closeButton:
+            '!border-border !bg-popover !text-muted-foreground hover:!text-foreground hover:!bg-muted',
+        },
+      }}
+    />
+  );
 };
-
-export const Toaster = () => (
-  <Toast.Provider toastManager={toastManager} timeout={TOAST_TIMEOUT}>
-    <Toast.Portal>
-      <Toast.Viewport className={s.viewport}>
-        <ToastList />
-      </Toast.Viewport>
-    </Toast.Portal>
-  </Toast.Provider>
-);

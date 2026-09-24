@@ -33,8 +33,12 @@ it('renders the schedulers link in the status tab row', async () => {
   const { container, schedulersLink } = renderPage();
 
   await waitFor(() => expect(schedulersLink()).toBeTruthy());
-  expect(container.querySelector('.statusBar a[href*="/job-schedulers"]')).toBeTruthy();
-  expect(container.querySelector('.actionContainer a[href*="/job-schedulers"]')).toBeNull();
+  expect(
+    container.querySelector('[data-slot="status-bar"] a[href*="/job-schedulers"]')
+  ).toBeTruthy();
+  expect(
+    container.querySelector('[data-slot="queue-toolbar"] a[href*="/job-schedulers"]')
+  ).toBeNull();
 });
 
 it('keeps the schedulers link on a read only queue', async () => {

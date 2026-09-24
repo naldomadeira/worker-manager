@@ -1,9 +1,7 @@
-import cn from 'clsx';
 import { useEffect, useState } from 'react';
+import { cn } from '@/lib/utils';
 import { asyncHighlight } from '../../utils/highlight/highlight';
-import { Button } from '../Button/Button';
-import { CopyIcon } from '../Icons/Copy';
-import s from './Highlight.module.css';
+import { CopyButton } from '../CopyButton/CopyButton';
 
 interface HighlightProps {
   language: 'json' | 'stacktrace';
@@ -26,19 +24,19 @@ export const Highlight: React.FC<HighlightProps> = ({ language, text }) => {
     };
   }, [language, text]);
 
-  const handleCopyClick = () => {
-    navigator.clipboard.writeText(text ?? '');
-  };
-
   return (
-    <div className={s.codeContainerWrapper}>
-      <pre>
-        <code className={cn('hljs', language)} dangerouslySetInnerHTML={{ __html: code }} />
+    <div className="group/highlight relative flex items-start rounded-lg border bg-muted/40 font-mono text-[0.8125rem] leading-relaxed">
+      <pre className="m-0 min-w-0 flex-1 overflow-x-auto p-3 pr-11">
+        <code
+          className={cn('hljs animate-in duration-300 fade-in-0', language)}
+          dangerouslySetInnerHTML={{ __html: code }}
+        />
       </pre>
 
-      <Button onClick={handleCopyClick} className={s.copyBtn} compact>
-        <CopyIcon />
-      </Button>
+      <CopyButton
+        textToCopy={text ?? ''}
+        className="absolute top-2 right-2 bg-card opacity-0 shadow-xs ring-1 ring-border transition-opacity group-focus-within/highlight:opacity-100 group-hover/highlight:opacity-100 max-md:opacity-70"
+      />
     </div>
   );
 };

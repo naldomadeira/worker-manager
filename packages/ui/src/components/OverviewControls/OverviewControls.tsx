@@ -1,15 +1,16 @@
+import { ChevronsDownUpIcon, ChevronsUpDownIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useShallow } from 'zustand/react/shallow';
+import { Button } from '@/components/ui/button';
+import { ButtonGroup } from '@/components/ui/button-group';
 import { useOverviewState } from '../../hooks/useMenuState';
-import { Button } from '../Button/Button';
-import { ChevronDown } from '../Icons/ChevronDown';
-import s from './OverviewControls.module.css';
 
 interface OverviewControlsProps {
   grouped: boolean;
   groupPaths: string[];
 }
 
+/** Expand / collapse every group of the grouped overview at once. */
 export const OverviewControls = ({ grouped, groupPaths }: OverviewControlsProps) => {
   const { t } = useTranslation();
   const expandAll = useOverviewState((state) => state.expandAll);
@@ -26,29 +27,27 @@ export const OverviewControls = ({ grouped, groupPaths }: OverviewControlsProps)
   }
 
   return (
-    <div className={s.expandActions}>
+    <ButtonGroup>
       <Button
-        theme="basic"
-        compact
-        className={s.expandButton}
+        variant="outline"
+        size="icon"
         onClick={() => expandAll(groupPaths)}
         title={t('MENU.EXPAND_ALL')}
         aria-label={t('MENU.EXPAND_ALL')}
         disabled={allExpanded}
       >
-        <ChevronDown className={s.expandIcon} />
+        <ChevronsUpDownIcon />
       </Button>
       <Button
-        theme="basic"
-        compact
-        className={s.expandButton}
+        variant="outline"
+        size="icon"
         onClick={() => collapseAll(groupPaths)}
         title={t('MENU.COLLAPSE_ALL')}
         aria-label={t('MENU.COLLAPSE_ALL')}
         disabled={allCollapsed}
       >
-        <ChevronDown className={s.collapseIcon} />
+        <ChevronsDownUpIcon />
       </Button>
-    </div>
+    </ButtonGroup>
   );
 };
