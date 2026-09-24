@@ -1,7 +1,7 @@
 {
   "name": "@worker-manager/cli",
   "version": "9.10.1",
-  "description": "Run the bull-board dashboard against a Redis instance from the command line.",
+  "description": "Run the bull-board dashboard against Redis or PostgreSQL (BullMQ v6) from the command line.",
   "keywords": [
     "bull",
     "bull-board",
@@ -39,16 +39,20 @@
   },
   "dependencies": {
     "@worker-manager/api": "9.10.1",
+    "@worker-manager/auth": "9.10.1",
     "@worker-manager/express": "9.10.1",
     "@worker-manager/metrics": "9.10.1",
     "bull": "^4.16.5",
     "bullmq": "^5.81.3",
+    "bullmq-v6": "npm:bullmq@^6",
     "express": "^5.2.1",
-    "ioredis": "^6.0.0"
+    "ioredis": "^6.0.0",
+    "pg": "^8.23.0"
   },
   "devDependencies": {
     "@types/express": "^5.0.6",
     "@types/jest": "^30.0.0",
+    "@types/pg": "^8.23.1",
     "@types/redis-parser": "^3.0.3",
     "@types/supertest": "^7.2.1",
     "jest": "^30.4.2",

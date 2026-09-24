@@ -1,6 +1,6 @@
 # @worker-manager/cli
 
-Run the [bull-board](https://github.com/naldomadeira/worker-manager) dashboard against a Redis instance, no app to wire it into.
+Run the [Worker Manager](https://github.com/naldomadeira/worker-manager) dashboard against a Redis instance or a PostgreSQL database holding BullMQ v6 queues, no app to wire it into.
 
 ```sh
 npx @worker-manager/cli -r redis://localhost:6379
@@ -8,14 +8,14 @@ npx @worker-manager/cli -r redis://localhost:6379
 
 That opens `http://127.0.0.1:3000` with the dashboard for every Bull and BullMQ queue it finds under the `bull` key prefix.
 
-![bull-board dashboard](https://raw.githubusercontent.com/naldomadeira/worker-manager/main/website/docs/public/screenshots/dashboard-overview.png)
+![Worker Manager dashboard](https://raw.githubusercontent.com/naldomadeira/worker-manager/main/website/docs/public/screenshots/dashboard-overview.png)
 
 ## When you'd reach for this
 
 - The workers live in a repo or a container you are not editing, and you want to watch jobs move without adding a route to an app you would then have to remember to remove.
 - Your producers are not Node. BullMQ has an official Python package and gets written to over the raw protocol from other languages. Those teams have no app to embed the dashboard into.
 - You want to look at a queue on staging or production through a tunnel, without deploying anything.
-- You are evaluating bull-board and would rather see your own queues than wire up an integration first.
+- You are evaluating Worker Manager and would rather see your own queues than wire up an integration first.
 
 This is not a replacement for mounting an adapter in your own server: there's no auto-login, no framework-level auth to inherit, and every option has to be passed on the command line, an env var, or a config file instead of code.
 
@@ -46,6 +46,28 @@ Options:
       --read-only         Disable every destructive action
       --user <name>       Basic auth user (requires --password)
       --password <pass>   Basic auth password (requires --user)
+      --keycloak-url <url>
+                          Log in through Keycloak (OIDC) instead, e.g.
+                          https://sso.example.com
+      --keycloak-realm <realm>
+                          Keycloak realm, required with --keycloak-url
+      --keycloak-client-id <id>
+                          Client id, required with --keycloak-url
+      --keycloak-client-secret <secret>
+                          Client secret, for confidential clients
+      --keycloak-roles <list>
+                          Comma separated realm/client roles, any grants access
+      --keycloak-bearer-only
+                          Accept only Authorization: Bearer tokens, no login page
+      --public-url <url>  External URL of the board, base path included, used
+                          for the OIDC redirect URI     [derived from the request]
+      --session-secret <s>
+                          Key the session cookie is encrypted with
+                                                        [--keycloak-client-secret]
+      --postgres <url>    Also serve BullMQ v6 queues stored in PostgreSQL
+                          (postgres://user:pass@host:5432/db)
+      --postgres-schema <name>
+                          Schema the BullMQ tables live in       [bullmq]
       --board-title <s>   Dashboard title
       --history           Record and serve long-retention metrics history
       --history-retention-days <n>
@@ -58,7 +80,7 @@ Options:
   -v, --version           Show the version
 ```
 
-Every flag also has an environment variable equivalent (`BULL_BOARD_REDIS_URL`, `BULL_BOARD_PORT`, `BULL_BOARD_READ_ONLY`, and so on), and a `bull-board.config.{mjs,js,cjs,json}` file for anything that doesn't fit on a command line. Flags win over environment variables, which win over the config file, which wins over the built-in default.
+Every flag also has an environment variable equivalent (`BULL_BOARD_REDIS_URL`, `BULL_BOARD_PORT`, `BULL_BOARD_READ_ONLY`, `BULL_BOARD_KEYCLOAK_URL`, `BULL_BOARD_POSTGRES_URL`, and so on), and a `bull-board.config.{mjs,js,cjs,json}` file for anything that doesn't fit on a command line. Flags win over environment variables, which win over the config file, which wins over the built-in default.
 
 If Redis is unreachable when the CLI starts, it still opens: it serves a diagnostic page explaining why (the URL it dialled, the underlying error, and the likely causes), keeps retrying every 3 seconds, and switches to the real dashboard on its own the moment Redis answers, no restart needed. That only covers startup, though: once the dashboard is live it stays live, even if Redis later goes away. The diagnostic page does not come back; API requests just stop returning until Redis is reachable again, and Ctrl-C still works. Pass `--no-retry` for the old behaviour instead: print the error and exit 1 immediately, without ever opening a port, which is what a script or CI checking the exit code wants.
 
@@ -73,6 +95,57 @@ module.exports = {
   queues: {
     'payment-webhooks': { readOnlyMode: true },
   },
+};
+```
+
+## Keycloak auth
+
+Instead of Basic auth, the CLI can put a Keycloak (OpenID Connect) login in front of the dashboard, through [`@worker-manager/auth`](https://www.npmjs.com/package/@worker-manager/auth):
+
+```sh
+npx @worker-manager/cli -r redis://localhost:6379 --host 0.0.0.0 \
+  --keycloak-url https://sso.example.com --keycloak-realm ops \
+  --keycloak-client-id worker-manager --keycloak-client-secret "$KEYCLOAK_SECRET" \
+  --keycloak-roles wm-admin \
+  --public-url https://queues.example.com --session-secret "$SESSION_SECRET"
+```
+
+Browsers are redirected to the Keycloak login page (authorization code flow with PKCE) and come back with an encrypted, `HttpOnly` session cookie that is refreshed silently while the refresh token lasts. Scripts can skip the browser and send `Authorization: Bearer <access token>` instead; `--keycloak-bearer-only` turns the login page off entirely. A user without one of `--keycloak-roles` (realm roles or client roles) gets a 403.
+
+Register `<public url>/auth/callback` as a valid redirect URI on the Keycloak client and `<public url>/` as a valid post logout redirect URI. Without `--public-url` the URL is derived from the request's `Host` and `X-Forwarded-*` headers. Set `--session-secret` whenever more than one CLI process serves the same board, or sessions will not survive a restart. `--user`/`--password` and `--keycloak-url` are mutually exclusive.
+
+In a config file, the same settings live under `keycloak`, with the option names of [`@worker-manager/auth`](https://www.npmjs.com/package/@worker-manager/auth):
+
+```js
+module.exports = {
+  keycloak: {
+    url: 'https://sso.example.com',
+    realm: 'ops',
+    clientId: 'worker-manager',
+    clientSecret: process.env.KEYCLOAK_SECRET,
+    requiredRoles: ['wm-admin'],
+    cookie: { secret: process.env.SESSION_SECRET },
+  },
+};
+```
+
+## PostgreSQL queues
+
+BullMQ v6 can store queues in PostgreSQL. `--postgres` serves them:
+
+```sh
+npx @worker-manager/cli --postgres postgres://bullmq:bullmq@localhost:5432/bullmq
+```
+
+Queue names are discovered from the tables of BullMQ's PostgreSQL schema (`bullmq` by default, `--postgres-schema` to change it), on the same `--scan-interval` as Redis discovery, or taken from `--queues`. The CLI bundles its own BullMQ v6 and `pg` for this, whatever BullMQ version your workers run.
+
+With no Redis source configured (no `--redis`, `--sentinel`, `--cluster`, their environment variables, or a `redis` entry in the config file), the board serves PostgreSQL only and never connects to Redis. With one, it serves both on the same board; a PostgreSQL outage then keeps the last known PostgreSQL queues on the board instead of taking the Redis ones down. `--history` records into Redis, so it is ignored on a PostgreSQL-only board.
+
+In a config file, `postgres` takes the URL, or a [node-postgres pool config](https://node-postgres.com/apis/pool) with an optional `schema`:
+
+```js
+module.exports = {
+  postgres: { host: 'db', user: 'bullmq', password: process.env.PGPASSWORD, database: 'jobs', schema: 'bullmq' },
 };
 ```
 

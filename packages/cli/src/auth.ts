@@ -1,33 +1,34 @@
-import { timingSafeEqual } from 'node:crypto';
+import { createAuthMiddleware, type AuthMiddleware } from '@worker-manager/auth';
 import type { RequestHandler } from 'express';
+import type { CliConfig } from './config/types';
 
-// timingSafeEqual needs equal lengths, so the length comparison is folded into the answer.
-function timingSafeCompare(supplied: string, expected: string): boolean {
-  const suppliedBytes = Buffer.from(supplied, 'utf8');
-  const expectedBytes = Buffer.from(expected, 'utf8');
-  const sameLength = suppliedBytes.length === expectedBytes.length;
-  const target = sameLength ? expectedBytes : suppliedBytes;
-
-  return timingSafeEqual(suppliedBytes, target) && sameLength;
+/**
+ * Basic auth for a single user, through @worker-manager/auth: credentials are compared in
+ * constant time, a failure answers 401 with a `WWW-Authenticate` challenge.
+ */
+export function basicAuth({ user, password }: { user: string; password: string }): RequestHandler {
+  return createAuthMiddleware({
+    strategy: 'basic',
+    realm: 'bull-board',
+    users: [{ username: user, password }],
+  }) as unknown as RequestHandler;
 }
 
-export function basicAuth({ user, password }: { user: string; password: string }): RequestHandler {
-  const expected = `${user}:${password}`;
+/** The middleware guarding the whole server, or null when no auth is configured. */
+export function createCliAuth(config: CliConfig): AuthMiddleware | null {
+  if (config.keycloak) {
+    return createAuthMiddleware(config.keycloak, { basePath: config.basePath });
+  }
+  if (config.auth) {
+    return createAuthMiddleware(
+      {
+        strategy: 'basic',
+        realm: 'bull-board',
+        users: [{ username: config.auth.user, password: config.auth.password }],
+      },
+      { basePath: config.basePath }
+    );
+  }
 
-  return (req, res, next) => {
-    const header = req.headers.authorization || '';
-    const [scheme, encoded] = header.split(' ');
-
-    if (scheme?.toLowerCase() === 'basic' && encoded) {
-      const supplied = Buffer.from(encoded, 'base64').toString('utf8');
-
-      if (timingSafeCompare(supplied, expected)) {
-        next();
-        return;
-      }
-    }
-
-    res.setHeader('WWW-Authenticate', 'Basic realm="bull-board"');
-    res.status(401).send('Unauthorized');
-  };
+  return null;
 }

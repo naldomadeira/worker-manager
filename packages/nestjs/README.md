@@ -37,7 +37,6 @@ Once the installation is completed, we can import the `BullBoardModule` into you
 ```typescript
 import { Module } from '@nestjs/common';
 import { BullBoardModule } from "@worker-manager/nestjs";
-import { ExpressAdapter } from "@worker-manager/express";
 
 @Module({
   imports: [
@@ -45,10 +44,8 @@ import { ExpressAdapter } from "@worker-manager/express";
       // your bull module config here.
     }),
 
-    BullBoardModule.forRoot({
-      route: '/queues',
-      adapter: ExpressAdapter // Or FastifyAdapter from `@worker-manager/fastify`
-    }),
+    // Served at /queues, with the adapter matching your Nest platform (Express or Fastify).
+    BullBoardModule.forRoot(),
   ],
 })
 export class AppModule {
@@ -56,65 +53,124 @@ export class AppModule {
 ```
 
 The `forRoot()` method registers the bull-board instance and allows you to pass several options to both the instance and module.
-The following options are available.
-- `route` the base route for the bull-board instance adapter.
-- `adapter` The routing adapter to be used, either the Express Adapter or Fastify Adapter provided by bull-board.
-- `boardOptions` options as provided by the bull-board package, such as `uiBasePath` and `uiConfig`
-- `middleware` optional middleware for the express adapter (e.g. basic authentication)
+The following options are available, all optional.
 
+| Option | Default | |
+|---|---|---|
+| `route` | `'/queues'` | Base route of the board, relative to the Nest global prefix. |
+| `adapter` | auto-detected | `ExpressAdapter` (`@worker-manager/express`) or `FastifyAdapter` (`@worker-manager/fastify`). When omitted, the module reads the platform from `HttpAdapterHost` and loads the matching package. |
+| `auth` | none | Built-in authentication, see [Authentication](#authentication). |
+| `enabled` | `true` | `false` registers nothing: no routes, no middleware, `forFeature` becomes a no-op and the injected instance is `null`. |
+| `readOnly` | `false` | Read-only mode for every queue registered through `queues` or `forFeature`, unless the queue sets `options.readOnlyMode` itself. |
+| `queues` | `[]` | Queues to register at the root, same shape as `forFeature` entries. |
+| `uiConfig` | | Merged into `boardOptions.uiConfig`. |
+| `title` / `logo` / `theme` | | Shortcuts for `uiConfig.boardTitle`, `uiConfig.boardLogo`, `uiConfig.theme`. |
+| `boardOptions` | | Options as provided by the bull-board package, such as `uiBasePath` and `uiConfig`. |
+| `middleware` | | Nest middleware applied to the board route, after `auth` on Express. |
 
-### Express Authentication
-
-For Express, install `express-basic-auth`:
-
-```bash
-$ npm install --save express-basic-auth
+```typescript
+BullBoardModule.forRoot({
+  route: '/ops/queues',
+  title: 'Ops queues',
+  readOnly: process.env.NODE_ENV === 'production',
+  enabled: process.env.QUEUE_BOARD !== 'off',
+  queues: [{ name: 'emails', adapter: BullMQAdapter }],
+}),
 ```
 
-Modify the `BullBoardModule.forRoot()` method:
+### Async configuration
+
+`forRootAsync()` accepts `useFactory` + `inject`, `useClass` or `useExisting`, with `imports`:
+
+```typescript
+BullBoardModule.forRootAsync({
+  imports: [ConfigModule],
+  inject: [ConfigService],
+  useFactory: (config: ConfigService) => ({
+    route: '/queues',
+    enabled: config.get('QUEUE_BOARD_ENABLED') !== 'false',
+    auth: {
+      strategy: 'keycloak',
+      url: config.getOrThrow('KEYCLOAK_URL'),
+      realm: config.getOrThrow('KEYCLOAK_REALM'),
+      clientId: config.getOrThrow('KEYCLOAK_CLIENT_ID'),
+      clientSecret: config.get('KEYCLOAK_CLIENT_SECRET'),
+      requiredRoles: ['wm-admin'],
+      cookie: { secret: config.getOrThrow('SESSION_SECRET') },
+    },
+  }),
+}),
+```
+
+```typescript
+@Injectable()
+class BoardConfig implements BullBoardOptionsFactory {
+  constructor(private readonly config: ConfigService) {}
+
+  createBullBoardOptions(): BullBoardModuleOptions {
+    return { auth: { strategy: 'basic', users: [{ username: 'admin', password: this.config.getOrThrow('BOARD_PASSWORD') }] } };
+  }
+}
+
+BullBoardModule.forRootAsync({ imports: [ConfigModule], useClass: BoardConfig }),
+```
+
+## Authentication
+
+The `auth` option protects every board route (page, API, assets) with
+[`@worker-manager/auth`](https://www.npmjs.com/package/@worker-manager/auth), on Express and
+Fastify alike, and honours the Nest global prefix.
+
+### Basic
+
+```typescript
+BullBoardModule.forRoot({
+  auth: {
+    strategy: 'basic',
+    users: [{ username: 'admin', password: process.env.BOARD_PASSWORD, roles: ['admin'] }],
+  },
+}),
+```
+
+### Keycloak
+
+```typescript
+BullBoardModule.forRoot({
+  auth: {
+    strategy: 'keycloak',
+    url: 'https://sso.example.com',
+    realm: 'ops',
+    clientId: 'worker-manager',
+    clientSecret: process.env.KEYCLOAK_CLIENT_SECRET,
+    publicUrl: 'https://api.example.com/queues', // the board's external URL, base path included
+    requiredRoles: ['wm-admin'],
+    cookie: { secret: process.env.SESSION_SECRET },
+  },
+}),
+```
+
+Browsers are sent through the OIDC authorization code flow (PKCE), API clients may send an
+`Authorization: Bearer` access token. Register `https://api.example.com/queues/auth/callback` as a
+redirect URI on the Keycloak client. The board serves `GET /queues/auth/me` (the signed-in user)
+and `GET /queues/auth/logout`.
+
+### Custom middleware
+
+`middleware` still takes any Nest middleware, e.g. `express-basic-auth`. On Express it runs after
+`auth`. On Fastify it is applied as Nest middleware to the exact `route`, before the board's own
+hooks.
 
 ```typescript
 import basicAuth from "express-basic-auth";
 
 BullBoardModule.forRoot({
   route: "/queues",
-  adapter: ExpressAdapter,
   middleware: basicAuth({
     challenge: true,
     users: { admin: "passwordhere" },
   }),
 }),
 ```
-
-### Fastify Authentication
-
-For Fastify, you can use `fastify-basic-auth`:
-
-```bash
-$ npm install --save fastify-basic-auth
-```
-
-Then apply it using middleware:
-
-```typescript
-import fastifyBasicAuth from "fastify-basic-auth";
-
-BullBoardModule.forRoot({
-  route: "/queues",
-  adapter: FastifyAdapter,
-  middleware: (req, res, next) => {
-    fastifyBasicAuth({
-      validate: async (username, password, req, reply) => {
-        if (username === "admin" && password === "passwordhere") {
-          return;
-        }
-        throw new Error("Unauthorized");
-      },
-    })(req, res, next);
-  },
-}),
-```
-
 
 ## Register your queues
 To register a new queue, you need to register `BullBoardModule.forFeature` in the same module as where your queues are registered.
@@ -150,6 +206,23 @@ The following options are available.
 - `options` queue adapter options as found in the bull-board package, such as `readOnlyMode`, `description` etc.
 
 Provide either `name` or `queue`.
+
+### PostgreSQL-backed queues (BullMQ v6)
+
+A BullMQ v6 queue stored in PostgreSQL has no Redis connection and is usually not in the Nest
+container, so hand the instance over directly:
+
+```typescript
+import { Queue, createPostgresBackend } from 'bullmq'; // bullmq@6, plus `pg`
+
+const invoices = new Queue('invoices', { connection: process.env.POSTGRES_URL }, createPostgresBackend);
+
+BullBoardModule.forRoot({
+  queues: [{ queue: invoices, adapter: BullMQAdapter }],
+}),
+```
+
+Redis and PostgreSQL queues can share one board.
 
 ### Registering queue instances directly
 

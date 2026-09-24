@@ -2,7 +2,7 @@
 
 > Status: Beta. The API and Redis storage layout may still change in a minor release while the feature settles. It is safe to run (opt-in, and it only writes its own namespaced keys), but pin an exact version if you depend on the storage format.
 
-Opt-in long-retention historical job metrics for [bull-board](https://github.com/naldomadeira/worker-manager).
+Opt-in long-retention historical job metrics for [Worker Manager](https://github.com/naldomadeira/worker-manager).
 
 Snapshots native BullMQ per-minute metrics into long-retention Redis buckets and exposes a
 `MetricsHistoryProvider` that feeds bull-board's history charts. Everything is opt-in: the core
@@ -133,4 +133,4 @@ Both are `SCAN`-driven and confined to this package's namespace, so they never b
 
 ## Scope
 
-The shipped bull-board UI reads daily rollups. `getHistory` also supports hourly granularity for custom consumers (via the core's `/api/metrics/history` endpoint), though the built-in charts don't use it.
+The shipped Worker Manager UI reads daily rollups. `getHistory` also supports hourly granularity for custom consumers (via the core's `/api/metrics/history` endpoint), though the built-in charts don't use it.

@@ -1,5 +1,5 @@
 export const HELP = `
-bull-board - run the bull-board dashboard against a Redis instance
+bull-board - run the bull-board dashboard against Redis and/or PostgreSQL
 
 Usage:
   bull-board [options]
@@ -27,6 +27,28 @@ Options:
       --read-only         Disable every destructive action
       --user <name>       Basic auth user (requires --password)
       --password <pass>   Basic auth password (requires --user)
+      --keycloak-url <url>
+                          Log in through Keycloak (OIDC) instead, e.g.
+                          https://sso.example.com
+      --keycloak-realm <realm>
+                          Keycloak realm, required with --keycloak-url
+      --keycloak-client-id <id>
+                          Client id, required with --keycloak-url
+      --keycloak-client-secret <secret>
+                          Client secret, for confidential clients
+      --keycloak-roles <list>
+                          Comma separated realm/client roles, any grants access
+      --keycloak-bearer-only
+                          Accept only Authorization: Bearer tokens, no login page
+      --public-url <url>  External URL of the board, base path included, used
+                          for the OIDC redirect URI     [derived from the request]
+      --session-secret <s>
+                          Key the session cookie is encrypted with
+                                                        [--keycloak-client-secret]
+      --postgres <url>    Also serve BullMQ v6 queues stored in PostgreSQL
+                          (postgres://user:pass@host:5432/db)
+      --postgres-schema <name>
+                          Schema the BullMQ tables live in       [bullmq]
       --board-title <s>   Dashboard title
       --history           Record and serve long-retention metrics history
       --history-retention-days <n>
@@ -66,9 +88,24 @@ and --history recording all move with it. The credential flags above apply to
 sentinel and cluster mode only; with a Redis URL, put credentials in the URL
 itself.
 
+--postgres serves queues from BullMQ v6's PostgreSQL backend, discovering
+their names from its tables (or taking --queues). With no Redis source set
+(no --redis, --sentinel, --cluster or config file entry) the board serves
+PostgreSQL only and never connects to Redis; otherwise it serves both.
+--history needs Redis and is ignored on a PostgreSQL-only board.
+
+--keycloak-url replaces Basic auth with a Keycloak login: browsers are sent
+through the OIDC authorization code flow (PKCE), API clients may send an
+Authorization: Bearer access token. The redirect URI to register in Keycloak
+is <public url>/auth/callback.
+
 Environment variables mirror every flag, for example BULL_BOARD_REDIS_URL,
 BULL_BOARD_SENTINELS, BULL_BOARD_SENTINEL_NAME, BULL_BOARD_CLUSTER_NODES,
-BULL_BOARD_PORT, BULL_BOARD_READ_ONLY.
+BULL_BOARD_PORT, BULL_BOARD_READ_ONLY, BULL_BOARD_KEYCLOAK_URL,
+BULL_BOARD_KEYCLOAK_REALM, BULL_BOARD_KEYCLOAK_CLIENT_ID,
+BULL_BOARD_KEYCLOAK_CLIENT_SECRET, BULL_BOARD_KEYCLOAK_ROLES,
+BULL_BOARD_PUBLIC_URL, BULL_BOARD_SESSION_SECRET, BULL_BOARD_POSTGRES_URL,
+BULL_BOARD_POSTGRES_SCHEMA.
 
 Examples:
   bull-board
@@ -77,4 +114,8 @@ Examples:
   bull-board --user admin --password secret --host 0.0.0.0
   bull-board --sentinel s1:26379,s2:26379 --sentinel-name mymaster
   bull-board --cluster n1:7000,n2:7000,n3:7000
+  bull-board --postgres postgres://bullmq:bullmq@localhost:5432/bullmq
+  bull-board --keycloak-url https://sso.example.com --keycloak-realm ops \\
+    --keycloak-client-id board --keycloak-client-secret $SECRET \\
+    --keycloak-roles wm-admin --public-url https://ops.example.com
 `;

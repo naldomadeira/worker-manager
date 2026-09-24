@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "outDir": "dist",
+    "esModuleInterop": true,
+    "lib": ["es2022"],
+    "module": "CommonJS",
+    "rootDir": "./src",
+    "noImplicitAny": true,
+    "sourceMap": true,
+    "strict": true,
+    "target": "es2022",
+    "noUnusedParameters": true,
+    "noUnusedLocals": true,
+    "declaration": true,
+    "skipLibCheck": true,
+    "types": ["node", "jest"]
+  },
+  "include": ["./src"]
+}

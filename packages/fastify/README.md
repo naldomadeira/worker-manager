@@ -22,4 +22,26 @@
 2. [Auth with fastify setup](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-fastify-auth)
 
 
+# Authentication
+
+[`@worker-manager/auth`](https://www.npmjs.com/package/@worker-manager/auth) protects the board
+with Basic auth or a Keycloak (OIDC) login. Wrap the board plugin so the hook is scoped to the
+board's routes only:
+
+```ts
+import { createAuthMiddleware, createFastifyAuthPlugin } from '@worker-manager/auth';
+
+const auth = createAuthMiddleware(
+  { strategy: 'basic', users: [{ username: 'admin', password: process.env.BOARD_PASSWORD }] },
+  // or { strategy: 'keycloak', url, realm, clientId, clientSecret, requiredRoles, cookie: { secret } }
+  { basePath: '/ui' }
+);
+
+serverAdapter.setBasePath('/ui');
+app.register(createFastifyAuthPlugin(serverAdapter.registerPlugin(), auth), { prefix: '/ui' });
+```
+
+Every board route (page, API, assets) then needs credentials, and `GET /ui/auth/me` returns the
+signed-in user.
+
 For more info visit the main [README](https://github.com/naldomadeira/worker-manager#readme)

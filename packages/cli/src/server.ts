@@ -1,7 +1,7 @@
 import type { Server } from 'node:http';
 import type { ExpressAdapter } from '@worker-manager/express';
 import express, { type Express } from 'express';
-import { basicAuth } from './auth';
+import { createCliAuth } from './auth';
 import type { CliConfig } from './config/types';
 import type { ConnectionState } from './connectionState';
 import { statusHandler, STATUS_PATH, unavailableGate } from './unavailableGate';
@@ -22,8 +22,10 @@ export async function startServer(
 ): Promise<RunningServer> {
   const app = express();
 
-  if (config.auth) {
-    app.use(basicAuth(config.auth));
+  const auth = createCliAuth(config);
+  if (auth) {
+    // Mounted at the root, so the status endpoint and the diagnostic page are guarded too.
+    app.use(auth as unknown as express.RequestHandler);
   }
 
   if (getConnectionState) {

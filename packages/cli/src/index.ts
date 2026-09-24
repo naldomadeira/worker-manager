@@ -3,8 +3,9 @@ import { ExpressAdapter } from '@worker-manager/express';
 import type { CliConfig } from './config/types';
 import { describeConnection, RETRY_INTERVAL_MS, type ConnectionState } from './connectionState';
 import { describeError } from './describeError';
-import { discoverQueues, probeQueues } from './discovery';
+import { discoverQueues, probeQueues, type DiscoveredQueue } from './discovery';
 import { createHistory, warnIfCountersUnavailable } from './history';
+import { createPostgresSource, type PostgresSource } from './postgres';
 import { createQueueFactory } from './queueFactory';
 import { createRedisClient } from './redisClient';
 import { QueueRegistry } from './registry';
@@ -61,6 +62,12 @@ export async function run(
     beforeReady?: (close: () => Promise<void>) => void;
   } = {}
 ): Promise<RunningBoard> {
+  warnIfExposed(config, log);
+
+  if (config.postgres?.only) {
+    return runPostgresOnly(config, log, { beforeReady });
+  }
+
   const redisOptions = {
     maxRetriesPerRequest: null,
     lazyConnect: true,
@@ -83,14 +90,6 @@ export async function run(
   const firstError = new Promise<never>((_, reject) => client.once('error', reject));
   firstError.catch(() => undefined);
 
-  if (!isLoopbackHost(config.host) && !config.auth) {
-    log.warn(
-      `Warning: bull-board is listening on ${config.host}, which accepts connections from ` +
-        'outside this machine, with no --user/--password set. Anyone who can reach it can ' +
-        'view and modify every queue. Set --user and --password, or bind to 127.0.0.1.'
-    );
-  }
-
   const onWarning = (message: string) => log.warn(message);
   const history = config.history
     ? createHistory({ client, config: config.history, onWarning })
@@ -110,7 +109,48 @@ export async function run(
     queueOptions: config.queueOptions,
     onWarning,
   });
-  const registry = new QueueRegistry({ board, createQueue: queues.createQueue, onWarning });
+  const postgres = config.postgres
+    ? createPostgresSource({
+        config: config.postgres,
+        readOnly: config.readOnly,
+        queueOptions: config.queueOptions,
+        onWarning,
+      })
+    : null;
+  const registry = new QueueRegistry({
+    board,
+    createQueue: (queue) =>
+      queue.lib === 'bullmq-postgres' && postgres
+        ? postgres.createQueue(queue)
+        : queues.createQueue(queue),
+    onWarning,
+  });
+  // A PostgreSQL hiccup must not take the Redis queues down with it, nor drop the PostgreSQL
+  // queues already on the board, so a failed discovery keeps serving the last known list.
+  let lastPostgres: DiscoveredQueue[] = [];
+  let postgresFailing = false;
+  const discoverPostgres = async (): Promise<DiscoveredQueue[]> => {
+    if (!postgres) return [];
+    try {
+      // Next to Redis, explicit --queues filter what PostgreSQL actually holds rather than
+      // conjuring every name there too.
+      const names = config.queueNames;
+      lastPostgres = (await postgres.discover(null)).filter(
+        (queue) => !names || names.includes(queue.name)
+      );
+      if (postgresFailing) log.log('PostgreSQL reachable again.');
+      postgresFailing = false;
+    } catch (error) {
+      if (!postgresFailing) {
+        log.warn(
+          `Could not list PostgreSQL queues at ${postgres.label}: ${describeError(error as Error)}`
+        );
+      }
+      postgresFailing = true;
+    }
+
+    return lastPostgres;
+  };
 
   let closing = false;
   let rescanTimer: NodeJS.Timeout | undefined;
@@ -123,6 +163,7 @@ export async function run(
           )
         ).flat()
       : await discoverQueues(client, config.prefixes);
+    discovered.push(...(await discoverPostgres()));
 
     if (closing) return discovered.length;
 
@@ -200,6 +241,7 @@ export async function run(
         )
       );
       await closeWithGrace(client.quit(), SHUTDOWN_GRACE_MS, () => client.disconnect());
+      await postgres?.close().catch(() => undefined);
     };
 
     beforeReady?.(close);
@@ -207,6 +249,7 @@ export async function run(
     log.log(`bull-board listening on ${server.url}`);
     log.log(`Redis:  ${redisLabel}`);
     log.log(`Prefix: ${config.prefixes.join(', ')}`);
+    if (postgres) log.log(`Postgres: ${postgres.label} (schema ${config.postgres!.schema})`);
     logIfIdle(count);
 
     scheduleRescan();
@@ -242,6 +285,7 @@ export async function run(
       )
     );
     await closeWithGrace(client.quit(), SHUTDOWN_GRACE_MS, () => client.disconnect());
+    await postgres?.close().catch(() => undefined);
   };
 
   beforeReady?.(close);
@@ -333,6 +377,7 @@ export async function run(
   log.log(`bull-board listening on ${server.url}`);
   log.log(`Redis:  ${redisLabel}`);
   log.log(`Prefix: ${config.prefixes.join(', ')}`);
+  if (postgres) log.log(`Postgres: ${postgres.label} (schema ${config.postgres!.schema})`);
   if (deferredIdleCount !== undefined) logIfIdle(deferredIdleCount);
 
   client.on('ready', () => {
@@ -342,6 +387,103 @@ export async function run(
   client.on('error', (error: Error) => {
     markUnavailable(describeError(error));
   });
+
+  return { url: server.url, close };
+}
+
+function warnIfExposed(config: CliConfig, log: Pick<Console, 'warn'>): void {
+  if (isLoopbackHost(config.host) || config.auth || config.keycloak) return;
+
+  log.warn(
+    `Warning: bull-board is listening on ${config.host}, which accepts connections from ` +
+      'outside this machine, with no --user/--password set. Anyone who can reach it can ' +
+      'view and modify every queue. Set --user and --password (or Keycloak), or bind to 127.0.0.1.'
+  );
+}
+
+/**
+ * No Redis source was configured, only PostgreSQL: there is no Redis to wait for, so no
+ * diagnostic page and no connection state, just discovery against the database.
+ */
+async function runPostgresOnly(
+  config: CliConfig,
+  log: Pick<Console, 'log' | 'warn'>,
+  { beforeReady }: { beforeReady?: (close: () => Promise<void>) => void }
+): Promise<RunningBoard> {
+  const onWarning = (message: string) => log.warn(message);
+  if (config.history) {
+    log.warn(
+      '--history records into Redis, which is not configured; it is ignored for PostgreSQL-only boards.'
+    );
+  }
+
+  const serverAdapter = new ExpressAdapter();
+  serverAdapter.setBasePath(config.basePath);
+  const board = createBullBoard({
+    queues: [],
+    serverAdapter,
+    options: { uiConfig: config.uiConfig },
+  });
+  const postgres: PostgresSource = createPostgresSource({
+    config: config.postgres!,
+    readOnly: config.readOnly,
+    queueOptions: config.queueOptions,
+    onWarning,
+  });
+  const registry = new QueueRegistry({ board, createQueue: postgres.createQueue, onWarning });
+
+  let closing = false;
+  let rescanTimer: NodeJS.Timeout | undefined;
+  const scan = async () => {
+    const discovered = await postgres.discover(config.queueNames);
+    if (!closing) await registry.sync(discovered);
+    return discovered.length;
+  };
+
+  let count: number;
+  try {
+    count = await scan();
+  } catch (error) {
+    await postgres.close().catch(() => undefined);
+    throw new Error(
+      `Could not connect to PostgreSQL at ${postgres.label}: ${describeError(error as Error)}`
+    );
+  }
+
+  const server = await startServer(config, { serverAdapter });
+
+  const scheduleRescan = () => {
+    if (closing || config.scanInterval <= 0 || rescanTimer) return;
+    rescanTimer = setTimeout(() => {
+      rescanTimer = undefined;
+      scan()
+        .catch((error) => log.warn(`Rescan failed: ${error.message}`))
+        .finally(scheduleRescan);
+    }, config.scanInterval * 1000);
+    rescanTimer.unref();
+  };
+
+  const close = async () => {
+    closing = true;
+    if (rescanTimer) clearTimeout(rescanTimer);
+    await closeWithGrace(server.close(), SHUTDOWN_GRACE_MS, () => server.closeAllConnections());
+    await closeWithGrace(registry.close(), SHUTDOWN_GRACE_MS, () =>
+      log.warn(`Closing queues did not finish within ${SHUTDOWN_GRACE_MS}ms; continuing shutdown.`)
+    );
+    await postgres.close().catch(() => undefined);
+  };
+
+  beforeReady?.(close);
+
+  log.log(`bull-board listening on ${server.url}`);
+  log.log(`Postgres: ${postgres.label} (schema ${config.postgres!.schema})`);
+  if (count === 0) {
+    log.log(
+      'No PostgreSQL queues found yet. ' +
+        (config.scanInterval > 0 ? 'Watching for new ones.' : 'Scanning was set to run once.')
+    );
+  }
+  scheduleRescan();
 
   return { url: server.url, close };
 }

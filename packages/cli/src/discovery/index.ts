@@ -4,7 +4,7 @@ import { scanKeys } from './scan';
 export interface DiscoveredQueue {
   prefix: string;
   name: string;
-  lib: 'bull' | 'bullmq';
+  lib: 'bull' | 'bullmq' | 'bullmq-postgres';
 }
 
 /**

@@ -1,25 +1,26 @@
-import { getQueueToken } from '@nestjs/bull-shared';
 import { Inject, Module, OnModuleInit } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
-import { Queue } from 'bullmq';
-import { BULL_BOARD_INSTANCE, BULL_BOARD_QUEUES } from './bull-board.constants';
-import { BullBoardInstance, BullBoardQueueOptions } from './bull-board.types';
+import { BULL_BOARD_INSTANCE, BULL_BOARD_OPTIONS, BULL_BOARD_QUEUES } from './bull-board.constants';
+import {
+  BullBoardInstance,
+  BullBoardModuleOptions,
+  BullBoardQueueOptions,
+} from './bull-board.types';
+import { registerQueues } from './bull-board.util';
 
 @Module({})
 export class BullBoardFeatureModule implements OnModuleInit {
   constructor(
     private readonly moduleRef: ModuleRef,
     @Inject(BULL_BOARD_QUEUES) private readonly queues: BullBoardQueueOptions[],
-    @Inject(BULL_BOARD_INSTANCE) private readonly board: BullBoardInstance
+    @Inject(BULL_BOARD_INSTANCE) private readonly board: BullBoardInstance | null,
+    @Inject(BULL_BOARD_OPTIONS) private readonly options: BullBoardModuleOptions
   ) {}
 
   onModuleInit(): any {
-    for (const queueOption of this.queues) {
-      const queue =
-        queueOption.queue ??
-        this.moduleRef.get<Queue>(getQueueToken(queueOption.name), { strict: false });
-      const queueAdapter = new queueOption.adapter(queue, queueOption.options);
-      this.board.addQueue(queueAdapter);
-    }
+    // `enabled: false` leaves no board to register into.
+    if (!this.board) return;
+
+    registerQueues(this.board, this.moduleRef, this.queues, this.options?.readOnly);
   }
 }

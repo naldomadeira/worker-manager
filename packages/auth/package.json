@@ -1,0 +1,48 @@
+{
+  "name": "@worker-manager/auth",
+  "version": "9.10.1",
+  "description": "Framework-agnostic authentication middleware (Basic and Keycloak/OIDC) for the Worker Manager dashboard.",
+  "keywords": [
+    "auth",
+    "basic-auth",
+    "bull",
+    "bullmq",
+    "dashboard",
+    "keycloak",
+    "middleware",
+    "oidc"
+  ],
+  "license": "MIT",
+  "author": "naldomadeira",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/naldomadeira/worker-manager.git",
+    "directory": "packages/auth"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "yarn clean && tsc",
+    "clean": "rm -rf dist",
+    "test": "jest"
+  },
+  "dependencies": {
+    "jose": "^5.10.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/node": "^22.20.1",
+    "jest": "^30.4.2",
+    "ts-jest": "^29.4.12",
+    "typescript": "^5.9.3"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

@@ -428,7 +428,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:^7.1.2, @babel/runtime@npm:^7.12.13, @babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.29.2, @babel/runtime@npm:^7.29.7":
+"@babel/runtime@npm:^7.1.2, @babel/runtime@npm:^7.12.13, @babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.29.7":
   version: 7.29.7
   resolution: "@babel/runtime@npm:7.29.7"
   checksum: 10c0/ca11572f7146b21e0bde6a9ed4bb6a89eafbee5f0944c7eb54d0d8a2dac962c33638a1d611e14faa71dfbb92b4b5f9236232208568a6b7d5c6f3f39ddb91771e
@@ -478,51 +478,6 @@ __metadata:
     "@babel/helper-string-parser": "npm:^7.29.7"
     "@babel/helper-validator-identifier": "npm:^7.29.7"
   checksum: 10c0/be7c279f0abf2a086c633e21b49c7ca80275d05283cc5a268b67a708c9914bd0c944f1422b3eb3cb37682a2af5d560abf520ccf9b01b53ecbfe6b71fbc3fdde6
-  languageName: node
-  linkType: hard
-
-"@base-ui/react@npm:^1.7.0":
-  version: 1.7.0
-  resolution: "@base-ui/react@npm:1.7.0"
-  dependencies:
-    "@babel/runtime": "npm:^7.29.2"
-    "@base-ui/utils": "npm:0.3.2"
-    "@floating-ui/react-dom": "npm:^2.1.9"
-    "@floating-ui/utils": "npm:^0.2.12"
-    use-sync-external-store: "npm:^1.6.0"
-  peerDependencies:
-    "@date-fns/tz": ^1.2.0
-    "@types/react": ^17 || ^18 || ^19
-    date-fns: ^4.0.0
-    react: ^17 || ^18 || ^19
-    react-dom: ^17 || ^18 || ^19
-  peerDependenciesMeta:
-    "@date-fns/tz":
-      optional: true
-    "@types/react":
-      optional: true
-    date-fns:
-      optional: true
-  checksum: 10c0/05bc69f68431ff30a5fac98d8e75c77af7c27749d10aeac10ab7f26843a0a8b49ca5cff32654aad1a107cb7f44aeb1705c15138c9c7f7ddc19d6321fbb263e4d
-  languageName: node
-  linkType: hard
-
-"@base-ui/utils@npm:0.3.2":
-  version: 0.3.2
-  resolution: "@base-ui/utils@npm:0.3.2"
-  dependencies:
-    "@babel/runtime": "npm:^7.29.2"
-    "@floating-ui/utils": "npm:^0.2.12"
-    reselect: "npm:^5.2.0"
-    use-sync-external-store: "npm:^1.6.0"
-  peerDependencies:
-    "@types/react": ^17 || ^18 || ^19
-    react: ^17 || ^18 || ^19
-    react-dom: ^17 || ^18 || ^19
-  peerDependenciesMeta:
-    "@types/react":
-      optional: true
-  checksum: 10c0/b523339f350679915550605e59754b5db9806a41a3b390d6f6adad29fedc0caf084c8ad1bad6bb62a463360593382defb7d3ea941a94404ed9db0142fdae5800
   languageName: node
   linkType: hard
 
@@ -858,6 +813,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@fastify/cors@npm:11.3.0":
+  version: 11.3.0
+  resolution: "@fastify/cors@npm:11.3.0"
+  dependencies:
+    fastify-plugin: "npm:^6.0.0"
+    toad-cache: "npm:^3.7.0"
+  checksum: 10c0/2b37bdf7f5a6c48dd329aeb1ab213514515f285969acd803c72a75a044cb2b6c30077c5d09f4c72bcf4dd5ade00adb4d34696ea9dcc0ffc39bf95e6b76a8d4b0
+  languageName: node
+  linkType: hard
+
 "@fastify/error@npm:^4.0.0":
   version: 4.2.0
   resolution: "@fastify/error@npm:4.2.0"
@@ -874,6 +839,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@fastify/formbody@npm:8.0.2":
+  version: 8.0.2
+  resolution: "@fastify/formbody@npm:8.0.2"
+  dependencies:
+    fast-querystring: "npm:^1.1.2"
+    fastify-plugin: "npm:^5.0.0"
+  checksum: 10c0/7eba1a9751d9b1f790a4a9740273521b226d361d00996165d273727233441e802694d6841af01bf2dce006521d1b8303064bf16129dd86f7c6842bee65e194d5
+  languageName: node
+  linkType: hard
+
+"@fastify/formbody@npm:9.0.0":
+  version: 9.0.0
+  resolution: "@fastify/formbody@npm:9.0.0"
+  dependencies:
+    fast-querystring: "npm:^1.1.2"
+    fastify-plugin: "npm:^6.0.0"
+  checksum: 10c0/7b01d39a726219a30144af8bd4f1a21292ab6ee5716774d0c5845ca337e43a53564fbd5824d720f76db4424dec18836476e15888fc873bd39e600e80ef99a34c
+  languageName: node
+  linkType: hard
+
 "@fastify/forwarded@npm:^3.0.0":
   version: 3.0.1
   resolution: "@fastify/forwarded@npm:3.0.1"
@@ -887,6 +872,19 @@ __metadata:
   dependencies:
     dequal: "npm:^2.0.3"
   checksum: 10c0/dfa884a8f62d53f71de273fdcd0e501b213367767a7d8c522ae87ba6fb571b3eea85175d6e019036d7c0c5419be60305abe54899b9459f76ed5333358699efcb
+  languageName: node
+  linkType: hard
+
+"@fastify/middie@npm:9.3.4":
+  version: 9.3.4
+  resolution: "@fastify/middie@npm:9.3.4"
+  dependencies:
+    "@fastify/error": "npm:^4.0.0"
+    fastify-plugin: "npm:^6.0.0"
+    find-my-way: "npm:^9.5.0"
+    path-to-regexp: "npm:^8.1.0"
+    reusify: "npm:^1.0.4"
+  checksum: 10c0/829398775e16ec5fc5cc9727b01f4ab1d907f193ce0e3840a87df9844f0afed7aedffee79dda4b21e87331c78bdcbf1283f2185b251f1a0a308e0903edf0ab23
   languageName: node
   linkType: hard
 
@@ -957,7 +955,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@floating-ui/react-dom@npm:^2.0.0, @floating-ui/react-dom@npm:^2.1.9":
+"@floating-ui/react-dom@npm:^2.0.0":
   version: 2.1.9
   resolution: "@floating-ui/react-dom@npm:2.1.9"
   dependencies:
@@ -2883,6 +2881,33 @@ __metadata:
     "@nestjs/common": ^11.0.0
     "@nestjs/core": ^11.0.0
   checksum: 10c0/a4c42544c54d11580a56d2567f0e5608f2529c1336893bc3031d6c12a4efaec3ab139a09039a64a59b5cb49adaf7175f89362a6c16043cc1afea825da67bde41
+  languageName: node
+  linkType: hard
+
+"@nestjs/platform-fastify@npm:^11.2.6, nestjs-platform-fastify-v11@npm:@nestjs/platform-fastify@^11":
+  version: 11.2.6
+  resolution: "@nestjs/platform-fastify@npm:11.2.6"
+  dependencies:
+    "@fastify/cors": "npm:11.3.0"
+    "@fastify/formbody": "npm:8.0.2"
+    "@fastify/middie": "npm:9.3.4"
+    fast-querystring: "npm:1.1.2"
+    fastify: "npm:5.11.3"
+    find-my-way: "npm:9.7.0"
+    light-my-request: "npm:6.6.0"
+    path-to-regexp: "npm:8.4.2"
+    tslib: "npm:2.8.1"
+  peerDependencies:
+    "@fastify/static": ^10.1.2
+    "@fastify/view": ^10.0.0 || ^11.0.0 || ^12.0.0
+    "@nestjs/common": ^11.0.0
+    "@nestjs/core": ^11.0.0
+  peerDependenciesMeta:
+    "@fastify/static":
+      optional: true
+    "@fastify/view":
+      optional: true
+  checksum: 10c0/f88583487b5caa074eddd6171fd6c4ede3298ac98bb382abc061cd56340eb0101e4feb8a5eace0856fe356dfaeb562e92756e4490b3658c65be55703aa9b6d77
   languageName: node
   linkType: hard
 
@@ -6781,15 +6806,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-paginate@npm:^7.1.4":
-  version: 7.1.4
-  resolution: "@types/react-paginate@npm:7.1.4"
-  dependencies:
-    "@types/react": "npm:*"
-  checksum: 10c0/d534daabad3f3d5221ab22f696b4de7287564362a818076675729f412fed3b5c83fcb9d1fa62c159d6f0a8551f20813cae427c2292a132af38812fc775efb0bd
-  languageName: node
-  linkType: hard
-
 "@types/react-router-dom@npm:^5.3.3":
   version: 5.3.3
   resolution: "@types/react-router-dom@npm:5.3.3"
@@ -7428,6 +7444,7 @@ __metadata:
     supertest: "npm:^7.2.2"
     ts-jest: "npm:^29.4.12"
     ts-node: "npm:^10.9.2"
+    typescript: "npm:^5.9.3"
     valibot: "npm:^1.5.0"
   peerDependencies:
     "@worker-manager/ui": 9.10.1
@@ -7438,6 +7455,19 @@ __metadata:
       optional: true
     bullmq:
       optional: true
+  languageName: unknown
+  linkType: soft
+
+"@worker-manager/auth@npm:9.10.1, @worker-manager/auth@workspace:*, @worker-manager/auth@workspace:packages/auth":
+  version: 0.0.0-use.local
+  resolution: "@worker-manager/auth@workspace:packages/auth"
+  dependencies:
+    "@types/jest": "npm:^30.0.0"
+    "@types/node": "npm:^22.20.1"
+    jest: "npm:^30.4.2"
+    jose: "npm:^5.10.0"
+    ts-jest: "npm:^29.4.12"
+    typescript: "npm:^5.9.3"
   languageName: unknown
   linkType: soft
 
@@ -7463,16 +7493,20 @@ __metadata:
   dependencies:
     "@types/express": "npm:^5.0.6"
     "@types/jest": "npm:^30.0.0"
+    "@types/pg": "npm:^8.23.1"
     "@types/redis-parser": "npm:^3.0.3"
     "@types/supertest": "npm:^7.2.1"
     "@worker-manager/api": "npm:9.10.1"
+    "@worker-manager/auth": "npm:9.10.1"
     "@worker-manager/express": "npm:9.10.1"
     "@worker-manager/metrics": "npm:9.10.1"
     bull: "npm:^4.16.5"
     bullmq: "npm:^5.81.3"
+    bullmq-v6: "npm:bullmq@^6"
     express: "npm:^5.2.1"
     ioredis: "npm:^6.0.0"
     jest: "npm:^30.4.2"
+    pg: "npm:^8.23.0"
     redis-parser: "npm:^3.0.0"
     supertest: "npm:^7.2.2"
     ts-jest: "npm:^29.4.12"
@@ -7519,7 +7553,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@worker-manager/express@npm:9.10.1, @worker-manager/express@npm:^9.10.1, @worker-manager/express@workspace:packages/express":
+"@worker-manager/express@npm:9.10.1, @worker-manager/express@npm:^9.10.1, @worker-manager/express@workspace:*, @worker-manager/express@workspace:packages/express":
   version: 0.0.0-use.local
   resolution: "@worker-manager/express@workspace:packages/express"
   dependencies:
@@ -7658,7 +7692,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@worker-manager/nestjs@workspace:packages/nestjs":
+"@worker-manager/nestjs@workspace:*, @worker-manager/nestjs@workspace:packages/nestjs":
   version: 0.0.0-use.local
   resolution: "@worker-manager/nestjs@workspace:packages/nestjs"
   dependencies:
@@ -7667,14 +7701,17 @@ __metadata:
     "@nestjs/common": "npm:^11.2.3"
     "@nestjs/core": "npm:^11.2.3"
     "@nestjs/platform-express": "npm:^11.2.3"
+    "@nestjs/platform-fastify": "npm:^11.2.6"
     "@types/node": "npm:^22.20.1"
     "@types/supertest": "npm:^7.2.1"
     "@worker-manager/api": "npm:^9.10.1"
+    "@worker-manager/auth": "npm:9.10.1"
     "@worker-manager/express": "npm:^9.10.1"
     "@worker-manager/fastify": "npm:^9.10.1"
     "@worker-manager/test-utils": "workspace:*"
     bull: "npm:^4.16.5"
     bullmq: "npm:^5.81.3"
+    bullmq-v6: "npm:bullmq@^6"
     jest: "npm:^30.4.2"
     nestjs-bull-shared-v11: "npm:@nestjs/bull-shared@^11"
     nestjs-bull-shared-v12: "npm:@nestjs/bull-shared@^12"
@@ -7686,6 +7723,9 @@ __metadata:
     nestjs-core-v12: "npm:@nestjs/core@^12"
     nestjs-platform-express-v11: "npm:@nestjs/platform-express@^11"
     nestjs-platform-express-v12: "npm:@nestjs/platform-express@^12"
+    nestjs-platform-fastify-v11: "npm:@nestjs/platform-fastify@^11"
+    nestjs-platform-fastify-v12: "npm:@nestjs/platform-fastify@^12"
+    pg: "npm:^8.23.0"
     reflect-metadata: "npm:^0.2.2"
     rxjs: "npm:^7.8.2"
     supertest: "npm:^7.2.2"
@@ -7696,8 +7736,35 @@ __metadata:
     "@nestjs/common": ^9.0.0 || ^10.0.0 || ^11.0.0 || ^12.0.0
     "@nestjs/core": ^9.0.0 || ^10.0.0 || ^11.0.0 || ^12.0.0
     "@worker-manager/api": ^9.10.1
+    "@worker-manager/express": ^9.10.1
+    "@worker-manager/fastify": ^9.10.1
     reflect-metadata: ^0.1.13 || ^0.2.0
     rxjs: ^7.8.1
+  peerDependenciesMeta:
+    "@worker-manager/express":
+      optional: true
+    "@worker-manager/fastify":
+      optional: true
+  languageName: unknown
+  linkType: soft
+
+"@worker-manager/playground@workspace:playground":
+  version: 0.0.0-use.local
+  resolution: "@worker-manager/playground@workspace:playground"
+  dependencies:
+    "@nestjs/common": "npm:^11.2.3"
+    "@nestjs/core": "npm:^11.2.3"
+    "@nestjs/platform-express": "npm:^11.2.3"
+    "@types/node": "npm:^22.20.1"
+    "@worker-manager/api": "workspace:*"
+    "@worker-manager/auth": "workspace:*"
+    "@worker-manager/express": "workspace:*"
+    "@worker-manager/nestjs": "workspace:*"
+    bullmq: "npm:^6.0.0"
+    reflect-metadata: "npm:^0.2.2"
+    rxjs: "npm:^7.8.2"
+    ts-node-dev: "npm:^2.0.0"
+    typescript: "npm:^5.9.3"
   languageName: unknown
   linkType: soft
 
@@ -7734,7 +7801,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@worker-manager/ui@workspace:packages/ui"
   dependencies:
-    "@base-ui/react": "npm:^1.7.0"
     "@codemirror/autocomplete": "npm:^6.20.3"
     "@codemirror/commands": "npm:^6.11.0"
     "@codemirror/lang-json": "npm:^6.0.2"
@@ -7757,7 +7823,6 @@ __metadata:
     "@types/jest": "npm:^30.0.0"
     "@types/react": "npm:^19.2.18"
     "@types/react-dom": "npm:^19.2.4"
-    "@types/react-paginate": "npm:^7.1.4"
     "@types/react-router-dom": "npm:^5.3.3"
     "@worker-manager/api": "npm:9.10.1"
     "@xyflow/react": "npm:^12.11.6"
@@ -7786,7 +7851,6 @@ __metadata:
     react-dom: "npm:^19.2.8"
     react-i18next: "npm:^17.0.12"
     react-json-view-lite: "npm:^2.5.0"
-    react-paginate: "npm:^8.3.0"
     react-router-dom: "npm:^5.3.4"
     recharts: "npm:^3.10.1"
     sonner: "npm:^2.0.8"
@@ -8732,6 +8796,33 @@ __metadata:
   languageName: node
   linkType: hard
 
+"bullmq@npm:^6.0.0":
+  version: 6.3.8
+  resolution: "bullmq@npm:6.3.8"
+  dependencies:
+    cron-parser: "npm:5.10.1"
+    msgpackr: "npm:2.1.0"
+    node-abort-controller: "npm:3.1.1"
+    semver: "npm:7.8.5"
+    tslib: "npm:2.8.1"
+  peerDependencies:
+    bullmq-otel: ">=2.0.0"
+    ioredis: ">=5.0.0"
+    pg: ">=8.0.0"
+    redis: ">=5.0.0"
+  peerDependenciesMeta:
+    bullmq-otel:
+      optional: true
+    ioredis:
+      optional: true
+    pg:
+      optional: true
+    redis:
+      optional: true
+  checksum: 10c0/99b468204808ec8d2507a602300bf012110cce119860c4e980ed1adcbbe5d3c06bbaff1bb25f5028d14cf82e0a5755bcaf739be104c55f1d01c205d04178935f
+  languageName: node
+  linkType: hard
+
 "bun-types@npm:^1.4.0":
   version: 1.4.0
   resolution: "bun-types@npm:1.4.0"
@@ -9516,6 +9607,15 @@ __metadata:
   dependencies:
     luxon: "npm:^3.2.1"
   checksum: 10c0/348622bdcd1a15695b61fc33af8a60133e5913a85cf99f6344367579e7002896514ba3b0a9d6bb569b02667d6b06836722bf2295fcd101b3de378f71d37bed0b
+  languageName: node
+  linkType: hard
+
+"cron-parser@npm:5.10.1":
+  version: 5.10.1
+  resolution: "cron-parser@npm:5.10.1"
+  dependencies:
+    luxon: "npm:^3.7.2"
+  checksum: 10c0/e5150167be9a5dddeaf2a8b27a52d6d449f3f2c99222cab1e4773973eb935117a9218ea050438b869183f00a7af6cdb2638f601172da57ba828ed1b5bc5165a5
   languageName: node
   linkType: hard
 
@@ -10870,7 +10970,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-querystring@npm:^1.0.0":
+"fast-querystring@npm:1.1.2, fast-querystring@npm:^1.0.0, fast-querystring@npm:^1.1.2":
   version: 1.1.2
   resolution: "fast-querystring@npm:1.1.2"
   dependencies:
@@ -10929,6 +11029,52 @@ __metadata:
   version: 6.0.0
   resolution: "fastify-plugin@npm:6.0.0"
   checksum: 10c0/4d9207efcbb0e6e8bd849eb8e00b097ae2d73590b1499f51d0bed135d08664e19d9428f2e8fc1a126b55ec4d2ac011dbcc72e753c255c46a751d6d34b57e5d4f
+  languageName: node
+  linkType: hard
+
+"fastify@npm:5.11.3":
+  version: 5.11.3
+  resolution: "fastify@npm:5.11.3"
+  dependencies:
+    "@fastify/ajv-compiler": "npm:^4.0.5"
+    "@fastify/error": "npm:^4.0.0"
+    "@fastify/fast-json-stringify-compiler": "npm:^5.0.0"
+    "@fastify/proxy-addr": "npm:^5.0.0"
+    abstract-logging: "npm:^2.0.1"
+    avvio: "npm:^9.0.0"
+    fast-json-stringify: "npm:^7.0.0"
+    find-my-way: "npm:^9.6.0"
+    light-my-request: "npm:^6.0.0"
+    pino: "npm:^9.14.0 || ^10.1.0"
+    process-warning: "npm:^5.0.0"
+    rfdc: "npm:^1.3.1"
+    secure-json-parse: "npm:^4.0.0"
+    semver: "npm:^7.6.0"
+    toad-cache: "npm:^3.7.0"
+  checksum: 10c0/a48aeb99e3dd5fe932400d5610f7cf7d4b3c9915f231090a598d469564e21c7fe0513e8e49bbc713a2a9e8f882960bfea295c30f7af61feb32b1f9a7277c16d1
+  languageName: node
+  linkType: hard
+
+"fastify@npm:5.12.5":
+  version: 5.12.5
+  resolution: "fastify@npm:5.12.5"
+  dependencies:
+    "@fastify/ajv-compiler": "npm:^4.0.5"
+    "@fastify/error": "npm:^4.0.0"
+    "@fastify/fast-json-stringify-compiler": "npm:^5.0.0"
+    "@fastify/proxy-addr": "npm:^5.0.0"
+    abstract-logging: "npm:^2.0.1"
+    avvio: "npm:^9.0.0"
+    fast-json-stringify: "npm:^7.0.0"
+    find-my-way: "npm:^9.6.0"
+    light-my-request: "npm:^6.0.0"
+    pino: "npm:^9.14.0 || ^10.1.0"
+    process-warning: "npm:^5.1.0"
+    rfdc: "npm:^1.3.1"
+    secure-json-parse: "npm:^4.0.0"
+    semver: "npm:^7.6.0"
+    toad-cache: "npm:^3.7.0"
+  checksum: 10c0/ed18ec344f8a007fb6aea1ad25924076334fab53f2403178d1db56e1f80a5da0f3db4c3a309ef1ae834fc3f20be2444dcc746ce3944093f95e827f66b1e2fbd5
   languageName: node
   linkType: hard
 
@@ -11054,7 +11200,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"find-my-way@npm:^9.6.0":
+"find-my-way@npm:9.7.0, find-my-way@npm:^9.6.0":
   version: 9.7.0
   resolution: "find-my-way@npm:9.7.0"
   dependencies:
@@ -11062,6 +11208,17 @@ __metadata:
     fast-querystring: "npm:^1.0.0"
     safe-regex2: "npm:^5.0.0"
   checksum: 10c0/0c7c15397075fe916ea11bb42e3464aec9025dfec01aef515e2fc70c362e662c4a8626e27cebe263fe5c31cfed7ce792a2a6b411b73dac996d0c2b2202af4a88
+  languageName: node
+  linkType: hard
+
+"find-my-way@npm:9.9.0, find-my-way@npm:^9.5.0":
+  version: 9.9.0
+  resolution: "find-my-way@npm:9.9.0"
+  dependencies:
+    fast-deep-equal: "npm:^3.1.3"
+    fast-querystring: "npm:^1.0.0"
+    safe-regex2: "npm:^5.0.0"
+  checksum: 10c0/fbcf02bbc6cb8f739167074f664a8a08721e89b7f5e4a9ff67b42f36e2c692369d520a14f7a9ed9b5bb6e47d7714e1cd885ac9049ddeb81077be4edcfecfdcad
   languageName: node
   linkType: hard
 
@@ -13296,6 +13453,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"jose@npm:^5.10.0":
+  version: 5.10.0
+  resolution: "jose@npm:5.10.0"
+  checksum: 10c0/e20d9fc58d7e402f2e5f04e824b8897d5579aae60e64cb88ebdea1395311c24537bf4892f7de413fab1acf11e922797fb1b42269bc8fc65089a3749265ccb7b0
+  languageName: node
+  linkType: hard
+
 "js-base64@npm:^3.9.2":
   version: 3.9.3
   resolution: "js-base64@npm:3.9.3"
@@ -13604,7 +13768,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"light-my-request@npm:^6.0.0":
+"light-my-request@npm:6.6.0, light-my-request@npm:^6.0.0":
   version: 6.6.0
   resolution: "light-my-request@npm:6.6.0"
   dependencies:
@@ -15169,6 +15333,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"msgpackr@npm:2.1.0":
+  version: 2.1.0
+  resolution: "msgpackr@npm:2.1.0"
+  dependencies:
+    msgpackr-extract: "npm:^3.0.4"
+  dependenciesMeta:
+    msgpackr-extract:
+      optional: true
+  checksum: 10c0/9fcfd08ab99e2499ccd3e7ae188737ed4f629e326ad89ff6f28f4c29e01d0625f679bebb28509ef8cb160ca0c317680c7153e7493c5b472ef3d6ff4b9eac5771
+  languageName: node
+  linkType: hard
+
 "msgpackr@npm:^1.11.2":
   version: 1.11.13
   resolution: "msgpackr@npm:1.11.13"
@@ -15410,6 +15586,36 @@ __metadata:
     "@nestjs/common": ^12.0.0
     "@nestjs/core": ^12.0.0
   checksum: 10c0/84083f9e85bcbd0609be09860c71096c623e3c21186f245e1172644169cad4d3951f9486e932dabbf4ff3ff74d072aaed0f1a7c7f69f9a39ce7f01879d981281
+  languageName: node
+  linkType: hard
+
+"nestjs-platform-fastify-v12@npm:@nestjs/platform-fastify@^12":
+  version: 12.1.0
+  resolution: "@nestjs/platform-fastify@npm:12.1.0"
+  dependencies:
+    "@fastify/cors": "npm:11.3.0"
+    "@fastify/formbody": "npm:9.0.0"
+    "@fastify/middie": "npm:9.3.4"
+    fast-querystring: "npm:1.1.2"
+    fastify: "npm:5.12.5"
+    find-my-way: "npm:9.9.0"
+    light-my-request: "npm:6.6.0"
+    path-to-regexp: "npm:8.4.2"
+    tslib: "npm:2.8.1"
+  peerDependencies:
+    "@fastify/multipart": ^10.1.0
+    "@fastify/static": ^10.1.2
+    "@fastify/view": ^10.0.0 || ^11.0.0 || ^12.0.0
+    "@nestjs/common": ^12.0.0
+    "@nestjs/core": ^12.0.0
+  peerDependenciesMeta:
+    "@fastify/multipart":
+      optional: true
+    "@fastify/static":
+      optional: true
+    "@fastify/view":
+      optional: true
+  checksum: 10c0/45b436214216704d236dc63e9b9e24603c21f743fabd4680ea4fa3960687ee4823abb102e09ab7ac71c53a5d9c5f8c315d339295dbd5944ddcc2513da77b322f
   languageName: node
   linkType: hard
 
@@ -16176,7 +16382,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"path-to-regexp@npm:8.4.2, path-to-regexp@npm:^8.0.0, path-to-regexp@npm:^8.4.2":
+"path-to-regexp@npm:8.4.2, path-to-regexp@npm:^8.0.0, path-to-regexp@npm:^8.1.0, path-to-regexp@npm:^8.4.2":
   version: 8.4.2
   resolution: "path-to-regexp@npm:8.4.2"
   checksum: 10c0/05b115c49b47ad252ce05faa32930f643f23769c68b8bcfe78ad833545140c48bbffb3266986d6c8d5db13a64cf12e07e0d72d9882cab830efeefa553533ebaf
@@ -16551,7 +16757,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prop-types@npm:^15, prop-types@npm:^15.6.2":
+"prop-types@npm:^15.6.2":
   version: 15.8.1
   resolution: "prop-types@npm:15.8.1"
   dependencies:
@@ -16940,17 +17146,6 @@ __metadata:
   version: 2.2.1
   resolution: "react-lazy-with-preload@npm:2.2.1"
   checksum: 10c0/57c36baedc24a2c8fa148681dc7c5123ac183542964063b4a0433856a06d4edead27deb893012a43f75905af51a479b4409e688b97be3ef70cffff926954f6d2
-  languageName: node
-  linkType: hard
-
-"react-paginate@npm:^8.3.0":
-  version: 8.3.0
-  resolution: "react-paginate@npm:8.3.0"
-  dependencies:
-    prop-types: "npm:^15"
-  peerDependencies:
-    react: ^16 || ^17 || ^18 || ^19
-  checksum: 10c0/2529fe1d5235fb50195b78c2edf4ab72c5dda88d38445e68521822cd2ea1e47d490a6af9ac2e4d0507db3d094cded4cdd4b5db2b12e535b2c435b123e9427eb7
   languageName: node
   linkType: hard
 
@@ -17582,7 +17777,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"reselect@npm:5.2.0, reselect@npm:^5.1.0, reselect@npm:^5.2.0":
+"reselect@npm:5.2.0, reselect@npm:^5.1.0":
   version: 5.2.0
   resolution: "reselect@npm:5.2.0"
   checksum: 10c0/d0a8497e404b25a769fe792eacae88b9b576c30870450cd243d76ec9427d91a59c4a2cc00d824d283448b444c4c698a8f961d771c8ae39c759313afb31950e2e

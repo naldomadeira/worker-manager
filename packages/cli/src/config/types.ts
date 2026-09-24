@@ -1,4 +1,5 @@
 import type { QueueAdapterOptions, UIConfig } from '@worker-manager/api/typings/app';
+import type { KeycloakAuthOptions } from '@worker-manager/auth';
 import type { Retention } from '@worker-manager/metrics';
 import type { RedisOptions } from 'ioredis';
 import type { ConnectionConfig } from './connection';
@@ -35,11 +36,32 @@ export interface FileConfig {
   readOnly?: boolean;
   user?: string;
   password?: string;
+  /** Keycloak (OIDC) login instead of Basic auth. */
+  keycloak?: Omit<KeycloakAuthOptions, 'strategy'>;
+  /**
+   * PostgreSQL connection for BullMQ v6 queues backed by PostgreSQL: a connection string, or
+   * a node-postgres pool config with an optional `schema` (default `bullmq`).
+   */
+  postgres?: string | PostgresFileConfig;
   open?: boolean;
   browser?: string;
   uiConfig?: UIConfig;
   noRetry?: boolean;
   history?: boolean | FileHistoryConfig;
+}
+
+export interface PostgresFileConfig {
+  connectionString?: string;
+  schema?: string;
+  [option: string]: unknown;
+}
+
+export interface PostgresConfig {
+  /** Passed to BullMQ's PostgreSQL backend as `connection`: a pool config plus `schema`. */
+  connection: Record<string, unknown>;
+  schema: string;
+  /** No Redis source was configured, so the board serves PostgreSQL queues only. */
+  only: boolean;
 }
 
 export interface CliConfig {
@@ -52,6 +74,8 @@ export interface CliConfig {
   basePath: string;
   readOnly: boolean;
   auth: { user: string; password: string } | null;
+  keycloak: KeycloakAuthOptions | null;
+  postgres: PostgresConfig | null;
   open: boolean;
   browser?: string;
   uiConfig: UIConfig;

@@ -22,7 +22,7 @@ export class BullBoardModule {
     };
   }
 
-  static forRoot(options: BullBoardModuleOptions): DynamicModule {
+  static forRoot(options: BullBoardModuleOptions = {}): DynamicModule {
     return {
       module: BullBoardModule,
       imports: [BullBoardRootModule.forRoot(options)],
