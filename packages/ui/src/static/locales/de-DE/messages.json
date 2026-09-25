@@ -651,5 +651,289 @@
     "PREVIOUS": "Vorherige Seite",
     "NEXT": "Nächste Seite",
     "PAGE": "Seite {{page}}"
+  },
+  "PGBOSS": {
+    "EXPERIMENTAL": "Experimentell",
+    "EXPERIMENTAL_HINT": "Die pg-boss-Engine ist experimentell: Ihre Ansichten und ihre HTTP-API können sich in einem Minor-Release noch ändern.",
+    "STATE": {
+      "ALL": "Alle",
+      "CREATED": "Erstellt",
+      "RETRY": "Wiederholung",
+      "ACTIVE": "Aktiv",
+      "COMPLETED": "Abgeschlossen",
+      "CANCELLED": "Abgebrochen",
+      "FAILED": "Fehlgeschlagen"
+    },
+    "SUBSTATE": {
+      "DEFERRED": "Zurückgestellt",
+      "BLOCKED": "Blockiert",
+      "READY": "Bereit"
+    },
+    "KPI": {
+      "READY": "Bereit",
+      "DEFERRED": "Zurückgestellt",
+      "ACTIVE": "Aktiv",
+      "FAILED": "Fehlgeschlagen",
+      "TOTAL": "Gesamt",
+      "BACKLOGGED": "Rückstau: {{value}}",
+      "NONE_BACKLOGGED": "Kein Rückstau",
+      "QUEUED_HINT": "Wartend: {{value}}"
+    },
+    "STATS": {
+      "UPDATED_AT": "Zähler von {{time}}",
+      "STALE": "Die Zähler wurden zuletzt {{time}} geschrieben. Seitdem hat keine pg-boss-Instanz mit supervise sie aktualisiert.",
+      "NEVER": "Noch keine pg-boss-Instanz hat diese Warteschlangen überwacht, daher stehen ihre Zähler auf null.",
+      "CACHED_HINT": "Vom Monitor von pg-boss zwischengespeichert. Die Tabs auf der Seite einer Warteschlange zählen live."
+    },
+    "QUEUE": {
+      "NAME": "Name",
+      "POLICY": "Richtlinie",
+      "PARTITION": "Speicherung",
+      "PARTITIONED": "Eigene Partition",
+      "SHARED": "Gemeinsame Tabelle",
+      "DEAD_LETTER": "Dead-Letter-Warteschlange",
+      "RETRY_LIMIT": "Maximale Wiederholungen",
+      "RETRY_DELAY": "Wartezeit vor Wiederholung",
+      "RETRY_BACKOFF": "Exponentielles Backoff",
+      "RETRY_DELAY_MAX": "Maximale Wartezeit vor Wiederholung",
+      "EXPIRE_IN": "Läuft ab nach",
+      "RETENTION": "Bleibt wartend für",
+      "DELETE_AFTER": "Gelöscht nach",
+      "WARNING_QUEUE_SIZE": "Rückstau-Warnung ab",
+      "BACKLOGGED": "Rückstau",
+      "HEARTBEAT": "Heartbeat",
+      "NOTIFY": "Beim Senden benachrichtigen",
+      "SINGLETONS_ACTIVE": "Aktive Singleton-Schlüssel",
+      "SCHEDULES": "Zeitpläne",
+      "CREATED_ON": "Erstellt",
+      "UPDATED_ON": "Aktualisiert",
+      "READY_HISTORY": "Bereite Jobs, letzte Messwerte",
+      "YES": "Ja",
+      "NO": "Nein",
+      "NONE": "Keine",
+      "SECTIONS": {
+        "GENERAL": "Allgemein",
+        "RETRIES": "Wiederholungen",
+        "LIFECYCLE": "Lebenszyklus"
+      },
+      "NOT_FOUND": "Warteschlange nicht gefunden"
+    },
+    "POLICY": {
+      "STANDARD": "Standard",
+      "STANDARD_DESC": "Jobs werden nach Priorität und Erstellungszeit abgeholt, ohne Begrenzung.",
+      "SHORT": "Kurz",
+      "SHORT_DESC": "Höchstens ein wartender Job pro Singleton-Schlüssel.",
+      "SINGLETON": "Singleton",
+      "SINGLETON_DESC": "Höchstens ein aktiver Job pro Singleton-Schlüssel.",
+      "STATELY": "Zustandsbezogen",
+      "STATELY_DESC": "Höchstens ein Job pro Zustand und Singleton-Schlüssel.",
+      "EXCLUSIVE": "Exklusiv",
+      "EXCLUSIVE_DESC": "Höchstens ein wartender oder aktiver Job pro Singleton-Schlüssel.",
+      "KEY_STRICT_FIFO": "Striktes FIFO pro Schlüssel",
+      "KEY_STRICT_FIFO_DESC": "Jobs mit demselben Singleton-Schlüssel laufen einzeln nacheinander, in Reihenfolge."
+    },
+    "JOB": {
+      "PRIORITY": "Priorität {{priority}}",
+      "ATTEMPT": "Versuch {{attempt}} von {{limit}}",
+      "CREATED_ON": "Erstellt",
+      "START_AFTER": "Startet nach",
+      "STARTED_ON": "Gestartet",
+      "COMPLETED_ON": "Beendet",
+      "KEEP_UNTIL": "Läuft ab, wenn nicht gestartet bis",
+      "SINGLETON_KEY": "Singleton-Schlüssel",
+      "SINGLETON_ON": "Singleton-Zeitfenster",
+      "GROUP_ID": "Gruppe",
+      "GROUP_TIER": "Gruppenstufe",
+      "HEARTBEAT_ON": "Letzter Heartbeat",
+      "BLOCKING": "Blockiert abhängige Jobs",
+      "NO_OUTPUT": "Dieser Job hat keine Ausgabe.",
+      "NO_DATA": "Dieser Job hat keine Daten.",
+      "DEPENDENCIES": "Wartet auf",
+      "DEPENDENTS": "Erwartet von",
+      "NO_DEPENDENCIES": "Dieser Job wartet auf keinen anderen Job.",
+      "NO_DEPENDENTS": "Kein Job wartet auf diesen.",
+      "PENDING_DEPENDENCIES": "Offene Abhängigkeiten: {{value}}",
+      "SOURCE_QUEUE": "Ursprungswarteschlange",
+      "SOURCE_JOB": "Ursprungsjob",
+      "SOURCE_CREATED_ON": "Ursprung erstellt",
+      "SOURCE_RETRY_COUNT": "Versuche im Ursprung",
+      "FROM_QUEUE": "Aus {{queue}}",
+      "NOT_DEAD_LETTER": "Dieser Job wurde nicht aus einer anderen Warteschlange hierher verschoben.",
+      "TABS": {
+        "DATA": "Daten",
+        "OUTPUT": "Ausgabe",
+        "OPTIONS": "Optionen",
+        "TIMELINE": "Zeitachse",
+        "DEPENDENCIES": "Abhängigkeiten",
+        "DEAD_LETTER": "Dead Letter"
+      }
+    },
+    "ACTIONS": {
+      "QUEUE_ACTIONS": "Aktionen der Warteschlange",
+      "AFFECTED": "{{affected}} von {{requested}} Jobs geändert.",
+      "CANCEL_ACTIVE_WARNING": "Der Job läuft gerade. Abbrechen markiert ihn als abgebrochen, stoppt aber nicht den Handler, der ihn bereits verarbeitet.",
+      "RETRY": {
+        "LABEL": "Wiederholen",
+        "CONFIRM": "Diesen fehlgeschlagenen Job wiederholen?",
+        "PENDING": "Job wird wiederholt…",
+        "DONE": "Job zur Wiederholung eingereiht"
+      },
+      "CANCEL": {
+        "LABEL": "Abbrechen",
+        "CONFIRM": "Diesen Job abbrechen?",
+        "PENDING": "Job wird abgebrochen…",
+        "DONE": "Job abgebrochen"
+      },
+      "RESUME": {
+        "LABEL": "Fortsetzen",
+        "CONFIRM": "Diesen abgebrochenen Job fortsetzen?",
+        "PENDING": "Job wird fortgesetzt…",
+        "DONE": "Job fortgesetzt"
+      },
+      "DELETE": {
+        "LABEL": "Löschen",
+        "CONFIRM": "Diesen Job löschen? Das kann nicht rückgängig gemacht werden.",
+        "PENDING": "Job wird gelöscht…",
+        "DONE": "Job gelöscht"
+      },
+      "DUPLICATE": {
+        "LABEL": "Duplizieren",
+        "PENDING": "Kopie wird gesendet…",
+        "DONE": "Kopie gesendet"
+      },
+      "SEND": {
+        "LABEL": "Job senden",
+        "PENDING": "Job wird gesendet…",
+        "DONE": "Job gesendet",
+        "DROPPED": "pg-boss hat den Job verworfen, vermutlich weil bereits ein Singleton mit demselben Schlüssel existiert."
+      },
+      "RETRY_FAILED": {
+        "LABEL": "Alle fehlgeschlagenen wiederholen",
+        "CONFIRM": "Alle fehlgeschlagenen Jobs dieser Warteschlange wiederholen?",
+        "PENDING": "Fehlgeschlagene Jobs werden wiederholt…",
+        "DONE": "Fehlgeschlagene Jobs zur Wiederholung eingereiht"
+      },
+      "DELETE_QUEUED": {
+        "LABEL": "Wartende Jobs löschen",
+        "CONFIRM": "Alle noch nicht gestarteten Jobs dieser Warteschlange löschen? Das kann nicht rückgängig gemacht werden.",
+        "PENDING": "Wartende Jobs werden gelöscht…",
+        "DONE": "Wartende Jobs gelöscht"
+      },
+      "DELETE_STORED": {
+        "LABEL": "Beendete Jobs löschen",
+        "CONFIRM": "Alle abgeschlossenen, abgebrochenen und fehlgeschlagenen Jobs dieser Warteschlange löschen? Das kann nicht rückgängig gemacht werden.",
+        "PENDING": "Beendete Jobs werden gelöscht…",
+        "DONE": "Beendete Jobs gelöscht"
+      }
+    },
+    "SEND": {
+      "TITLE": "Job senden",
+      "DUPLICATE_TITLE": "Job duplizieren",
+      "QUEUE": "Warteschlange",
+      "DATA": "Daten",
+      "PRIORITY": "Priorität",
+      "START_AFTER": "Starten nach",
+      "START_AFTER_HINT": "Sekunden ab jetzt oder ein ISO-Datum. Leer startet ihn sofort.",
+      "SINGLETON_KEY": "Singleton-Schlüssel",
+      "RETRY_LIMIT": "Maximale Wiederholungen",
+      "RETRY_DELAY": "Wartezeit vor Wiederholung (Sekunden)",
+      "RETRY_BACKOFF": "Exponentielles Backoff",
+      "EXPIRE_IN": "Ablauf nach (Sekunden)",
+      "QUEUE_DEFAULT": "Standard der Warteschlange",
+      "SUBMIT": "Senden"
+    },
+    "SCHEDULES": {
+      "TITLE": "Zeitpläne",
+      "EMPTY": "Noch keine Zeitpläne.",
+      "KIND_CRON": "Cron",
+      "KIND_RRULE": "RRULE",
+      "KEY": "Schlüssel",
+      "DEFAULT_KEY": "Standardschlüssel",
+      "EXPRESSION": "Ausdruck",
+      "EXPRESSION_HINT": "Ein Cron-Ausdruck wie 0 * * * * oder eine RRULE ab pg-boss 12.31.",
+      "TIMEZONE": "Zeitzone",
+      "MISSED": "Verpasste Ausführungen",
+      "MISSED_DEFAULT": "Standard von pg-boss",
+      "MISSED_SKIP": "Überspringen",
+      "MISSED_ONCE": "Einmal ausführen",
+      "NEXT_RUNS": "Nächste Ausführungen",
+      "NO_NEXT_RUNS": "Das verwendete pg-boss kann diesen Zeitplan nicht vorausberechnen.",
+      "QUEUE": "Warteschlange",
+      "DATA": "Daten",
+      "OPTIONS": "Job-Optionen",
+      "ALL_QUEUES": "Alle Warteschlangen",
+      "FILTER_BY_QUEUE": "Nach Warteschlange filtern",
+      "CREATE": "Neuer Zeitplan",
+      "EDIT": "Zeitplan bearbeiten",
+      "SAVE": "Speichern",
+      "SAVE_PENDING": "Zeitplan wird gespeichert…",
+      "SAVE_DONE": "Zeitplan gespeichert",
+      "REMOVE": "Zeitplan entfernen",
+      "REMOVE_CONFIRM": "Diesen Zeitplan entfernen? Bereits gesendete Jobs bleiben in der Warteschlange.",
+      "REMOVE_PENDING": "Zeitplan wird entfernt…",
+      "REMOVE_DONE": "Zeitplan entfernt",
+      "RUN_NOW": "Jetzt ausführen",
+      "RUN_NOW_CONFIRM": "Jetzt einen Job aus der Vorlage dieses Zeitplans senden?",
+      "RUN_NOW_PENDING": "Job wird gesendet…",
+      "RUN_NOW_DONE": "Job gesendet",
+      "PREVIEW": "Vorschau",
+      "PREVIEW_UNAVAILABLE": "Die Vorschau erfordert pg-boss 12.31 oder neuer.",
+      "COLUMNS": {
+        "QUEUE": "Warteschlange",
+        "KEY": "Schlüssel",
+        "SCHEDULE": "Zeitplan",
+        "NEXT_RUN": "Nächste Ausführung",
+        "LAST_JOB": "Letzter Job",
+        "UPDATED": "Aktualisiert"
+      }
+    },
+    "PAGINATION": {
+      "LABEL": "Job-Seiten",
+      "FIRST": "Erste Seite",
+      "PREVIOUS": "Zurück",
+      "NEXT": "Weiter"
+    },
+    "COUNT": {
+      "CAPPED": "{{cap}}+",
+      "UNKNOWN": "?",
+      "CAPPED_HINT": "Mehr als {{cap}} Jobs. Das Zählen endet dort, damit die Seite schnell bleibt.",
+      "TIMEOUT": "Das Zählen hat zu lange gedauert. Die Liste unten funktioniert weiterhin."
+    },
+    "FILTER": {
+      "ID": "Job-ID",
+      "ID_PLACEHOLDER": "Job nach ID suchen",
+      "SINGLETON_KEY": "Singleton-Schlüssel",
+      "SINGLETON_KEY_PLACEHOLDER": "Nach Singleton-Schlüssel filtern",
+      "APPLY": "Filtern",
+      "CLEAR": "Filter zurücksetzen",
+      "INVALID_ID": "Eine pg-boss-Job-ID ist eine UUID."
+    },
+    "EMPTY": {
+      "QUEUES": "Keine pg-boss-Warteschlangen vorhanden",
+      "QUEUES_HINT": "Warteschlangen erscheinen hier, sobald die Anwendung sie anlegt.",
+      "QUEUES_FILTERED": "Keine Warteschlange entspricht diesen Filtern",
+      "JOBS": "Keine Jobs in diesem Zustand",
+      "JOBS_FILTERED": "Kein Job entspricht diesen Filtern"
+    },
+    "BANNER": {
+      "WRITES_DISABLED": "Änderungen sind deaktiviert",
+      "READ_ONLY": "Nur lesen",
+      "UNREADABLE": "Diese pg-boss-Datenbank kann nicht gelesen werden",
+      "SCHEMA_UNSUPPORTED": "Das pg-boss-Schema hier liegt außerhalb des unterstützten Bereichs von {{min}} bis {{max}}.",
+      "NOT_INSTALLED": "Installiere zuerst pg-boss in der Anwendung. Das Board legt sein Schema nie an und migriert es nie.",
+      "SLOW_QUERY": "Diesen Zustand aufzulisten ist bei einer großen Warteschlange langsam. Filtere nach Job-ID oder Singleton-Schlüssel oder lege den Index an, den die Dokumentation empfiehlt."
+    },
+    "DATASTORE": {
+      "TITLE": "pg-boss-Datenspeicher",
+      "SCHEMA": "Schema",
+      "SCHEMA_VERSION": "Schemaversion",
+      "SUPPORTED_RANGE": "Unterstützte Versionen",
+      "RANGE": "{{min}} bis {{max}}",
+      "PERSIST_QUEUE_STATS": "Verlauf der Warteschlangenstatistik",
+      "WRITABLE": "Schreiben",
+      "INSTALLED": "Installiert",
+      "ENABLED": "An",
+      "DISABLED": "Aus"
+    }
   }
 }

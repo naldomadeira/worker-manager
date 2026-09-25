@@ -4,7 +4,7 @@
 # `yarn pack` rewrites `workspace:` ranges to real versions, and installing the tarballs together
 # lets them satisfy each other's @worker-manager/* dependencies.
 #
-#   scripts/pack-local.sh <out-dir> <package> [<package>...]   e.g. docker-dist api ui cli
+#   scripts/pack-local.sh <out-dir> <package> [<package>...]   e.g. docker-dist api ui pg-boss cli
 #
 # Run `yarn build` first: the tarballs contain each package's dist/.
 set -euo pipefail

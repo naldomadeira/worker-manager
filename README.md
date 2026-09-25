@@ -1,6 +1,6 @@
 # <img alt="Worker Manager" src="https://raw.githubusercontent.com/naldomadeira/worker-manager/main/packages/ui/src/static/images/logo.svg" width="35px" /> Worker Manager
 
-A modern dashboard for [BullMQ](https://github.com/taskforcesh/bullmq) and [Bull](https://github.com/OptimalBits/bull) job queues, on **Redis or PostgreSQL**, with **Basic and Keycloak auth built in**. Plug it into your server, see your queues.
+A modern dashboard for [BullMQ](https://github.com/taskforcesh/bullmq) and [Bull](https://github.com/OptimalBits/bull) job queues, on **Redis or PostgreSQL**, plus an experimental [pg-boss](https://github.com/timgit/pg-boss) engine, with **Basic and Keycloak auth built in**. Plug it into your server, see your queues.
 
 > Worker Manager is a fork of the open-source bull-board project (MIT), rebuilt with a shadcn/ui + Tailwind CSS interface, first-class authentication and a richer NestJS module. Migrating means a scope rename, `@bull-board/*` → `@worker-manager/*`, plus the v2.0 product rename (`createBullBoard` → `createWorkerManagerBoard`, `BullBoardModule` → `WorkerManagerModule`, the `worker-manager` CLI binary and `WORKER_MANAGER_*` env vars); see the [v2.0.0 changelog](./CHANGELOG.md) for the full list.
 
@@ -31,13 +31,14 @@ A modern dashboard for [BullMQ](https://github.com/taskforcesh/bullmq) and [Bull
 
 <sub>Light and dark ship together, and this picks whichever you are reading in.</sub>
 
-[Highlights](#highlights) · [Try it](#try-it) · [NestJS](#nestjs-in-one-import) · [Authentication](#authentication) · [PostgreSQL](#postgresql) · [Playground](#playground) · [Packages](#packages) · [Contributing](#contributing)
+[Highlights](#highlights) · [Try it](#try-it) · [NestJS](#nestjs-in-one-import) · [Authentication](#authentication) · [PostgreSQL](#postgresql) · [pg-boss](#pg-boss-experimental) · [Playground](#playground) · [Packages](#packages) · [Contributing](#contributing)
 
 ## Highlights
 
 - **A new interface**: shadcn/ui components on Tailwind CSS v4, a collapsible sidebar, a `Ctrl/⌘ K` command palette, KPI tiles, animated status bars and transitions (reduced motion respected), light, dark and system themes, and whitelabel design tokens.
 - **Authentication built in**: `@worker-manager/auth` protects any adapter with HTTP Basic or Keycloak (OpenID Connect with PKCE, encrypted session cookie, bearer tokens, required roles). The signed-in user shows up in the header.
 - **Redis and PostgreSQL**: BullMQ `>= 5.56` and all of v6, including v6 queues stored in PostgreSQL, from the libraries, the NestJS module and the CLI.
+- **pg-boss, experimental**: a board over a pg-boss schema with pages of its own (six job states, schedules, dead letters), on the same shell, auth, server adapters, NestJS module and CLI. It never migrates or alters your database.
 - **A NestJS module that does more for you**: adapter auto-detection, `auth`, `readOnly`, `enabled`, root-level `queues`, `title`/`logo`/`theme` shortcuts and `forRootAsync` with `useFactory`, `useClass` or `useExisting`.
 - **Validated end to end**: a playground app with Redis, PostgreSQL and Keycloak in Docker, synthetic traffic and a smoke test for every auth mode.
 
@@ -185,6 +186,25 @@ createWorkerManagerBoard({ queues: [new BullMQAdapter(invoices)], serverAdapter 
 ```
 
 The CLI discovers them for you: `npx @worker-manager/cli --postgres postgres://user:pass@host/db`. See the [PostgreSQL recipe](https://naldomadeira.github.io/worker-manager/recipes/postgres-backend).
+
+## pg-boss (experimental)
+
+A board runs one engine. Besides BullMQ and Bull, there is now a [pg-boss](https://github.com/timgit/pg-boss) engine, for pg-boss 12.24 and later on Node.js 22.12 and later. It reads the pg-boss tables with plain SQL and writes through the pg-boss API, and never migrates, supervises or creates anything in your database. It is experimental: its screens and its `/api/pg-boss` HTTP contract may still change in a minor release.
+
+```sh
+npm install @worker-manager/pg-boss
+```
+
+```ts
+import { createPgBossBoard } from '@worker-manager/pg-boss';
+
+const serverAdapter = new ExpressAdapter();
+serverAdapter.setBasePath('/pg-boss');
+createPgBossBoard({ serverAdapter, pgBoss: { instance: boss, connection: process.env.DATABASE_URL } });
+app.use('/pg-boss', serverAdapter.getRouter());
+```
+
+The NestJS module mounts it as a named board next to a BullMQ one (`engine: 'pg-boss'`), and the CLI serves it with `--pg-boss <url>`. See the [pg-boss docs](https://naldomadeira.github.io/worker-manager/queue-adapters/pg-boss), or the [pg-boss demo](https://naldomadeira.github.io/worker-manager/demo/pg-boss/).
 
 ## Playground
 

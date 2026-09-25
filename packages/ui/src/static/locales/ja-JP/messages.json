@@ -647,5 +647,289 @@
     "PREVIOUS": "前のページ",
     "NEXT": "次のページ",
     "PAGE": "{{page}} ページ"
+  },
+  "PGBOSS": {
+    "EXPERIMENTAL": "実験的",
+    "EXPERIMENTAL_HINT": "pg-boss エンジンは実験的です。画面と HTTP API はマイナーリリースで変わる可能性があります。",
+    "STATE": {
+      "ALL": "すべて",
+      "CREATED": "作成済み",
+      "RETRY": "再試行待ち",
+      "ACTIVE": "実行中",
+      "COMPLETED": "完了",
+      "CANCELLED": "キャンセル済み",
+      "FAILED": "失敗"
+    },
+    "SUBSTATE": {
+      "DEFERRED": "延期",
+      "BLOCKED": "ブロック中",
+      "READY": "実行可能"
+    },
+    "KPI": {
+      "READY": "実行可能",
+      "DEFERRED": "延期",
+      "ACTIVE": "実行中",
+      "FAILED": "失敗",
+      "TOTAL": "合計",
+      "BACKLOGGED": "滞留中: {{value}}",
+      "NONE_BACKLOGGED": "滞留なし",
+      "QUEUED_HINT": "待機中: {{value}}"
+    },
+    "STATS": {
+      "UPDATED_AT": "{{time}}時点のカウンター",
+      "STALE": "カウンターの最終書き込みは{{time}}です。それ以降、supervise を実行する pg-boss インスタンスは更新していません。",
+      "NEVER": "これらのキューを監視した pg-boss インスタンスはまだないため、カウンターは 0 です。",
+      "CACHED_HINT": "pg-boss のモニターによるキャッシュです。キューページのタブはリアルタイムで数えます。"
+    },
+    "QUEUE": {
+      "NAME": "名前",
+      "POLICY": "ポリシー",
+      "PARTITION": "ストレージ",
+      "PARTITIONED": "専用パーティション",
+      "SHARED": "共有テーブル",
+      "DEAD_LETTER": "デッドレターキュー",
+      "RETRY_LIMIT": "再試行の上限",
+      "RETRY_DELAY": "再試行までの待ち時間",
+      "RETRY_BACKOFF": "指数バックオフ",
+      "RETRY_DELAY_MAX": "再試行までの最大待ち時間",
+      "EXPIRE_IN": "有効期限",
+      "RETENTION": "待機中の保持期間",
+      "DELETE_AFTER": "削除までの期間",
+      "WARNING_QUEUE_SIZE": "滞留警告のしきい値",
+      "BACKLOGGED": "滞留中",
+      "HEARTBEAT": "ハートビート",
+      "NOTIFY": "送信時に通知",
+      "SINGLETONS_ACTIVE": "アクティブなシングルトンキー",
+      "SCHEDULES": "スケジュール",
+      "CREATED_ON": "作成日時",
+      "UPDATED_ON": "更新日時",
+      "READY_HISTORY": "実行可能なジョブ（直近のサンプル）",
+      "YES": "はい",
+      "NO": "いいえ",
+      "NONE": "なし",
+      "SECTIONS": {
+        "GENERAL": "一般",
+        "RETRIES": "再試行",
+        "LIFECYCLE": "ライフサイクル"
+      },
+      "NOT_FOUND": "キューが見つかりません"
+    },
+    "POLICY": {
+      "STANDARD": "標準",
+      "STANDARD_DESC": "ジョブは優先度と作成日時の順に取得され、制限はありません。",
+      "SHORT": "ショート",
+      "SHORT_DESC": "シングルトンキーごとに待機中のジョブは最大 1 件です。",
+      "SINGLETON": "シングルトン",
+      "SINGLETON_DESC": "シングルトンキーごとに実行中のジョブは最大 1 件です。",
+      "STATELY": "ステートリー",
+      "STATELY_DESC": "状態とシングルトンキーごとにジョブは最大 1 件です。",
+      "EXCLUSIVE": "排他",
+      "EXCLUSIVE_DESC": "シングルトンキーごとに待機中または実行中のジョブは最大 1 件です。",
+      "KEY_STRICT_FIFO": "キー単位の厳密な FIFO",
+      "KEY_STRICT_FIFO_DESC": "同じシングルトンキーのジョブは 1 件ずつ順番に実行されます。"
+    },
+    "JOB": {
+      "PRIORITY": "優先度 {{priority}}",
+      "ATTEMPT": "試行 {{attempt}} / {{limit}}",
+      "CREATED_ON": "作成",
+      "START_AFTER": "開始予定",
+      "STARTED_ON": "開始",
+      "COMPLETED_ON": "終了",
+      "KEEP_UNTIL": "この日時までに開始しなければ期限切れ",
+      "SINGLETON_KEY": "シングルトンキー",
+      "SINGLETON_ON": "シングルトンの時間枠",
+      "GROUP_ID": "グループ",
+      "GROUP_TIER": "グループの階層",
+      "HEARTBEAT_ON": "最後のハートビート",
+      "BLOCKING": "依存ジョブをブロック",
+      "NO_OUTPUT": "このジョブには出力がありません。",
+      "NO_DATA": "このジョブにはデータがありません。",
+      "DEPENDENCIES": "待機対象",
+      "DEPENDENTS": "待機しているジョブ",
+      "NO_DEPENDENCIES": "このジョブは他のジョブを待っていません。",
+      "NO_DEPENDENTS": "このジョブを待っているジョブはありません。",
+      "PENDING_DEPENDENCIES": "未完了の依存関係: {{value}}",
+      "SOURCE_QUEUE": "元のキュー",
+      "SOURCE_JOB": "元のジョブ",
+      "SOURCE_CREATED_ON": "元の作成日時",
+      "SOURCE_RETRY_COUNT": "元の試行回数",
+      "FROM_QUEUE": "{{queue}} から",
+      "NOT_DEAD_LETTER": "このジョブは他のキューから移されたものではありません。",
+      "TABS": {
+        "DATA": "データ",
+        "OUTPUT": "出力",
+        "OPTIONS": "オプション",
+        "TIMELINE": "タイムライン",
+        "DEPENDENCIES": "依存関係",
+        "DEAD_LETTER": "デッドレター"
+      }
+    },
+    "ACTIONS": {
+      "QUEUE_ACTIONS": "キューの操作",
+      "AFFECTED": "{{requested}} 件中 {{affected}} 件のジョブを変更しました。",
+      "CANCEL_ACTIVE_WARNING": "このジョブは実行中です。キャンセルするとキャンセル済みになりますが、すでに処理しているハンドラーは止まりません。",
+      "RETRY": {
+        "LABEL": "再試行",
+        "CONFIRM": "この失敗したジョブを再試行しますか？",
+        "PENDING": "ジョブを再試行しています…",
+        "DONE": "ジョブを再試行キューに入れました"
+      },
+      "CANCEL": {
+        "LABEL": "キャンセル",
+        "CONFIRM": "このジョブをキャンセルしますか？",
+        "PENDING": "ジョブをキャンセルしています…",
+        "DONE": "ジョブをキャンセルしました"
+      },
+      "RESUME": {
+        "LABEL": "再開",
+        "CONFIRM": "このキャンセル済みジョブを再開しますか？",
+        "PENDING": "ジョブを再開しています…",
+        "DONE": "ジョブを再開しました"
+      },
+      "DELETE": {
+        "LABEL": "削除",
+        "CONFIRM": "このジョブを削除しますか？元に戻せません。",
+        "PENDING": "ジョブを削除しています…",
+        "DONE": "ジョブを削除しました"
+      },
+      "DUPLICATE": {
+        "LABEL": "複製",
+        "PENDING": "コピーを送信しています…",
+        "DONE": "コピーを送信しました"
+      },
+      "SEND": {
+        "LABEL": "ジョブを送信",
+        "PENDING": "ジョブを送信しています…",
+        "DONE": "ジョブを送信しました",
+        "DROPPED": "pg-boss がジョブを破棄しました。同じキーのシングルトンがすでに存在する可能性があります。"
+      },
+      "RETRY_FAILED": {
+        "LABEL": "失敗したジョブをすべて再試行",
+        "CONFIRM": "このキューの失敗したジョブをすべて再試行しますか？",
+        "PENDING": "失敗したジョブを再試行しています…",
+        "DONE": "失敗したジョブを再試行キューに入れました"
+      },
+      "DELETE_QUEUED": {
+        "LABEL": "待機中のジョブを削除",
+        "CONFIRM": "このキューのまだ開始していないジョブをすべて削除しますか？元に戻せません。",
+        "PENDING": "待機中のジョブを削除しています…",
+        "DONE": "待機中のジョブを削除しました"
+      },
+      "DELETE_STORED": {
+        "LABEL": "終了したジョブを削除",
+        "CONFIRM": "このキューの完了・キャンセル済み・失敗したジョブをすべて削除しますか？元に戻せません。",
+        "PENDING": "終了したジョブを削除しています…",
+        "DONE": "終了したジョブを削除しました"
+      }
+    },
+    "SEND": {
+      "TITLE": "ジョブを送信",
+      "DUPLICATE_TITLE": "ジョブを複製",
+      "QUEUE": "キュー",
+      "DATA": "データ",
+      "PRIORITY": "優先度",
+      "START_AFTER": "開始時刻",
+      "START_AFTER_HINT": "現在からの秒数、または ISO 形式の日時。空欄ならすぐに開始します。",
+      "SINGLETON_KEY": "シングルトンキー",
+      "RETRY_LIMIT": "再試行の上限",
+      "RETRY_DELAY": "再試行までの待ち時間（秒）",
+      "RETRY_BACKOFF": "指数バックオフ",
+      "EXPIRE_IN": "有効期限（秒）",
+      "QUEUE_DEFAULT": "キューの既定値",
+      "SUBMIT": "送信"
+    },
+    "SCHEDULES": {
+      "TITLE": "スケジュール",
+      "EMPTY": "スケジュールはまだありません。",
+      "KIND_CRON": "Cron",
+      "KIND_RRULE": "RRULE",
+      "KEY": "キー",
+      "DEFAULT_KEY": "既定のキー",
+      "EXPRESSION": "式",
+      "EXPRESSION_HINT": "0 * * * * のような cron 式、または pg-boss 12.31 以降では RRULE。",
+      "TIMEZONE": "タイムゾーン",
+      "MISSED": "実行されなかった回",
+      "MISSED_DEFAULT": "pg-boss の既定",
+      "MISSED_SKIP": "スキップする",
+      "MISSED_ONCE": "1 回だけ実行",
+      "NEXT_RUNS": "次回以降の実行",
+      "NO_NEXT_RUNS": "使用中の pg-boss ではこのスケジュールをプレビューできません。",
+      "QUEUE": "キュー",
+      "DATA": "データ",
+      "OPTIONS": "ジョブのオプション",
+      "ALL_QUEUES": "すべてのキュー",
+      "FILTER_BY_QUEUE": "キューで絞り込む",
+      "CREATE": "新しいスケジュール",
+      "EDIT": "スケジュールを編集",
+      "SAVE": "保存",
+      "SAVE_PENDING": "スケジュールを保存しています…",
+      "SAVE_DONE": "スケジュールを保存しました",
+      "REMOVE": "スケジュールを削除",
+      "REMOVE_CONFIRM": "このスケジュールを削除しますか？すでに送信されたジョブはキューに残ります。",
+      "REMOVE_PENDING": "スケジュールを削除しています…",
+      "REMOVE_DONE": "スケジュールを削除しました",
+      "RUN_NOW": "今すぐ実行",
+      "RUN_NOW_CONFIRM": "このスケジュールのテンプレートから今すぐジョブを送信しますか？",
+      "RUN_NOW_PENDING": "ジョブを送信しています…",
+      "RUN_NOW_DONE": "ジョブを送信しました",
+      "PREVIEW": "プレビュー",
+      "PREVIEW_UNAVAILABLE": "プレビューには pg-boss 12.31 以降が必要です。",
+      "COLUMNS": {
+        "QUEUE": "キュー",
+        "KEY": "キー",
+        "SCHEDULE": "スケジュール",
+        "NEXT_RUN": "次回の実行",
+        "LAST_JOB": "最後のジョブ",
+        "UPDATED": "更新日時"
+      }
+    },
+    "PAGINATION": {
+      "LABEL": "ジョブのページ",
+      "FIRST": "最初のページ",
+      "PREVIOUS": "前へ",
+      "NEXT": "次へ"
+    },
+    "COUNT": {
+      "CAPPED": "{{cap}}+",
+      "UNKNOWN": "?",
+      "CAPPED_HINT": "{{cap}} 件を超えています。ページを速く保つため、そこで数えるのをやめています。",
+      "TIMEOUT": "件数の集計に時間がかかりすぎました。下の一覧は引き続き使えます。"
+    },
+    "FILTER": {
+      "ID": "ジョブ ID",
+      "ID_PLACEHOLDER": "ID でジョブを検索",
+      "SINGLETON_KEY": "シングルトンキー",
+      "SINGLETON_KEY_PLACEHOLDER": "シングルトンキーで絞り込む",
+      "APPLY": "絞り込む",
+      "CLEAR": "フィルターをクリア",
+      "INVALID_ID": "pg-boss のジョブ ID は UUID です。"
+    },
+    "EMPTY": {
+      "QUEUES": "表示する pg-boss のキューがありません",
+      "QUEUES_HINT": "アプリケーションがキューを作成すると、ここに表示されます。",
+      "QUEUES_FILTERED": "この条件に一致するキューはありません",
+      "JOBS": "この状態のジョブはありません",
+      "JOBS_FILTERED": "この条件に一致するジョブはありません"
+    },
+    "BANNER": {
+      "WRITES_DISABLED": "変更は無効になっています",
+      "READ_ONLY": "読み取り専用",
+      "UNREADABLE": "この pg-boss データベースを読み取れません",
+      "SCHEMA_UNSUPPORTED": "この pg-boss スキーマはサポート範囲（{{min}}〜{{max}}）外です。",
+      "NOT_INSTALLED": "先にアプリケーションで pg-boss をインストールしてください。ボードがスキーマを作成・移行することはありません。",
+      "SLOW_QUERY": "大きなキューではこの状態の一覧表示に時間がかかります。ジョブ ID かシングルトンキーで絞り込むか、ドキュメントで推奨されているインデックスを追加してください。"
+    },
+    "DATASTORE": {
+      "TITLE": "pg-boss データストア",
+      "SCHEMA": "スキーマ",
+      "SCHEMA_VERSION": "スキーマのバージョン",
+      "SUPPORTED_RANGE": "サポートされるバージョン",
+      "RANGE": "{{min}}〜{{max}}",
+      "PERSIST_QUEUE_STATS": "キュー統計の履歴",
+      "WRITABLE": "書き込み",
+      "INSTALLED": "インストール済み",
+      "ENABLED": "オン",
+      "DISABLED": "オフ"
+    }
   }
 }

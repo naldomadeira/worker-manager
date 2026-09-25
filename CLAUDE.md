@@ -23,6 +23,7 @@ Yarn 4 workspaces under `packages/*`, plus `playground` (see "Playground"). Key 
 | `express`, `fastify`, `hono`, `koa`, `h3`, `hapi`, `nestjs`, `elysia`, `bun` | Server adapters |
 | `cli` | Standalone `worker-manager` executable, also what the Docker image installs |
 | `metrics` | Opt-in Redis-backed recorder behind the core's `historyProvider` seam |
+| `pg-boss` | Experimental pg-boss engine: a separate board (`createPgBossBoard`) over a pg-boss schema, mounted through the `@worker-manager/api/engine` seam; needs Node >= 22.12 |
 | `test-utils` | Private (unpublished) in-repo test kit for adapter contract tests |
 
 ## UI conventions
@@ -246,6 +247,47 @@ Request validation is wrapped in `wrapHandler` (`src/hooks.ts`), which runs it a
 `handlerHooks.before` so a visibility guard answers before a 400 can reveal that a hidden route
 exists. Response validation is the same schema, off by default behind `options.validateResponses`.
 
+## pg-boss engine (experimental)
+
+`@worker-manager/pg-boss` is a second, separate board over a pg-boss schema, not a `BaseAdapter`:
+pg-boss has no pause, logs, progress, workers or rate limit, and has states BullMQ lacks
+(`retry`, `cancelled`, plus the `deferred`/`blocked` sub-states). Mixing pg-boss and BullMQ
+queues in one board is out of scope; an app mounts two boards side by side.
+
+- **Seam.** `@worker-manager/api/engine` exports `mountBoard`, `buildPgBossRoutes`, the
+  `PgBossEngine` interface, a `stub` engine for tests and the `/api/pg-boss/*` handlers; the
+  valibot schemas live in `packages/api/src/schemas/pgBoss.ts` (`pgBossDomainSchemas`, summed by
+  the OpenAPI generator) and the error keys are `ERRORS.PGBOSS_*`. `mountBoard` writes
+  `uiConfig.engine = 'pg-boss'`, which is the only thing the UI reads to switch boards
+  (`App.tsx` renders `PgBossBoard` lazily; a BullMQ board never loads that code, and
+  `useQueues` never fetches on a pg-boss board).
+- **Engine rules.** Reads are plain SQL over the package's own `pg` pool (or the app's started
+  `PgBoss` instance via `getDb()`); writes go through a `new PgBoss({ db: poolAdapter, schema,
+  migrate: false, supervise: false, schedule: false, createSchema: false })` built per command and
+  never `start()`ed. The package never emits DDL, never migrates, and `tests/safety.spec.ts`
+  asserts that. Supported range is `pg-boss ^12.24.0` (schema 35 to 42, `versionGuard.ts`);
+  outside it writes are disabled with a translated reason and reads keep working.
+- **Tests.** `yarn workspace @worker-manager/pg-boss test` runs `scripts/test.mjs`: two ESM jest
+  projects (`jest.config.latest.js`, then `jest.config.floor.js`, mapping `pg-boss` to the
+  `pg-boss-latest` / `pg-boss-floor` npm aliases) under `--experimental-vm-modules`. It needs
+  `POSTGRES_URL` and Node >= 22.12 and skips loudly without either, which is why CI's Node 20
+  leg stays green. Each Jest worker installs its own schema (`tests/support.ts`) and drops it.
+- **Capabilities.** Since phase 1 every queue reports `capabilities`, `library` and `datastore`
+  (`BaseAdapter.getCapabilities()`, `packages/ui/src/utils/capabilities.ts`); the UI gates
+  buttons and tabs on those, never on `queue.type`. Defaults are what every adapter already
+  implements, so adding a flag must not remove a control from an existing adapter.
+- **Consumers.** NestJS: `WorkerManagerModule.forRoot({ name, route, engine: 'pg-boss', pgBoss:
+  { instance | useExisting | connection, schema, queues } })`, named boards get per-name DI
+  tokens and a per-board session cookie. CLI: `--pg-boss <url>` (+ `--pg-boss-schema`,
+  `--pg-boss-queues`, `--pg-boss-path`), alone or next to a BullMQ board, guarded to Node >= 22.12
+  only when that flag is used. Metrics: `pgBossMetricsSources(engine)` feeds `MetricsRecorder`
+  through the `CounterSource` seam and records under `pgboss:<schema>:<queue>`;
+  `namespacedHistoryProvider` lets one store serve both boards. Playground mounts both boards
+  (`WM_PGBOSS`), and the POC at `../../pocs/bull-board/bullboard-poc` has mode `m8`.
+- **Contract stability.** `/api/pg-boss/*` may change in a minor until it is called stable; the
+  queue-depth history endpoint described in the plan is not implemented yet (the read helper
+  `readPgBossQueueDepth` exists, the route and schema do not).
+
 ## Adapter contract tests
 
 ### Overview
@@ -365,8 +407,8 @@ NestJS 11 and 12 are both exercised on every run. `yarn workspace @worker-manage
 
 | Folder | What it holds |
 |---|---|
-| `tests/scenarios/` | One real Nest app per datastore, booted through `WorkerManagerModule` as a user would: `redis` (`@nestjs/bullmq` + Basic auth, Express and Fastify), `postgres` (bullmq@6 `createPostgresBackend`, skips without `POSTGRES_URL`), `keycloak` (in-process fake OIDC provider), `pg-boss` (`it.todo` until the engine exists) |
-| `tests/module/` | Module options the scenarios do not exercise (global prefix, `enabled: false`, `title`, `forRootAsync`, same-name queues, DI tokens) |
+| `tests/scenarios/` | One real Nest app per datastore, booted through `WorkerManagerModule` as a user would: `redis` (`@nestjs/bullmq` + Basic auth, Express and Fastify), `postgres` (bullmq@6 `createPostgresBackend`, skips without `POSTGRES_URL`), `keycloak` (in-process fake OIDC provider), `pg-boss` (a real `createPgBossBoard` board through `engine: 'pg-boss'`, skips without `POSTGRES_URL`) |
+| `tests/module/` | Module options the scenarios do not exercise (global prefix, `enabled: false`, `title`, `forRootAsync`, same-name queues, DI tokens), and `named-boards.spec.ts`: several boards in one app (`forRoot({ name })`, per-name tokens and cookie, a BullMQ board next to a pg-boss board on the stub engine, every configuration error) |
 | `tests/contract/` | The shared 12-case adapter contract battery |
 | `tests/support/` | `boot()`/`basic()`/`http()` helpers, Redis connection and unique queue names, the fake OIDC provider, the ESM test-utils shim |
 
@@ -389,8 +431,11 @@ against. Neither config uses them.
 
 NestJS 12 is published as ESM only: no CommonJS build, `"type": "module"` on every package. Jest
 cannot `require()` that, so `jest.config.v12.js` is an ESM project, with
-`extensionsToTreatAsEsm: ['.ts']`, ts-jest under `useESM` and `module: 'esnext'`, and
-`NODE_OPTIONS=--experimental-vm-modules` in front of that second invocation.
+`extensionsToTreatAsEsm: ['.ts']`, ts-jest under `useESM` and `module: 'esnext'`. Both
+invocations run under `NODE_OPTIONS=--experimental-vm-modules`: the 12 project needs it for Nest
+itself, and the 11 project needs it because `pg-boss` is ESM only too, and the pg-boss scenario
+loads it through `tests/support/pg-boss-loader.js`, a plain JS file ts-jest leaves alone so the
+dynamic `import()` is not rewritten to `require()`.
 
 That is also why the two majors cannot be a `projects` aggregate in one `jest` run, which is what
 this started as. Jest decides whether a path is ESM once per worker process and caches the answer

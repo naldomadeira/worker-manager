@@ -1,12 +1,18 @@
 import type { BaseAdapter } from '@worker-manager/api/baseAdapter';
-import type { MetricsType } from '@worker-manager/api/typings/app';
 import type { MetricsConnection } from './connection';
-import { metricsToMinutePoints, type MinutePoint } from './dataMapping';
+import {
+  adapterCounterSource,
+  adapterOf,
+  type CounterMetric,
+  type CounterSource,
+  type CounterSources,
+} from './counterSources';
+import type { MinutePoint } from './dataMapping';
 import { LatencySampler } from './LatencySampler';
 import { RedisMetricsStore } from './RedisMetricsStore';
 import type { CounterStore, MetricsStore, Retention } from './store';
 
-const METRICS: MetricsType[] = ['completed', 'failed'];
+const METRICS: CounterMetric[] = ['completed', 'failed'];
 const MS_PER_MINUTE = 60000;
 const MINUTES_PER_DAY = 1440;
 
@@ -44,14 +50,31 @@ interface StoreOptions {
   prefix?: never;
 }
 
-export type MetricsRecorderOptions = RecorderBaseOptions & (RedisOptions | StoreOptions);
+export type MetricsRecorderOptions = RecorderBaseOptions &
+  (RedisOptions | StoreOptions) &
+  (QueuesOption | SourcesOption);
 
-interface RecorderBaseOptions {
+interface QueuesOption {
   /**
    * A function is resolved on every tick, for a board whose queue set changes while it
    * runs. An array is read once, at construction.
    */
   queues: BaseAdapter[] | (() => BaseAdapter[]);
+  /** See `SourcesOption.sources`. Either or both may be given. */
+  sources?: CounterSources;
+}
+
+interface SourcesOption {
+  queues?: BaseAdapter[] | (() => BaseAdapter[]);
+  /**
+   * Queues that are not queue adapters, such as `pgBossMetricsSources(engine)` from
+   * `@worker-manager/pg-boss`. A function is resolved, and awaited, on every tick; an array is
+   * read once. Recorded after `queues`, in the same tick.
+   */
+  sources: CounterSources;
+}
+
+interface RecorderBaseOptions {
   /** Per-resolution retention in days. Unspecified tiers fall back to the defaults. */
   retention?: Partial<Retention>;
   /**
@@ -108,7 +131,8 @@ export function resolveRetention(opts: {
 }
 
 export class MetricsRecorder {
-  private readonly resolveQueues: () => BaseAdapter[];
+  private readonly resolveQueues: (() => BaseAdapter[]) | null;
+  private readonly resolveSources: (() => CounterSource[] | Promise<CounterSource[]>) | null;
   private readonly store: CounterStore;
   /** Set only when the recorder built the store itself, from a `connection`. */
   private readonly ownedStore: MetricsStore | null;
@@ -122,8 +146,12 @@ export class MetricsRecorder {
   private readonly onSnapshotError?: (error: unknown) => void;
 
   constructor(opts: MetricsRecorderOptions) {
-    const { queues } = opts;
-    this.resolveQueues = typeof queues === 'function' ? queues : () => queues;
+    const { queues, sources } = opts;
+    if (!queues && !sources) {
+      throw new Error('MetricsRecorder needs `queues`, `sources`, or both.');
+    }
+    this.resolveQueues = !queues ? null : typeof queues === 'function' ? queues : () => queues;
+    this.resolveSources = !sources ? null : typeof sources === 'function' ? sources : () => sources;
     this.intervalMs = opts.snapshotIntervalMs ?? 60000;
     const store =
       opts.store ?? new RedisMetricsStore({ connection: opts.connection, prefix: opts.prefix });
@@ -188,13 +216,20 @@ export class MetricsRecorder {
     }
     this.running = true;
     try {
-      for (const adapter of this.resolveQueues()) {
-        const name = adapter.getName();
+      const sources = (this.resolveQueues?.() ?? []).map(adapterCounterSource);
+      if (this.resolveSources) {
+        sources.push(...(await this.resolveSources()));
+      }
+      for (const source of sources) {
+        const name = source.name;
         for (const metric of METRICS) {
-          await this.snapshotOne(adapter, name, metric);
+          await this.snapshotOne(source, name, metric);
         }
         if (this.latencySampler) {
-          await this.latencySampler.sample(adapter);
+          const adapter = adapterOf(source);
+          await (adapter
+            ? this.latencySampler.sample(adapter)
+            : this.latencySampler.sampleSource(name, source.jobSource(), source.rollup));
         }
       }
     } finally {
@@ -210,17 +245,36 @@ export class MetricsRecorder {
    * minutes are upserted (safe against overlapping windows across ticks), then the
    * watermark advances. So the first tick backfills the buffer and every later tick only
    * writes the minutes that appeared since.
+   *
+   * A `CounterSource` that is not an adapter is asked for exactly the range past the
+   * watermark, and a cold start takes that watermark from the store rather than re-reading the
+   * whole minute window: a source that counts rows (pg-boss) can have lost rows it already
+   * counted, and writing its smaller count back would subtract them from every rollup.
    */
   private async snapshotOne(
-    adapter: BaseAdapter,
+    source: CounterSource,
     name: string,
-    metric: MetricsType
+    metric: CounterMetric
   ): Promise<void> {
     const cursorKey = `${name}:${metric}`;
-    const seenUpTo = this.lastMinute.get(cursorKey) ?? -1;
+    let seenUpTo = this.lastMinute.get(cursorKey);
+    const currentMinute = Math.floor(Date.now() / MS_PER_MINUTE);
+    const isAdapter = adapterOf(source) !== null;
+    if (seenUpTo === undefined && !isAdapter) {
+      seenUpTo = (await this.store.latestMinute(name, metric)) ?? -1;
+      this.lastMinute.set(cursorKey, seenUpTo);
+    }
+    seenUpTo ??= -1;
 
-    const metrics = await adapter.getMetrics(metric).catch(() => null);
-    const points = metricsToMinutePoints(metrics);
+    const fromMinute = Math.max(
+      seenUpTo + 1,
+      currentMinute - this.store.retention.minutes * MINUTES_PER_DAY
+    );
+    const points = await source.readMinutes(
+      metric,
+      fromMinute * MS_PER_MINUTE,
+      currentMinute * MS_PER_MINUTE
+    );
     if (points.length === 0) {
       return;
     }
@@ -235,14 +289,17 @@ export class MetricsRecorder {
     const oldestWritable =
       Math.floor(Date.now() / MS_PER_MINUTE) - this.store.retention.minutes * MINUTES_PER_DAY;
 
+    // A filter rather than an early exit, since only an adapter promises newest-first order.
+    // For an adapter the result is the same: its minutes strictly descend, so everything past
+    // the first stored or too-old minute is stored or too old as well.
     let newest = seenUpTo;
     const fresh: MinutePoint[] = [];
     for (const point of points) {
-      if (point.minute <= seenUpTo) {
-        break; // points are newest-first; everything older is already stored
+      if (point.minute <= seenUpTo || point.minute < oldestWritable) {
+        continue;
       }
-      if (point.minute < oldestWritable) {
-        break; // ...and everything past here is older still
+      if (!isAdapter && point.minute >= currentMinute) {
+        continue; // a source is not trusted with the minute in progress
       }
       fresh.push(point);
       if (point.minute > newest) {
@@ -251,7 +308,9 @@ export class MetricsRecorder {
     }
     // One call per queue and metric, so a SQL store can make it one transaction. The
     // watermark only moves once the write has landed.
-    await this.store.upsertMinutes(name, metric, fresh);
+    await (source.rollup === undefined
+      ? this.store.upsertMinutes(name, metric, fresh)
+      : this.store.upsertMinutes(name, metric, fresh, source.rollup));
     this.lastMinute.set(cursorKey, newest);
   }
 }

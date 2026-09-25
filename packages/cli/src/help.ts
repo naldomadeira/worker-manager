@@ -1,5 +1,5 @@
 export const HELP = `
-worker-manager - run the Worker Manager dashboard against Redis and/or PostgreSQL
+worker-manager - run the Worker Manager dashboard against Redis, PostgreSQL and/or pg-boss
 
 Usage:
   worker-manager [options]
@@ -49,6 +49,15 @@ Options:
                           (postgres://user:pass@host:5432/db)
       --postgres-schema <name>
                           Schema the BullMQ tables live in       [bullmq]
+      --pg-boss <url>     Serve a pg-boss board (experimental, Node >= 22.12)
+                          (postgres://user:pass@host:5432/db)
+      --pg-boss-schema <name>
+                          Schema pg-boss was installed in        [pgboss]
+      --pg-boss-queues <list>
+                          Comma separated pg-boss queues to show [all]
+      --pg-boss-path <path>
+                          Where the pg-boss board is served next to a
+                          BullMQ board                           [/pg-boss]
       --board-title <s>   Dashboard title
       --history           Record and serve long-retention metrics history
       --history-retention-days <n>
@@ -92,7 +101,18 @@ itself.
 their names from its tables (or taking --queues). With no Redis source set
 (no --redis, --sentinel, --cluster or config file entry) the board serves
 PostgreSQL only and never connects to Redis; otherwise it serves both.
---history needs Redis and is ignored on a PostgreSQL-only board.
+--history records into Redis when there is one; on a PostgreSQL-only board
+it records into PostgreSQL instead, in the --postgres-schema schema.
+
+--pg-boss serves an experimental board over a pg-boss schema. With no Redis
+or --postgres source it is the only board and takes the root; otherwise the
+BullMQ board keeps the root, the pg-boss board is served under --pg-boss-path,
+and each links to the other from the header. --read-only and the auth flags
+cover both. Nothing is migrated or created in the pg-boss schema: when the
+database is on a different pg-boss schema version than the one bundled here,
+writes turn off with the reason logged at startup, and reads keep working
+within the supported range. --history keeps the pg-boss board's history in
+the worker_manager schema of the same database. Needs Node.js 22.12 or later.
 
 --keycloak-url replaces Basic auth with a Keycloak login: browsers are sent
 through the OIDC authorization code flow (PKCE), API clients may send an
@@ -105,7 +125,8 @@ WORKER_MANAGER_PORT, WORKER_MANAGER_READ_ONLY, WORKER_MANAGER_KEYCLOAK_URL,
 WORKER_MANAGER_KEYCLOAK_REALM, WORKER_MANAGER_KEYCLOAK_CLIENT_ID,
 WORKER_MANAGER_KEYCLOAK_CLIENT_SECRET, WORKER_MANAGER_KEYCLOAK_ROLES,
 WORKER_MANAGER_PUBLIC_URL, WORKER_MANAGER_SESSION_SECRET, WORKER_MANAGER_POSTGRES_URL,
-WORKER_MANAGER_POSTGRES_SCHEMA.
+WORKER_MANAGER_POSTGRES_SCHEMA, WORKER_MANAGER_PGBOSS_URL, WORKER_MANAGER_PGBOSS_SCHEMA,
+WORKER_MANAGER_PGBOSS_QUEUES, WORKER_MANAGER_PGBOSS_PATH.
 
 Examples:
   worker-manager
@@ -115,6 +136,8 @@ Examples:
   worker-manager --sentinel s1:26379,s2:26379 --sentinel-name mymaster
   worker-manager --cluster n1:7000,n2:7000,n3:7000
   worker-manager --postgres postgres://bullmq:bullmq@localhost:5432/bullmq
+  worker-manager --pg-boss postgres://app:secret@localhost:5432/app
+  worker-manager -r redis://localhost:6379 --pg-boss postgres://localhost/app
   worker-manager --keycloak-url https://sso.example.com --keycloak-realm ops \\
     --keycloak-client-id board --keycloak-client-secret $SECRET \\
     --keycloak-roles wm-admin --public-url https://ops.example.com

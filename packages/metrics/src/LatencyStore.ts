@@ -190,7 +190,8 @@ export class LatencyStore implements LatencyStorage {
     queue: string,
     metric: LatencyMetric,
     hour: number,
-    vector: number[]
+    vector: number[],
+    rollup: string = GLOBAL_QUEUE
   ): Promise<void> {
     const day = minuteToDay(hour * 60);
     await this.redis.eval(
@@ -198,8 +199,8 @@ export class LatencyStore implements LatencyStorage {
       4,
       this.keys.hour(queue, metric, day),
       this.keys.totals(queue, metric),
-      this.keys.hour(GLOBAL_QUEUE, metric, day),
-      this.keys.totals(GLOBAL_QUEUE, metric),
+      this.keys.hour(rollup, metric, day),
+      this.keys.totals(rollup, metric),
       String(hour),
       day,
       packVector(vector),
@@ -210,15 +211,20 @@ export class LatencyStore implements LatencyStorage {
     );
   }
 
-  async recordQueueAge(queue: string, hour: number, ms: number): Promise<void> {
+  async recordQueueAge(
+    queue: string,
+    hour: number,
+    ms: number,
+    rollup: string = GLOBAL_QUEUE
+  ): Promise<void> {
     const day = minuteToDay(hour * 60);
     await this.redis.eval(
       MAX_GAUGE,
       4,
       this.keys.hour(queue, QUEUE_AGE_METRIC, day),
       this.keys.totals(queue, QUEUE_AGE_METRIC),
-      this.keys.hour(GLOBAL_QUEUE, QUEUE_AGE_METRIC, day),
-      this.keys.totals(GLOBAL_QUEUE, QUEUE_AGE_METRIC),
+      this.keys.hour(rollup, QUEUE_AGE_METRIC, day),
+      this.keys.totals(rollup, QUEUE_AGE_METRIC),
       String(hour),
       day,
       String(Math.max(0, Math.round(ms))),

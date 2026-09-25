@@ -648,5 +648,289 @@
     "PREVIOUS": "Previous page",
     "NEXT": "Next page",
     "PAGE": "Page {{page}}"
+  },
+  "PGBOSS": {
+    "EXPERIMENTAL": "Experimental",
+    "EXPERIMENTAL_HINT": "The pg-boss engine is experimental: its screens and its HTTP API may still change in a minor release.",
+    "STATE": {
+      "ALL": "All",
+      "CREATED": "Created",
+      "RETRY": "Retry",
+      "ACTIVE": "Active",
+      "COMPLETED": "Completed",
+      "CANCELLED": "Cancelled",
+      "FAILED": "Failed"
+    },
+    "SUBSTATE": {
+      "DEFERRED": "Deferred",
+      "BLOCKED": "Blocked",
+      "READY": "Ready"
+    },
+    "KPI": {
+      "READY": "Ready",
+      "DEFERRED": "Deferred",
+      "ACTIVE": "Active",
+      "FAILED": "Failed",
+      "TOTAL": "Total",
+      "BACKLOGGED": "Backlogged: {{value}}",
+      "NONE_BACKLOGGED": "None backlogged",
+      "QUEUED_HINT": "Queued: {{value}}"
+    },
+    "STATS": {
+      "UPDATED_AT": "Counters from {{time}}",
+      "STALE": "The counters were last written {{time}}. No pg-boss instance running supervise has refreshed them since.",
+      "NEVER": "No pg-boss instance has monitored these queues yet, so their counters read zero.",
+      "CACHED_HINT": "Cached by pg-boss's monitor. The tabs on a queue page count live."
+    },
+    "QUEUE": {
+      "NAME": "Name",
+      "POLICY": "Policy",
+      "PARTITION": "Storage",
+      "PARTITIONED": "Own partition",
+      "SHARED": "Shared table",
+      "DEAD_LETTER": "Dead letter queue",
+      "RETRY_LIMIT": "Retry limit",
+      "RETRY_DELAY": "Retry delay",
+      "RETRY_BACKOFF": "Exponential backoff",
+      "RETRY_DELAY_MAX": "Maximum retry delay",
+      "EXPIRE_IN": "Expires after",
+      "RETENTION": "Kept queued for",
+      "DELETE_AFTER": "Deleted after",
+      "WARNING_QUEUE_SIZE": "Backlog warning at",
+      "BACKLOGGED": "Backlogged",
+      "HEARTBEAT": "Heartbeat",
+      "NOTIFY": "Notify on send",
+      "SINGLETONS_ACTIVE": "Active singleton keys",
+      "SCHEDULES": "Schedules",
+      "CREATED_ON": "Created",
+      "UPDATED_ON": "Updated",
+      "READY_HISTORY": "Ready jobs, last samples",
+      "YES": "Yes",
+      "NO": "No",
+      "NONE": "None",
+      "SECTIONS": {
+        "GENERAL": "General",
+        "RETRIES": "Retries",
+        "LIFECYCLE": "Lifecycle"
+      },
+      "NOT_FOUND": "Queue not found"
+    },
+    "POLICY": {
+      "STANDARD": "Standard",
+      "STANDARD_DESC": "Jobs are fetched by priority and creation time, with no limits.",
+      "SHORT": "Short",
+      "SHORT_DESC": "At most one queued job per singleton key.",
+      "SINGLETON": "Singleton",
+      "SINGLETON_DESC": "At most one active job per singleton key.",
+      "STATELY": "Stately",
+      "STATELY_DESC": "At most one job per state and singleton key.",
+      "EXCLUSIVE": "Exclusive",
+      "EXCLUSIVE_DESC": "At most one queued or active job per singleton key.",
+      "KEY_STRICT_FIFO": "Key strict FIFO",
+      "KEY_STRICT_FIFO_DESC": "Jobs sharing a singleton key run one at a time, in order."
+    },
+    "JOB": {
+      "PRIORITY": "Priority {{priority}}",
+      "ATTEMPT": "Attempt {{attempt}} of {{limit}}",
+      "CREATED_ON": "Created",
+      "START_AFTER": "Starts after",
+      "STARTED_ON": "Started",
+      "COMPLETED_ON": "Finished",
+      "KEEP_UNTIL": "Expires if not started by",
+      "SINGLETON_KEY": "Singleton key",
+      "SINGLETON_ON": "Singleton slot",
+      "GROUP_ID": "Group",
+      "GROUP_TIER": "Group tier",
+      "HEARTBEAT_ON": "Last heartbeat",
+      "BLOCKING": "Blocks dependents",
+      "NO_OUTPUT": "This job has no output.",
+      "NO_DATA": "This job has no data.",
+      "DEPENDENCIES": "Waits on",
+      "DEPENDENTS": "Waited on by",
+      "NO_DEPENDENCIES": "This job waits on no other job.",
+      "NO_DEPENDENTS": "No job waits on this one.",
+      "PENDING_DEPENDENCIES": "Pending dependencies: {{value}}",
+      "SOURCE_QUEUE": "Source queue",
+      "SOURCE_JOB": "Source job",
+      "SOURCE_CREATED_ON": "Source created",
+      "SOURCE_RETRY_COUNT": "Source attempts",
+      "FROM_QUEUE": "From {{queue}}",
+      "NOT_DEAD_LETTER": "This job was not moved here from another queue.",
+      "TABS": {
+        "DATA": "Data",
+        "OUTPUT": "Output",
+        "OPTIONS": "Options",
+        "TIMELINE": "Timeline",
+        "DEPENDENCIES": "Dependencies",
+        "DEAD_LETTER": "Dead letter"
+      }
+    },
+    "ACTIONS": {
+      "QUEUE_ACTIONS": "Queue actions",
+      "AFFECTED": "{{affected}} of {{requested}} jobs changed.",
+      "CANCEL_ACTIVE_WARNING": "The job is running. Cancelling it marks it cancelled, but does not stop the handler already working on it.",
+      "RETRY": {
+        "LABEL": "Retry",
+        "CONFIRM": "Retry this failed job?",
+        "PENDING": "Retrying the job…",
+        "DONE": "Job queued for retry"
+      },
+      "CANCEL": {
+        "LABEL": "Cancel",
+        "CONFIRM": "Cancel this job?",
+        "PENDING": "Cancelling the job…",
+        "DONE": "Job cancelled"
+      },
+      "RESUME": {
+        "LABEL": "Resume",
+        "CONFIRM": "Resume this cancelled job?",
+        "PENDING": "Resuming the job…",
+        "DONE": "Job resumed"
+      },
+      "DELETE": {
+        "LABEL": "Delete",
+        "CONFIRM": "Delete this job? This cannot be undone.",
+        "PENDING": "Deleting the job…",
+        "DONE": "Job deleted"
+      },
+      "DUPLICATE": {
+        "LABEL": "Duplicate",
+        "PENDING": "Sending a copy…",
+        "DONE": "Copy sent"
+      },
+      "SEND": {
+        "LABEL": "Send job",
+        "PENDING": "Sending the job…",
+        "DONE": "Job sent",
+        "DROPPED": "pg-boss dropped the job, most likely because a singleton with the same key already exists."
+      },
+      "RETRY_FAILED": {
+        "LABEL": "Retry all failed",
+        "CONFIRM": "Retry every failed job of this queue?",
+        "PENDING": "Retrying failed jobs…",
+        "DONE": "Failed jobs queued for retry"
+      },
+      "DELETE_QUEUED": {
+        "LABEL": "Delete queued jobs",
+        "CONFIRM": "Delete every job of this queue that has not started? This cannot be undone.",
+        "PENDING": "Deleting queued jobs…",
+        "DONE": "Queued jobs deleted"
+      },
+      "DELETE_STORED": {
+        "LABEL": "Delete finished jobs",
+        "CONFIRM": "Delete every completed, cancelled and failed job of this queue? This cannot be undone.",
+        "PENDING": "Deleting finished jobs…",
+        "DONE": "Finished jobs deleted"
+      }
+    },
+    "SEND": {
+      "TITLE": "Send a job",
+      "DUPLICATE_TITLE": "Duplicate a job",
+      "QUEUE": "Queue",
+      "DATA": "Data",
+      "PRIORITY": "Priority",
+      "START_AFTER": "Start after",
+      "START_AFTER_HINT": "Seconds from now, or an ISO date. Empty starts it right away.",
+      "SINGLETON_KEY": "Singleton key",
+      "RETRY_LIMIT": "Retry limit",
+      "RETRY_DELAY": "Retry delay (seconds)",
+      "RETRY_BACKOFF": "Exponential backoff",
+      "EXPIRE_IN": "Expire after (seconds)",
+      "QUEUE_DEFAULT": "Queue default",
+      "SUBMIT": "Send"
+    },
+    "SCHEDULES": {
+      "TITLE": "Schedules",
+      "EMPTY": "No schedules yet.",
+      "KIND_CRON": "Cron",
+      "KIND_RRULE": "RRULE",
+      "KEY": "Key",
+      "DEFAULT_KEY": "Default key",
+      "EXPRESSION": "Expression",
+      "EXPRESSION_HINT": "A cron expression such as 0 * * * *, or an RRULE on pg-boss 12.31 and later.",
+      "TIMEZONE": "Time zone",
+      "MISSED": "Missed runs",
+      "MISSED_DEFAULT": "pg-boss default",
+      "MISSED_SKIP": "Skip them",
+      "MISSED_ONCE": "Run once",
+      "NEXT_RUNS": "Next runs",
+      "NO_NEXT_RUNS": "The pg-boss in use cannot preview this schedule.",
+      "QUEUE": "Queue",
+      "DATA": "Data",
+      "OPTIONS": "Job options",
+      "ALL_QUEUES": "All queues",
+      "FILTER_BY_QUEUE": "Filter by queue",
+      "CREATE": "New schedule",
+      "EDIT": "Edit schedule",
+      "SAVE": "Save",
+      "SAVE_PENDING": "Saving the schedule…",
+      "SAVE_DONE": "Schedule saved",
+      "REMOVE": "Remove schedule",
+      "REMOVE_CONFIRM": "Remove this schedule? Jobs it already sent stay in the queue.",
+      "REMOVE_PENDING": "Removing the schedule…",
+      "REMOVE_DONE": "Schedule removed",
+      "RUN_NOW": "Run now",
+      "RUN_NOW_CONFIRM": "Send a job from this schedule's template now?",
+      "RUN_NOW_PENDING": "Sending the job…",
+      "RUN_NOW_DONE": "Job sent",
+      "PREVIEW": "Preview",
+      "PREVIEW_UNAVAILABLE": "Preview needs pg-boss 12.31 or later.",
+      "COLUMNS": {
+        "QUEUE": "Queue",
+        "KEY": "Key",
+        "SCHEDULE": "Schedule",
+        "NEXT_RUN": "Next run",
+        "LAST_JOB": "Last job",
+        "UPDATED": "Updated"
+      }
+    },
+    "PAGINATION": {
+      "LABEL": "Job pages",
+      "FIRST": "First page",
+      "PREVIOUS": "Previous",
+      "NEXT": "Next"
+    },
+    "COUNT": {
+      "CAPPED": "{{cap}}+",
+      "UNKNOWN": "?",
+      "CAPPED_HINT": "More than {{cap}} jobs. Counting stops there to keep the page fast.",
+      "TIMEOUT": "Counting took too long. The list below still works."
+    },
+    "FILTER": {
+      "ID": "Job id",
+      "ID_PLACEHOLDER": "Find a job by id",
+      "SINGLETON_KEY": "Singleton key",
+      "SINGLETON_KEY_PLACEHOLDER": "Filter by singleton key",
+      "APPLY": "Filter",
+      "CLEAR": "Clear filters",
+      "INVALID_ID": "A pg-boss job id is a UUID."
+    },
+    "EMPTY": {
+      "QUEUES": "No pg-boss queues to show",
+      "QUEUES_HINT": "Queues appear here once the application creates them.",
+      "QUEUES_FILTERED": "No queue matches these filters",
+      "JOBS": "No jobs in this state",
+      "JOBS_FILTERED": "No job matches these filters"
+    },
+    "BANNER": {
+      "WRITES_DISABLED": "Changes are turned off",
+      "READ_ONLY": "Read only",
+      "UNREADABLE": "This pg-boss database cannot be read",
+      "SCHEMA_UNSUPPORTED": "The pg-boss schema here is outside the supported range {{min}} to {{max}}.",
+      "NOT_INSTALLED": "Install pg-boss in the application first. The board never creates or migrates its schema.",
+      "SLOW_QUERY": "Listing this state is slow on a large queue. Filter by job id or singleton key, or add the index the documentation recommends."
+    },
+    "DATASTORE": {
+      "TITLE": "pg-boss datastore",
+      "SCHEMA": "Schema",
+      "SCHEMA_VERSION": "Schema version",
+      "SUPPORTED_RANGE": "Supported versions",
+      "RANGE": "{{min}} to {{max}}",
+      "PERSIST_QUEUE_STATS": "Queue stats history",
+      "WRITABLE": "Writes",
+      "INSTALLED": "Installed",
+      "ENABLED": "On",
+      "DISABLED": "Off"
+    }
   }
 }

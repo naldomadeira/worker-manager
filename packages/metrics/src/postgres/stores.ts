@@ -47,11 +47,22 @@ export class PostgresCounterStore implements CounterStore {
     this.pruner = new RetentionPruner(ctx, this.retention);
   }
 
-  async upsertMinute(queue: string, metric: string, minute: number, value: number): Promise<void> {
-    await this.upsertMinutes(queue, metric, [{ minute, value }]);
+  async upsertMinute(
+    queue: string,
+    metric: string,
+    minute: number,
+    value: number,
+    rollup: string = GLOBAL_QUEUE
+  ): Promise<void> {
+    await this.upsertMinutes(queue, metric, [{ minute, value }], rollup);
   }
 
-  async upsertMinutes(queue: string, metric: string, points: MinutePoint[]): Promise<void> {
+  async upsertMinutes(
+    queue: string,
+    metric: string,
+    points: MinutePoint[],
+    rollup: string = GLOBAL_QUEUE
+  ): Promise<void> {
     if (points.length === 0) {
       return;
     }
@@ -94,17 +105,23 @@ export class PostgresCounterStore implements CounterStore {
          SELECT queue, $2, tier, bucket, delta FROM rollup ORDER BY queue, tier, bucket
          ON CONFLICT (queue, metric, tier, bucket)
            DO UPDATE SET value = ${counters}.value + EXCLUDED.value`,
-        [
-          queue,
-          metric,
-          points.map((p) => p.minute),
-          points.map((p) => Math.round(p.value)),
-          GLOBAL_QUEUE,
-        ]
+        [queue, metric, points.map((p) => p.minute), points.map((p) => Math.round(p.value)), rollup]
       );
     });
     const newest = Math.max(...points.map((p) => p.minute));
     await this.pruner.afterWrite(minuteToDay(newest));
+  }
+
+  /** The minute tier only holds rows inside the minute window, so this is one index probe. */
+  async latestMinute(queue: string, metric: string): Promise<number | null> {
+    await this.ctx.ready();
+    const { rows } = await this.ctx.pool.query(
+      `SELECT max(bucket) AS minute FROM ${this.ctx.tables.counters}
+        WHERE queue = $1 AND metric = $2 AND tier = 'minute'`,
+      [queue, metric]
+    );
+    const minute = rows[0]?.minute;
+    return minute == null ? null : Number(minute);
   }
 
   async readDailyTotals(queue: string, metric: string, days: string[]): Promise<(number | null)[]> {
@@ -178,7 +195,8 @@ export class PostgresLatencyStore implements LatencyStorage {
     queue: string,
     metric: LatencyMetric,
     hour: number,
-    vector: number[]
+    vector: number[],
+    rollup: string = GLOBAL_QUEUE
   ): Promise<void> {
     await this.ctx.ready();
     const { histograms } = this.ctx.tables;
@@ -195,12 +213,17 @@ export class PostgresLatencyStore implements LatencyStorage {
            FROM unnest(${histograms}.counts, EXCLUDED.counts) WITH ORDINALITY AS t(a, b, i)
           ORDER BY i
        )`,
-      [queue, metric, hour, dayToIndex(day), counts, GLOBAL_QUEUE]
+      [queue, metric, hour, dayToIndex(day), counts, rollup]
     );
     await this.pruner.afterWrite(day);
   }
 
-  async recordQueueAge(queue: string, hour: number, ms: number): Promise<void> {
+  async recordQueueAge(
+    queue: string,
+    hour: number,
+    ms: number,
+    rollup: string = GLOBAL_QUEUE
+  ): Promise<void> {
     await this.ctx.ready();
     const { counters } = this.ctx.tables;
     const day = minuteToDay(hour * 60);
@@ -212,7 +235,7 @@ export class PostgresLatencyStore implements LatencyStorage {
          ($6, $2, 'hour', $3, $5)
        ON CONFLICT (queue, metric, tier, bucket)
          DO UPDATE SET value = GREATEST(${counters}.value, EXCLUDED.value)`,
-      [queue, QUEUE_AGE_METRIC, hour, dayToIndex(day), Math.max(0, Math.round(ms)), GLOBAL_QUEUE]
+      [queue, QUEUE_AGE_METRIC, hour, dayToIndex(day), Math.max(0, Math.round(ms)), rollup]
     );
     await this.pruner.afterWrite(day);
   }

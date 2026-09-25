@@ -79,6 +79,15 @@ Options:
                           (postgres://user:pass@host:5432/db)
       --postgres-schema <name>
                           Schema the BullMQ tables live in       [bullmq]
+      --pg-boss <url>     Serve a pg-boss board (experimental, Node >= 22.12)
+                          (postgres://user:pass@host:5432/db)
+      --pg-boss-schema <name>
+                          Schema pg-boss was installed in        [pgboss]
+      --pg-boss-queues <list>
+                          Comma separated pg-boss queues to show [all]
+      --pg-boss-path <path>
+                          Where the pg-boss board is served next to a
+                          BullMQ board                           [/pg-boss]
       --board-title <s>   Dashboard title
       --history           Record and serve long-retention metrics history
       --history-retention-days <n>
@@ -124,6 +133,10 @@ Every flag has an environment variable equivalent, so you can configure the CLI 
 | `--session-secret` | `WORKER_MANAGER_SESSION_SECRET` |
 | `--postgres` | `WORKER_MANAGER_POSTGRES_URL` |
 | `--postgres-schema` | `WORKER_MANAGER_POSTGRES_SCHEMA` |
+| `--pg-boss` | `WORKER_MANAGER_PGBOSS_URL` |
+| `--pg-boss-schema` | `WORKER_MANAGER_PGBOSS_SCHEMA` |
+| `--pg-boss-queues` | `WORKER_MANAGER_PGBOSS_QUEUES` |
+| `--pg-boss-path` | `WORKER_MANAGER_PGBOSS_PATH` |
 | `--board-title` | `WORKER_MANAGER_BOARD_TITLE` |
 | `--history` | `WORKER_MANAGER_HISTORY` |
 | `--history-retention-days` | `WORKER_MANAGER_HISTORY_RETENTION_DAYS` |
@@ -303,6 +316,84 @@ module.exports = {
   postgres: { host: 'db', user: 'bullmq', password: process.env.PGPASSWORD, database: 'jobs', schema: 'bullmq' },
 };
 ```
+
+## pg-boss
+
+::: warning Experimental
+The pg-boss board is experimental: its `/api/pg-boss` HTTP contract may still change in a minor release.
+:::
+
+`--pg-boss` serves a board over a [pg-boss](https://github.com/timgit/pg-boss) schema: its queues, jobs in every state, and schedules.
+See [the pg-boss engine](/queue-adapters/pg-boss) for what the board shows, the recommended indexes and a read-only database role.
+
+```sh
+npx @worker-manager/cli --pg-boss postgres://app:secret@localhost:5432/app
+```
+
+It needs Node.js 22.12 or newer, because pg-boss does. On an older Node.js, `--pg-boss` stops at startup with a message saying so, while every other mode of the CLI keeps running on Node.js 20. The [Docker image](/guide/docker) is on Node.js 22 already. The CLI bundles its own pg-boss 12 and reads and writes through it; your app does not need to share a version with it.
+
+| Flag | Default | What it does |
+|---|---|---|
+| `--pg-boss <url>` | | The PostgreSQL database pg-boss lives in |
+| `--pg-boss-schema <name>` | `pgboss` | The schema pg-boss was installed in |
+| `--pg-boss-queues <a,b>` | every queue | Show only these queues. Any other queue answers 404, in the UI and in the API |
+| `--pg-boss-path <path>` | `/pg-boss` | Where the pg-boss board is served when a BullMQ board has the root |
+
+Nothing is migrated, supervised or created in that database. The board reads the pg-boss tables with plain SQL, inside a supported range of pg-boss schema versions, and writes (retry, cancel, resume, delete, send, schedules) through the pg-boss API. Writes need the database to be on exactly the schema version the bundled pg-boss writes. If it is on another one, because your app is on an older or newer pg-boss, the board turns writes off, reads keep working, and the reason is logged at startup and shown in the UI:
+
+```text
+Worker Manager listening on http://127.0.0.1:3000
+pg-boss: postgres://app:***@localhost:5432/app (schema pgboss, version 41)
+pg-boss writes are disabled: the database is on pg-boss schema version 41, but the pg-boss bundled with this CLI writes version 42. Reading keeps working.
+```
+
+A schema pg-boss was never installed in, or one outside the supported range, is logged the same way, and the board says so instead of showing queues.
+
+### Next to a BullMQ board
+
+With only `--pg-boss`, the pg-boss board is the whole dashboard and sits at the root (or at `--base-path`). Add a BullMQ source (`--redis`, `--sentinel`, `--cluster`, `--postgres`, or their environment and config file equivalents) and you get two boards from one process: BullMQ at the root, pg-boss under `--pg-boss-path`. Each board's header links to the other.
+
+```sh
+npx @worker-manager/cli \
+  --redis redis://localhost:6379 \
+  --pg-boss postgres://app:secret@localhost:5432/app \
+  --user admin --password secret
+```
+
+| URL | Board |
+|---|---|
+| `http://127.0.0.1:3000/` | BullMQ, from Redis |
+| `http://127.0.0.1:3000/pg-boss/` | pg-boss |
+
+The two boards share everything that is not about the queues:
+
+- **Auth.** Basic or Keycloak auth is mounted once, at the root, so it covers both boards. There is one login, and with Keycloak one redirect URI (`<public url>/auth/callback`).
+- **`--read-only`** applies to both. On the pg-boss board the write routes are not mounted at all.
+- **`--base-path`** prefixes both: `--base-path /ops` puts BullMQ at `/ops/` and pg-boss at `/ops/pg-boss/`.
+- **Outages stay separate.** The pg-boss board is served ahead of the Redis gate, so it keeps working while Redis is unreachable, and an unreachable pg-boss database is a warning, not a failed start, when BullMQ is there too. On its own, `--pg-boss` fails startup when the database does not answer, like a PostgreSQL-only board.
+
+`--pg-boss-path` cannot be `/` or a path the BullMQ board answers itself (`/api`, `/static`, `/auth`, `/queue`, `/job-schedulers`). The links between the boards are added after any `miscLinks` in your `uiConfig`, which both boards share, title included.
+
+`--history` gives the pg-boss board its own history, kept in the same database as pg-boss but in a separate schema, `worker_manager` (tables `worker_manager_metrics_*`), and never inside the pg-boss schema. Its queues are recorded as `pgboss:<schema>:<queue>`, so they cannot collide with BullMQ queues of the same name. The BullMQ board keeps its history where it always has. Completed and failed counts need an index on the pg-boss `job` table; the CLI warns at startup when there isn't one, and the [historical metrics recipe](/recipes/historical-metrics) has the DDL. `--read-only` stops the recording and serves what is already there.
+
+In a config file, `pgBoss` takes the URL, or a [node-postgres pool config](https://node-postgres.com/apis/pool) plus `schema`, `queues` and `path`:
+
+```js
+module.exports = {
+  redis: 'redis://localhost:6379',
+  pgBoss: {
+    host: 'db',
+    user: 'app',
+    password: process.env.PGPASSWORD,
+    database: 'app',
+    schema: 'pgboss',
+    queues: ['emails', 'invoices'],
+    path: '/pg-boss',
+  },
+};
+```
+
+A URL from `--pg-boss` or `WORKER_MANAGER_PGBOSS_URL` replaces the config file's connection but keeps its `schema`, `queues` and `path` unless those are overridden too.
 
 ## Historical metrics
 

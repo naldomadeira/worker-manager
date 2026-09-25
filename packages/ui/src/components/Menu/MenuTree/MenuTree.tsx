@@ -1,4 +1,3 @@
-import type { AppQueue } from '@worker-manager/api/typings/app';
 import { ChevronRight, Folder, FolderOpen } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
@@ -12,16 +11,17 @@ import {
 } from '@/components/ui/sidebar';
 import { cn } from '@/lib/utils';
 import { useActiveQueueName } from '../../../hooks/useActiveQueueName';
+import type { NavQueue } from '../../../hooks/useBoardNavigation';
 import { useMenuState } from '../../../hooks/useMenuState';
 import { useSelectedStatuses } from '../../../hooks/useSelectedStatuses';
 import { links } from '../../../utils/links';
 import { countPausedQueues, countQueues } from '../../../utils/queueTreeCounts';
-import { AppQueueTreeNode } from '../../../utils/toTree';
+import { QueueTreeNode } from '../../../utils/toTree';
 
 const compact = new Intl.NumberFormat(undefined, { notation: 'compact', maximumFractionDigits: 1 });
 
 /** Leading dot: pulses while jobs run, turns red on failures, greys out when paused. */
-const QueueStatusDot = ({ queue }: { queue: AppQueue }) => {
+const QueueStatusDot = ({ queue }: { queue: NavQueue }) => {
   const failed = queue.counts.failed || 0;
   const active = queue.counts.active || 0;
 
@@ -42,7 +42,7 @@ const QueueStatusDot = ({ queue }: { queue: AppQueue }) => {
   );
 };
 
-const QueueBadges = ({ queue }: { queue: AppQueue }) => {
+const QueueBadges = ({ queue }: { queue: NavQueue }) => {
   const { t } = useTranslation();
   const failed = queue.counts.failed || 0;
   const active = queue.counts.active || 0;
@@ -73,7 +73,7 @@ export const MenuTree = ({
   level = 0,
   parentPath = '',
 }: {
-  tree: AppQueueTreeNode;
+  tree: QueueTreeNode<NavQueue>;
   level?: number;
   parentPath?: string;
 }) => {

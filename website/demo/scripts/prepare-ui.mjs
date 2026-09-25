@@ -1,4 +1,4 @@
-import { copyFileSync, cpSync, existsSync, rmSync, } from 'node:fs';
+import { copyFileSync, cpSync, existsSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { execSync } from 'node:child_process';
@@ -28,6 +28,25 @@ if (existsSync(demoPublicStatic)) {
 cpSync(uiDistStatic, demoPublicStatic, { recursive: true });
 cpSync(join(uiDist, 'index.ejs'), 'index.ejs');
 console.warn(`[demo] Copied UI static assets into ${demoPublicStatic}`);
+
+// The pg-boss board is a second page, one level down at pg-boss/. Its <base> points there, so
+// the API calls and the router resolve under it, but the bundle is the same one: its template
+// loads the shared assets by absolute path instead of relative to <base>.
+const template = readFileSync(join(uiDist, 'index.ejs'), 'utf8');
+const pgBossTemplate = template.replace(
+  /(href|src)="static\//g,
+  '$1="/worker-manager/demo/static/'
+);
+writeFileSync(resolve(demoRoot, 'index.pg-boss.ejs'), pgBossTemplate);
+
+// i18next fetches the locales relative to <base>, so they are the one asset the pg-boss page
+// needs a copy of under its own path.
+const pgBossLocales = resolve(demoRoot, 'public/pg-boss/static/locales');
+if (existsSync(resolve(demoRoot, 'public/pg-boss'))) {
+  rmSync(resolve(demoRoot, 'public/pg-boss'), { recursive: true });
+}
+cpSync(join(uiDistStatic, 'locales'), pgBossLocales, { recursive: true });
+console.warn(`[demo] Wrote index.pg-boss.ejs and copied the locales into ${pgBossLocales}`);
 
 // Bundle the project logo and favicon inside the demo so it renders even when
 // served standalone (outside the docs site). See index.html.template for refs.

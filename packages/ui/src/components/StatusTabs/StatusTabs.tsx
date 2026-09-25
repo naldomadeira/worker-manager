@@ -13,6 +13,12 @@ export interface StatusTabItem {
   isActive: NavLinkProps['isActive'];
   count?: number;
   dot?: boolean;
+  /** Replaces the `QUEUE.STATUS.*` label, for statuses of another engine. */
+  label?: string;
+  /** Replaces the count shown in the badge, such as a capped "10k+"; `count` still decides it shows. */
+  countLabel?: string;
+  /** Tooltip on the tab. */
+  title?: string;
 }
 
 interface StatusTabsProps {
@@ -56,10 +62,9 @@ export const StatusTabs = ({ items, children }: PropsWithChildren<StatusTabsProp
               } as CSSProperties
             }
           >
-            {items.map(({ status, to, isActive, count, dot = true }) => {
-              const displayStatus = t(
-                dynamicTranslationKey(`QUEUE.STATUS.${status.toUpperCase()}`)
-              );
+            {items.map(({ status, to, isActive, count, dot = true, label, countLabel, title }) => {
+              const displayStatus =
+                label ?? t(dynamicTranslationKey(`QUEUE.STATUS.${status.toUpperCase()}`));
               const match = matchPath(location.pathname, { path: pathOf(to), exact: true });
               const active = isActive ? !!isActive(match as any, location) : !!match;
               const tone = statusTone(status);
@@ -70,6 +75,7 @@ export const StatusTabs = ({ items, children }: PropsWithChildren<StatusTabsProp
                     to={to}
                     isActive={isActive}
                     activeClassName="isActive"
+                    title={title}
                     className={cn(
                       'relative inline-flex h-8 items-center gap-2 rounded-lg px-3 text-[0.8125rem] font-medium whitespace-nowrap text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50',
                       active && 'text-foreground'
@@ -115,7 +121,7 @@ export const StatusTabs = ({ items, children }: PropsWithChildren<StatusTabsProp
                               : 'bg-foreground/5 text-muted-foreground'
                           )}
                         >
-                          {count}
+                          {countLabel ?? count}
                         </motion.span>
                       )}
                     </AnimatePresence>

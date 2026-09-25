@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Kbd } from '@/components/ui/kbd';
 import { Separator } from '@/components/ui/separator';
+import { useBoardNavigation } from '../../hooks/useBoardNavigation';
 import { useModal } from '../../hooks/useModal';
 import { useUIConfig } from '../../hooks/useUIConfig';
 import { useCommandPalette } from '../CommandPalette/CommandPalette';
@@ -53,6 +54,9 @@ export const HeaderActions = () => {
   const modal = useModal<ModalTypes>();
   const openPalette = useCommandPalette((state) => state.setOpen);
   const isFullscreen = useIsFullscreen();
+  const navigation = useBoardNavigation();
+  const DatastoreModal = navigation.DatastoreModal ?? RedisStatsModalLazy;
+  const datastoreTitle = navigation.datastoreTitle ?? t('REDIS.TITLE');
 
   return (
     <>
@@ -84,13 +88,13 @@ export const HeaderActions = () => {
         <Separator orientation="vertical" className="mx-1 h-5! max-md:hidden" />
 
         {!hideRedisDetails && (
-          <HintTooltip title={t('REDIS.TITLE')} side="bottom">
+          <HintTooltip title={datastoreTitle} side="bottom">
             <Button
               variant="ghost"
               size="icon-sm"
               className={iconButtonClass}
               onClick={() => modal.open('redis')}
-              aria-label={t('REDIS.TITLE')}
+              aria-label={datastoreTitle}
             >
               <Database aria-hidden="true" />
             </Button>
@@ -139,7 +143,7 @@ export const HeaderActions = () => {
       </div>
       <Suspense fallback={null}>
         {!hideRedisDetails && modal.isMounted('redis') && (
-          <RedisStatsModalLazy open={modal.isOpen('redis')} onClose={modal.close('redis')} />
+          <DatastoreModal open={modal.isOpen('redis')} onClose={modal.close('redis')} />
         )}
         {modal.isMounted('settings') && (
           <SettingsModalLazy open={modal.isOpen('settings')} onClose={modal.close('settings')} />

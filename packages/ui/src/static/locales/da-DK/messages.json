@@ -651,5 +651,289 @@
     "PREVIOUS": "Forrige side",
     "NEXT": "Næste side",
     "PAGE": "Side {{page}}"
+  },
+  "PGBOSS": {
+    "EXPERIMENTAL": "Eksperimentel",
+    "EXPERIMENTAL_HINT": "pg-boss-motoren er eksperimentel: dens skærme og dens HTTP-API kan stadig ændre sig i en mindre udgivelse.",
+    "STATE": {
+      "ALL": "Alle",
+      "CREATED": "Oprettet",
+      "RETRY": "Nyt forsøg",
+      "ACTIVE": "Aktiv",
+      "COMPLETED": "Gennemført",
+      "CANCELLED": "Annulleret",
+      "FAILED": "Fejlet"
+    },
+    "SUBSTATE": {
+      "DEFERRED": "Udskudt",
+      "BLOCKED": "Blokeret",
+      "READY": "Klar"
+    },
+    "KPI": {
+      "READY": "Klar",
+      "DEFERRED": "Udskudt",
+      "ACTIVE": "Aktive",
+      "FAILED": "Fejlede",
+      "TOTAL": "I alt",
+      "BACKLOGGED": "Med efterslæb: {{value}}",
+      "NONE_BACKLOGGED": "Intet efterslæb",
+      "QUEUED_HINT": "I kø: {{value}}"
+    },
+    "STATS": {
+      "UPDATED_AT": "Tællere fra {{time}}",
+      "STALE": "Tællerne blev sidst skrevet {{time}}. Ingen pg-boss-instans, der kører supervise, har opdateret dem siden.",
+      "NEVER": "Ingen pg-boss-instans har overvåget disse køer endnu, så deres tællere står på nul.",
+      "CACHED_HINT": "Cachet af pg-boss' monitor. Fanerne på en køs side tæller live."
+    },
+    "QUEUE": {
+      "NAME": "Navn",
+      "POLICY": "Politik",
+      "PARTITION": "Lagring",
+      "PARTITIONED": "Egen partition",
+      "SHARED": "Delt tabel",
+      "DEAD_LETTER": "Dead letter-kø",
+      "RETRY_LIMIT": "Maksimalt antal nye forsøg",
+      "RETRY_DELAY": "Ventetid før nyt forsøg",
+      "RETRY_BACKOFF": "Eksponentiel backoff",
+      "RETRY_DELAY_MAX": "Maksimal ventetid før nyt forsøg",
+      "EXPIRE_IN": "Udløber efter",
+      "RETENTION": "Bliver i kø i",
+      "DELETE_AFTER": "Slettes efter",
+      "WARNING_QUEUE_SIZE": "Advarsel om efterslæb ved",
+      "BACKLOGGED": "Efterslæb",
+      "HEARTBEAT": "Hjerteslag",
+      "NOTIFY": "Giv besked ved afsendelse",
+      "SINGLETONS_ACTIVE": "Aktive singleton-nøgler",
+      "SCHEDULES": "Planlægninger",
+      "CREATED_ON": "Oprettet",
+      "UPDATED_ON": "Opdateret",
+      "READY_HISTORY": "Klare jobs, seneste målinger",
+      "YES": "Ja",
+      "NO": "Nej",
+      "NONE": "Ingen",
+      "SECTIONS": {
+        "GENERAL": "Generelt",
+        "RETRIES": "Nye forsøg",
+        "LIFECYCLE": "Livscyklus"
+      },
+      "NOT_FOUND": "Kø ikke fundet"
+    },
+    "POLICY": {
+      "STANDARD": "Standard",
+      "STANDARD_DESC": "Jobs hentes efter prioritet og oprettelsestid, uden begrænsninger.",
+      "SHORT": "Kort",
+      "SHORT_DESC": "Højst ét job i kø pr. singleton-nøgle.",
+      "SINGLETON": "Singleton",
+      "SINGLETON_DESC": "Højst ét aktivt job pr. singleton-nøgle.",
+      "STATELY": "Tilstandsbaseret",
+      "STATELY_DESC": "Højst ét job pr. tilstand og singleton-nøgle.",
+      "EXCLUSIVE": "Eksklusiv",
+      "EXCLUSIVE_DESC": "Højst ét job i kø eller aktivt pr. singleton-nøgle.",
+      "KEY_STRICT_FIFO": "Streng FIFO pr. nøgle",
+      "KEY_STRICT_FIFO_DESC": "Jobs med samme singleton-nøgle kører ét ad gangen, i rækkefølge."
+    },
+    "JOB": {
+      "PRIORITY": "Prioritet {{priority}}",
+      "ATTEMPT": "Forsøg {{attempt}} af {{limit}}",
+      "CREATED_ON": "Oprettet",
+      "START_AFTER": "Starter efter",
+      "STARTED_ON": "Startet",
+      "COMPLETED_ON": "Afsluttet",
+      "KEEP_UNTIL": "Udløber, hvis det ikke er startet inden",
+      "SINGLETON_KEY": "Singleton-nøgle",
+      "SINGLETON_ON": "Singleton-tidsrum",
+      "GROUP_ID": "Gruppe",
+      "GROUP_TIER": "Gruppeniveau",
+      "HEARTBEAT_ON": "Seneste hjerteslag",
+      "BLOCKING": "Blokerer afhængige jobs",
+      "NO_OUTPUT": "Dette job har intet output.",
+      "NO_DATA": "Dette job har ingen data.",
+      "DEPENDENCIES": "Venter på",
+      "DEPENDENTS": "Ventes på af",
+      "NO_DEPENDENCIES": "Dette job venter ikke på andre jobs.",
+      "NO_DEPENDENTS": "Intet job venter på dette.",
+      "PENDING_DEPENDENCIES": "Udestående afhængigheder: {{value}}",
+      "SOURCE_QUEUE": "Oprindelig kø",
+      "SOURCE_JOB": "Oprindeligt job",
+      "SOURCE_CREATED_ON": "Oprindelse oprettet",
+      "SOURCE_RETRY_COUNT": "Forsøg i oprindelsen",
+      "FROM_QUEUE": "Fra {{queue}}",
+      "NOT_DEAD_LETTER": "Dette job blev ikke flyttet hertil fra en anden kø.",
+      "TABS": {
+        "DATA": "Data",
+        "OUTPUT": "Output",
+        "OPTIONS": "Indstillinger",
+        "TIMELINE": "Tidslinje",
+        "DEPENDENCIES": "Afhængigheder",
+        "DEAD_LETTER": "Dead letter"
+      }
+    },
+    "ACTIONS": {
+      "QUEUE_ACTIONS": "Kø-handlinger",
+      "AFFECTED": "{{affected}} af {{requested}} jobs ændret.",
+      "CANCEL_ACTIVE_WARNING": "Jobbet kører. Annullering markerer det som annulleret, men stopper ikke den handler, der allerede arbejder på det.",
+      "RETRY": {
+        "LABEL": "Prøv igen",
+        "CONFIRM": "Prøv dette fejlede job igen?",
+        "PENDING": "Prøver jobbet igen…",
+        "DONE": "Job sat i kø til nyt forsøg"
+      },
+      "CANCEL": {
+        "LABEL": "Annullér",
+        "CONFIRM": "Annullér dette job?",
+        "PENDING": "Annullerer jobbet…",
+        "DONE": "Job annulleret"
+      },
+      "RESUME": {
+        "LABEL": "Genoptag",
+        "CONFIRM": "Genoptag dette annullerede job?",
+        "PENDING": "Genoptager jobbet…",
+        "DONE": "Job genoptaget"
+      },
+      "DELETE": {
+        "LABEL": "Slet",
+        "CONFIRM": "Slet dette job? Det kan ikke fortrydes.",
+        "PENDING": "Sletter jobbet…",
+        "DONE": "Job slettet"
+      },
+      "DUPLICATE": {
+        "LABEL": "Duplikér",
+        "PENDING": "Sender en kopi…",
+        "DONE": "Kopi sendt"
+      },
+      "SEND": {
+        "LABEL": "Send job",
+        "PENDING": "Sender jobbet…",
+        "DONE": "Job sendt",
+        "DROPPED": "pg-boss droppede jobbet, sandsynligvis fordi der allerede findes en singleton med samme nøgle."
+      },
+      "RETRY_FAILED": {
+        "LABEL": "Prøv alle fejlede igen",
+        "CONFIRM": "Prøv alle fejlede jobs i denne kø igen?",
+        "PENDING": "Prøver fejlede jobs igen…",
+        "DONE": "Fejlede jobs sat i kø til nyt forsøg"
+      },
+      "DELETE_QUEUED": {
+        "LABEL": "Slet jobs i kø",
+        "CONFIRM": "Slet alle jobs i denne kø, der ikke er startet? Det kan ikke fortrydes.",
+        "PENDING": "Sletter jobs i kø…",
+        "DONE": "Jobs i kø slettet"
+      },
+      "DELETE_STORED": {
+        "LABEL": "Slet afsluttede jobs",
+        "CONFIRM": "Slet alle gennemførte, annullerede og fejlede jobs i denne kø? Det kan ikke fortrydes.",
+        "PENDING": "Sletter afsluttede jobs…",
+        "DONE": "Afsluttede jobs slettet"
+      }
+    },
+    "SEND": {
+      "TITLE": "Send et job",
+      "DUPLICATE_TITLE": "Duplikér et job",
+      "QUEUE": "Kø",
+      "DATA": "Data",
+      "PRIORITY": "Prioritet",
+      "START_AFTER": "Start efter",
+      "START_AFTER_HINT": "Sekunder fra nu eller en ISO-dato. Tomt starter det med det samme.",
+      "SINGLETON_KEY": "Singleton-nøgle",
+      "RETRY_LIMIT": "Maksimalt antal nye forsøg",
+      "RETRY_DELAY": "Ventetid før nyt forsøg (sekunder)",
+      "RETRY_BACKOFF": "Eksponentiel backoff",
+      "EXPIRE_IN": "Udløb efter (sekunder)",
+      "QUEUE_DEFAULT": "Køens standard",
+      "SUBMIT": "Send"
+    },
+    "SCHEDULES": {
+      "TITLE": "Planlægninger",
+      "EMPTY": "Ingen planlægninger endnu.",
+      "KIND_CRON": "Cron",
+      "KIND_RRULE": "RRULE",
+      "KEY": "Nøgle",
+      "DEFAULT_KEY": "Standardnøgle",
+      "EXPRESSION": "Udtryk",
+      "EXPRESSION_HINT": "Et cron-udtryk som 0 * * * * eller en RRULE med pg-boss 12.31 og nyere.",
+      "TIMEZONE": "Tidszone",
+      "MISSED": "Mistede kørsler",
+      "MISSED_DEFAULT": "pg-boss' standard",
+      "MISSED_SKIP": "Spring dem over",
+      "MISSED_ONCE": "Kør én gang",
+      "NEXT_RUNS": "Næste kørsler",
+      "NO_NEXT_RUNS": "Den anvendte pg-boss kan ikke forudberegne denne planlægning.",
+      "QUEUE": "Kø",
+      "DATA": "Data",
+      "OPTIONS": "Jobindstillinger",
+      "ALL_QUEUES": "Alle køer",
+      "FILTER_BY_QUEUE": "Filtrér efter kø",
+      "CREATE": "Ny planlægning",
+      "EDIT": "Redigér planlægning",
+      "SAVE": "Gem",
+      "SAVE_PENDING": "Gemmer planlægningen…",
+      "SAVE_DONE": "Planlægning gemt",
+      "REMOVE": "Fjern planlægning",
+      "REMOVE_CONFIRM": "Fjern denne planlægning? Jobs, den allerede har sendt, bliver i køen.",
+      "REMOVE_PENDING": "Fjerner planlægningen…",
+      "REMOVE_DONE": "Planlægning fjernet",
+      "RUN_NOW": "Kør nu",
+      "RUN_NOW_CONFIRM": "Send et job fra denne planlægnings skabelon nu?",
+      "RUN_NOW_PENDING": "Sender jobbet…",
+      "RUN_NOW_DONE": "Job sendt",
+      "PREVIEW": "Forhåndsvis",
+      "PREVIEW_UNAVAILABLE": "Forhåndsvisning kræver pg-boss 12.31 eller nyere.",
+      "COLUMNS": {
+        "QUEUE": "Kø",
+        "KEY": "Nøgle",
+        "SCHEDULE": "Tidsplan",
+        "NEXT_RUN": "Næste kørsel",
+        "LAST_JOB": "Seneste job",
+        "UPDATED": "Opdateret"
+      }
+    },
+    "PAGINATION": {
+      "LABEL": "Jobsider",
+      "FIRST": "Første side",
+      "PREVIOUS": "Forrige",
+      "NEXT": "Næste"
+    },
+    "COUNT": {
+      "CAPPED": "{{cap}}+",
+      "UNKNOWN": "?",
+      "CAPPED_HINT": "Mere end {{cap}} jobs. Optællingen stopper der, så siden forbliver hurtig.",
+      "TIMEOUT": "Optællingen tog for lang tid. Listen nedenfor virker stadig."
+    },
+    "FILTER": {
+      "ID": "Job-id",
+      "ID_PLACEHOLDER": "Find et job efter id",
+      "SINGLETON_KEY": "Singleton-nøgle",
+      "SINGLETON_KEY_PLACEHOLDER": "Filtrér efter singleton-nøgle",
+      "APPLY": "Filtrér",
+      "CLEAR": "Ryd filtre",
+      "INVALID_ID": "Et pg-boss-job-id er et UUID."
+    },
+    "EMPTY": {
+      "QUEUES": "Ingen pg-boss-køer at vise",
+      "QUEUES_HINT": "Køer vises her, når applikationen opretter dem.",
+      "QUEUES_FILTERED": "Ingen kø matcher disse filtre",
+      "JOBS": "Ingen jobs i denne tilstand",
+      "JOBS_FILTERED": "Intet job matcher disse filtre"
+    },
+    "BANNER": {
+      "WRITES_DISABLED": "Ændringer er slået fra",
+      "READ_ONLY": "Skrivebeskyttet",
+      "UNREADABLE": "Denne pg-boss-database kan ikke læses",
+      "SCHEMA_UNSUPPORTED": "pg-boss-skemaet her ligger uden for det understøttede interval fra {{min}} til {{max}}.",
+      "NOT_INSTALLED": "Installér pg-boss i applikationen først. Boardet opretter eller migrerer aldrig sit skema.",
+      "SLOW_QUERY": "Det er langsomt at vise denne tilstand på en stor kø. Filtrér efter job-id eller singleton-nøgle, eller tilføj det indeks, dokumentationen anbefaler."
+    },
+    "DATASTORE": {
+      "TITLE": "pg-boss-datalager",
+      "SCHEMA": "Skema",
+      "SCHEMA_VERSION": "Skemaversion",
+      "SUPPORTED_RANGE": "Understøttede versioner",
+      "RANGE": "{{min}} til {{max}}",
+      "PERSIST_QUEUE_STATS": "Historik for køstatistik",
+      "WRITABLE": "Skrivning",
+      "INSTALLED": "Installeret",
+      "ENABLED": "Til",
+      "DISABLED": "Fra"
+    }
   }
 }

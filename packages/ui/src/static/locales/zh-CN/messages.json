@@ -645,5 +645,289 @@
     "PREVIOUS": "上一页",
     "NEXT": "下一页",
     "PAGE": "第 {{page}} 页"
+  },
+  "PGBOSS": {
+    "EXPERIMENTAL": "实验性",
+    "EXPERIMENTAL_HINT": "pg-boss 引擎是实验性的：它的界面和 HTTP API 可能会在次要版本中变化。",
+    "STATE": {
+      "ALL": "全部",
+      "CREATED": "已创建",
+      "RETRY": "待重试",
+      "ACTIVE": "运行中",
+      "COMPLETED": "已完成",
+      "CANCELLED": "已取消",
+      "FAILED": "失败"
+    },
+    "SUBSTATE": {
+      "DEFERRED": "已推迟",
+      "BLOCKED": "被阻塞",
+      "READY": "就绪"
+    },
+    "KPI": {
+      "READY": "就绪",
+      "DEFERRED": "已推迟",
+      "ACTIVE": "运行中",
+      "FAILED": "失败",
+      "TOTAL": "总计",
+      "BACKLOGGED": "积压队列：{{value}}",
+      "NONE_BACKLOGGED": "没有积压",
+      "QUEUED_HINT": "排队中：{{value}}"
+    },
+    "STATS": {
+      "UPDATED_AT": "计数器截至 {{time}}",
+      "STALE": "计数器最后一次写入是在 {{time}}。此后没有运行 supervise 的 pg-boss 实例刷新过它们。",
+      "NEVER": "还没有 pg-boss 实例监控过这些队列，所以计数器为零。",
+      "CACHED_HINT": "由 pg-boss 的监控器缓存。队列页面上的标签页是实时计数的。"
+    },
+    "QUEUE": {
+      "NAME": "名称",
+      "POLICY": "策略",
+      "PARTITION": "存储",
+      "PARTITIONED": "独立分区",
+      "SHARED": "共享表",
+      "DEAD_LETTER": "死信队列",
+      "RETRY_LIMIT": "重试上限",
+      "RETRY_DELAY": "重试间隔",
+      "RETRY_BACKOFF": "指数退避",
+      "RETRY_DELAY_MAX": "最大重试间隔",
+      "EXPIRE_IN": "过期时间",
+      "RETENTION": "排队保留时长",
+      "DELETE_AFTER": "删除时长",
+      "WARNING_QUEUE_SIZE": "积压告警阈值",
+      "BACKLOGGED": "积压",
+      "HEARTBEAT": "心跳",
+      "NOTIFY": "发送时通知",
+      "SINGLETONS_ACTIVE": "活跃的单例键",
+      "SCHEDULES": "计划",
+      "CREATED_ON": "创建时间",
+      "UPDATED_ON": "更新时间",
+      "READY_HISTORY": "就绪作业，最近采样",
+      "YES": "是",
+      "NO": "否",
+      "NONE": "无",
+      "SECTIONS": {
+        "GENERAL": "常规",
+        "RETRIES": "重试",
+        "LIFECYCLE": "生命周期"
+      },
+      "NOT_FOUND": "未找到队列"
+    },
+    "POLICY": {
+      "STANDARD": "标准",
+      "STANDARD_DESC": "按优先级和创建时间获取作业，没有限制。",
+      "SHORT": "短队列",
+      "SHORT_DESC": "每个单例键最多一个排队中的作业。",
+      "SINGLETON": "单例",
+      "SINGLETON_DESC": "每个单例键最多一个运行中的作业。",
+      "STATELY": "按状态",
+      "STATELY_DESC": "每个状态和单例键最多一个作业。",
+      "EXCLUSIVE": "独占",
+      "EXCLUSIVE_DESC": "每个单例键最多一个排队中或运行中的作业。",
+      "KEY_STRICT_FIFO": "按键严格 FIFO",
+      "KEY_STRICT_FIFO_DESC": "共享同一单例键的作业按顺序逐个运行。"
+    },
+    "JOB": {
+      "PRIORITY": "优先级 {{priority}}",
+      "ATTEMPT": "第 {{attempt}} 次尝试，共 {{limit}} 次",
+      "CREATED_ON": "创建",
+      "START_AFTER": "开始于",
+      "STARTED_ON": "已开始",
+      "COMPLETED_ON": "已结束",
+      "KEEP_UNTIL": "此前未开始则过期",
+      "SINGLETON_KEY": "单例键",
+      "SINGLETON_ON": "单例时间段",
+      "GROUP_ID": "分组",
+      "GROUP_TIER": "分组层级",
+      "HEARTBEAT_ON": "最后一次心跳",
+      "BLOCKING": "阻塞依赖它的作业",
+      "NO_OUTPUT": "此作业没有输出。",
+      "NO_DATA": "此作业没有数据。",
+      "DEPENDENCIES": "等待",
+      "DEPENDENTS": "被以下作业等待",
+      "NO_DEPENDENCIES": "此作业不等待其他作业。",
+      "NO_DEPENDENTS": "没有作业在等待此作业。",
+      "PENDING_DEPENDENCIES": "未完成的依赖：{{value}}",
+      "SOURCE_QUEUE": "来源队列",
+      "SOURCE_JOB": "来源作业",
+      "SOURCE_CREATED_ON": "来源创建时间",
+      "SOURCE_RETRY_COUNT": "来源尝试次数",
+      "FROM_QUEUE": "来自 {{queue}}",
+      "NOT_DEAD_LETTER": "此作业不是从其他队列移过来的。",
+      "TABS": {
+        "DATA": "数据",
+        "OUTPUT": "输出",
+        "OPTIONS": "选项",
+        "TIMELINE": "时间线",
+        "DEPENDENCIES": "依赖",
+        "DEAD_LETTER": "死信"
+      }
+    },
+    "ACTIONS": {
+      "QUEUE_ACTIONS": "队列操作",
+      "AFFECTED": "{{requested}} 个作业中已更改 {{affected}} 个。",
+      "CANCEL_ACTIVE_WARNING": "该作业正在运行。取消会将其标记为已取消，但不会停止已在处理它的处理程序。",
+      "RETRY": {
+        "LABEL": "重试",
+        "CONFIRM": "重试这个失败的作业？",
+        "PENDING": "正在重试作业…",
+        "DONE": "作业已排队等待重试"
+      },
+      "CANCEL": {
+        "LABEL": "取消",
+        "CONFIRM": "取消这个作业？",
+        "PENDING": "正在取消作业…",
+        "DONE": "作业已取消"
+      },
+      "RESUME": {
+        "LABEL": "恢复",
+        "CONFIRM": "恢复这个已取消的作业？",
+        "PENDING": "正在恢复作业…",
+        "DONE": "作业已恢复"
+      },
+      "DELETE": {
+        "LABEL": "删除",
+        "CONFIRM": "删除这个作业？此操作无法撤销。",
+        "PENDING": "正在删除作业…",
+        "DONE": "作业已删除"
+      },
+      "DUPLICATE": {
+        "LABEL": "复制",
+        "PENDING": "正在发送副本…",
+        "DONE": "副本已发送"
+      },
+      "SEND": {
+        "LABEL": "发送作业",
+        "PENDING": "正在发送作业…",
+        "DONE": "作业已发送",
+        "DROPPED": "pg-boss 丢弃了该作业，很可能是因为已存在相同键的单例。"
+      },
+      "RETRY_FAILED": {
+        "LABEL": "重试所有失败作业",
+        "CONFIRM": "重试此队列中所有失败的作业？",
+        "PENDING": "正在重试失败的作业…",
+        "DONE": "失败的作业已排队等待重试"
+      },
+      "DELETE_QUEUED": {
+        "LABEL": "删除排队中的作业",
+        "CONFIRM": "删除此队列中所有尚未开始的作业？此操作无法撤销。",
+        "PENDING": "正在删除排队中的作业…",
+        "DONE": "排队中的作业已删除"
+      },
+      "DELETE_STORED": {
+        "LABEL": "删除已结束的作业",
+        "CONFIRM": "删除此队列中所有已完成、已取消和失败的作业？此操作无法撤销。",
+        "PENDING": "正在删除已结束的作业…",
+        "DONE": "已结束的作业已删除"
+      }
+    },
+    "SEND": {
+      "TITLE": "发送作业",
+      "DUPLICATE_TITLE": "复制作业",
+      "QUEUE": "队列",
+      "DATA": "数据",
+      "PRIORITY": "优先级",
+      "START_AFTER": "开始时间",
+      "START_AFTER_HINT": "从现在起的秒数，或 ISO 日期。留空则立即开始。",
+      "SINGLETON_KEY": "单例键",
+      "RETRY_LIMIT": "重试上限",
+      "RETRY_DELAY": "重试间隔（秒）",
+      "RETRY_BACKOFF": "指数退避",
+      "EXPIRE_IN": "过期时间（秒）",
+      "QUEUE_DEFAULT": "队列默认值",
+      "SUBMIT": "发送"
+    },
+    "SCHEDULES": {
+      "TITLE": "计划",
+      "EMPTY": "还没有计划。",
+      "KIND_CRON": "Cron",
+      "KIND_RRULE": "RRULE",
+      "KEY": "键",
+      "DEFAULT_KEY": "默认键",
+      "EXPRESSION": "表达式",
+      "EXPRESSION_HINT": "如 0 * * * * 的 cron 表达式，或在 pg-boss 12.31 及更高版本中使用 RRULE。",
+      "TIMEZONE": "时区",
+      "MISSED": "错过的运行",
+      "MISSED_DEFAULT": "pg-boss 默认",
+      "MISSED_SKIP": "跳过",
+      "MISSED_ONCE": "运行一次",
+      "NEXT_RUNS": "接下来的运行",
+      "NO_NEXT_RUNS": "当前使用的 pg-boss 无法预览此计划。",
+      "QUEUE": "队列",
+      "DATA": "数据",
+      "OPTIONS": "作业选项",
+      "ALL_QUEUES": "所有队列",
+      "FILTER_BY_QUEUE": "按队列筛选",
+      "CREATE": "新建计划",
+      "EDIT": "编辑计划",
+      "SAVE": "保存",
+      "SAVE_PENDING": "正在保存计划…",
+      "SAVE_DONE": "计划已保存",
+      "REMOVE": "移除计划",
+      "REMOVE_CONFIRM": "移除这个计划？它已经发送的作业会留在队列中。",
+      "REMOVE_PENDING": "正在移除计划…",
+      "REMOVE_DONE": "计划已移除",
+      "RUN_NOW": "立即运行",
+      "RUN_NOW_CONFIRM": "现在用这个计划的模板发送一个作业？",
+      "RUN_NOW_PENDING": "正在发送作业…",
+      "RUN_NOW_DONE": "作业已发送",
+      "PREVIEW": "预览",
+      "PREVIEW_UNAVAILABLE": "预览需要 pg-boss 12.31 或更高版本。",
+      "COLUMNS": {
+        "QUEUE": "队列",
+        "KEY": "键",
+        "SCHEDULE": "计划",
+        "NEXT_RUN": "下次运行",
+        "LAST_JOB": "最后一个作业",
+        "UPDATED": "更新时间"
+      }
+    },
+    "PAGINATION": {
+      "LABEL": "作业分页",
+      "FIRST": "第一页",
+      "PREVIOUS": "上一页",
+      "NEXT": "下一页"
+    },
+    "COUNT": {
+      "CAPPED": "{{cap}}+",
+      "UNKNOWN": "?",
+      "CAPPED_HINT": "超过 {{cap}} 个作业。为保持页面快速，计数到此为止。",
+      "TIMEOUT": "计数耗时过长。下方列表仍可正常使用。"
+    },
+    "FILTER": {
+      "ID": "作业 ID",
+      "ID_PLACEHOLDER": "按 ID 查找作业",
+      "SINGLETON_KEY": "单例键",
+      "SINGLETON_KEY_PLACEHOLDER": "按单例键筛选",
+      "APPLY": "筛选",
+      "CLEAR": "清除筛选",
+      "INVALID_ID": "pg-boss 作业 ID 是一个 UUID。"
+    },
+    "EMPTY": {
+      "QUEUES": "没有可显示的 pg-boss 队列",
+      "QUEUES_HINT": "应用创建队列后，它们会显示在这里。",
+      "QUEUES_FILTERED": "没有与这些筛选条件匹配的队列",
+      "JOBS": "此状态下没有作业",
+      "JOBS_FILTERED": "没有与这些筛选条件匹配的作业"
+    },
+    "BANNER": {
+      "WRITES_DISABLED": "更改已关闭",
+      "READ_ONLY": "只读",
+      "UNREADABLE": "无法读取此 pg-boss 数据库",
+      "SCHEMA_UNSUPPORTED": "此处的 pg-boss 模式超出支持范围（{{min}} 至 {{max}}）。",
+      "NOT_INSTALLED": "请先在应用中安装 pg-boss。面板从不创建或迁移它的模式。",
+      "SLOW_QUERY": "在大队列上列出此状态很慢。请按作业 ID 或单例键筛选，或添加文档推荐的索引。"
+    },
+    "DATASTORE": {
+      "TITLE": "pg-boss 数据存储",
+      "SCHEMA": "模式",
+      "SCHEMA_VERSION": "模式版本",
+      "SUPPORTED_RANGE": "支持的版本",
+      "RANGE": "{{min}} 至 {{max}}",
+      "PERSIST_QUEUE_STATS": "队列统计历史",
+      "WRITABLE": "写入",
+      "INSTALLED": "已安装",
+      "ENABLED": "开",
+      "DISABLED": "关"
+    }
   }
 }

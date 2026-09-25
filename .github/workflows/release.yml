@@ -93,6 +93,11 @@ jobs:
         # 1.0.0, and npm refuses to move `latest` to a lower version implicitly.
         run: |
           npm install -g npm@latest
+          # A prerelease (2.1.0-next.0) goes to the `next` dist-tag so `latest` keeps pointing
+          # at the last stable version; `npm install @worker-manager/api@next` opts in.
+          tag=latest
+          case "${GITHUB_REF_NAME#v}" in *-*) tag=next ;; esac
+          echo "Publishing under dist-tag $tag"
           for pkg in packages/*/; do
             name=$(node -p "require('./${pkg}package.json').name")
             version=$(node -p "require('./${pkg}package.json').version")
@@ -105,7 +110,7 @@ jobs:
               continue
             fi
             echo "Publishing $name@$version..."
-            (cd "$pkg" && npm publish --provenance --access public --tag latest)
+            (cd "$pkg" && npm publish --provenance --access public --tag "$tag")
           done
 
       - name: Comment on released PRs

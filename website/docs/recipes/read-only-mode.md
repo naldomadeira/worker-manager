@@ -1,6 +1,6 @@
 # Read-only mode
 
-> Applies to: all adapters.
+> Applies to: all adapters, and [pg-boss boards](#pg-boss-boards) (experimental).
 
 Read-only mode disables every destructive action on a queue. No retries, no removals, no queue operations (pause, resume, empty, clean, obliterate), no adding jobs. Use it to share the dashboard with stakeholders, support, or shared dev environments without risking anything.
 
@@ -66,6 +66,38 @@ It only takes effect while `allowRetries` is `true`. On `BullAdapter` it's alway
 ::: warning
 `allowRetries: false` only hides the retry buttons, it doesn't block the retry API endpoint. Anyone who knows the URL can still trigger a retry. Use `readOnlyMode: true` for real enforcement.
 :::
+
+## pg-boss boards
+
+A [pg-boss board](/queue-adapters/pg-boss) has no queue adapters, so read-only mode is set on the whole board:
+
+```ts
+createPgBossBoard({
+  serverAdapter,
+  pgBoss: { connection: process.env.PGBOSS_READER_URL, schema: 'pgboss' },
+  options: { readOnly: true },
+});
+```
+
+(`readOnly: true` on a NestJS board with `engine: 'pg-boss'`, and `--read-only` on the CLI, do the same.)
+
+It is stricter than a BullMQ queue's `readOnlyMode`: the mutation routes (send, retry, cancel, resume, delete, the bulk and per-queue commands, and schedule edits) are never registered, so a forged request gets **404**, not 405, and cannot tell that the route exists. The UI hides every control that changes something. Reading, including the schedule preview, keeps working.
+
+Separately from `readOnly`, a pg-boss board turns writes off by itself when it cannot write safely, for instance when it only has a `connection` and the database is on a different pg-boss schema version from the pg-boss installed next to it. The routes are there then, but answer **409** `ERRORS.PGBOSS_WRITES_DISABLED` with the reason, and the UI shows it in a banner.
+
+### A read-only PostgreSQL role
+
+A read-only pg-boss board runs nothing but `SELECT`, so it can connect as a role that cannot write at all, which makes the guarantee hold at the database too:
+
+```sql
+CREATE ROLE wm_reader LOGIN PASSWORD 'change-me';
+GRANT USAGE ON SCHEMA pgboss TO wm_reader;
+GRANT SELECT ON ALL TABLES IN SCHEMA pgboss TO wm_reader;
+-- Tables pg-boss creates later (one per partitioned queue); run as the role that owns pgboss:
+ALTER DEFAULT PRIVILEGES FOR ROLE app IN SCHEMA pgboss GRANT SELECT ON TABLES TO wm_reader;
+```
+
+Connect with that role through `connection` and pass no `instance`. See [the pg-boss page](/queue-adapters/pg-boss#a-read-only-postgresql-role).
 
 ## Source of truth
 

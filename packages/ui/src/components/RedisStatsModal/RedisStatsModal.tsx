@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { DATASTORES } from '@worker-manager/api/constants/datastores';
+import type { RedisStats } from '@worker-manager/api/typings/app';
 import { DatabaseIcon, type LucideIcon, ServerIcon } from 'lucide-react';
 import formatBytes from 'pretty-bytes';
 import type { ReactNode } from 'react';
@@ -47,21 +48,39 @@ export interface RedisStatsModalProps {
   open: boolean;
 
   onClose(): void;
+  /** Stats another engine already has, instead of asking `/api/redis/stats`. */
+  stats?: RedisStats | null;
+  /** Replaces the panel's title. */
+  title?: string;
+  /** Rendered below the stats, for what an engine adds about its own datastore. */
+  children?: ReactNode;
 }
 
-export const RedisStatsModal = ({ open, onClose }: RedisStatsModalProps) => {
+export const RedisStatsModal = ({
+  open,
+  onClose,
+  stats: providedStats,
+  title,
+  children,
+}: RedisStatsModalProps) => {
   const { t, i18n } = useTranslation();
   const api = useApi();
+  const hasProvidedStats = providedStats !== undefined;
 
-  const { data: stats } = useQuery({
+  const { data: fetchedStats } = useQuery({
     queryKey: queryKeys.redisStats,
     queryFn: () => api.getStats(),
-    enabled: open,
+    enabled: open && !hasProvidedStats,
     refetchInterval: 5000,
   });
+  const stats = hasProvidedStats ? providedStats : fetchedStats;
 
   if (!stats) {
-    return null;
+    return hasProvidedStats && children ? (
+      <Modal width="small" open={open} onClose={onClose} title={title ?? t('REDIS.TITLE_POSTGRES')}>
+        {children}
+      </Modal>
+    ) : null;
   }
 
   // A server older than the PostgreSQL support sends no `backend`, and could only be Redis.
@@ -98,7 +117,7 @@ export const RedisStatsModal = ({ open, onClose }: RedisStatsModalProps) => {
       width="small"
       open={open}
       onClose={onClose}
-      title={isPostgres ? t('REDIS.TITLE_POSTGRES') : t('REDIS.TITLE')}
+      title={title ?? (isPostgres ? t('REDIS.TITLE_POSTGRES') : t('REDIS.TITLE'))}
     >
       <div className="flex flex-col gap-3">
         <div className="flex items-center gap-3 rounded-xl border bg-muted/30 p-3">
@@ -167,6 +186,7 @@ export const RedisStatsModal = ({ open, onClose }: RedisStatsModalProps) => {
             </div>
           ))}
         </dl>
+        {children}
       </div>
     </Modal>
   );

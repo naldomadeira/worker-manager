@@ -128,6 +128,8 @@
   --color-status-active: var(--status-active);
   --color-status-delayed: var(--status-delayed);
   --color-status-paused: var(--status-paused);
+  --color-status-retry: var(--status-retry);
+  --color-status-cancelled: var(--status-cancelled);
 
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);

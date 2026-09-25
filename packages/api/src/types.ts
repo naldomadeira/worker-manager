@@ -473,7 +473,9 @@ export type ThemeTokenName =
       | 'prioritized'
       | 'active'
       | 'delayed'
-      | 'paused'}`;
+      | 'paused'
+      | 'retry'
+      | 'cancelled'}`;
 
 export type UITheme = {
   /** Token overrides applied to the light theme. */

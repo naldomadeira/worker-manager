@@ -4,6 +4,20 @@ import { createPgBossEngine } from './engine';
 import type { PgBossBoardOptions } from './types';
 
 export { createPgBossEngine } from './engine';
+export {
+  isUsableMetricsIndex,
+  PgBossJobSource,
+  pgBossMetricsIndexDdl,
+  pgBossMetricsNamespace,
+  pgBossMetricsSources,
+  readPgBossQueueDepth,
+} from './metrics';
+export type {
+  PgBossMetricsOptions,
+  PgBossMetricsSources,
+  PgBossQueueDepthPoint,
+  PgBossQueueDepthQuery,
+} from './metrics';
 export type { PgBossBoardOptions, PgBossConnection, PgBossLike } from './types';
 export { SCHEMA_MAX, SCHEMA_MIN } from './versionGuard';
 

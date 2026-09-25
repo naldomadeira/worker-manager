@@ -47,6 +47,11 @@ export interface FileConfig {
    * a node-postgres pool config with an optional `schema` (default `bullmq`).
    */
   postgres?: string | PostgresFileConfig;
+  /**
+   * PostgreSQL database holding a pg-boss schema (experimental): a connection string, or a
+   * node-postgres pool config with the pg-boss options below. Needs Node.js 22.12 or later.
+   */
+  pgBoss?: string | PgBossFileConfig;
   open?: boolean;
   browser?: string;
   uiConfig?: UIConfig;
@@ -58,6 +63,29 @@ export interface PostgresFileConfig {
   connectionString?: string;
   schema?: string;
   [option: string]: unknown;
+}
+
+export interface PgBossFileConfig {
+  connectionString?: string;
+  /** Schema pg-boss was installed in. Default `pgboss`. */
+  schema?: string;
+  /** Only these pg-boss queues, instead of every queue in the schema. */
+  queues?: string | string[];
+  /** Where the pg-boss board is served when a BullMQ board takes the root. Default `/pg-boss`. */
+  path?: string;
+  [option: string]: unknown;
+}
+
+export interface PgBossConfig {
+  /** A node-postgres pool config the pg-boss board reads (and writes) through. */
+  connection: Record<string, unknown>;
+  schema: string;
+  /** Allowlist of pg-boss queue names, or null for all of them. */
+  queues: string[] | null;
+  /** Normalised like `basePath` (`/pg-boss`), relative to it. */
+  path: string;
+  /** No BullMQ source was configured, so the pg-boss board takes the root on its own. */
+  only: boolean;
 }
 
 export interface PostgresConfig {
@@ -80,6 +108,7 @@ export interface CliConfig {
   auth: { user: string; password: string } | null;
   keycloak: KeycloakAuthOptions | null;
   postgres: PostgresConfig | null;
+  pgBoss: PgBossConfig | null;
   open: boolean;
   browser?: string;
   uiConfig: UIConfig;

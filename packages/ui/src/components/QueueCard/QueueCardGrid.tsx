@@ -1,5 +1,6 @@
 import type { AppQueue } from '@worker-manager/api/typings/app';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
+import type { ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 import { QueueCard } from './QueueCard';
 
@@ -16,12 +17,23 @@ interface QueueCardGridProps {
 
 const EASE_OUT = [0.16, 1, 0.3, 1] as const;
 
+interface AnimatedCardGridProps<T extends { key: string }> {
+  items: T[];
+  renderItem(item: T): ReactNode;
+  className?: string;
+}
+
 /**
  * Responsive grid of queue cards. Cards fade up in a short stagger when they first appear and
  * glide to their new slot when sorting or filtering reorders them. Only the position is
  * animated (`layout="position"`), so a card whose content grows between polls never squashes.
+ * Engine-neutral: each engine renders its own card into it.
  */
-export const QueueCardGrid = ({ items, className }: QueueCardGridProps) => {
+export function AnimatedCardGrid<T extends { key: string }>({
+  items,
+  renderItem,
+  className,
+}: AnimatedCardGridProps<T>) {
   const reduceMotion = useReducedMotion();
 
   return (
@@ -50,10 +62,18 @@ export const QueueCardGrid = ({ items, className }: QueueCardGridProps) => {
             transition={{ layout: { duration: 0.35, ease: EASE_OUT } }}
             className="min-w-0"
           >
-            <QueueCard queue={item.queue} displayName={item.displayName} />
+            {renderItem(item)}
           </motion.li>
         ))}
       </AnimatePresence>
     </ul>
   );
-};
+}
+
+export const QueueCardGrid = ({ items, className }: QueueCardGridProps) => (
+  <AnimatedCardGrid
+    items={items}
+    className={className}
+    renderItem={(item) => <QueueCard queue={item.queue} displayName={item.displayName} />}
+  />
+);

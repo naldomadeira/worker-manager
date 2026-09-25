@@ -108,6 +108,30 @@ The container is a normal recorder, so it keeps writing for as long as it runs a
 
 Leave `WORKER_MANAGER_REDIS_URL` unset there. Setting both is an error, so an old URL left behind in a compose file or an env file stops the container rather than quietly winning.
 
+A [pg-boss](/guide/cli#pg-boss) board (experimental) takes a PostgreSQL URL. The image runs Node.js 22, which is what pg-boss needs, and bundles its own pg-boss 12. With nothing else set it is the only board:
+
+```sh
+docker run --rm -p 127.0.0.1:3000:3000 \
+  -e WORKER_MANAGER_USER=admin -e WORKER_MANAGER_PASSWORD=secret \
+  -e WORKER_MANAGER_PGBOSS_URL=postgres://app:secret@db:5432/app \
+  ghcr.io/naldomadeira/worker-manager
+```
+
+Next to a Redis, BullMQ keeps the root and pg-boss moves to `/pg-boss/` (or `WORKER_MANAGER_PGBOSS_PATH`), behind the same login and linked from each board's header:
+
+```yaml
+  worker-manager:
+    image: ghcr.io/naldomadeira/worker-manager:9
+    environment:
+      WORKER_MANAGER_REDIS_URL: redis://redis:6379
+      WORKER_MANAGER_PGBOSS_URL: postgres://app:${PGPASSWORD}@db:5432/app
+      WORKER_MANAGER_PGBOSS_SCHEMA: pgboss
+      WORKER_MANAGER_USER: ${WORKER_MANAGER_USER}
+      WORKER_MANAGER_PASSWORD: ${WORKER_MANAGER_PASSWORD}
+```
+
+The container never migrates or creates anything in the pg-boss schema. If your app is on a pg-boss whose schema version differs from the one in the image, the board stays readable, turns writes off and logs why at startup.
+
 Serving the dashboard under a path prefix, which is what a reverse proxy routing on the path needs, is `--base-path`:
 
 ```sh

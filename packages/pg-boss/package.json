@@ -1,8 +1,7 @@
 {
   "name": "@worker-manager/pg-boss",
   "version": "2.0.1",
-  "private": true,
-  "description": "Experimental pg-boss engine for Worker Manager: a full board over a pg-boss schema.",
+    "description": "Experimental pg-boss engine for Worker Manager: a full board over a pg-boss schema.",
   "keywords": [
     "dashboard",
     "monitoring",
@@ -43,6 +42,7 @@
     "@types/supertest": "^7.2.1",
     "@worker-manager/api": "2.0.1",
     "@worker-manager/express": "2.0.1",
+    "@worker-manager/metrics": "2.0.1",
     "@worker-manager/ui": "2.0.1",
     "jest": "^30.4.2",
     "pg-boss": "^12.34.0",
@@ -54,9 +54,13 @@
   },
   "peerDependencies": {
     "@worker-manager/api": "2.0.1",
+    "@worker-manager/metrics": "2.0.1",
     "pg-boss": "^12.24.0"
   },
   "peerDependenciesMeta": {
+    "@worker-manager/metrics": {
+      "optional": true
+    },
     "pg-boss": {
       "optional": true
     }

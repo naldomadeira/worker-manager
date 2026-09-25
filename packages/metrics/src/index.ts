@@ -10,6 +10,11 @@ export type {
 } from './HistoryAdmin';
 export { MetricsRecorder } from './MetricsRecorder';
 export type { MetricsRecorderOptions } from './MetricsRecorder';
+export { adapterCounterSource } from './counterSources';
+export type { CounterMetric, CounterSource, CounterSources } from './counterSources';
+export type { MinutePoint } from './dataMapping';
+export type { FinishedJob, FinishedJobs, JobSource } from './jobSources';
+export { namespacedHistoryProvider, namespacedRollup } from './namespacedHistoryProvider';
 export type { MetricsStore, Retention } from './store';
 export { RedisMetricsStore } from './RedisMetricsStore';
 export type { RedisMetricsStoreOptions } from './RedisMetricsStore';

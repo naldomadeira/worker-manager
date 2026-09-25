@@ -7,6 +7,7 @@ import type {
   FileConfig,
   FileHistoryConfig,
   HistoryConfig,
+  PgBossConfig,
   PostgresConfig,
 } from './types';
 
@@ -44,6 +45,20 @@ function toBoolean(value: string | undefined): boolean | undefined {
   if (value === undefined) return undefined;
 
   return !['0', 'false', 'no', ''].includes(value.toLowerCase());
+}
+
+const IDENTIFIER = /^[A-Za-z_][A-Za-z0-9_]*$/;
+
+function assertIdentifier(value: string, flag: string): void {
+  if (!IDENTIFIER.test(value)) {
+    throw new Error(`Invalid ${flag}: ${value}`);
+  }
+}
+
+function assertPostgresUrl(url: string): void {
+  if (!/^postgres(ql)?:\/\//.test(url)) {
+    throw new Error(`PostgreSQL URL must use postgres:// or postgresql://, got "${url}"`);
+  }
 }
 
 function normalizeBasePath(value: string | undefined): string | undefined {
@@ -93,6 +108,9 @@ export function resolveConfig({
     uiConfig.showMetrics = uiConfig.showMetrics ?? true;
   }
 
+  const postgres = resolvePostgres({ flags, env, file });
+  const bullmqSource = hasExplicitRedis(flags, env, file) || postgres !== null;
+
   return {
     connection: resolveConnection({ flags, env, file }),
     port:
@@ -121,7 +139,8 @@ export function resolveConfig({
     readOnly,
     auth: user && password ? { user, password } : null,
     keycloak,
-    postgres: resolvePostgres({ flags, env, file }),
+    postgres,
+    pgBoss: resolvePgBoss({ flags, env, file, bullmq: bullmqSource }),
     open:
       flags['no-open'] === true ? false : (toBoolean(env.WORKER_MANAGER_OPEN) ?? file.open ?? true),
     browser: firstDefined(flags.browser, env.WORKER_MANAGER_BROWSER, env.BROWSER, file.browser),
@@ -263,19 +282,75 @@ function resolvePostgres({
       env.WORKER_MANAGER_POSTGRES_SCHEMA,
       typeof fromFile === 'object' ? fromFile.schema : undefined
     ) ?? 'bullmq';
-  if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(schema)) {
-    throw new Error(`Invalid --postgres-schema: ${schema}`);
-  }
+  assertIdentifier(schema, '--postgres-schema');
 
   const source = url ?? fromFile!;
-  if (typeof source === 'string' && !/^postgres(ql)?:\/\//.test(source)) {
-    throw new Error(`PostgreSQL URL must use postgres:// or postgresql://, got "${source}"`);
-  }
+  if (typeof source === 'string') assertPostgresUrl(source);
   const base = typeof source === 'string' ? { connectionString: source } : { ...source };
 
   return {
     connection: { ...base, schema },
     schema,
     only: !hasExplicitRedis(flags, env, file),
+  };
+}
+
+/** Path segments the BullMQ board at the root answers itself, so a pg-boss board cannot sit there. */
+const RESERVED_PGBOSS_PATHS = new Set(['api', 'static', 'auth', 'queue', 'job-schedulers']);
+
+function resolvePgBoss({
+  flags,
+  env,
+  file,
+  bullmq,
+}: {
+  flags: FlagValues;
+  env: NodeJS.ProcessEnv;
+  file: FileConfig;
+  /** A Redis or BullMQ-on-PostgreSQL source is configured too, so BullMQ keeps the root. */
+  bullmq: boolean;
+}): PgBossConfig | null {
+  const url = firstDefined(flags['pg-boss'], env.WORKER_MANAGER_PGBOSS_URL);
+  const fromFile =
+    typeof file.pgBoss === 'string' ? { connectionString: file.pgBoss } : file.pgBoss;
+  if (!url && !fromFile) return null;
+
+  const { schema: fileSchema, queues: fileQueues, path: filePath, ...poolConfig } = fromFile ?? {};
+
+  const schema =
+    firstDefined(
+      flags['pg-boss-schema'],
+      env.WORKER_MANAGER_PGBOSS_SCHEMA,
+      typeof fileSchema === 'string' ? fileSchema : undefined
+    ) ?? 'pgboss';
+  assertIdentifier(schema, '--pg-boss-schema');
+
+  // A URL from a flag or the environment replaces the file's connection, not its other options.
+  const connection = url ? { connectionString: url } : poolConfig;
+  if (typeof connection.connectionString === 'string') {
+    assertPostgresUrl(connection.connectionString);
+  }
+
+  const path =
+    normalizeBasePath(flags['pg-boss-path']) ??
+    normalizeBasePath(env.WORKER_MANAGER_PGBOSS_PATH) ??
+    normalizeBasePath(typeof filePath === 'string' ? filePath : undefined) ??
+    '/pg-boss';
+  if (bullmq && (path === '' || RESERVED_PGBOSS_PATHS.has(path.slice(1).split('/')[0]))) {
+    throw new Error(
+      `Invalid --pg-boss-path: "${path || '/'}" is taken by the BullMQ board at the root.`
+    );
+  }
+
+  return {
+    connection,
+    schema,
+    queues:
+      toList(flags['pg-boss-queues']) ??
+      toList(env.WORKER_MANAGER_PGBOSS_QUEUES) ??
+      toList(fileQueues as string | string[] | undefined) ??
+      null,
+    path,
+    only: !bullmq,
   };
 }

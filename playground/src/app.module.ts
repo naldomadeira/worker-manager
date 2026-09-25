@@ -3,6 +3,8 @@ import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 import { WorkerManagerModule } from '@worker-manager/nestjs';
 import { config } from './config';
 import { HomeController } from './home.controller';
+import { PGBOSS_SCHEMA, pgBoss } from './pgboss/pgboss';
+import { PgBossService } from './pgboss/pgboss.service';
 import { allQueues } from './queues/queues';
 import { TrafficService } from './queues/traffic.service';
 
@@ -31,22 +33,56 @@ function boardAuth() {
   }
 }
 
+/** Links each board to the other, so the two can be told apart and reached from the sidebar. */
+const BULLMQ_LINK = { text: 'BullMQ board', url: '/queues' };
+const PGBOSS_LINK = { text: 'pg-boss board', url: '/pg-boss' };
+
+/** The second board, over the `pgboss` schema, mounted when WM_PGBOSS is on (the default). */
+const pgBossBoard = pgBoss
+  ? [
+      WorkerManagerModule.forRoot({
+        name: 'pgboss',
+        route: '/pg-boss',
+        engine: 'pg-boss',
+        auth: boardAuth(),
+        readOnly: config.readOnly,
+        title: 'Worker Manager Playground (pg-boss)',
+        uiConfig: {
+          environment: { label: 'playground', color: '#0ea5e9' },
+          miscLinks: [BULLMQ_LINK, { text: 'Keycloak admin', url: config.keycloak.url }],
+        },
+        // `connection` next to `instance`: reads then get a server-side statement_timeout.
+        pgBoss: {
+          instance: pgBoss,
+          connection: config.postgresUrl,
+          schema: PGBOSS_SCHEMA,
+          delimiter: '.',
+        },
+      }),
+    ]
+  : [];
+
 @Module({
   imports: [
     WorkerManagerModule.forRoot({
       route: '/queues',
       // No `adapter`: the module detects Express from the running Nest app.
       auth: boardAuth(),
+      readOnly: config.readOnly,
       title: 'Worker Manager Playground',
       uiConfig: {
         environment: { label: 'playground', color: '#6366f1' },
         overview: { groupByDelimiter: true },
-        miscLinks: [{ text: 'Keycloak admin', url: config.keycloak.url }],
+        miscLinks: [
+          ...(pgBoss ? [PGBOSS_LINK] : []),
+          { text: 'Keycloak admin', url: config.keycloak.url },
+        ],
       },
       queues: allQueues.map((queue) => ({ queue, name: queue.name, adapter: BullMQAdapter })),
     }),
+    ...pgBossBoard,
   ],
   controllers: [HomeController],
-  providers: [TrafficService],
+  providers: [TrafficService, ...(pgBoss ? [PgBossService] : [])],
 })
 export class AppModule {}

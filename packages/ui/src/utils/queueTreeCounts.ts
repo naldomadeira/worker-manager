@@ -1,5 +1,5 @@
 import type { AppQueue, Status } from '@worker-manager/api/typings/app';
-import { AppQueueTreeNode } from './toTree';
+import { AppQueueTreeNode, QueueTreeNode, TreeQueue } from './toTree';
 
 const STATUS_ORDER: Status[] = [
   'active',
@@ -12,12 +12,12 @@ const STATUS_ORDER: Status[] = [
   'paused',
 ];
 
-export function countQueues(node: AppQueueTreeNode): number {
+export function countQueues(node: QueueTreeNode<TreeQueue>): number {
   if (!node.children.length) return node.queue ? 1 : 0;
   return node.children.reduce((sum, child) => sum + countQueues(child), 0);
 }
 
-export function countPausedQueues(node: AppQueueTreeNode): number {
+export function countPausedQueues(node: QueueTreeNode<TreeQueue & { isPaused: boolean }>): number {
   if (!node.children.length) return node.queue?.isPaused ? 1 : 0;
   return node.children.reduce((sum, child) => sum + countPausedQueues(child), 0);
 }

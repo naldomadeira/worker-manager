@@ -7500,6 +7500,7 @@ __metadata:
     "@worker-manager/auth": "npm:2.0.1"
     "@worker-manager/express": "npm:2.0.1"
     "@worker-manager/metrics": "npm:2.0.1"
+    "@worker-manager/pg-boss": "npm:2.0.1"
     bull: "npm:^4.16.5"
     bullmq: "npm:^5.81.3"
     bullmq-v6: "npm:bullmq@^6"
@@ -7507,6 +7508,7 @@ __metadata:
     ioredis: "npm:^6.0.0"
     jest: "npm:^30.4.2"
     pg: "npm:^8.23.0"
+    pg-boss: "npm:^12.34.0"
     redis-parser: "npm:^3.0.0"
     supertest: "npm:^7.2.2"
     ts-jest: "npm:^29.4.12"
@@ -7717,6 +7719,7 @@ __metadata:
     "@worker-manager/auth": "npm:2.0.1"
     "@worker-manager/express": "npm:^2.0.1"
     "@worker-manager/fastify": "npm:^2.0.1"
+    "@worker-manager/pg-boss": "npm:^2.0.1"
     "@worker-manager/test-utils": "workspace:*"
     bull: "npm:^4.16.5"
     bullmq: "npm:^5.81.3"
@@ -7736,6 +7739,7 @@ __metadata:
     nestjs-platform-fastify-v11: "npm:@nestjs/platform-fastify@^11"
     nestjs-platform-fastify-v12: "npm:@nestjs/platform-fastify@^12"
     pg: "npm:^8.23.0"
+    pg-boss: "npm:^12.34.0"
     reflect-metadata: "npm:^0.2.2"
     rxjs: "npm:^7.8.2"
     supertest: "npm:^7.2.2"
@@ -7748,6 +7752,7 @@ __metadata:
     "@worker-manager/api": ^2.0.1
     "@worker-manager/express": ^2.0.1
     "@worker-manager/fastify": ^2.0.1
+    "@worker-manager/pg-boss": ^2.0.1
     reflect-metadata: ^0.1.13 || ^0.2.0
     rxjs: ^7.8.1
   peerDependenciesMeta:
@@ -7755,10 +7760,12 @@ __metadata:
       optional: true
     "@worker-manager/fastify":
       optional: true
+    "@worker-manager/pg-boss":
+      optional: true
   languageName: unknown
   linkType: soft
 
-"@worker-manager/pg-boss@workspace:packages/pg-boss":
+"@worker-manager/pg-boss@npm:2.0.1, @worker-manager/pg-boss@npm:^2.0.1, @worker-manager/pg-boss@workspace:*, @worker-manager/pg-boss@workspace:packages/pg-boss":
   version: 0.0.0-use.local
   resolution: "@worker-manager/pg-boss@workspace:packages/pg-boss"
   dependencies:
@@ -7768,6 +7775,7 @@ __metadata:
     "@types/supertest": "npm:^7.2.1"
     "@worker-manager/api": "npm:2.0.1"
     "@worker-manager/express": "npm:2.0.1"
+    "@worker-manager/metrics": "npm:2.0.1"
     "@worker-manager/ui": "npm:2.0.1"
     jest: "npm:^30.4.2"
     pg: "npm:^8.23.0"
@@ -7779,8 +7787,11 @@ __metadata:
     typescript: "npm:^5.9.3"
   peerDependencies:
     "@worker-manager/api": 2.0.1
+    "@worker-manager/metrics": 2.0.1
     pg-boss: ^12.24.0
   peerDependenciesMeta:
+    "@worker-manager/metrics":
+      optional: true
     pg-boss:
       optional: true
   languageName: unknown
@@ -7798,7 +7809,9 @@ __metadata:
     "@worker-manager/auth": "workspace:*"
     "@worker-manager/express": "workspace:*"
     "@worker-manager/nestjs": "workspace:*"
+    "@worker-manager/pg-boss": "workspace:*"
     bullmq: "npm:^6.0.0"
+    pg-boss: "npm:^12.34.0"
     reflect-metadata: "npm:^0.2.2"
     rxjs: "npm:^7.8.2"
     ts-node-dev: "npm:^2.0.0"

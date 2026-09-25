@@ -1,5 +1,7 @@
 dist/
 public/static/
+public/pg-boss/
 index.html
 index.ejs
+index.pg-boss.ejs
 node_modules/

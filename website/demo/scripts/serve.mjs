@@ -1,6 +1,7 @@
 /**
  * A tiny static server for the built demo, mounted under the same base path GitHub Pages uses,
- * with the SPA fallback the board's client-side routes need. Used by the screenshot script;
+ * with the SPA fallback the boards' client-side routes need (the BullMQ board at the root, the
+ * pg-boss board under pg-boss/). Used by the screenshot script;
  * `node scripts/serve.mjs` also runs it on its own.
  */
 import { createReadStream, existsSync, statSync } from 'node:fs';
@@ -30,7 +31,11 @@ export function serveDemo(port = 0) {
     }
     const relative = normalize(decodeURIComponent(url.pathname.slice(BASE.length))).replace(/^(\.\.[/\\])+/, '');
     let file = join(DIST, relative);
-    if (!existsSync(file) || statSync(file).isDirectory()) file = join(DIST, 'index.html');
+    // Each board is its own page: anything under pg-boss/ falls back to the pg-boss one.
+    const page = relative.startsWith('pg-boss')
+      ? join(DIST, 'pg-boss', 'index.html')
+      : join(DIST, 'index.html');
+    if (!existsSync(file) || statSync(file).isDirectory()) file = page;
     res.writeHead(200, { 'content-type': TYPES[extname(file)] ?? 'application/octet-stream' });
     createReadStream(file).pipe(res);
   });

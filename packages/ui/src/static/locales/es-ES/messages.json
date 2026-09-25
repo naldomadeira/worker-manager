@@ -654,5 +654,289 @@
     "PREVIOUS": "Página anterior",
     "NEXT": "Página siguiente",
     "PAGE": "Página {{page}}"
+  },
+  "PGBOSS": {
+    "EXPERIMENTAL": "Experimental",
+    "EXPERIMENTAL_HINT": "El motor pg-boss es experimental: sus pantallas y su API HTTP aún pueden cambiar en una versión menor.",
+    "STATE": {
+      "ALL": "Todas",
+      "CREATED": "Creada",
+      "RETRY": "Reintento",
+      "ACTIVE": "Activa",
+      "COMPLETED": "Completada",
+      "CANCELLED": "Cancelada",
+      "FAILED": "Fallida"
+    },
+    "SUBSTATE": {
+      "DEFERRED": "Diferida",
+      "BLOCKED": "Bloqueada",
+      "READY": "Lista"
+    },
+    "KPI": {
+      "READY": "Listas",
+      "DEFERRED": "Diferidas",
+      "ACTIVE": "Activas",
+      "FAILED": "Fallidas",
+      "TOTAL": "Total",
+      "BACKLOGGED": "Acumuladas: {{value}}",
+      "NONE_BACKLOGGED": "Ninguna cola acumulada",
+      "QUEUED_HINT": "En cola: {{value}}"
+    },
+    "STATS": {
+      "UPDATED_AT": "Contadores de {{time}}",
+      "STALE": "Los contadores se escribieron por última vez {{time}}. Ninguna instancia de pg-boss que ejecute supervise los ha actualizado desde entonces.",
+      "NEVER": "Ninguna instancia de pg-boss ha supervisado aún estas colas, así que sus contadores marcan cero.",
+      "CACHED_HINT": "Guardados en caché por el monitor de pg-boss. Las pestañas de la página de una cola cuentan en vivo."
+    },
+    "QUEUE": {
+      "NAME": "Nombre",
+      "POLICY": "Política",
+      "PARTITION": "Almacenamiento",
+      "PARTITIONED": "Partición propia",
+      "SHARED": "Tabla compartida",
+      "DEAD_LETTER": "Cola de mensajes fallidos",
+      "RETRY_LIMIT": "Límite de reintentos",
+      "RETRY_DELAY": "Espera entre reintentos",
+      "RETRY_BACKOFF": "Espera exponencial",
+      "RETRY_DELAY_MAX": "Espera máxima entre reintentos",
+      "EXPIRE_IN": "Caduca tras",
+      "RETENTION": "Permanece en cola durante",
+      "DELETE_AFTER": "Se elimina tras",
+      "WARNING_QUEUE_SIZE": "Aviso de acumulación a partir de",
+      "BACKLOGGED": "Acumulada",
+      "HEARTBEAT": "Latido",
+      "NOTIFY": "Notificar al enviar",
+      "SINGLETONS_ACTIVE": "Claves singleton activas",
+      "SCHEDULES": "Programaciones",
+      "CREATED_ON": "Creada",
+      "UPDATED_ON": "Actualizada",
+      "READY_HISTORY": "Tareas listas, últimas muestras",
+      "YES": "Sí",
+      "NO": "No",
+      "NONE": "Ninguno",
+      "SECTIONS": {
+        "GENERAL": "General",
+        "RETRIES": "Reintentos",
+        "LIFECYCLE": "Ciclo de vida"
+      },
+      "NOT_FOUND": "Cola no encontrada"
+    },
+    "POLICY": {
+      "STANDARD": "Estándar",
+      "STANDARD_DESC": "Las tareas se obtienen por prioridad y fecha de creación, sin límites.",
+      "SHORT": "Corta",
+      "SHORT_DESC": "Como máximo una tarea en cola por clave singleton.",
+      "SINGLETON": "Singleton",
+      "SINGLETON_DESC": "Como máximo una tarea activa por clave singleton.",
+      "STATELY": "Por estado",
+      "STATELY_DESC": "Como máximo una tarea por estado y clave singleton.",
+      "EXCLUSIVE": "Exclusiva",
+      "EXCLUSIVE_DESC": "Como máximo una tarea en cola o activa por clave singleton.",
+      "KEY_STRICT_FIFO": "FIFO estricto por clave",
+      "KEY_STRICT_FIFO_DESC": "Las tareas con la misma clave singleton se ejecutan de una en una, en orden."
+    },
+    "JOB": {
+      "PRIORITY": "Prioridad {{priority}}",
+      "ATTEMPT": "Intento {{attempt}} de {{limit}}",
+      "CREATED_ON": "Creada",
+      "START_AFTER": "Empieza tras",
+      "STARTED_ON": "Iniciada",
+      "COMPLETED_ON": "Terminada",
+      "KEEP_UNTIL": "Caduca si no empieza antes de",
+      "SINGLETON_KEY": "Clave singleton",
+      "SINGLETON_ON": "Franja singleton",
+      "GROUP_ID": "Grupo",
+      "GROUP_TIER": "Nivel del grupo",
+      "HEARTBEAT_ON": "Último latido",
+      "BLOCKING": "Bloquea a sus dependientes",
+      "NO_OUTPUT": "Esta tarea no tiene salida.",
+      "NO_DATA": "Esta tarea no tiene datos.",
+      "DEPENDENCIES": "Espera a",
+      "DEPENDENTS": "Esperada por",
+      "NO_DEPENDENCIES": "Esta tarea no espera a ninguna otra.",
+      "NO_DEPENDENTS": "Ninguna tarea espera a esta.",
+      "PENDING_DEPENDENCIES": "Dependencias pendientes: {{value}}",
+      "SOURCE_QUEUE": "Cola de origen",
+      "SOURCE_JOB": "Tarea de origen",
+      "SOURCE_CREATED_ON": "Origen creado",
+      "SOURCE_RETRY_COUNT": "Intentos en origen",
+      "FROM_QUEUE": "Desde {{queue}}",
+      "NOT_DEAD_LETTER": "Esta tarea no se movió aquí desde otra cola.",
+      "TABS": {
+        "DATA": "Datos",
+        "OUTPUT": "Salida",
+        "OPTIONS": "Opciones",
+        "TIMELINE": "Cronología",
+        "DEPENDENCIES": "Dependencias",
+        "DEAD_LETTER": "Mensajes fallidos"
+      }
+    },
+    "ACTIONS": {
+      "QUEUE_ACTIONS": "Acciones de la cola",
+      "AFFECTED": "{{affected}} de {{requested}} tareas modificadas.",
+      "CANCEL_ACTIVE_WARNING": "La tarea se está ejecutando. Cancelarla la marca como cancelada, pero no detiene el manejador que ya la está procesando.",
+      "RETRY": {
+        "LABEL": "Reintentar",
+        "CONFIRM": "¿Reintentar esta tarea fallida?",
+        "PENDING": "Reintentando la tarea…",
+        "DONE": "Tarea en cola para reintento"
+      },
+      "CANCEL": {
+        "LABEL": "Cancelar",
+        "CONFIRM": "¿Cancelar esta tarea?",
+        "PENDING": "Cancelando la tarea…",
+        "DONE": "Tarea cancelada"
+      },
+      "RESUME": {
+        "LABEL": "Reanudar",
+        "CONFIRM": "¿Reanudar esta tarea cancelada?",
+        "PENDING": "Reanudando la tarea…",
+        "DONE": "Tarea reanudada"
+      },
+      "DELETE": {
+        "LABEL": "Eliminar",
+        "CONFIRM": "¿Eliminar esta tarea? No se puede deshacer.",
+        "PENDING": "Eliminando la tarea…",
+        "DONE": "Tarea eliminada"
+      },
+      "DUPLICATE": {
+        "LABEL": "Duplicar",
+        "PENDING": "Enviando una copia…",
+        "DONE": "Copia enviada"
+      },
+      "SEND": {
+        "LABEL": "Enviar tarea",
+        "PENDING": "Enviando la tarea…",
+        "DONE": "Tarea enviada",
+        "DROPPED": "pg-boss descartó la tarea, probablemente porque ya existe un singleton con la misma clave."
+      },
+      "RETRY_FAILED": {
+        "LABEL": "Reintentar todas las fallidas",
+        "CONFIRM": "¿Reintentar todas las tareas fallidas de esta cola?",
+        "PENDING": "Reintentando las tareas fallidas…",
+        "DONE": "Tareas fallidas en cola para reintento"
+      },
+      "DELETE_QUEUED": {
+        "LABEL": "Eliminar tareas en cola",
+        "CONFIRM": "¿Eliminar todas las tareas de esta cola que no han empezado? No se puede deshacer.",
+        "PENDING": "Eliminando las tareas en cola…",
+        "DONE": "Tareas en cola eliminadas"
+      },
+      "DELETE_STORED": {
+        "LABEL": "Eliminar tareas terminadas",
+        "CONFIRM": "¿Eliminar todas las tareas completadas, canceladas y fallidas de esta cola? No se puede deshacer.",
+        "PENDING": "Eliminando las tareas terminadas…",
+        "DONE": "Tareas terminadas eliminadas"
+      }
+    },
+    "SEND": {
+      "TITLE": "Enviar una tarea",
+      "DUPLICATE_TITLE": "Duplicar una tarea",
+      "QUEUE": "Cola",
+      "DATA": "Datos",
+      "PRIORITY": "Prioridad",
+      "START_AFTER": "Empezar tras",
+      "START_AFTER_HINT": "Segundos desde ahora, o una fecha ISO. Vacío la inicia de inmediato.",
+      "SINGLETON_KEY": "Clave singleton",
+      "RETRY_LIMIT": "Límite de reintentos",
+      "RETRY_DELAY": "Espera entre reintentos (segundos)",
+      "RETRY_BACKOFF": "Espera exponencial",
+      "EXPIRE_IN": "Caducar tras (segundos)",
+      "QUEUE_DEFAULT": "Valor de la cola",
+      "SUBMIT": "Enviar"
+    },
+    "SCHEDULES": {
+      "TITLE": "Programaciones",
+      "EMPTY": "Aún no hay programaciones.",
+      "KIND_CRON": "Cron",
+      "KIND_RRULE": "RRULE",
+      "KEY": "Clave",
+      "DEFAULT_KEY": "Clave por defecto",
+      "EXPRESSION": "Expresión",
+      "EXPRESSION_HINT": "Una expresión cron como 0 * * * *, o una RRULE con pg-boss 12.31 o posterior.",
+      "TIMEZONE": "Zona horaria",
+      "MISSED": "Ejecuciones perdidas",
+      "MISSED_DEFAULT": "Valor por defecto de pg-boss",
+      "MISSED_SKIP": "Omitirlas",
+      "MISSED_ONCE": "Ejecutar una vez",
+      "NEXT_RUNS": "Próximas ejecuciones",
+      "NO_NEXT_RUNS": "El pg-boss en uso no puede prever esta programación.",
+      "QUEUE": "Cola",
+      "DATA": "Datos",
+      "OPTIONS": "Opciones de la tarea",
+      "ALL_QUEUES": "Todas las colas",
+      "FILTER_BY_QUEUE": "Filtrar por cola",
+      "CREATE": "Nueva programación",
+      "EDIT": "Editar programación",
+      "SAVE": "Guardar",
+      "SAVE_PENDING": "Guardando la programación…",
+      "SAVE_DONE": "Programación guardada",
+      "REMOVE": "Eliminar programación",
+      "REMOVE_CONFIRM": "¿Eliminar esta programación? Las tareas que ya envió siguen en la cola.",
+      "REMOVE_PENDING": "Eliminando la programación…",
+      "REMOVE_DONE": "Programación eliminada",
+      "RUN_NOW": "Ejecutar ahora",
+      "RUN_NOW_CONFIRM": "¿Enviar ahora una tarea a partir de la plantilla de esta programación?",
+      "RUN_NOW_PENDING": "Enviando la tarea…",
+      "RUN_NOW_DONE": "Tarea enviada",
+      "PREVIEW": "Previsualizar",
+      "PREVIEW_UNAVAILABLE": "La previsualización necesita pg-boss 12.31 o posterior.",
+      "COLUMNS": {
+        "QUEUE": "Cola",
+        "KEY": "Clave",
+        "SCHEDULE": "Programación",
+        "NEXT_RUN": "Próxima ejecución",
+        "LAST_JOB": "Última tarea",
+        "UPDATED": "Actualizada"
+      }
+    },
+    "PAGINATION": {
+      "LABEL": "Páginas de tareas",
+      "FIRST": "Primera página",
+      "PREVIOUS": "Anterior",
+      "NEXT": "Siguiente"
+    },
+    "COUNT": {
+      "CAPPED": "{{cap}}+",
+      "UNKNOWN": "?",
+      "CAPPED_HINT": "Más de {{cap}} tareas. El recuento se detiene ahí para que la página siga siendo rápida.",
+      "TIMEOUT": "El recuento tardó demasiado. La lista de abajo sigue funcionando."
+    },
+    "FILTER": {
+      "ID": "Id de la tarea",
+      "ID_PLACEHOLDER": "Buscar una tarea por id",
+      "SINGLETON_KEY": "Clave singleton",
+      "SINGLETON_KEY_PLACEHOLDER": "Filtrar por clave singleton",
+      "APPLY": "Filtrar",
+      "CLEAR": "Quitar filtros",
+      "INVALID_ID": "El id de una tarea de pg-boss es un UUID."
+    },
+    "EMPTY": {
+      "QUEUES": "No hay colas de pg-boss que mostrar",
+      "QUEUES_HINT": "Las colas aparecen aquí cuando la aplicación las crea.",
+      "QUEUES_FILTERED": "Ninguna cola coincide con estos filtros",
+      "JOBS": "No hay tareas en este estado",
+      "JOBS_FILTERED": "Ninguna tarea coincide con estos filtros"
+    },
+    "BANNER": {
+      "WRITES_DISABLED": "Los cambios están desactivados",
+      "READ_ONLY": "Solo lectura",
+      "UNREADABLE": "No se puede leer esta base de datos de pg-boss",
+      "SCHEMA_UNSUPPORTED": "El esquema de pg-boss aquí está fuera del rango admitido, de {{min}} a {{max}}.",
+      "NOT_INSTALLED": "Instala primero pg-boss en la aplicación. El panel nunca crea ni migra su esquema.",
+      "SLOW_QUERY": "Listar este estado es lento en una cola grande. Filtra por id de tarea o por clave singleton, o añade el índice que recomienda la documentación."
+    },
+    "DATASTORE": {
+      "TITLE": "Almacén de datos de pg-boss",
+      "SCHEMA": "Esquema",
+      "SCHEMA_VERSION": "Versión del esquema",
+      "SUPPORTED_RANGE": "Versiones admitidas",
+      "RANGE": "{{min}} a {{max}}",
+      "PERSIST_QUEUE_STATS": "Historial de estadísticas de colas",
+      "WRITABLE": "Escritura",
+      "INSTALLED": "Instalado",
+      "ENABLED": "Activada",
+      "DISABLED": "Desactivada"
+    }
   }
 }

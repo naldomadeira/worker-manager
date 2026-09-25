@@ -31,7 +31,7 @@ const DISCOVERY_SQL = ['job', 'meta', 'scheduler', 'event']
   .join('\nUNION\n')
   .concat('\nORDER BY 1');
 
-function describeTarget(connection: PostgresConfig['connection']): string {
+export function describeTarget(connection: PostgresConfig['connection']): string {
   const raw =
     typeof connection.connectionString === 'string'
       ? connection.connectionString

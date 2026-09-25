@@ -22,6 +22,18 @@ export async function boot(
   return app;
 }
 
+export async function bootError(AppModule: any): Promise<Error> {
+  const app = await NestFactory.create(AppModule, new ExpressAdapter(), {
+    logger: false,
+    abortOnError: false,
+  })
+    .then((created) => created.init())
+    .catch((error: Error) => error);
+  if (app instanceof Error) return app;
+  await app.close();
+  throw new Error('the application booted');
+}
+
 export const http = (app: INestApplication) => request(app.getHttpServer());
 
 export const basic = (username: string, password: string) =>

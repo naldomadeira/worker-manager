@@ -41,6 +41,17 @@ export interface PurgeOptions {
   queue?: string;
   /** Only drop days strictly before this date (UTC). Omit to drop everything in scope. */
   before?: Date | string;
+  /**
+   * The cross-queue series a single-queue purge subtracts the queue's counts from. Defaults to
+   * `__global__`; a queue recorded from a `CounterSource` with its own `rollup` (a pg-boss
+   * queue) names that rollup here, so purging it does not drain another board's totals.
+   */
+  rollup?: string;
+  /**
+   * Limit the purge to queues whose recorded name starts with this, the rollup included. What
+   * `namespacedHistoryProvider` uses so a board's "clear all" stays inside its namespace.
+   */
+  queuePrefix?: string;
 }
 
 export interface PurgeResult {

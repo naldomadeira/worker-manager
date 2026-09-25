@@ -28,7 +28,7 @@
   "scripts": {
     "build": "yarn clean && tsc",
     "clean": "rm -rf dist",
-    "test": "jest && NODE_OPTIONS=--experimental-vm-modules jest -c jest.config.v12.js"
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest && NODE_OPTIONS=--experimental-vm-modules jest -c jest.config.v12.js"
   },
   "dependencies": {
     "@worker-manager/auth": "2.0.1"
@@ -45,6 +45,7 @@
     "@worker-manager/api": "^2.0.1",
     "@worker-manager/express": "^2.0.1",
     "@worker-manager/fastify": "^2.0.1",
+    "@worker-manager/pg-boss": "^2.0.1",
     "@worker-manager/test-utils": "workspace:*",
     "bull": "^4.16.5",
     "bullmq": "^5.81.3",
@@ -64,6 +65,7 @@
     "nestjs-platform-fastify-v11": "npm:@nestjs/platform-fastify@^11",
     "nestjs-platform-fastify-v12": "npm:@nestjs/platform-fastify@^12",
     "pg": "^8.23.0",
+    "pg-boss": "^12.34.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.2",
     "supertest": "^7.2.2",
@@ -77,6 +79,7 @@
     "@worker-manager/api": "^2.0.1",
     "@worker-manager/express": "^2.0.1",
     "@worker-manager/fastify": "^2.0.1",
+    "@worker-manager/pg-boss": "^2.0.1",
     "reflect-metadata": "^0.1.13 || ^0.2.0",
     "rxjs": "^7.8.1"
   },
@@ -85,6 +88,9 @@
       "optional": true
     },
     "@worker-manager/fastify": {
+      "optional": true
+    },
+    "@worker-manager/pg-boss": {
       "optional": true
     }
   }

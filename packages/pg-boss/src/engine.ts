@@ -28,6 +28,7 @@ import {
   moduleSchemaVersion,
   unstartedWriter,
 } from './connection';
+import { registerEngine } from './internals';
 import { INTERNAL_QUEUE_PREFIX, quoteSchema, sql } from './sql';
 import type { PgBossBoardOptions, PgBossLike } from './types';
 import {
@@ -534,5 +535,6 @@ export function createPgBossEngine(
     },
   };
 
+  registerEngine(engine, { reader, schema });
   return engine;
 }

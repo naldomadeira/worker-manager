@@ -41,6 +41,42 @@ import { toastManager } from './toastManager';
  */
 const CLIENT_HANDLED_ERROR_CODES = ['JOB_BELONGS_TO_JOB_SCHEDULER'];
 
+/** Unwraps a successful response to its body. Shared by every engine's API client. */
+export function handleApiResponse(response: AxiosResponse): any {
+  return response.data;
+}
+
+/**
+ * Turns a failed request into what the callers expect: a rejection when there was no response,
+ * otherwise the error body, resolved, after toasting it. Shared by every engine's API client.
+ */
+export async function handleApiError(requestError: { response?: AxiosResponse }): Promise<any> {
+  const { response } = requestError;
+
+  // No response at all: the server is down, the network dropped or the request timed out.
+  // Nothing here can be branched on, so the caller gets a rejection, and the toast is held to
+  // one at a time because polling would raise it again every interval.
+  if (!response) {
+    const description = i18n.t('ERRORS.NETWORK');
+    toastManager.addOnce('network-error', { type: 'error', title: description });
+    return Promise.reject(new Error(description));
+  }
+
+  const { error, message, code } = (response.data ?? {}) as Partial<ErrorResponseBody>;
+
+  // Only codes listed above are silenced, since the caller owns what the user sees for those.
+  // Anything else still toasts, so a new coded error can never fail silently.
+  if (error && !(code && CLIENT_HANDLED_ERROR_CODES.includes(code))) {
+    toastManager.add({
+      type: 'error',
+      title: translateMessage(error),
+      description: translateMessage(message),
+    });
+  }
+
+  return Promise.resolve(response.data);
+}
+
 export class Api {
   private axios: AxiosInstance;
 
@@ -314,33 +350,10 @@ export class Api {
   }
 
   private handleResponse(response: AxiosResponse): any {
-    return response.data;
+    return handleApiResponse(response);
   }
 
-  private async handleError(requestError: { response?: AxiosResponse }): Promise<any> {
-    const { response } = requestError;
-
-    // No response at all: the server is down, the network dropped or the request timed out.
-    // Nothing here can be branched on, so the caller gets a rejection, and the toast is held to
-    // one at a time because polling would raise it again every interval.
-    if (!response) {
-      const description = i18n.t('ERRORS.NETWORK');
-      toastManager.addOnce('network-error', { type: 'error', title: description });
-      return Promise.reject(new Error(description));
-    }
-
-    const { error, message, code } = (response.data ?? {}) as Partial<ErrorResponseBody>;
-
-    // Only codes listed above are silenced, since the caller owns what the user sees for those.
-    // Anything else still toasts, so a new coded error can never fail silently.
-    if (error && !(code && CLIENT_HANDLED_ERROR_CODES.includes(code))) {
-      toastManager.add({
-        type: 'error',
-        title: translateMessage(error),
-        description: translateMessage(message),
-      });
-    }
-
-    return Promise.resolve(response.data);
+  private handleError(requestError: { response?: AxiosResponse }): Promise<any> {
+    return handleApiError(requestError);
   }
 }
