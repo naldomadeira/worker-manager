@@ -20,7 +20,9 @@
     "@worker-manager/auth": "workspace:*",
     "@worker-manager/express": "workspace:*",
     "@worker-manager/nestjs": "workspace:*",
+    "@worker-manager/pg-boss": "workspace:*",
     "bullmq": "^6.0.0",
+    "pg-boss": "^12.34.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.2"
   },

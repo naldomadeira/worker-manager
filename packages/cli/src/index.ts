@@ -5,6 +5,7 @@ import { describeConnection, RETRY_INTERVAL_MS, type ConnectionState } from './c
 import { describeError } from './describeError';
 import { discoverQueues, probeQueues, type DiscoveredQueue } from './discovery';
 import { createHistory, warnIfCountersUnavailable } from './history';
+import { assertPgBossRuntime, boardLinks, createPgBossSide, type PgBossSide } from './pgBoss';
 import { createPostgresSource, type PostgresSource } from './postgres';
 import { createQueueFactory } from './queueFactory';
 import { createRedisClient } from './redisClient';
@@ -63,6 +64,13 @@ export async function run(
   } = {}
 ): Promise<RunningBoard> {
   warnIfExposed(config, log);
+  if (config.pgBoss) {
+    assertPgBossRuntime();
+  }
+
+  if (config.pgBoss?.only) {
+    return runPgBossOnly(config, log, { beforeReady });
+  }
 
   if (config.postgres?.only) {
     return runPostgresOnly(config, log, { beforeReady });
@@ -95,12 +103,14 @@ export async function run(
     ? createHistory({ client, config: config.history, onWarning })
     : null;
 
+  const pgBoss = pgBossNextToBullMQ(config, onWarning);
+
   const serverAdapter = new ExpressAdapter();
   serverAdapter.setBasePath(config.basePath);
   const board = createWorkerManagerBoard({
     queues: [],
     serverAdapter,
-    options: { uiConfig: config.uiConfig, historyProvider: history?.provider },
+    options: { uiConfig: pgBoss?.uiConfig ?? config.uiConfig, historyProvider: history?.provider },
   });
 
   const queues = createQueueFactory({
@@ -211,6 +221,7 @@ export async function run(
     try {
       await client.connect();
     } catch (error) {
+      await closePgBoss(pgBoss?.side, log);
       throw new Error(
         `Could not connect to Redis at ${redisLabel}: ${describeError(attemptError ?? (error as Error))}`
       );
@@ -218,7 +229,7 @@ export async function run(
 
     const count = await scan();
     await startHistory();
-    const server = await startServer(config, { serverAdapter });
+    const server = await startServer(config, { serverAdapter, boards: pgBoss?.boards });
 
     const close = async () => {
       closing = true;
@@ -242,6 +253,7 @@ export async function run(
       );
       await closeWithGrace(client.quit(), SHUTDOWN_GRACE_MS, () => client.disconnect());
       await postgres?.close().catch(() => undefined);
+      await closePgBoss(pgBoss?.side, log);
     };
 
     beforeReady?.(close);
@@ -250,6 +262,7 @@ export async function run(
     log.log(`Redis:  ${redisLabel}`);
     log.log(`Prefix: ${config.prefixes.join(', ')}`);
     if (postgres) log.log(`Postgres: ${postgres.label} (schema ${config.postgres!.schema})`);
+    await reportPgBoss(pgBoss?.side, log);
     logIfIdle(count);
 
     scheduleRescan();
@@ -264,7 +277,11 @@ export async function run(
   };
   const getState = () => state;
 
-  const server = await startServer(config, { serverAdapter, getConnectionState: getState });
+  const server = await startServer(config, {
+    serverAdapter,
+    getConnectionState: getState,
+    boards: pgBoss?.boards,
+  });
 
   const close = async () => {
     closing = true;
@@ -286,6 +303,7 @@ export async function run(
     );
     await closeWithGrace(client.quit(), SHUTDOWN_GRACE_MS, () => client.disconnect());
     await postgres?.close().catch(() => undefined);
+    await closePgBoss(pgBoss?.side, log);
   };
 
   beforeReady?.(close);
@@ -378,6 +396,7 @@ export async function run(
   log.log(`Redis:  ${redisLabel}`);
   log.log(`Prefix: ${config.prefixes.join(', ')}`);
   if (postgres) log.log(`Postgres: ${postgres.label} (schema ${config.postgres!.schema})`);
+  await reportPgBoss(pgBoss?.side, log);
   if (deferredIdleCount !== undefined) logIfIdle(deferredIdleCount);
 
   client.on('ready', () => {
@@ -416,12 +435,14 @@ async function runPostgresOnly(
     ? createHistory({ postgres: config.postgres!, config: config.history, onWarning })
     : null;
 
+  const pgBoss = pgBossNextToBullMQ(config, onWarning);
+
   const serverAdapter = new ExpressAdapter();
   serverAdapter.setBasePath(config.basePath);
   const board = createWorkerManagerBoard({
     queues: [],
     serverAdapter,
-    options: { uiConfig: config.uiConfig, historyProvider: history?.provider },
+    options: { uiConfig: pgBoss?.uiConfig ?? config.uiConfig, historyProvider: history?.provider },
   });
   const postgres: PostgresSource = createPostgresSource({
     config: config.postgres!,
@@ -445,6 +466,7 @@ async function runPostgresOnly(
   } catch (error) {
     await history?.stop();
     await postgres.close().catch(() => undefined);
+    await closePgBoss(pgBoss?.side, log);
     throw new Error(
       `Could not connect to PostgreSQL at ${postgres.label}: ${describeError(error as Error)}`
     );
@@ -462,7 +484,7 @@ async function runPostgresOnly(
     }
   }
 
-  const server = await startServer(config, { serverAdapter });
+  const server = await startServer(config, { serverAdapter, boards: pgBoss?.boards });
 
   const scheduleRescan = () => {
     if (closing || config.scanInterval <= 0 || rescanTimer) return;
@@ -484,6 +506,7 @@ async function runPostgresOnly(
       log.warn(`Closing queues did not finish within ${SHUTDOWN_GRACE_MS}ms; continuing shutdown.`)
     );
     await postgres.close().catch(() => undefined);
+    await closePgBoss(pgBoss?.side, log);
   };
 
   beforeReady?.(close);
@@ -491,6 +514,7 @@ async function runPostgresOnly(
   log.log(`Worker Manager listening on ${server.url}`);
   log.log(`Postgres: ${postgres.label} (schema ${config.postgres!.schema})`);
   if (history) log.log(`History: ${history.label}`);
+  await reportPgBoss(pgBoss?.side, log);
   if (count === 0) {
     log.log(
       'No PostgreSQL queues found yet. ' +
@@ -498,6 +522,91 @@ async function runPostgresOnly(
     );
   }
   scheduleRescan();
+
+  return { url: server.url, close };
+}
+
+/**
+ * The pg-boss board that sits under `--pg-boss-path` next to a BullMQ board at the root. The
+ * BullMQ board gets the matching `uiConfig`, which links back to this one.
+ */
+function pgBossNextToBullMQ(config: CliConfig, onWarning: (message: string) => void) {
+  if (!config.pgBoss) return null;
+
+  const links = boardLinks(config);
+  const side = createPgBossSide(config, { uiConfig: links.pgBoss, onWarning });
+
+  return {
+    side,
+    uiConfig: links.bullmq,
+    boards: [{ path: side.path, serverAdapter: side.serverAdapter }],
+  };
+}
+
+/** Next to BullMQ an unreachable pg-boss database is a warning: the BullMQ board still works. */
+async function reportPgBoss(
+  side: PgBossSide | undefined,
+  log: Pick<Console, 'log' | 'warn'>
+): Promise<void> {
+  if (!side) return;
+  try {
+    side.report(await side.probe(), log);
+  } catch (error) {
+    log.warn(
+      `${(error as Error).message}. The pg-boss board answers once PostgreSQL is reachable.`
+    );
+  }
+}
+
+async function closePgBoss(
+  side: PgBossSide | undefined,
+  log: Pick<Console, 'warn'>
+): Promise<void> {
+  if (!side) return;
+  await closeWithGrace(side.close(), SHUTDOWN_GRACE_MS, () =>
+    log.warn(`Closing pg-boss did not finish within ${SHUTDOWN_GRACE_MS}ms; continuing shutdown.`)
+  );
+}
+
+/**
+ * Only a pg-boss source was configured: one pg-boss board at the root, nothing BullMQ, and so
+ * no Redis to wait for. Like a PostgreSQL-only board, an unreachable database fails startup.
+ */
+async function runPgBossOnly(
+  config: CliConfig,
+  log: Pick<Console, 'log' | 'warn'>,
+  { beforeReady }: { beforeReady?: (close: () => Promise<void>) => void }
+): Promise<RunningBoard> {
+  const side = createPgBossSide(config, {
+    uiConfig: config.uiConfig,
+    onWarning: (message) => log.warn(message),
+  });
+
+  let info: Awaited<ReturnType<PgBossSide['probe']>>;
+  try {
+    info = await side.probe();
+  } catch (error) {
+    await side.close();
+    throw error;
+  }
+
+  let server: Awaited<ReturnType<typeof startServer>>;
+  try {
+    server = await startServer(config, { serverAdapter: side.serverAdapter });
+  } catch (error) {
+    await side.close();
+    throw error;
+  }
+
+  const close = async () => {
+    await closeWithGrace(server.close(), SHUTDOWN_GRACE_MS, () => server.closeAllConnections());
+    await closePgBoss(side, log);
+  };
+
+  beforeReady?.(close);
+
+  log.log(`Worker Manager listening on ${server.url}`);
+  side.report(info, log);
 
   return { url: server.url, close };
 }

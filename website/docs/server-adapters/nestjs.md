@@ -75,11 +75,14 @@ export class FeatureModule {}
 
 | Option | Default | |
 |---|---|---|
+| `name` | none | Registers a [named board](#several-boards) with its own DI tokens, so one app can mount several. |
+| `engine` | `'bullmq'` | `'pg-boss'` mounts a [pg-boss board](#pg-boss-board-experimental) instead of a BullMQ one. |
+| `pgBoss` | | Where a pg-boss board reads and writes. Only read with `engine: 'pg-boss'`. |
 | `route` | `'/queues'` | Base path where the dashboard is mounted, relative to the Nest global prefix. |
 | `adapter` | auto-detected | Server adapter class (`ExpressAdapter` or `FastifyAdapter`). When left out, the module asks `HttpAdapterHost` which platform the app runs on and loads `@worker-manager/express` or `@worker-manager/fastify`, failing with an install hint if the package is missing. |
 | `auth` | none | Built-in authentication (Basic or Keycloak). See [Authentication](#authentication). |
 | `enabled` | `true` | `false` registers nothing: no routes, no middleware, `forFeature()` becomes a no-op and `@InjectWorkerManager()` resolves `null`. Handy to switch the board off per environment. |
-| `readOnly` | `false` | Read-only mode for every queue registered through `queues` or `forFeature()`, unless the queue sets `options.readOnlyMode` itself. |
+| `readOnly` | `false` | Read-only mode for every queue registered through `queues` or `forFeature()`, unless the queue sets `options.readOnlyMode` itself. On a pg-boss board, the whole board is read-only. |
 | `queues` | `[]` | Queues to register at the root without a separate `forFeature()` import. Same shape as `forFeature()` entries. |
 | `uiConfig` | | Merged into `boardOptions.uiConfig`, taking precedence. |
 | `title`, `logo`, `theme` | | Shortcuts for `uiConfig.boardTitle`, `uiConfig.boardLogo` and `uiConfig.theme`. |
@@ -265,6 +268,132 @@ export class OpsController {
   constructor(@InjectWorkerManager() private readonly board: WorkerManagerBoard) {}
 }
 ```
+
+## Several boards
+
+Give each `forRoot()` a `name` and its own `route` to mount several boards in one application,
+for example one per team or one per datastore:
+
+```ts
+@Module({
+  imports: [
+    BullModule.forRoot({ connection: { host: 'localhost', port: 6379 } }),
+    WorkerManagerModule.forRoot({ name: 'ops', route: '/ops', auth: opsAuth }),
+    WorkerManagerModule.forRootAsync({
+      name: 'billing',
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({ route: '/billing', title: config.get('TITLE') }),
+    }),
+    WorkerManagerModule.forFeature('ops', { name: 'emails', adapter: BullMQAdapter }),
+    WorkerManagerModule.forFeature('billing', { name: 'invoices', adapter: BullMQAdapter }),
+  ],
+})
+export class AppModule {}
+```
+
+- A named board's providers use the tokens `worker_manager_options:<name>`,
+  `worker_manager_adapter:<name>` and `worker_manager_instance:<name>`
+  (`getWorkerManagerToken(name)` returns the last one). The unnamed board keeps the plain
+  `worker_manager_*` tokens, so an existing `forRoot()` without `name` is unchanged and can sit
+  next to named ones.
+- `forFeature(name, ...queues)` registers into the named board; `forFeature(...queues)` still
+  targets the unnamed one.
+- With `forRootAsync()`, `name` goes on the async options, next to `useFactory`: it decides the
+  tokens, so it has to be known before the factory runs.
+- Inject a named board with `@InjectWorkerManager(name)`:
+
+```ts
+@Injectable()
+export class QueueRegistry {
+  constructor(@InjectWorkerManager('ops') private readonly ops: WorkerManagerBoard) {}
+}
+```
+
+Names are letters, digits, `.`, `_` and `-`. Give every board its own `route` and do not nest one
+under another (`/queues` and `/queues/ops`): on Express the outer board's middleware also matches
+the inner board's paths and answers for them.
+
+Each board applies its own `auth` on its own prefix. With Keycloak:
+
+- Register every board's redirect URI in the Keycloak client, `https://<host>/<route>/auth/callback`
+  for each `route` (and a post-logout redirect URI of `https://<host>/<route>/`). With `publicUrl`,
+  set it per board.
+- A named board's session cookie is `wm_session_<name>` instead of `wm_session`, scoped to the
+  board's path, unless `auth.cookie.name` is set. Boards never share a session: log in once per
+  board. The cookie secret can be the same.
+
+## pg-boss board (experimental)
+
+`engine: 'pg-boss'` mounts a board over a [pg-boss](https://github.com/timgit/pg-boss) schema, with
+the same shell, auth and routing as a BullMQ board. It needs pg-boss 12.24 or later, Node 22.12 or
+later and one more package:
+
+```sh
+npm install @worker-manager/pg-boss
+```
+
+`@worker-manager/pg-boss` is an optional peer: it is only loaded when a board asks for the pg-boss
+engine. The board never migrates, supervises or creates anything in the database.
+See [the pg-boss engine](/queue-adapters/pg-boss) for connection modes, indexes and what the board shows.
+
+Hand it the app's own pg-boss instance, already started, as a provider token:
+
+```ts
+import { PgBoss } from 'pg-boss';
+
+@Module({
+  providers: [
+    {
+      provide: 'PG_BOSS',
+      useFactory: async () => {
+        const boss = new PgBoss(process.env.DATABASE_URL!);
+        await boss.start();
+        return boss;
+      },
+    },
+  ],
+  exports: ['PG_BOSS'],
+})
+export class PgBossModule {}
+
+@Module({
+  imports: [
+    PgBossModule,
+    WorkerManagerModule.forRoot({ route: '/queues' }), // the BullMQ board, unchanged
+    WorkerManagerModule.forRootAsync({
+      name: 'pgboss',
+      imports: [PgBossModule],
+      inject: ['PG_BOSS'],
+      useFactory: (boss: PgBoss) => ({
+        route: '/pg-boss',
+        engine: 'pg-boss',
+        auth: { strategy: 'basic', users: [{ username: 'ops', password: process.env.BOARD_PASSWORD! }] },
+        pgBoss: { instance: boss, connection: process.env.DATABASE_URL, schema: 'pgboss' },
+      }),
+    }),
+  ],
+})
+export class AppModule {}
+```
+
+`pgBoss` takes:
+
+| Option | | |
+|---|---|---|
+| `instance` | | The app's pg-boss instance, already started. Preferred for writes. |
+| `useExisting` | | A provider token that resolves to that instance, looked up at bootstrap, instead of `instance`. Works with plain `forRoot()`. |
+| `connection` | | A connection string, `pg` pool config or `pg.Pool` to read through. Reads through `instance` alone cannot enforce the query timeout on the server, so pass both when you can. With a connection and no instance, writes go through a pg-boss that is never started. |
+| `schema` | `'pgboss'` | The pg-boss schema. |
+| `queues` | all | An allowlist of queue names, or a predicate. |
+| `delimiter` | | Groups queue names in the sidebar, for example `'.'`. |
+| `includeInternalQueues`, `queryTimeoutMs`, `countCap`, `visibilityGuard` | | Passed through to `createPgBossBoard`. |
+| `engine` | | A ready-made `PgBossEngine` (for tests, `createPgBossStubEngine()` from `@worker-manager/api/engine`). `@worker-manager/pg-boss` is not loaded then, and the engine is yours to close. |
+
+`readOnly: true` makes the whole board read-only. The board lists the queues of its schema, so
+`queues` at the root and `forFeature()` into a pg-boss board are configuration errors. The engine's
+own read pool is closed with the application; the instance and a pool you pass stay yours.
+`@InjectWorkerManager('pgboss')` resolves `{ engine, close() }`.
 
 ## Plain adapter setup
 

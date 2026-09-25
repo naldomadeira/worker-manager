@@ -645,5 +645,289 @@
     "PREVIOUS": "이전 페이지",
     "NEXT": "다음 페이지",
     "PAGE": "{{page}}페이지"
+  },
+  "PGBOSS": {
+    "EXPERIMENTAL": "실험적",
+    "EXPERIMENTAL_HINT": "pg-boss 엔진은 실험적 기능입니다. 화면과 HTTP API는 마이너 릴리스에서 바뀔 수 있습니다.",
+    "STATE": {
+      "ALL": "전체",
+      "CREATED": "생성됨",
+      "RETRY": "재시도 대기",
+      "ACTIVE": "실행 중",
+      "COMPLETED": "완료됨",
+      "CANCELLED": "취소됨",
+      "FAILED": "실패"
+    },
+    "SUBSTATE": {
+      "DEFERRED": "연기됨",
+      "BLOCKED": "차단됨",
+      "READY": "준비됨"
+    },
+    "KPI": {
+      "READY": "준비됨",
+      "DEFERRED": "연기됨",
+      "ACTIVE": "실행 중",
+      "FAILED": "실패",
+      "TOTAL": "합계",
+      "BACKLOGGED": "적체: {{value}}",
+      "NONE_BACKLOGGED": "적체 없음",
+      "QUEUED_HINT": "대기 중: {{value}}"
+    },
+    "STATS": {
+      "UPDATED_AT": "{{time}} 기준 카운터",
+      "STALE": "카운터가 마지막으로 기록된 시점은 {{time}}입니다. 그 뒤로 supervise를 실행하는 pg-boss 인스턴스가 갱신하지 않았습니다.",
+      "NEVER": "아직 이 큐들을 모니터링한 pg-boss 인스턴스가 없어 카운터가 0입니다.",
+      "CACHED_HINT": "pg-boss 모니터가 캐시한 값입니다. 큐 페이지의 탭은 실시간으로 셉니다."
+    },
+    "QUEUE": {
+      "NAME": "이름",
+      "POLICY": "정책",
+      "PARTITION": "저장 방식",
+      "PARTITIONED": "전용 파티션",
+      "SHARED": "공유 테이블",
+      "DEAD_LETTER": "데드 레터 큐",
+      "RETRY_LIMIT": "재시도 한도",
+      "RETRY_DELAY": "재시도 대기 시간",
+      "RETRY_BACKOFF": "지수 백오프",
+      "RETRY_DELAY_MAX": "최대 재시도 대기 시간",
+      "EXPIRE_IN": "만료 시간",
+      "RETENTION": "대기 보관 기간",
+      "DELETE_AFTER": "삭제까지 기간",
+      "WARNING_QUEUE_SIZE": "적체 경고 기준",
+      "BACKLOGGED": "적체됨",
+      "HEARTBEAT": "하트비트",
+      "NOTIFY": "전송 시 알림",
+      "SINGLETONS_ACTIVE": "활성 싱글턴 키",
+      "SCHEDULES": "스케줄",
+      "CREATED_ON": "생성",
+      "UPDATED_ON": "업데이트",
+      "READY_HISTORY": "준비된 작업, 최근 샘플",
+      "YES": "예",
+      "NO": "아니요",
+      "NONE": "없음",
+      "SECTIONS": {
+        "GENERAL": "일반",
+        "RETRIES": "재시도",
+        "LIFECYCLE": "수명 주기"
+      },
+      "NOT_FOUND": "큐를 찾을 수 없습니다"
+    },
+    "POLICY": {
+      "STANDARD": "표준",
+      "STANDARD_DESC": "작업은 우선순위와 생성 시각 순으로 가져오며 제한이 없습니다.",
+      "SHORT": "숏",
+      "SHORT_DESC": "싱글턴 키마다 대기 중인 작업은 최대 1개입니다.",
+      "SINGLETON": "싱글턴",
+      "SINGLETON_DESC": "싱글턴 키마다 실행 중인 작업은 최대 1개입니다.",
+      "STATELY": "상태별",
+      "STATELY_DESC": "상태와 싱글턴 키마다 작업은 최대 1개입니다.",
+      "EXCLUSIVE": "배타적",
+      "EXCLUSIVE_DESC": "싱글턴 키마다 대기 중이거나 실행 중인 작업은 최대 1개입니다.",
+      "KEY_STRICT_FIFO": "키별 엄격한 FIFO",
+      "KEY_STRICT_FIFO_DESC": "같은 싱글턴 키를 가진 작업은 한 번에 하나씩 순서대로 실행됩니다."
+    },
+    "JOB": {
+      "PRIORITY": "우선순위 {{priority}}",
+      "ATTEMPT": "{{limit}}회 중 {{attempt}}번째 시도",
+      "CREATED_ON": "생성",
+      "START_AFTER": "시작 예정",
+      "STARTED_ON": "시작",
+      "COMPLETED_ON": "종료",
+      "KEEP_UNTIL": "이때까지 시작하지 않으면 만료",
+      "SINGLETON_KEY": "싱글턴 키",
+      "SINGLETON_ON": "싱글턴 시간대",
+      "GROUP_ID": "그룹",
+      "GROUP_TIER": "그룹 단계",
+      "HEARTBEAT_ON": "마지막 하트비트",
+      "BLOCKING": "종속 작업 차단",
+      "NO_OUTPUT": "이 작업에는 출력이 없습니다.",
+      "NO_DATA": "이 작업에는 데이터가 없습니다.",
+      "DEPENDENCIES": "기다리는 작업",
+      "DEPENDENTS": "이 작업을 기다리는 작업",
+      "NO_DEPENDENCIES": "이 작업은 다른 작업을 기다리지 않습니다.",
+      "NO_DEPENDENTS": "이 작업을 기다리는 작업이 없습니다.",
+      "PENDING_DEPENDENCIES": "남은 종속성: {{value}}",
+      "SOURCE_QUEUE": "원본 큐",
+      "SOURCE_JOB": "원본 작업",
+      "SOURCE_CREATED_ON": "원본 생성",
+      "SOURCE_RETRY_COUNT": "원본 시도 횟수",
+      "FROM_QUEUE": "{{queue}}에서 옴",
+      "NOT_DEAD_LETTER": "이 작업은 다른 큐에서 옮겨 온 것이 아닙니다.",
+      "TABS": {
+        "DATA": "데이터",
+        "OUTPUT": "출력",
+        "OPTIONS": "옵션",
+        "TIMELINE": "타임라인",
+        "DEPENDENCIES": "종속성",
+        "DEAD_LETTER": "데드 레터"
+      }
+    },
+    "ACTIONS": {
+      "QUEUE_ACTIONS": "큐 작업",
+      "AFFECTED": "작업 {{requested}}개 중 {{affected}}개가 변경되었습니다.",
+      "CANCEL_ACTIVE_WARNING": "작업이 실행 중입니다. 취소하면 취소됨으로 표시되지만 이미 처리 중인 핸들러는 멈추지 않습니다.",
+      "RETRY": {
+        "LABEL": "재시도",
+        "CONFIRM": "이 실패한 작업을 재시도할까요?",
+        "PENDING": "작업을 재시도하는 중…",
+        "DONE": "작업을 재시도 대기열에 넣었습니다"
+      },
+      "CANCEL": {
+        "LABEL": "취소",
+        "CONFIRM": "이 작업을 취소할까요?",
+        "PENDING": "작업을 취소하는 중…",
+        "DONE": "작업을 취소했습니다"
+      },
+      "RESUME": {
+        "LABEL": "재개",
+        "CONFIRM": "이 취소된 작업을 재개할까요?",
+        "PENDING": "작업을 재개하는 중…",
+        "DONE": "작업을 재개했습니다"
+      },
+      "DELETE": {
+        "LABEL": "삭제",
+        "CONFIRM": "이 작업을 삭제할까요? 되돌릴 수 없습니다.",
+        "PENDING": "작업을 삭제하는 중…",
+        "DONE": "작업을 삭제했습니다"
+      },
+      "DUPLICATE": {
+        "LABEL": "복제",
+        "PENDING": "사본을 보내는 중…",
+        "DONE": "사본을 보냈습니다"
+      },
+      "SEND": {
+        "LABEL": "작업 보내기",
+        "PENDING": "작업을 보내는 중…",
+        "DONE": "작업을 보냈습니다",
+        "DROPPED": "pg-boss가 작업을 버렸습니다. 같은 키의 싱글턴이 이미 있는 것으로 보입니다."
+      },
+      "RETRY_FAILED": {
+        "LABEL": "실패한 작업 모두 재시도",
+        "CONFIRM": "이 큐의 실패한 작업을 모두 재시도할까요?",
+        "PENDING": "실패한 작업을 재시도하는 중…",
+        "DONE": "실패한 작업을 재시도 대기열에 넣었습니다"
+      },
+      "DELETE_QUEUED": {
+        "LABEL": "대기 중인 작업 삭제",
+        "CONFIRM": "이 큐에서 아직 시작하지 않은 작업을 모두 삭제할까요? 되돌릴 수 없습니다.",
+        "PENDING": "대기 중인 작업을 삭제하는 중…",
+        "DONE": "대기 중인 작업을 삭제했습니다"
+      },
+      "DELETE_STORED": {
+        "LABEL": "끝난 작업 삭제",
+        "CONFIRM": "이 큐의 완료, 취소, 실패한 작업을 모두 삭제할까요? 되돌릴 수 없습니다.",
+        "PENDING": "끝난 작업을 삭제하는 중…",
+        "DONE": "끝난 작업을 삭제했습니다"
+      }
+    },
+    "SEND": {
+      "TITLE": "작업 보내기",
+      "DUPLICATE_TITLE": "작업 복제",
+      "QUEUE": "큐",
+      "DATA": "데이터",
+      "PRIORITY": "우선순위",
+      "START_AFTER": "시작 시점",
+      "START_AFTER_HINT": "지금부터의 초 또는 ISO 날짜입니다. 비워 두면 바로 시작합니다.",
+      "SINGLETON_KEY": "싱글턴 키",
+      "RETRY_LIMIT": "재시도 한도",
+      "RETRY_DELAY": "재시도 대기 시간(초)",
+      "RETRY_BACKOFF": "지수 백오프",
+      "EXPIRE_IN": "만료 시간(초)",
+      "QUEUE_DEFAULT": "큐 기본값",
+      "SUBMIT": "보내기"
+    },
+    "SCHEDULES": {
+      "TITLE": "스케줄",
+      "EMPTY": "아직 스케줄이 없습니다.",
+      "KIND_CRON": "Cron",
+      "KIND_RRULE": "RRULE",
+      "KEY": "키",
+      "DEFAULT_KEY": "기본 키",
+      "EXPRESSION": "표현식",
+      "EXPRESSION_HINT": "0 * * * * 같은 cron 표현식, 또는 pg-boss 12.31 이상에서는 RRULE.",
+      "TIMEZONE": "시간대",
+      "MISSED": "놓친 실행",
+      "MISSED_DEFAULT": "pg-boss 기본값",
+      "MISSED_SKIP": "건너뛰기",
+      "MISSED_ONCE": "한 번 실행",
+      "NEXT_RUNS": "다음 실행",
+      "NO_NEXT_RUNS": "사용 중인 pg-boss로는 이 스케줄을 미리 볼 수 없습니다.",
+      "QUEUE": "큐",
+      "DATA": "데이터",
+      "OPTIONS": "작업 옵션",
+      "ALL_QUEUES": "모든 큐",
+      "FILTER_BY_QUEUE": "큐로 필터링",
+      "CREATE": "새 스케줄",
+      "EDIT": "스케줄 편집",
+      "SAVE": "저장",
+      "SAVE_PENDING": "스케줄을 저장하는 중…",
+      "SAVE_DONE": "스케줄을 저장했습니다",
+      "REMOVE": "스케줄 제거",
+      "REMOVE_CONFIRM": "이 스케줄을 제거할까요? 이미 보낸 작업은 큐에 남습니다.",
+      "REMOVE_PENDING": "스케줄을 제거하는 중…",
+      "REMOVE_DONE": "스케줄을 제거했습니다",
+      "RUN_NOW": "지금 실행",
+      "RUN_NOW_CONFIRM": "이 스케줄의 템플릿으로 지금 작업을 보낼까요?",
+      "RUN_NOW_PENDING": "작업을 보내는 중…",
+      "RUN_NOW_DONE": "작업을 보냈습니다",
+      "PREVIEW": "미리 보기",
+      "PREVIEW_UNAVAILABLE": "미리 보기에는 pg-boss 12.31 이상이 필요합니다.",
+      "COLUMNS": {
+        "QUEUE": "큐",
+        "KEY": "키",
+        "SCHEDULE": "스케줄",
+        "NEXT_RUN": "다음 실행",
+        "LAST_JOB": "마지막 작업",
+        "UPDATED": "업데이트"
+      }
+    },
+    "PAGINATION": {
+      "LABEL": "작업 페이지",
+      "FIRST": "첫 페이지",
+      "PREVIOUS": "이전",
+      "NEXT": "다음"
+    },
+    "COUNT": {
+      "CAPPED": "{{cap}}+",
+      "UNKNOWN": "?",
+      "CAPPED_HINT": "작업이 {{cap}}개를 넘습니다. 페이지를 빠르게 유지하려고 거기서 세기를 멈춥니다.",
+      "TIMEOUT": "개수를 세는 데 너무 오래 걸렸습니다. 아래 목록은 계속 사용할 수 있습니다."
+    },
+    "FILTER": {
+      "ID": "작업 ID",
+      "ID_PLACEHOLDER": "ID로 작업 찾기",
+      "SINGLETON_KEY": "싱글턴 키",
+      "SINGLETON_KEY_PLACEHOLDER": "싱글턴 키로 필터링",
+      "APPLY": "필터",
+      "CLEAR": "필터 지우기",
+      "INVALID_ID": "pg-boss 작업 ID는 UUID입니다."
+    },
+    "EMPTY": {
+      "QUEUES": "표시할 pg-boss 큐가 없습니다",
+      "QUEUES_HINT": "애플리케이션이 큐를 만들면 여기에 나타납니다.",
+      "QUEUES_FILTERED": "이 필터와 일치하는 큐가 없습니다",
+      "JOBS": "이 상태의 작업이 없습니다",
+      "JOBS_FILTERED": "이 필터와 일치하는 작업이 없습니다"
+    },
+    "BANNER": {
+      "WRITES_DISABLED": "변경이 꺼져 있습니다",
+      "READ_ONLY": "읽기 전용",
+      "UNREADABLE": "이 pg-boss 데이터베이스를 읽을 수 없습니다",
+      "SCHEMA_UNSUPPORTED": "여기의 pg-boss 스키마가 지원 범위({{min}}~{{max}})를 벗어났습니다.",
+      "NOT_INSTALLED": "먼저 애플리케이션에 pg-boss를 설치하세요. 보드는 스키마를 만들거나 마이그레이션하지 않습니다.",
+      "SLOW_QUERY": "큰 큐에서는 이 상태의 목록을 불러오는 데 오래 걸립니다. 작업 ID나 싱글턴 키로 필터링하거나 문서에서 권장하는 인덱스를 추가하세요."
+    },
+    "DATASTORE": {
+      "TITLE": "pg-boss 데이터 저장소",
+      "SCHEMA": "스키마",
+      "SCHEMA_VERSION": "스키마 버전",
+      "SUPPORTED_RANGE": "지원 버전",
+      "RANGE": "{{min}}~{{max}}",
+      "PERSIST_QUEUE_STATS": "큐 통계 기록",
+      "WRITABLE": "쓰기",
+      "INSTALLED": "설치됨",
+      "ENABLED": "켜짐",
+      "DISABLED": "꺼짐"
+    }
   }
 }

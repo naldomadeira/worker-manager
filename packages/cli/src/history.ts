@@ -5,6 +5,7 @@ import {
   PostgresMetricsHistoryProvider,
   PostgresMetricsStore,
   RedisMetricsHistoryProvider,
+  type CounterSources,
   type MetricsStore,
 } from '@worker-manager/metrics';
 import type { HistoryConfig, PostgresConfig } from './config/types';
@@ -15,7 +16,8 @@ export interface HistoryRuntime {
   provider: MetricsHistoryProvider;
   /** Where the history is kept, for the startup log. */
   label: string;
-  start(queues: () => BaseAdapter[]): void;
+  /** `sources` records queues that are not adapters, such as a pg-boss board's. */
+  start(queues: () => BaseAdapter[], sources?: CounterSources): void;
   stop(): Promise<void>;
 }
 
@@ -75,7 +77,7 @@ export function createHistory(deps: HistoryDeps): HistoryRuntime {
   return {
     provider,
     label,
-    start(queues) {
+    start(queues, sources) {
       if (!config.record || recorder) return;
 
       const target =
@@ -84,6 +86,7 @@ export function createHistory(deps: HistoryDeps): HistoryRuntime {
           : { store: store as MetricsStore };
       recorder = new MetricsRecorder({
         queues,
+        ...(sources ? { sources } : {}),
         ...target,
         ...shared,
         latency: config.latency,

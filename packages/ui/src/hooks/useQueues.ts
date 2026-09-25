@@ -7,6 +7,7 @@ import type {
 } from '@worker-manager/api/typings/app';
 import type { ErrorResponseBody } from '@worker-manager/api/typings/app';
 import { GetQueuesResponse } from '@worker-manager/api/typings/responses';
+import { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useShallow } from 'zustand/react/shallow';
 import { QueueActions } from '../../typings/app';
@@ -21,6 +22,7 @@ import { useConfirm } from './useConfirm';
 import { useSearchParams } from './useSearchParams';
 import { useSelectedStatuses } from './useSelectedStatuses';
 import { useSettingsStore } from './useSettings';
+import { UIConfigContext } from './useUIConfig';
 
 export type QueuesState = {
   queues: null | GetQueuesResponse['queues'];
@@ -47,6 +49,8 @@ export function useQueues(): QueuesState & { actions: QueueActions } {
     }))
   );
   const { openConfirm } = useConfirm();
+  // The shell asks for the queue list on every board; only a BullMQ board serves it.
+  const isBullMQBoard = (useContext(UIConfigContext)?.engine ?? 'bullmq') === 'bullmq';
 
   const status = activeQueueName ? selectedStatuses[activeQueueName] : undefined;
   const params = { activeQueue: activeQueueName || undefined, status, page, jobsPerPage };
@@ -54,6 +58,7 @@ export function useQueues(): QueuesState & { actions: QueueActions } {
   const { data, isPending, isFetching, isPlaceholderData, error } = useQuery({
     queryKey: queryKeys.queues.list(params),
     queryFn: () => api.getQueues(params),
+    enabled: isBullMQBoard,
     refetchInterval: pollingInterval > 0 ? pollingInterval * 1000 : false,
     placeholderData: keepPreviousData,
     // Non-mutating: lets structural sharing keep stable job references across polls.

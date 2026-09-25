@@ -27,6 +27,8 @@ const badgeVariants = cva(
         active: 'bg-status-active/12 text-status-active dark:bg-status-active/20',
         delayed: 'bg-status-delayed/12 text-status-delayed dark:bg-status-delayed/20',
         paused: 'bg-status-paused/12 text-status-paused dark:bg-status-paused/20',
+        retry: 'bg-status-retry/12 text-status-retry dark:bg-status-retry/20',
+        cancelled: 'bg-status-cancelled/12 text-status-cancelled dark:bg-status-cancelled/20',
       },
     },
     defaultVariants: {

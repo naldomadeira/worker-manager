@@ -10,7 +10,9 @@ async function bootstrap() {
   await app.listen(config.port);
 
   Logger.log(
-    `Dashboard on http://localhost:${config.port}/queues (auth: ${config.auth})`,
+    `Dashboard on http://localhost:${config.port}/queues` +
+      (config.pgBoss ? ` and http://localhost:${config.port}/pg-boss` : '') +
+      ` (auth: ${config.auth}${config.readOnly ? ', read-only' : ''})`,
     'Playground'
   );
 }

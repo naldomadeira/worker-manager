@@ -206,6 +206,23 @@ jobs:
     name: Build Docker image
     runs-on: ubuntu-latest
 
+    # The smoke test boots a pg-boss board against it. No pg-boss schema is installed: the CLI
+    # never creates one, and the board has to come up and say so either way.
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: bullmq
+          POSTGRES_USER: bullmq
+          POSTGRES_DB: bullmq
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v6
@@ -223,7 +240,7 @@ jobs:
 
       # Build the image from this commit rather than from npm, so CI checks the code under test.
       - name: Pack the CLI and its workspace dependencies
-        run: scripts/pack-local.sh docker-dist api ui auth express metrics cli
+        run: scripts/pack-local.sh docker-dist api ui auth express metrics pg-boss cli
 
       - name: Set up Buildx
         uses: docker/setup-buildx-action@v3
@@ -237,3 +254,22 @@ jobs:
 
       - name: Run the CLI from the image
         run: docker run --rm worker-manager:ci --version
+
+      - name: Boot a pg-boss board from the image
+        run: |
+          docker run -d --name wm-pgboss --network host \
+            -e WORKER_MANAGER_PGBOSS_URL=postgres://bullmq:bullmq@localhost:5432/bullmq \
+            worker-manager:ci
+          for _ in $(seq 30); do
+            if curl -fsS http://127.0.0.1:3000/api/pg-boss/info | tee /tmp/info.json | grep -q '"schema":"pgboss"'; then
+              docker logs wm-pgboss
+              docker rm -f wm-pgboss > /dev/null
+              exit 0
+            fi
+            sleep 1
+          done
+          echo 'The pg-boss board did not answer'
+          cat /tmp/info.json || true
+          docker logs wm-pgboss
+          docker rm -f wm-pgboss > /dev/null
+          exit 1

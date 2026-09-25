@@ -1,7 +1,7 @@
 {
   "name": "@worker-manager/cli",
   "version": "2.0.1",
-  "description": "Run the Worker Manager dashboard against Redis or PostgreSQL (BullMQ v6) from the command line.",
+  "description": "Run the Worker Manager dashboard against Redis, PostgreSQL (BullMQ v6) or pg-boss from the command line.",
   "keywords": [
     "bull",
     "worker-manager",
@@ -10,6 +10,8 @@
     "dashboard",
     "jobs",
     "monitoring",
+    "pg-boss",
+    "postgres",
     "queue",
     "queue-dashboard",
     "redis",
@@ -42,12 +44,14 @@
     "@worker-manager/auth": "2.0.1",
     "@worker-manager/express": "2.0.1",
     "@worker-manager/metrics": "2.0.1",
+    "@worker-manager/pg-boss": "2.0.1",
     "bull": "^4.16.5",
     "bullmq": "^5.81.3",
     "bullmq-v6": "npm:bullmq@^6",
     "express": "^5.2.1",
     "ioredis": "^6.0.0",
-    "pg": "^8.23.0"
+    "pg": "^8.23.0",
+    "pg-boss": "^12.34.0"
   },
   "devDependencies": {
     "@types/express": "^5.0.6",

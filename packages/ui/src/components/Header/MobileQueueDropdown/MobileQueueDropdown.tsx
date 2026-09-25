@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
 import { useActiveQueueName } from '../../../hooks/useActiveQueueName';
-import { useQueues } from '../../../hooks/useQueues';
+import { navQueueTotal, useBoardNavigation } from '../../../hooks/useBoardNavigation';
 import { useUIConfig } from '../../../hooks/useUIConfig';
 import { links } from '../../../utils/links';
 
@@ -19,14 +19,13 @@ const activeItem =
 
 export const MobileQueueDropdown = () => {
   const { t } = useTranslation();
-  const { queues } = useQueues();
+  const { queues, showSchedules: showJobSchedulers } = useBoardNavigation();
   const activeQueueName = useActiveQueueName();
   const { hasHistoryProvider = false } = useUIConfig();
   const history = useHistory();
   const { pathname } = useLocation();
 
   const currentQueue = queues?.find((queue) => queue.name === activeQueueName);
-  const showJobSchedulers = queues?.some((queue) => queue.jobSchedulerCount > 0);
 
   /* A quick switcher for small screens, next to the sidebar drawer. */
   const pages = [
@@ -89,10 +88,7 @@ export const MobileQueueDropdown = () => {
                 <span className="min-w-0 flex-1 truncate">{queue.name}</span>
                 {queue.counts && (
                   <span className="ml-auto shrink-0 rounded-full bg-muted px-1.5 text-xs leading-5 text-muted-foreground tabular-nums">
-                    {Object.values(queue.counts).reduce(
-                      (acc: number, val: any) => acc + (val || 0),
-                      0
-                    )}
+                    {navQueueTotal(queue)}
                   </span>
                 )}
               </DropdownMenuItem>

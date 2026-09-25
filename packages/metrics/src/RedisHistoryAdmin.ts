@@ -79,14 +79,14 @@ function emptyTiers(): Record<HistoryTier, TierStats> {
   };
 }
 
-/** The global rollup key mirroring a per-queue key, same tier and same day. */
-function globalKeyFor(keys: MetricsKeys, parsed: ParsedKey): string {
+/** The rollup key mirroring a per-queue key, same tier and same day. */
+function globalKeyFor(keys: MetricsKeys, parsed: ParsedKey, rollup: string): string {
   if (parsed.day === null) {
-    return keys.totals(GLOBAL_QUEUE, parsed.metric);
+    return keys.totals(rollup, parsed.metric);
   }
   return parsed.tier === 'hour'
-    ? keys.hour(GLOBAL_QUEUE, parsed.metric, parsed.day)
-    : keys.day(GLOBAL_QUEUE, parsed.metric, parsed.day);
+    ? keys.hour(rollup, parsed.metric, parsed.day)
+    : keys.day(rollup, parsed.metric, parsed.day);
 }
 
 /**
@@ -224,6 +224,9 @@ export class RedisHistoryAdmin implements HistoryAdministration {
       if (opts.queue !== undefined && parsed.queue !== opts.queue) {
         continue;
       }
+      if (opts.queuePrefix !== undefined && !parsed.queue.startsWith(opts.queuePrefix)) {
+        continue;
+      }
       if (parsed.day === null) {
         totalsKeys.push({ key, parsed });
       } else if (before === null || parsed.day < before) {
@@ -233,11 +236,13 @@ export class RedisHistoryAdmin implements HistoryAdministration {
 
     // Rewriting the global rollup only makes sense when a single queue is being removed:
     // a full purge drops the global keys outright, along with everything else.
-    const adjustGlobal = opts.queue !== undefined && opts.queue !== GLOBAL_QUEUE;
+    const rollup = opts.rollup ?? GLOBAL_QUEUE;
+    const adjustGlobal =
+      opts.queue !== undefined && opts.queue !== GLOBAL_QUEUE && opts.queue !== rollup;
 
     for (const { key, parsed } of dayKeys) {
       if (adjustGlobal) {
-        result.keysDeleted += await this.subtractDayFromGlobal(key, parsed);
+        result.keysDeleted += await this.subtractDayFromGlobal(key, parsed, rollup);
       }
       result.keysDeleted += await this.redis.unlink(key);
     }
@@ -246,7 +251,12 @@ export class RedisHistoryAdmin implements HistoryAdministration {
       const stale = (await this.redis.hkeys(key)).filter((day) => before === null || day < before);
       if (adjustGlobal && stale.length > 0) {
         const totals = await this.redis.hmget(key, ...stale);
-        result.fieldsDeleted += await this.subtractTotalsFromGlobal(parsed.metric, stale, totals);
+        result.fieldsDeleted += await this.subtractTotalsFromGlobal(
+          parsed.metric,
+          stale,
+          totals,
+          rollup
+        );
       }
       if (before === null) {
         result.keysDeleted += await this.redis.unlink(key);
@@ -275,12 +285,16 @@ export class RedisHistoryAdmin implements HistoryAdministration {
    * Only the summable metrics are touched; the latency ones are skipped outright rather than
    * silently producing a no-op subtraction of their packed values. See SUMMABLE_METRICS.
    */
-  private async subtractDayFromGlobal(key: string, parsed: ParsedKey): Promise<number> {
+  private async subtractDayFromGlobal(
+    key: string,
+    parsed: ParsedKey,
+    rollup: string
+  ): Promise<number> {
     if (parsed.day === null || !SUMMABLE_METRICS.includes(parsed.metric)) {
       return 0;
     }
     const minutes = await this.redis.hgetall(key);
-    const globalDay = globalKeyFor(this.keys, parsed);
+    const globalDay = globalKeyFor(this.keys, parsed, rollup);
     const pipeline = this.redis.multi();
     const touched: string[] = [];
     for (const field of Object.keys(minutes)) {
@@ -312,12 +326,13 @@ export class RedisHistoryAdmin implements HistoryAdministration {
   private async subtractTotalsFromGlobal(
     metric: string,
     days: string[],
-    values: (string | null)[]
+    values: (string | null)[],
+    rollup: string
   ): Promise<number> {
     if (!SUMMABLE_METRICS.includes(metric)) {
       return 0;
     }
-    const globalTotals = this.keys.totals(GLOBAL_QUEUE, metric);
+    const globalTotals = this.keys.totals(rollup, metric);
     const pipeline = this.redis.multi();
     const touched: string[] = [];
     days.forEach((day, i) => {

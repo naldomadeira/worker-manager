@@ -654,5 +654,289 @@
     "PREVIOUS": "Page précédente",
     "NEXT": "Page suivante",
     "PAGE": "Page {{page}}"
+  },
+  "PGBOSS": {
+    "EXPERIMENTAL": "Expérimental",
+    "EXPERIMENTAL_HINT": "Le moteur pg-boss est expérimental : ses écrans et son API HTTP peuvent encore changer dans une version mineure.",
+    "STATE": {
+      "ALL": "Toutes",
+      "CREATED": "Créée",
+      "RETRY": "Nouvel essai",
+      "ACTIVE": "Active",
+      "COMPLETED": "Terminée",
+      "CANCELLED": "Annulée",
+      "FAILED": "Échouée"
+    },
+    "SUBSTATE": {
+      "DEFERRED": "Différée",
+      "BLOCKED": "Bloquée",
+      "READY": "Prête"
+    },
+    "KPI": {
+      "READY": "Prêtes",
+      "DEFERRED": "Différées",
+      "ACTIVE": "Actives",
+      "FAILED": "Échouées",
+      "TOTAL": "Total",
+      "BACKLOGGED": "En retard : {{value}}",
+      "NONE_BACKLOGGED": "Aucune file en retard",
+      "QUEUED_HINT": "En attente : {{value}}"
+    },
+    "STATS": {
+      "UPDATED_AT": "Compteurs de {{time}}",
+      "STALE": "Les compteurs ont été écrits pour la dernière fois {{time}}. Aucune instance pg-boss exécutant supervise ne les a actualisés depuis.",
+      "NEVER": "Aucune instance pg-boss n'a encore surveillé ces files, leurs compteurs sont donc à zéro.",
+      "CACHED_HINT": "Mis en cache par le moniteur de pg-boss. Les onglets de la page d'une file comptent en direct."
+    },
+    "QUEUE": {
+      "NAME": "Nom",
+      "POLICY": "Politique",
+      "PARTITION": "Stockage",
+      "PARTITIONED": "Partition dédiée",
+      "SHARED": "Table partagée",
+      "DEAD_LETTER": "File des lettres mortes",
+      "RETRY_LIMIT": "Nombre maximal de nouveaux essais",
+      "RETRY_DELAY": "Délai entre les essais",
+      "RETRY_BACKOFF": "Délai exponentiel",
+      "RETRY_DELAY_MAX": "Délai maximal entre les essais",
+      "EXPIRE_IN": "Expire après",
+      "RETENTION": "Conservée en attente pendant",
+      "DELETE_AFTER": "Supprimée après",
+      "WARNING_QUEUE_SIZE": "Alerte de retard à partir de",
+      "BACKLOGGED": "En retard",
+      "HEARTBEAT": "Battement de cœur",
+      "NOTIFY": "Notifier à l'envoi",
+      "SINGLETONS_ACTIVE": "Clés singleton actives",
+      "SCHEDULES": "Planifications",
+      "CREATED_ON": "Créée",
+      "UPDATED_ON": "Mise à jour",
+      "READY_HISTORY": "Tâches prêtes, derniers relevés",
+      "YES": "Oui",
+      "NO": "Non",
+      "NONE": "Aucune",
+      "SECTIONS": {
+        "GENERAL": "Général",
+        "RETRIES": "Nouveaux essais",
+        "LIFECYCLE": "Cycle de vie"
+      },
+      "NOT_FOUND": "File non trouvée"
+    },
+    "POLICY": {
+      "STANDARD": "Standard",
+      "STANDARD_DESC": "Les tâches sont récupérées par priorité et date de création, sans limite.",
+      "SHORT": "Courte",
+      "SHORT_DESC": "Au plus une tâche en attente par clé singleton.",
+      "SINGLETON": "Singleton",
+      "SINGLETON_DESC": "Au plus une tâche active par clé singleton.",
+      "STATELY": "Par état",
+      "STATELY_DESC": "Au plus une tâche par état et par clé singleton.",
+      "EXCLUSIVE": "Exclusive",
+      "EXCLUSIVE_DESC": "Au plus une tâche en attente ou active par clé singleton.",
+      "KEY_STRICT_FIFO": "FIFO strict par clé",
+      "KEY_STRICT_FIFO_DESC": "Les tâches partageant une clé singleton s'exécutent une à une, dans l'ordre."
+    },
+    "JOB": {
+      "PRIORITY": "Priorité {{priority}}",
+      "ATTEMPT": "Essai {{attempt}} sur {{limit}}",
+      "CREATED_ON": "Créée",
+      "START_AFTER": "Démarre après",
+      "STARTED_ON": "Démarrée",
+      "COMPLETED_ON": "Terminée",
+      "KEEP_UNTIL": "Expire si elle n'a pas démarré avant",
+      "SINGLETON_KEY": "Clé singleton",
+      "SINGLETON_ON": "Créneau singleton",
+      "GROUP_ID": "Groupe",
+      "GROUP_TIER": "Niveau du groupe",
+      "HEARTBEAT_ON": "Dernier battement de cœur",
+      "BLOCKING": "Bloque ses dépendantes",
+      "NO_OUTPUT": "Cette tâche n'a pas de sortie.",
+      "NO_DATA": "Cette tâche n'a pas de données.",
+      "DEPENDENCIES": "Attend",
+      "DEPENDENTS": "Attendue par",
+      "NO_DEPENDENCIES": "Cette tâche n'attend aucune autre tâche.",
+      "NO_DEPENDENTS": "Aucune tâche n'attend celle-ci.",
+      "PENDING_DEPENDENCIES": "Dépendances en attente : {{value}}",
+      "SOURCE_QUEUE": "File d'origine",
+      "SOURCE_JOB": "Tâche d'origine",
+      "SOURCE_CREATED_ON": "Origine créée",
+      "SOURCE_RETRY_COUNT": "Essais à l'origine",
+      "FROM_QUEUE": "Venue de {{queue}}",
+      "NOT_DEAD_LETTER": "Cette tâche n'a pas été déplacée ici depuis une autre file.",
+      "TABS": {
+        "DATA": "Données",
+        "OUTPUT": "Sortie",
+        "OPTIONS": "Options",
+        "TIMELINE": "Chronologie",
+        "DEPENDENCIES": "Dépendances",
+        "DEAD_LETTER": "Lettre morte"
+      }
+    },
+    "ACTIONS": {
+      "QUEUE_ACTIONS": "Actions de la file",
+      "AFFECTED": "{{affected}} tâches modifiées sur {{requested}}.",
+      "CANCEL_ACTIVE_WARNING": "La tâche est en cours d'exécution. L'annuler la marque comme annulée, mais n'arrête pas le gestionnaire qui la traite déjà.",
+      "RETRY": {
+        "LABEL": "Réessayer",
+        "CONFIRM": "Réessayer cette tâche échouée ?",
+        "PENDING": "Nouvel essai de la tâche…",
+        "DONE": "Tâche remise en file pour un nouvel essai"
+      },
+      "CANCEL": {
+        "LABEL": "Annuler",
+        "CONFIRM": "Annuler cette tâche ?",
+        "PENDING": "Annulation de la tâche…",
+        "DONE": "Tâche annulée"
+      },
+      "RESUME": {
+        "LABEL": "Reprendre",
+        "CONFIRM": "Reprendre cette tâche annulée ?",
+        "PENDING": "Reprise de la tâche…",
+        "DONE": "Tâche reprise"
+      },
+      "DELETE": {
+        "LABEL": "Supprimer",
+        "CONFIRM": "Supprimer cette tâche ? Cette action est irréversible.",
+        "PENDING": "Suppression de la tâche…",
+        "DONE": "Tâche supprimée"
+      },
+      "DUPLICATE": {
+        "LABEL": "Dupliquer",
+        "PENDING": "Envoi d'une copie…",
+        "DONE": "Copie envoyée"
+      },
+      "SEND": {
+        "LABEL": "Envoyer une tâche",
+        "PENDING": "Envoi de la tâche…",
+        "DONE": "Tâche envoyée",
+        "DROPPED": "pg-boss a écarté la tâche, sans doute parce qu'un singleton avec la même clé existe déjà."
+      },
+      "RETRY_FAILED": {
+        "LABEL": "Réessayer toutes les échouées",
+        "CONFIRM": "Réessayer toutes les tâches échouées de cette file ?",
+        "PENDING": "Nouvel essai des tâches échouées…",
+        "DONE": "Tâches échouées remises en file pour un nouvel essai"
+      },
+      "DELETE_QUEUED": {
+        "LABEL": "Supprimer les tâches en attente",
+        "CONFIRM": "Supprimer toutes les tâches de cette file qui n'ont pas démarré ? Cette action est irréversible.",
+        "PENDING": "Suppression des tâches en attente…",
+        "DONE": "Tâches en attente supprimées"
+      },
+      "DELETE_STORED": {
+        "LABEL": "Supprimer les tâches finies",
+        "CONFIRM": "Supprimer toutes les tâches terminées, annulées et échouées de cette file ? Cette action est irréversible.",
+        "PENDING": "Suppression des tâches finies…",
+        "DONE": "Tâches finies supprimées"
+      }
+    },
+    "SEND": {
+      "TITLE": "Envoyer une tâche",
+      "DUPLICATE_TITLE": "Dupliquer une tâche",
+      "QUEUE": "File",
+      "DATA": "Données",
+      "PRIORITY": "Priorité",
+      "START_AFTER": "Démarrer après",
+      "START_AFTER_HINT": "Un nombre de secondes à partir de maintenant, ou une date ISO. Vide, elle démarre tout de suite.",
+      "SINGLETON_KEY": "Clé singleton",
+      "RETRY_LIMIT": "Nombre maximal de nouveaux essais",
+      "RETRY_DELAY": "Délai entre les essais (secondes)",
+      "RETRY_BACKOFF": "Délai exponentiel",
+      "EXPIRE_IN": "Expirer après (secondes)",
+      "QUEUE_DEFAULT": "Valeur de la file",
+      "SUBMIT": "Envoyer"
+    },
+    "SCHEDULES": {
+      "TITLE": "Planifications",
+      "EMPTY": "Aucune planification pour l'instant.",
+      "KIND_CRON": "Cron",
+      "KIND_RRULE": "RRULE",
+      "KEY": "Clé",
+      "DEFAULT_KEY": "Clé par défaut",
+      "EXPRESSION": "Expression",
+      "EXPRESSION_HINT": "Une expression cron comme 0 * * * *, ou une RRULE avec pg-boss 12.31 ou ultérieur.",
+      "TIMEZONE": "Fuseau horaire",
+      "MISSED": "Exécutions manquées",
+      "MISSED_DEFAULT": "Par défaut de pg-boss",
+      "MISSED_SKIP": "Les ignorer",
+      "MISSED_ONCE": "Exécuter une fois",
+      "NEXT_RUNS": "Prochaines exécutions",
+      "NO_NEXT_RUNS": "Le pg-boss utilisé ne peut pas prévoir cette planification.",
+      "QUEUE": "File",
+      "DATA": "Données",
+      "OPTIONS": "Options de la tâche",
+      "ALL_QUEUES": "Toutes les files",
+      "FILTER_BY_QUEUE": "Filtrer par file",
+      "CREATE": "Nouvelle planification",
+      "EDIT": "Modifier la planification",
+      "SAVE": "Enregistrer",
+      "SAVE_PENDING": "Enregistrement de la planification…",
+      "SAVE_DONE": "Planification enregistrée",
+      "REMOVE": "Supprimer la planification",
+      "REMOVE_CONFIRM": "Supprimer cette planification ? Les tâches qu'elle a déjà envoyées restent dans la file.",
+      "REMOVE_PENDING": "Suppression de la planification…",
+      "REMOVE_DONE": "Planification supprimée",
+      "RUN_NOW": "Exécuter maintenant",
+      "RUN_NOW_CONFIRM": "Envoyer maintenant une tâche à partir du modèle de cette planification ?",
+      "RUN_NOW_PENDING": "Envoi de la tâche…",
+      "RUN_NOW_DONE": "Tâche envoyée",
+      "PREVIEW": "Aperçu",
+      "PREVIEW_UNAVAILABLE": "L'aperçu nécessite pg-boss 12.31 ou ultérieur.",
+      "COLUMNS": {
+        "QUEUE": "File",
+        "KEY": "Clé",
+        "SCHEDULE": "Planification",
+        "NEXT_RUN": "Prochaine exécution",
+        "LAST_JOB": "Dernière tâche",
+        "UPDATED": "Mise à jour"
+      }
+    },
+    "PAGINATION": {
+      "LABEL": "Pages de tâches",
+      "FIRST": "Première page",
+      "PREVIOUS": "Précédente",
+      "NEXT": "Suivante"
+    },
+    "COUNT": {
+      "CAPPED": "{{cap}}+",
+      "UNKNOWN": "?",
+      "CAPPED_HINT": "Plus de {{cap}} tâches. Le comptage s'arrête là pour que la page reste rapide.",
+      "TIMEOUT": "Le comptage a pris trop de temps. La liste ci-dessous fonctionne toujours."
+    },
+    "FILTER": {
+      "ID": "Id de la tâche",
+      "ID_PLACEHOLDER": "Trouver une tâche par id",
+      "SINGLETON_KEY": "Clé singleton",
+      "SINGLETON_KEY_PLACEHOLDER": "Filtrer par clé singleton",
+      "APPLY": "Filtrer",
+      "CLEAR": "Effacer les filtres",
+      "INVALID_ID": "L'id d'une tâche pg-boss est un UUID."
+    },
+    "EMPTY": {
+      "QUEUES": "Aucune file pg-boss à afficher",
+      "QUEUES_HINT": "Les files apparaissent ici dès que l'application les crée.",
+      "QUEUES_FILTERED": "Aucune file ne correspond à ces filtres",
+      "JOBS": "Aucune tâche dans cet état",
+      "JOBS_FILTERED": "Aucune tâche ne correspond à ces filtres"
+    },
+    "BANNER": {
+      "WRITES_DISABLED": "Les modifications sont désactivées",
+      "READ_ONLY": "Lecture seule",
+      "UNREADABLE": "Impossible de lire cette base pg-boss",
+      "SCHEMA_UNSUPPORTED": "Le schéma pg-boss ici est hors de la plage prise en charge, de {{min}} à {{max}}.",
+      "NOT_INSTALLED": "Installez d'abord pg-boss dans l'application. Le tableau de bord ne crée ni ne migre jamais son schéma.",
+      "SLOW_QUERY": "Lister cet état est lent sur une grande file. Filtrez par id de tâche ou par clé singleton, ou ajoutez l'index recommandé par la documentation."
+    },
+    "DATASTORE": {
+      "TITLE": "Stockage pg-boss",
+      "SCHEMA": "Schéma",
+      "SCHEMA_VERSION": "Version du schéma",
+      "SUPPORTED_RANGE": "Versions prises en charge",
+      "RANGE": "{{min}} à {{max}}",
+      "PERSIST_QUEUE_STATS": "Historique des statistiques des files",
+      "WRITABLE": "Écriture",
+      "INSTALLED": "Installé",
+      "ENABLED": "Activé",
+      "DISABLED": "Désactivé"
+    }
   }
 }

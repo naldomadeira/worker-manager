@@ -1,4 +1,5 @@
 import { createWorkerManagerBoard } from '@worker-manager/api';
+import { buildPgBossRoutes, mountBoard } from '@worker-manager/api/engine';
 import type {
   WorkerManagerRequest,
   ControllerHandlerReturnType,
@@ -6,7 +7,9 @@ import type {
 import { seedFixtures } from './fixtures';
 import { MockAdapter } from './MockAdapter';
 import { MockMetricsHistoryProvider } from './MockMetricsHistoryProvider';
+import { MockPgBossEngine } from './MockPgBossEngine';
 import { MSWServerAdapter } from './MSWServerAdapter';
+import { seedPgBossFixtures } from './pgBossFixtures';
 import { findJob, state } from './state';
 import type { DemoJob } from './state';
 
@@ -124,6 +127,13 @@ const mockAdapters = state.queues.map((q) => {
   return adapter;
 });
 
+// The header menu that switches between the two boards. The page each board is served from
+// carries the same list in its uiConfig (rsbuild.config.ts), which is the copy the UI reads.
+const miscLinks = [
+  { text: 'BullMQ board', url: '/worker-manager/demo/' },
+  { text: 'pg-boss board (experimental)', url: '/worker-manager/demo/pg-boss/' },
+];
+
 const serverAdapter = new MSWServerAdapter();
 serverAdapter.setBasePath('/worker-manager/demo');
 
@@ -142,7 +152,7 @@ createWorkerManagerBoard({
       showMetrics: true,
       pollingInterval: { showSetting: true },
       sortQueues: true,
-      miscLinks: [],
+      miscLinks,
       hideDocsLink: false,
     },
   },
@@ -155,4 +165,34 @@ serverAdapter.mapApiRoutes((route) =>
     : route
 );
 
-export const handlers = serverAdapter.getHandlers();
+// ---- the pg-boss board, mounted the way createPgBossBoard does it ----
+//
+// A board runs one engine, so pg-boss is a second board on its own base path, with the routes
+// bound to an in-memory engine instead of @worker-manager/pg-boss (which needs PostgreSQL).
+
+const pgBossServerAdapter = new MSWServerAdapter();
+pgBossServerAdapter.setBasePath('/worker-manager/demo/pg-boss');
+
+const pgBossEngine = new MockPgBossEngine(seedPgBossFixtures());
+
+mountBoard({
+  engine: 'pg-boss',
+  routes: buildPgBossRoutes(pgBossEngine, { readOnly: false }),
+  serverAdapter: pgBossServerAdapter,
+  options: {
+    uiBasePath: '/worker-manager/demo',
+    uiConfig: {
+      boardTitle: 'Worker Manager Demo',
+      boardLogo: { path: '/worker-manager/demo/logo.svg', width: 32, height: 32 },
+      environment: { label: 'demo', color: '#f59f00', textColor: '#000' },
+      pollingInterval: { showSetting: true },
+      sortQueues: true,
+      miscLinks,
+      hideDocsLink: false,
+    },
+  },
+  isReadOnly: () => false,
+  readOnlyAtMount: false,
+});
+
+export const handlers = [...serverAdapter.getHandlers(), ...pgBossServerAdapter.getHandlers()];

@@ -109,22 +109,46 @@ export class LatencySampler {
       if (!source) {
         return;
       }
-      if (!(await this.store.acquireLease(name, this.id, this.tickMs * 2))) {
-        return;
-      }
-      try {
-        await this.sampleDurations(source, name);
-        await this.sampleQueueAge(source, name);
-      } finally {
-        await this.store.releaseLease(name, this.id);
-      }
+      await this.sampleLeased(name, source);
     } catch (error) {
-      // Intentionally swallowed, see the method comment.
-      try {
-        this.onError?.(error, name);
-      } catch {
-        // A reporter that throws must not resurrect the failure this catch contains.
-      }
+      this.report(error, name);
+    }
+  }
+
+  /**
+   * The same tick for a queue that is not an adapter, whose `JobSource` the caller already
+   * holds (a `CounterSource`'s). `rollup` names the cross-queue series, `__global__` if omitted.
+   * Swallows its errors exactly like `sample`.
+   */
+  async sampleSource(name: string, source: JobSource | null, rollup?: string): Promise<void> {
+    if (!source) {
+      return;
+    }
+    try {
+      await this.sampleLeased(name, source, rollup);
+    } catch (error) {
+      this.report(error, name);
+    }
+  }
+
+  private async sampleLeased(name: string, source: JobSource, rollup?: string): Promise<void> {
+    if (!(await this.store.acquireLease(name, this.id, this.tickMs * 2))) {
+      return;
+    }
+    try {
+      await this.sampleDurations(source, name, rollup);
+      await this.sampleQueueAge(source, name, rollup);
+    } finally {
+      await this.store.releaseLease(name, this.id);
+    }
+  }
+
+  /** Intentionally swallowed, see `sample`. */
+  private report(error: unknown, name: string): void {
+    try {
+      this.onError?.(error, name);
+    } catch {
+      // A reporter that throws must not resurrect the failure this catch contains.
     }
   }
 
@@ -159,7 +183,7 @@ export class LatencySampler {
     return Math.max(1, Math.floor(this.store.retention.days * SECONDS_PER_DAY));
   }
 
-  private async sampleDurations(source: JobSource, name: string): Promise<void> {
+  private async sampleDurations(source: JobSource, name: string, rollup?: string): Promise<void> {
     const stored = await this.store.readWatermark(name);
     // Cold start covers one tick ending at the safety bound rather than backfilling, since a
     // first run against a large completed set would be a surprise fetch storm. Ending at the
@@ -206,8 +230,8 @@ export class LatencySampler {
       }
     }
 
-    await this.flush(name, 'runtime', runByHour);
-    await this.flush(name, 'waittime', waitByHour);
+    await this.flush(name, 'runtime', runByHour, rollup);
+    await this.flush(name, 'waittime', waitByHour, rollup);
     // The bound, not the highest score observed. See SAFETY_MARGIN_MS.
     await this.store.writeWatermark(name, upperBound, this.watermarkTtlSeconds());
   }
@@ -215,7 +239,8 @@ export class LatencySampler {
   private async flush(
     name: string,
     metric: LatencyMetric,
-    byHour: Map<number, number[]>
+    byHour: Map<number, number[]>,
+    rollup?: string
   ): Promise<void> {
     for (const [hour, vector] of byHour) {
       // Scaled counts are fractional. Left unrounded, join(',') would write seventeen
@@ -225,19 +250,20 @@ export class LatencySampler {
         name,
         metric,
         hour,
-        vector.map((v) => Math.round(v))
+        vector.map((v) => Math.round(v)),
+        rollup
       );
     }
   }
 
   /** A tick that could not read the backlog cleanly records nothing, see `JobSource`. */
-  private async sampleQueueAge(source: JobSource, name: string): Promise<void> {
+  private async sampleQueueAge(source: JobSource, name: string, rollup?: string): Promise<void> {
     const hour = Math.floor(Date.now() / MS_PER_HOUR);
     const age = await source.oldestWaitingAge(Date.now());
     if (age === null) {
       return;
     }
-    await this.store.recordQueueAge(name, hour, age);
+    await this.store.recordQueueAge(name, hour, age, rollup);
   }
 }
 

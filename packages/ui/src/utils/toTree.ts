@@ -1,13 +1,24 @@
 import type { AppQueue } from '@worker-manager/api/typings/app';
 
-export interface AppQueueTreeNode {
+/** What the tree needs from a queue: a name, and what to split it on. */
+export interface TreeQueue {
   name: string;
-  queue?: AppQueue;
-  children: AppQueueTreeNode[];
+  delimiter?: string;
 }
 
-export function toTree(queues: AppQueue[], sort = false): AppQueueTreeNode {
-  const root: AppQueueTreeNode = {
+export interface QueueTreeNode<Q extends TreeQueue> {
+  name: string;
+  queue?: Q;
+  children: QueueTreeNode<Q>[];
+}
+
+export type AppQueueTreeNode = QueueTreeNode<AppQueue>;
+
+export function toTree<Q extends TreeQueue = AppQueue>(
+  queues: Q[],
+  sort = false
+): QueueTreeNode<Q> {
+  const root: QueueTreeNode<Q> = {
     name: 'root',
     children: [],
   };
@@ -53,7 +64,7 @@ export function toTree(queues: AppQueue[], sort = false): AppQueueTreeNode {
   return root;
 }
 
-export function collectGroupPaths(node: AppQueueTreeNode, parentPath = ''): string[] {
+export function collectGroupPaths(node: QueueTreeNode<TreeQueue>, parentPath = ''): string[] {
   const paths: string[] = [];
   for (const child of node.children) {
     if (child.children.length > 0) {
@@ -65,7 +76,7 @@ export function collectGroupPaths(node: AppQueueTreeNode, parentPath = ''): stri
   return paths;
 }
 
-function sortTree(node: AppQueueTreeNode): void {
+function sortTree(node: QueueTreeNode<TreeQueue>): void {
   node.children.sort((a, b) => {
     const aIsGroup = a.children.length > 0;
     const bIsGroup = b.children.length > 0;

@@ -58,7 +58,12 @@ Anything you leave out keeps the shipped value, so a theme can be two lines or f
 | Type | `font-sans`, `font-mono` |
 | Sidebar | `sidebar`, `sidebar-foreground`, `sidebar-primary`, `sidebar-primary-foreground`, `sidebar-accent`, `sidebar-accent-foreground`, `sidebar-border`, `sidebar-ring`, and the matching `sidebar-state-*` set |
 | Charts | `chart-1` through `chart-5` |
-| Job statuses | `status-failed`, `status-completed`, `status-waiting`, `status-waiting-children`, `status-prioritized`, `status-active`, `status-delayed`, `status-paused` |
+| Job statuses | `status-failed`, `status-completed`, `status-waiting`, `status-waiting-children`, `status-prioritized`, `status-active`, `status-delayed`, `status-paused`, and on a [pg-boss board](/queue-adapters/pg-boss) `status-retry` and `status-cancelled` |
+
+A pg-boss board reuses the BullMQ colours where the states mean the same thing (`created` is drawn
+with `status-waiting`, and `active`, `completed` and `failed` with their namesakes) and adds two of
+its own, `status-retry` and `status-cancelled`, for the states BullMQ does not have. They are
+ordinary tokens, overridable per theme like the rest.
 
 A few of those are worth a sentence. The interaction states are mixed from `primary` at 8%, 16% and
 24%, so set them only if you want a hovered or selected control somewhere other than three strengths

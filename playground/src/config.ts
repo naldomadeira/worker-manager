@@ -11,6 +11,8 @@ const env = (name: string, fallback = '') => process.env[name] ?? fallback;
 
 export type AuthMode = 'none' | 'basic' | 'keycloak';
 
+const postgresUrl = env('POSTGRES_URL', 'postgres://bullmq:bullmq@localhost:5440/bullmq');
+
 export const config = {
   port: Number(env('PORT', '3100')),
   auth: env('WM_AUTH', 'basic') as AuthMode,
@@ -30,6 +32,10 @@ export const config = {
     cookieSecret: env('WM_COOKIE_SECRET', 'change-me-to-a-long-random-string-please'),
   },
   redisUrl: env('REDIS_URL', 'redis://localhost:6390'),
-  postgresUrl: env('POSTGRES_URL', 'postgres://bullmq:bullmq@localhost:5440/bullmq'),
+  postgresUrl,
   traffic: env('WM_TRAFFIC', 'true') !== 'false',
+  /** Both boards read-only: the pg-boss board then does not even register its mutation routes. */
+  readOnly: env('WM_READONLY', 'false') === 'true',
+  /** The second board, over a pg-boss schema in the same PostgreSQL. Needs POSTGRES_URL. */
+  pgBoss: !!postgresUrl && env('WM_PGBOSS', 'true') !== 'false',
 };

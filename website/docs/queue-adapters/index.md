@@ -1,22 +1,57 @@
-# Queue Adapters
+# Queue engines
 
-Queue adapters wrap your Bull or BullMQ queue instances so the board can read and manipulate them. The core `@worker-manager/api` ships with three built-in adapters; third-party queue systems can add their own.
+A board runs one **engine**. The BullMQ engine is the default and has been there all along: it drives Bull, BullMQ and BullMQ Pro queues through queue adapters, on Redis or on PostgreSQL. The pg-boss engine is new and experimental: it mounts a board over a pg-boss schema, with pages of its own. The shell around them (sidebar, command palette, themes, auth, server adapters, NestJS module, CLI) is the same.
 
-## Built-in adapters
+| Queue system | Engine | Entry point | Docs |
+|-------------|--------|-------------|------|
+| Bull | BullMQ | `BullAdapter` | [Bull →](/queue-adapters/bull) |
+| BullMQ (Redis, or PostgreSQL on v6) | BullMQ | `BullMQAdapter` | [BullMQ →](/queue-adapters/bullmq) |
+| BullMQ Pro | BullMQ | `BullMQProAdapter` | [BullMQ Pro →](/queue-adapters/bullmq-pro) |
+| pg-boss (experimental) | pg-boss | `createPgBossBoard` | [pg-boss →](/queue-adapters/pg-boss) |
 
-| Queue system | Adapter | Docs |
-|-------------|---------|------|
-| Bull | `BullAdapter` | [Bull →](/queue-adapters/bull) |
-| BullMQ | `BullMQAdapter` | [BullMQ →](/queue-adapters/bullmq) |
-| BullMQ Pro | `BullMQProAdapter` | [BullMQ Pro →](/queue-adapters/bullmq-pro) |
+The rest of this page is about the BullMQ engine's queue adapters, which `@worker-manager/api` ships with; third-party queue systems can add their own. The pg-boss engine takes no queue adapters: it lists the queues of its schema itself. See [its page](/queue-adapters/pg-boss).
 
 `BullMQProAdapter` extends `BullMQAdapter` to handle [Pro groups](https://docs.bullmq.io/bullmq-pro/introduction). All `BullMQAdapter` options work the same way on it.
 
 `BullMQAdapter` covers BullMQ v5 and v6, including [v6 queues stored in PostgreSQL](/recipes/postgres-backend). See [supported versions](/queue-adapters/bullmq#supported-versions) for the two differences you can see in the UI.
 
+## Capabilities
+
+What the board offers depends on what the library behind a queue can do. Each BullMQ-engine queue reports it in `capabilities` on `GET /api/queues` (from the adapter's `getCapabilities()`), and the UI shows a control only when its capability is on, rather than switching on the library name. A pg-boss board reports its own set in `capabilities` on `GET /api/pg-boss/info`.
+
+| | Bull | BullMQ on Redis | BullMQ on PostgreSQL | BullMQ Pro | pg-boss |
+|---|---|---|---|---|---|
+| Pause and resume a queue | Yes | Yes | Yes | Yes | No |
+| Paused tab | Yes | v5 only | No | Like the BullMQ it runs on | No |
+| Job logs | Yes | Yes | Yes | Yes | No |
+| Job progress | Yes | Yes | Yes | Yes | No |
+| Flows | No | Graph | Graph | Graph | Dependency lists |
+| Promote a delayed job | Yes | Yes | Yes | Yes | No |
+| Edit a job's data | Yes | Yes | Yes | Yes | No |
+| Change a job's priority | No | Yes | Yes | Yes | No |
+| Remove a parent's unprocessed children | No | Yes | Yes | Yes | No |
+| Retry a failed job | Yes | Yes | Yes | Yes | Yes |
+| Retry a completed job | No | Yes | Yes | Yes | No |
+| Cancel and resume a job | No | No | No | No | Yes |
+| Global concurrency | No | Yes | Yes | Yes | No |
+| Configured rate limit | No | When the queue has `setGlobalRateLimit` | When the queue has `setGlobalRateLimit` | When the queue has `setGlobalRateLimit` | No |
+| Workers panel | Yes | Yes | Yes, from `pg_stat_activity` | Yes | No |
+| Throughput chart (the library's own metrics) | Yes | Yes | Yes | Yes | No |
+| [Historical metrics](/recipes/historical-metrics) | No | Yes | Yes | Yes | Yes |
+| Schedules | Repeatable jobs, remove only | Job schedulers (`every`, cron): edit, run now, remove | Job schedulers: edit, run now, remove | Job schedulers: edit, run now, remove | Cron and RRULE: create, edit, run now, remove |
+| Datastore panel | Redis `INFO` | Redis `INFO` | PostgreSQL | Redis `INFO` | PostgreSQL and the pg-boss schema |
+| Groups | No | No | No | Yes | No |
+
+A few notes on the table:
+
+- **Paused tab.** BullMQ v6 dropped the paused job state, on Redis and on PostgreSQL alike: a paused queue's jobs are stored as `waiting`. The queue still shows its paused banner and the buttons still work.
+- **Rescheduling a delayed job** is offered on every BullMQ-engine queue. Bull cannot do it and answers the request with `ERRORS.JOB_EDIT_NOT_SUPPORTED`.
+- **Workers panel.** Turned off everywhere by `showWorkers: false`.
+- **pg-boss** has states BullMQ does not (`retry`, `cancelled`) and none of pause, logs, progress, workers or rate limits. See [what does not exist there](/queue-adapters/pg-boss#what-does-not-exist-here).
+
 ## Shared options
 
-All adapters accept the same optional options:
+All BullMQ-engine adapters accept the same optional options:
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
@@ -75,7 +110,7 @@ adapter.setVisibilityGuard((request) => {
 
 ## Mixing adapters
 
-You can mix Bull and BullMQ queues in the same board:
+You can mix Bull and BullMQ queues in the same board. pg-boss queues cannot join them: a pg-boss board is a board of its own, which can sit [next to this one](/recipes/multiple-dashboards#bullmq-and-pg-boss-side-by-side).
 
 ```ts
 createWorkerManagerBoard({

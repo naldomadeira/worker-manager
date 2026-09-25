@@ -68,6 +68,15 @@ Options:
                           (postgres://user:pass@host:5432/db)
       --postgres-schema <name>
                           Schema the BullMQ tables live in       [bullmq]
+      --pg-boss <url>     Serve a pg-boss board (experimental, Node >= 22.12)
+                          (postgres://user:pass@host:5432/db)
+      --pg-boss-schema <name>
+                          Schema pg-boss was installed in        [pgboss]
+      --pg-boss-queues <list>
+                          Comma separated pg-boss queues to show [all]
+      --pg-boss-path <path>
+                          Where the pg-boss board is served next to a
+                          BullMQ board                           [/pg-boss]
       --board-title <s>   Dashboard title
       --history           Record and serve long-retention metrics history
       --history-retention-days <n>
@@ -148,6 +157,16 @@ module.exports = {
   postgres: { host: 'db', user: 'bullmq', password: process.env.PGPASSWORD, database: 'jobs', schema: 'bullmq' },
 };
 ```
+
+## pg-boss (experimental)
+
+`--pg-boss` (or `WORKER_MANAGER_PGBOSS_URL`) serves a board over a pg-boss schema. It needs Node.js 22.12 or newer; every other mode still runs on Node.js 20.
+
+```sh
+npx @worker-manager/cli --pg-boss postgres://app:secret@localhost:5432/app
+```
+
+On its own it is the only board. With a BullMQ source too (`--redis`, `--postgres`, ...), BullMQ keeps the root and pg-boss is served under `--pg-boss-path` (`/pg-boss`), behind the same auth and `--read-only`, each board linking to the other. Nothing is migrated in the pg-boss schema: on a schema version other than the bundled pg-boss writes, writes turn off and the reason is logged at startup. See the [CLI guide](https://naldomadeira.github.io/worker-manager/guide/cli#pg-boss).
 
 ## Redis Sentinel
 

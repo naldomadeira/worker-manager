@@ -73,6 +73,20 @@ const tones: Record<string, StatusTone> = {
     border: 'border-status-paused/40',
     color: 'var(--status-paused)',
   },
+  retry: {
+    dot: 'bg-status-retry',
+    text: 'text-status-retry',
+    soft: 'bg-status-retry/12',
+    border: 'border-status-retry/40',
+    color: 'var(--status-retry)',
+  },
+  cancelled: {
+    dot: 'bg-status-cancelled',
+    text: 'text-status-cancelled',
+    soft: 'bg-status-cancelled/12',
+    border: 'border-status-cancelled/40',
+    color: 'var(--status-cancelled)',
+  },
 };
 
 const neutral: StatusTone = {

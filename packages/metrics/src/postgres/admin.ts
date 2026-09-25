@@ -140,10 +140,14 @@ export class PostgresHistoryAdmin implements HistoryAdministration {
   async purge(opts: PurgeOptions = {}): Promise<PurgeResult> {
     const before = opts.before === undefined ? null : dayToIndex(toDay(opts.before));
     const queue = opts.queue ?? null;
-    const adjustGlobal = queue !== null && queue !== GLOBAL_QUEUE;
+    const rollup = opts.rollup ?? GLOBAL_QUEUE;
+    const prefix = opts.queuePrefix ?? null;
+    const adjustGlobal = queue !== null && queue !== GLOBAL_QUEUE && queue !== rollup;
     const { counters, histograms } = this.ctx.tables;
-    const scope = `($1::text IS NULL OR queue = $1)
-      AND ($2::bigint IS NULL OR coalesce(${ROW_DAY}, bucket) < $2)`;
+    // `left()` rather than LIKE, so a `_` or `%` in the prefix is not a wildcard.
+    const scope = (prefixParam: string) => `($1::text IS NULL OR queue = $1)
+      AND ($2::bigint IS NULL OR coalesce(${ROW_DAY}, bucket) < $2)
+      AND (${prefixParam}::text IS NULL OR left(queue, length(${prefixParam})) = ${prefixParam})`;
 
     return inTransaction(this.ctx, async (client) => {
       const result: PurgeResult = { keysDeleted: 0, fieldsDeleted: 0 };
@@ -157,7 +161,7 @@ export class PostgresHistoryAdmin implements HistoryAdministration {
 
       const { rows: removed } = await client.query(
         `WITH doomed AS (
-           DELETE FROM ${counters} WHERE ${scope}
+           DELETE FROM ${counters} WHERE ${scope('$6')}
            RETURNING metric, tier, bucket, value
          ),
          drained AS (
@@ -173,7 +177,7 @@ export class PostgresHistoryAdmin implements HistoryAdministration {
          UNION ALL
          SELECT 'drained', tier, count(*), array_agg(metric), array_agg(bucket)
            FROM drained WHERE value <= 0 GROUP BY tier`,
-        [queue, before, adjustGlobal, GLOBAL_QUEUE, SUMMABLE_METRICS]
+        [queue, before, adjustGlobal, rollup, SUMMABLE_METRICS, prefix]
       );
 
       for (const row of removed) {
@@ -187,15 +191,15 @@ export class PostgresHistoryAdmin implements HistoryAdministration {
           `DELETE FROM ${counters} g
              USING unnest($2::text[], $3::bigint[]) AS d(metric, bucket)
             WHERE g.queue = $1 AND g.tier = $4 AND g.metric = d.metric AND g.bucket = d.bucket`,
-          [GLOBAL_QUEUE, row.metrics, row.buckets, row.tier]
+          [rollup, row.metrics, row.buckets, row.tier]
         );
         tally(row.tier, rowCount ?? 0);
       }
 
       const { rows: latency } = await client.query(
-        `WITH doomed AS (DELETE FROM ${histograms} WHERE ${scope} RETURNING tier)
+        `WITH doomed AS (DELETE FROM ${histograms} WHERE ${scope('$3')} RETURNING tier)
          SELECT tier, count(*) AS n FROM doomed GROUP BY tier`,
-        [queue, before]
+        [queue, before, prefix]
       );
       for (const row of latency) {
         tally(row.tier, Number(row.n));

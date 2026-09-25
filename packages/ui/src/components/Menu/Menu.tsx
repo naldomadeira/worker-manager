@@ -31,8 +31,8 @@ import {
 } from '@/components/ui/sidebar';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
+import { useBoardNavigation } from '../../hooks/useBoardNavigation';
 import { useMenuState } from '../../hooks/useMenuState';
-import { useQueues } from '../../hooks/useQueues';
 import { useQueueSearch } from '../../hooks/useQueueSearch';
 import { focusQueueSearch } from '../../hooks/useSearchHotkey';
 import { useSettingsStore } from '../../hooks/useSettings';
@@ -57,7 +57,7 @@ const iconButton =
 export const Menu = () => {
   const { t } = useTranslation();
   const { pathname } = useLocation();
-  const { queues } = useQueues();
+  const { queues, showSchedules: showJobSchedulers } = useBoardNavigation();
   const sortQueues = useSettingsStore((state) => state.sortQueues);
   const { searchTerm, setSearchTerm } = useQueueSearch();
   const { hasHistoryProvider = false } = useUIConfig();
@@ -82,8 +82,6 @@ export const Menu = () => {
       allCollapsed: hasGroups && groupPaths.every((p) => !state.isMenuOpen(p)),
     }))
   );
-  const showJobSchedulers = queues?.some((queue) => queue.jobSchedulerCount > 0);
-
   const nav: NavEntry[] = [
     { to: '/', label: t('MENU.OVERVIEW'), icon: LayoutDashboard, exact: true },
     ...(showJobSchedulers

@@ -6,6 +6,7 @@ import type {
 } from '@nestjs/common';
 import { createWorkerManagerBoard } from '@worker-manager/api';
 import type { BaseAdapter } from '@worker-manager/api/baseAdapter';
+import type { PgBossEngine } from '@worker-manager/api/engine';
 import type {
   BoardOptions,
   IServerAdapter,
@@ -13,12 +14,50 @@ import type {
   UIConfig,
 } from '@worker-manager/api/typings/app';
 import type { AuthOptions } from '@worker-manager/auth';
+import type { PgBossBoardOptions, PgBossLike } from '@worker-manager/pg-boss';
 
 export type { AuthOptions } from '@worker-manager/auth';
 
 export type WorkerManagerBoard = ReturnType<typeof createWorkerManagerBoard>;
 
+/** What a board created with `engine: 'pg-boss'` resolves to through `@InjectWorkerManager()`. */
+export type WorkerManagerPgBossBoard = { engine: PgBossEngine; close(): Promise<void> };
+
+export type WorkerManagerEngine = 'bullmq' | 'pg-boss';
+
+/**
+ * The `pgBoss` block of a board created with `engine: 'pg-boss'`. Everything but `useExisting`
+ * and `engine` is handed to `createPgBossBoard` from `@worker-manager/pg-boss` as it is.
+ */
+export type WorkerManagerPgBossOptions = Omit<PgBossBoardOptions, 'instance'> & {
+  /** The app's own pg-boss instance, already started. Preferred for writes. */
+  instance?: PgBossLike;
+  /** A provider token that resolves to the app's pg-boss instance, looked up at bootstrap. */
+  useExisting?: InjectionToken;
+  /**
+   * A ready-made engine, mounted as it is instead of building one from a connection. For tests
+   * (`createPgBossStubEngine()` from `@worker-manager/api/engine`) or an engine configured
+   * elsewhere with `createPgBossEngine()`. `@worker-manager/pg-boss` is then never loaded.
+   */
+  engine?: PgBossEngine;
+};
+
 export type WorkerManagerModuleOptions = {
+  /**
+   * Registers a named board. Its providers get their own tokens
+   * (`worker_manager_instance:<name>` and so on) and it is injected with
+   * `@InjectWorkerManager(name)`, so several boards can be mounted in one application. Leave it
+   * out for the single, unnamed board.
+   */
+  name?: string;
+  /**
+   * `bullmq` (the default) serves Bull and BullMQ queues registered through `queues` or
+   * `forFeature`. `pg-boss` serves a pg-boss schema configured by `pgBoss`, and needs
+   * `@worker-manager/pg-boss` installed. Experimental.
+   */
+  engine?: WorkerManagerEngine;
+  /** Where the pg-boss board reads and writes. Required with `engine: 'pg-boss'`. */
+  pgBoss?: WorkerManagerPgBossOptions;
   /**
    * Where the board is served, relative to the Nest global prefix. Defaults to `/queues`.
    */
@@ -41,7 +80,7 @@ export type WorkerManagerModuleOptions = {
   enabled?: boolean;
   /**
    * Read-only mode for every queue registered through `queues` or `forFeature`, unless a queue
-   * sets `options.readOnlyMode` itself.
+   * sets `options.readOnlyMode` itself. On a pg-boss board, the whole board is read-only.
    */
   readOnly?: boolean;
   /** Queues to register at the root, without a separate `forFeature` import. */
@@ -61,6 +100,11 @@ export interface WorkerManagerOptionsFactory {
 }
 
 export type WorkerManagerModuleAsyncOptions = {
+  /**
+   * The board's name, as in `forRoot({ name })`. It has to be known before the factory runs,
+   * because it decides the tokens, so it goes here rather than in the resolved options.
+   */
+  name?: string;
   imports?: ModuleMetadata['imports'];
   useFactory?: (...args: any[]) => WorkerManagerModuleOptions | Promise<WorkerManagerModuleOptions>;
   inject?: Array<InjectionToken | OptionalFactoryDependency>;

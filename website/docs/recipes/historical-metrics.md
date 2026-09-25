@@ -1,6 +1,6 @@
 # Historical metrics
 
-> Applies to: BullMQ only.
+> Applies to: BullMQ, and [pg-boss](#pg-boss-queues) boards (experimental).
 >
 > Beta: this feature ships in the opt-in `@worker-manager/metrics` package. It is safe to run, but the API and the Redis and PostgreSQL storage layouts may still change in a minor release while it settles, so pin an exact version if you depend on the storage format.
 
@@ -385,6 +385,89 @@ Each row in that table carries a bar scaled against the busiest queue and split 
 
 Leave `historyProvider` unset and none of this appears; the board behaves exactly as it did before.
 
+## pg-boss queues
+
+> Experimental, like the [pg-boss engine](/queue-adapters/pg-boss) itself.
+
+pg-boss keeps no per-minute metrics buffer, so there is nothing for the recorder to snapshot. What it does keep is every finished job, with the time it finished, for as long as the queue's `deleteAfterSeconds` allows. `@worker-manager/pg-boss` turns that into the same history a BullMQ board gets: `pgBossMetricsSources` hands the recorder one source per queue, and each source counts the queue's jobs by the minute of `completed_on`.
+
+```ts
+import { createPgBossBoard, pgBossMetricsSources } from '@worker-manager/pg-boss';
+import {
+  MetricsRecorder,
+  namespacedHistoryProvider,
+  PostgresMetricsHistoryProvider,
+  PostgresMetricsStore,
+} from '@worker-manager/metrics';
+
+const store = new PostgresMetricsStore({ connection: pool, migrate: true });
+const provider = new PostgresMetricsHistoryProvider({ store });
+
+const board = createPgBossBoard({
+  serverAdapter,
+  pgBoss: { connection: pool, schema: 'pgboss' },
+  options: {
+    uiConfig: { showMetrics: true },
+    historyProvider: namespacedHistoryProvider(provider, 'pgboss:pgboss:'),
+  },
+});
+
+const sources = pgBossMetricsSources(board.engine);
+const recorder = new MetricsRecorder({ store, sources });
+recorder.start();
+```
+
+`sources` is resolved on every tick, so a queue created after start is recorded from its first tick, and the engine's `queues` allowlist applies. It can also be built without a board, from the same options `createPgBossBoard` takes under `pgBoss`: `pgBossMetricsSources({ connection, schema })`. That opens a reader of its own, which `sources.close()` ends. Nothing is written to the pg-boss schema: the sources only read.
+
+What gets recorded:
+
+| Series | Where it comes from |
+|---|---|
+| Completed, failed | Jobs in state `completed` or `failed`, by the minute of `completed_on`. Cancelled jobs are left out: pg-boss stamps `completed_on` on a cancel too. |
+| Run time | `completed_on - started_on` of each finished job. |
+| Wait time | `started_on - start_after`, not `- created_on`, so a job deferred on purpose does not count as waiting. Retried jobs (`retry_count > 0`) are left out, as on BullMQ. |
+| Queue age | Age of the oldest job that is queued, not blocked by a dependency, and due (`start_after <= now()`). |
+
+A minute is only handed over once it has closed on the database clock, with a five-second margin (`safetyMarginMs`) for a completing transaction that commits after its minute ended. After a restart the recorder resumes from the newest minute it already stored rather than re-reading the whole minute window, because pg-boss may have deleted some of the jobs it counted, and a recount would write a smaller number back over the recorded one.
+
+### The index it needs
+
+The counts and the latency scan read a range of `completed_on` inside one queue. pg-boss has no index for that, so without one every tick reads every retained row of the queue. The sources therefore look for a usable index when a queue first appears (through `pg_indexes`, every five minutes after that), and without one they keep that queue's counters and latency scan off and say so once through `onWarning` (`console.warn` by default). The queue-age gauge stays on either way; pg-boss's own fetch index covers it.
+
+The index, which this package never creates for you:
+
+```sql
+CREATE INDEX wm_job_completed_on ON pgboss.job (name, completed_on);
+```
+
+`job` is partitioned (a `job_common` default partition plus one table per queue created with `partition: true`), and on a partitioned table that statement takes a lock that blocks writes on every partition while it builds. On a busy schema, build it per partition instead, without blocking:
+
+```sql
+CREATE INDEX wm_job_completed_on ON ONLY pgboss.job (name, completed_on);
+
+CREATE INDEX CONCURRENTLY wm_job_common_completed_on ON pgboss.job_common (name, completed_on);
+ALTER INDEX pgboss.wm_job_completed_on ATTACH PARTITION pgboss.wm_job_common_completed_on;
+
+-- then the same two statements for every table this lists:
+SELECT table_name FROM pgboss.queue WHERE partition;
+```
+
+The parent index turns valid once every partition has one attached, and a queue partitioned later gets its own automatically. Any valid btree index whose leading columns are `(name, completed_on)` counts, on `job` or on the queue's own table, with no predicate or one that keeps both `completed` and `failed`. pg-boss's schema drift check lists an index like this under `extraIndexes` without failing, and its reindex tooling handles it like its own.
+
+### Two boards, one store
+
+pg-boss queues record as `pgboss:<schema>:<queue>`, and their cross-queue totals go into `pgboss:<schema>:__global__` rather than `__global__`. `namespacedHistoryProvider(provider, 'pgboss:<schema>:')` is the pg-boss board's view of that: queue names without the prefix, and its own global series. `pgBossMetricsNamespace(schema)` and `sources.namespace` both give the prefix. That is what lets a BullMQ board and a pg-boss board in one app share one `PostgresMetricsStore` (or one Redis namespace) with neither global chart counting the other's jobs. One recorder can record both at once: `new MetricsRecorder({ store, queues, sources })`.
+
+The pg-boss board's storage panel lists only its own queues, and its "clear all" stays inside the namespace. The BullMQ board sharing the store is not namespaced, so its storage panel lists the pg-boss queues too, and its "clear all" clears them as well. Clearing a single queue is scoped correctly on both.
+
+### Retention
+
+The series can only reach back as far as pg-boss keeps finished jobs: `deleteAfterSeconds`, seven days by default, which is the same order as the recorder's minute window. A recorder that is down for longer than that loses the minutes in between for good, exactly like a BullMQ recorder that outlives its workers' `maxDataPoints`. Once recorded, the history follows the recorder's retention (90 days by default), however soon pg-boss deletes the jobs.
+
+### Queue depth
+
+With `persistQueueStats: true` on a queue, and some instance running `supervise`, pg-boss keeps its own queue-size snapshots in `queue_stats`. `readPgBossQueueDepth(engine, queue, { from, to, bucketSeconds, aggregate })` folds them into buckets, the same way pg-boss's `getQueueStatsHistoryBucketed` does. It is a library call for now: no route serves it yet, so the board shows no depth card.
+
 ## Redis Cluster
 
 Hand `connection` a `Cluster` and the recorder, the provider and the admin all work. One detail of the key layout is worth knowing before you turn it on.
@@ -411,6 +494,6 @@ The [CLI](/guide/cli#redis-cluster) and the Docker image reach a cluster with `-
 
 ## Scope
 
-This is BullMQ only. Bull v3 has no native metrics to snapshot. Completed and failed throughput, wait time, run time, and queue age are tracked; there's no history for other job states or for job data itself.
+This is BullMQ and pg-boss. Bull v3 has no native metrics to snapshot. Completed and failed throughput, wait time, run time, and queue age are tracked; there's no history for other job states or for job data itself.
 
 The shipped UI reads daily rollups. The provider also supports hourly granularity through the `/api/metrics/history` endpoint (`granularity: 'hour'`) for custom consumers, though the built-in charts and the Metrics history page don't use it.

@@ -1,4 +1,6 @@
 import { Inject } from '@nestjs/common';
-import { WORKER_MANAGER_INSTANCE } from './worker-manager.constants';
+import { getWorkerManagerToken } from './worker-manager.constants';
 
-export const InjectWorkerManager = (): ParameterDecorator => Inject(WORKER_MANAGER_INSTANCE);
+/** Injects the board registered by `forRoot`, or the one registered with `forRoot({ name })`. */
+export const InjectWorkerManager = (name?: string): ParameterDecorator =>
+  Inject(getWorkerManagerToken(name));

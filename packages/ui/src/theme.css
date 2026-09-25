@@ -73,6 +73,9 @@
   --status-active: #2563eb;
   --status-delayed: #7c3aed;
   --status-paused: #6b6560;
+  /* pg-boss only: a failed job waiting for its next attempt, and a cancelled one. */
+  --status-retry: #0891b2;
+  --status-cancelled: #64748b;
 
   /* Latency percentile ramps: hue carries the metric (run vs wait), and each ramp runs from a
      pale, low-contrast p50 up to a dark, high-contrast p99, so severity reads independently
@@ -139,6 +142,8 @@
   --status-active: #5b8ad7;
   --status-delayed: #9374dc;
   --status-paused: #a29e96;
+  --status-retry: #4fb3c8;
+  --status-cancelled: #8b95a7;
 
   /* Ramp direction flips against a dark background: "calm" means dim and close to the
      background, "severe" means bright and saturated, the opposite of light mode's push

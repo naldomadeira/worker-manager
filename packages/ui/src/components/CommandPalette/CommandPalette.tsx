@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/command';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { Kbd } from '@/components/ui/kbd';
-import { useQueues } from '../../hooks/useQueues';
+import { navQueueTotal, useBoardNavigation } from '../../hooks/useBoardNavigation';
 import { useSearchHotkey } from '../../hooks/useSearchHotkey';
 import { useSettingsStore } from '../../hooks/useSettings';
 import { useUIConfig } from '../../hooks/useUIConfig';
@@ -34,24 +34,17 @@ export const useCommandPalette = create<CommandPaletteState>((set) => ({
   toggle: () => set((state) => ({ open: !state.open })),
 }));
 
-const totalJobs = (counts: Record<string, number>) =>
-  Object.entries(counts).reduce(
-    (sum, [status, n]) => (status === 'latest' ? sum : sum + (n || 0)),
-    0
-  );
-
 export const CommandPalette = () => {
   const { t } = useTranslation();
   const history = useHistory();
   const { open, setOpen, toggle } = useCommandPalette();
-  const { queues } = useQueues();
+  const { queues, showSchedules: showJobSchedulers } = useBoardNavigation();
   const { hasHistoryProvider = false } = useUIConfig();
   const theme = useSettingsStore((state) => state.theme);
   const setSettings = useSettingsStore((state) => state.setSettings);
 
   useSearchHotkey(toggle);
 
-  const showJobSchedulers = queues?.some((queue) => queue.jobSchedulerCount > 0);
   const pages = [
     { path: '/', label: t('MENU.OVERVIEW'), icon: LayoutDashboard, show: true },
     {
@@ -129,7 +122,7 @@ export const CommandPalette = () => {
                         </span>
                       )}
                       <CommandShortcut className="tracking-normal tabular-nums">
-                        {totalJobs(queue.counts as unknown as Record<string, number>)}
+                        {navQueueTotal(queue, ['latest'])}
                       </CommandShortcut>
                     </CommandItem>
                   ))}

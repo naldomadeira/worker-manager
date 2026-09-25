@@ -13,6 +13,7 @@ RUN if ls /tmp/packages/*.tgz > /dev/null 2>&1; then \
     fi \
     && rm -rf /tmp/packages
 
+# 22.x is past the 22.12 that --pg-boss needs (pg-boss is ESM only); keep it there.
 FROM node:22-alpine
 
 ENV NODE_ENV=production \

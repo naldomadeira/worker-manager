@@ -36,6 +36,8 @@ const NO_MOTION_CSS = `
 `;
 
 const q = (name) => `queue/${encodeURIComponent(name)}`;
+/** The pg-boss board is its own page under pg-boss/, with the same page paths. */
+const pgBoss = (path = '') => `pg-boss/${path}`;
 
 // ---- helpers shared by the shots ----------------------------------------------------------
 
@@ -77,6 +79,22 @@ async function openFlow(page, queueName, jobName) {
   await flow.scrollIntoViewIfNeeded();
   await flow.getByRole('button', { name: 'Fit the whole flow' }).click();
   return flow;
+}
+
+async function openPgBossJob(page, queueName, state) {
+  await page.goto(pgBoss(`${q(queueName)}?state=${state}`));
+  const card = page.locator(`[data-job-state=${state}]`).first();
+  await card.waitFor({ timeout: TIMEOUT });
+  await card.getByRole('link').first().click();
+  await page.waitForURL(/\/pg-boss\/queue\/[^/]+\/[0-9a-f-]{36}/, { timeout: TIMEOUT });
+  // As on the BullMQ board, wait for the list to unmount so only the job page's card is left.
+  await page.waitForFunction(
+    () =>
+      document.querySelectorAll('[data-job-state]').length === 1 &&
+      !!document.querySelector('[role=tab]'),
+    null,
+    { timeout: TIMEOUT }
+  );
 }
 
 const flowCard = (page) =>
@@ -401,6 +419,53 @@ const shots = [
     path: `${q('billing:charges')}?status=completed`,
     uiTheme: VIOLET_THEME,
     theme: 'dark',
+  },
+  // ---- the pg-boss board (experimental) ----
+  {
+    name: 'pgboss-overview',
+    path: pgBoss(),
+    async run(page) {
+      await page.getByText('emails.transactional').first().waitFor({ timeout: TIMEOUT });
+    },
+  },
+  {
+    name: 'pgboss-overview-dark',
+    path: pgBoss(),
+    theme: 'dark',
+    async run(page) {
+      await page.getByText('emails.transactional').first().waitFor({ timeout: TIMEOUT });
+    },
+  },
+  {
+    name: 'pgboss-queue',
+    path: pgBoss(q('emails.transactional')),
+    async run(page) {
+      await page.locator('[data-job-state]').first().waitFor({ timeout: TIMEOUT });
+    },
+  },
+  {
+    name: 'pgboss-queue-dark',
+    path: pgBoss(q('emails.transactional')),
+    theme: 'dark',
+    async run(page) {
+      await page.locator('[data-job-state]').first().waitFor({ timeout: TIMEOUT });
+    },
+  },
+  {
+    name: 'pgboss-job',
+    path: pgBoss(),
+    async run(page) {
+      await openPgBossJob(page, 'emails.transactional', 'failed');
+      await page.getByRole('tab', { name: 'Output' }).click();
+      await page.getByText(/SMTP|Recipient|ENOTFOUND/).first().waitFor({ timeout: TIMEOUT });
+    },
+  },
+  {
+    name: 'pgboss-schedules',
+    path: pgBoss('job-schedulers'),
+    async run(page) {
+      await page.getByText('FREQ=WEEKLY', { exact: false }).first().waitFor({ timeout: TIMEOUT });
+    },
   },
 ];
 

@@ -57,6 +57,8 @@ export const TOKEN_NAMES = new Set([
   'status-active',
   'status-delayed',
   'status-paused',
+  'status-retry',
+  'status-cancelled',
 ]);
 
 /** Plain CSS values only: no blocks, no rule injection, no HTML. */

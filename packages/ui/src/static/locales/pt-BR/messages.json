@@ -654,5 +654,289 @@
     "PREVIOUS": "Página anterior",
     "NEXT": "Próxima página",
     "PAGE": "Página {{page}}"
+  },
+  "PGBOSS": {
+    "EXPERIMENTAL": "Experimental",
+    "EXPERIMENTAL_HINT": "A engine pg-boss é experimental: suas telas e sua API HTTP ainda podem mudar em uma versão minor.",
+    "STATE": {
+      "ALL": "Todos",
+      "CREATED": "Criado",
+      "RETRY": "Nova tentativa",
+      "ACTIVE": "Ativo",
+      "COMPLETED": "Completo",
+      "CANCELLED": "Cancelado",
+      "FAILED": "Erro"
+    },
+    "SUBSTATE": {
+      "DEFERRED": "Adiado",
+      "BLOCKED": "Bloqueado",
+      "READY": "Pronto"
+    },
+    "KPI": {
+      "READY": "Prontos",
+      "DEFERRED": "Adiados",
+      "ACTIVE": "Ativos",
+      "FAILED": "Com erro",
+      "TOTAL": "Total",
+      "BACKLOGGED": "Acumuladas: {{value}}",
+      "NONE_BACKLOGGED": "Nenhuma fila acumulada",
+      "QUEUED_HINT": "Na fila: {{value}}"
+    },
+    "STATS": {
+      "UPDATED_AT": "Contadores de {{time}}",
+      "STALE": "Os contadores foram gravados pela última vez {{time}}. Nenhuma instância do pg-boss rodando supervise os atualizou desde então.",
+      "NEVER": "Nenhuma instância do pg-boss monitorou estas filas ainda, então os contadores estão zerados.",
+      "CACHED_HINT": "Guardados em cache pelo monitor do pg-boss. As abas da página de uma fila contam ao vivo."
+    },
+    "QUEUE": {
+      "NAME": "Nome",
+      "POLICY": "Política",
+      "PARTITION": "Armazenamento",
+      "PARTITIONED": "Partição própria",
+      "SHARED": "Tabela compartilhada",
+      "DEAD_LETTER": "Fila de dead letter",
+      "RETRY_LIMIT": "Limite de tentativas",
+      "RETRY_DELAY": "Intervalo entre tentativas",
+      "RETRY_BACKOFF": "Backoff exponencial",
+      "RETRY_DELAY_MAX": "Intervalo máximo entre tentativas",
+      "EXPIRE_IN": "Expira após",
+      "RETENTION": "Fica na fila por",
+      "DELETE_AFTER": "Apagado após",
+      "WARNING_QUEUE_SIZE": "Alerta de acúmulo em",
+      "BACKLOGGED": "Acumulada",
+      "HEARTBEAT": "Heartbeat",
+      "NOTIFY": "Notificar ao enviar",
+      "SINGLETONS_ACTIVE": "Chaves singleton ativas",
+      "SCHEDULES": "Agendamentos",
+      "CREATED_ON": "Criada",
+      "UPDATED_ON": "Atualizada",
+      "READY_HISTORY": "Jobs prontos, últimas amostras",
+      "YES": "Sim",
+      "NO": "Não",
+      "NONE": "Nenhum",
+      "SECTIONS": {
+        "GENERAL": "Geral",
+        "RETRIES": "Tentativas",
+        "LIFECYCLE": "Ciclo de vida"
+      },
+      "NOT_FOUND": "Fila não encontrada"
+    },
+    "POLICY": {
+      "STANDARD": "Padrão",
+      "STANDARD_DESC": "Os jobs são buscados por prioridade e data de criação, sem limites.",
+      "SHORT": "Curta",
+      "SHORT_DESC": "No máximo um job na fila por chave singleton.",
+      "SINGLETON": "Singleton",
+      "SINGLETON_DESC": "No máximo um job ativo por chave singleton.",
+      "STATELY": "Por estado",
+      "STATELY_DESC": "No máximo um job por estado e chave singleton.",
+      "EXCLUSIVE": "Exclusiva",
+      "EXCLUSIVE_DESC": "No máximo um job na fila ou ativo por chave singleton.",
+      "KEY_STRICT_FIFO": "FIFO estrito por chave",
+      "KEY_STRICT_FIFO_DESC": "Jobs com a mesma chave singleton rodam um de cada vez, em ordem."
+    },
+    "JOB": {
+      "PRIORITY": "Prioridade {{priority}}",
+      "ATTEMPT": "Tentativa {{attempt}} de {{limit}}",
+      "CREATED_ON": "Criado",
+      "START_AFTER": "Começa após",
+      "STARTED_ON": "Iniciado",
+      "COMPLETED_ON": "Finalizado",
+      "KEEP_UNTIL": "Expira se não começar até",
+      "SINGLETON_KEY": "Chave singleton",
+      "SINGLETON_ON": "Janela singleton",
+      "GROUP_ID": "Grupo",
+      "GROUP_TIER": "Nível do grupo",
+      "HEARTBEAT_ON": "Último heartbeat",
+      "BLOCKING": "Bloqueia dependentes",
+      "NO_OUTPUT": "Este job não tem saída.",
+      "NO_DATA": "Este job não tem dados.",
+      "DEPENDENCIES": "Aguarda",
+      "DEPENDENTS": "Aguardado por",
+      "NO_DEPENDENCIES": "Este job não aguarda nenhum outro.",
+      "NO_DEPENDENTS": "Nenhum job aguarda este.",
+      "PENDING_DEPENDENCIES": "Dependências pendentes: {{value}}",
+      "SOURCE_QUEUE": "Fila de origem",
+      "SOURCE_JOB": "Job de origem",
+      "SOURCE_CREATED_ON": "Origem criada em",
+      "SOURCE_RETRY_COUNT": "Tentativas na origem",
+      "FROM_QUEUE": "Veio de {{queue}}",
+      "NOT_DEAD_LETTER": "Este job não foi movido de outra fila.",
+      "TABS": {
+        "DATA": "Dados",
+        "OUTPUT": "Saída",
+        "OPTIONS": "Opções",
+        "TIMELINE": "Linha do tempo",
+        "DEPENDENCIES": "Dependências",
+        "DEAD_LETTER": "Dead letter"
+      }
+    },
+    "ACTIONS": {
+      "QUEUE_ACTIONS": "Ações da fila",
+      "AFFECTED": "{{affected}} de {{requested}} jobs alterados.",
+      "CANCEL_ACTIVE_WARNING": "O job está rodando. Cancelar marca o job como cancelado, mas não interrompe o handler que já está trabalhando nele.",
+      "RETRY": {
+        "LABEL": "Tentar de novo",
+        "CONFIRM": "Tentar de novo este job com erro?",
+        "PENDING": "Tentando o job de novo…",
+        "DONE": "Job colocado para nova tentativa"
+      },
+      "CANCEL": {
+        "LABEL": "Cancelar",
+        "CONFIRM": "Cancelar este job?",
+        "PENDING": "Cancelando o job…",
+        "DONE": "Job cancelado"
+      },
+      "RESUME": {
+        "LABEL": "Retomar",
+        "CONFIRM": "Retomar este job cancelado?",
+        "PENDING": "Retomando o job…",
+        "DONE": "Job retomado"
+      },
+      "DELETE": {
+        "LABEL": "Apagar",
+        "CONFIRM": "Apagar este job? Isso não pode ser desfeito.",
+        "PENDING": "Apagando o job…",
+        "DONE": "Job apagado"
+      },
+      "DUPLICATE": {
+        "LABEL": "Duplicar",
+        "PENDING": "Enviando uma cópia…",
+        "DONE": "Cópia enviada"
+      },
+      "SEND": {
+        "LABEL": "Enviar job",
+        "PENDING": "Enviando o job…",
+        "DONE": "Job enviado",
+        "DROPPED": "O pg-boss descartou o job, provavelmente porque já existe um singleton com a mesma chave."
+      },
+      "RETRY_FAILED": {
+        "LABEL": "Tentar de novo todos com erro",
+        "CONFIRM": "Tentar de novo todos os jobs com erro desta fila?",
+        "PENDING": "Tentando de novo os jobs com erro…",
+        "DONE": "Jobs com erro colocados para nova tentativa"
+      },
+      "DELETE_QUEUED": {
+        "LABEL": "Apagar jobs na fila",
+        "CONFIRM": "Apagar todos os jobs desta fila que ainda não começaram? Isso não pode ser desfeito.",
+        "PENDING": "Apagando os jobs na fila…",
+        "DONE": "Jobs na fila apagados"
+      },
+      "DELETE_STORED": {
+        "LABEL": "Apagar jobs finalizados",
+        "CONFIRM": "Apagar todos os jobs completos, cancelados e com erro desta fila? Isso não pode ser desfeito.",
+        "PENDING": "Apagando os jobs finalizados…",
+        "DONE": "Jobs finalizados apagados"
+      }
+    },
+    "SEND": {
+      "TITLE": "Enviar um job",
+      "DUPLICATE_TITLE": "Duplicar um job",
+      "QUEUE": "Fila",
+      "DATA": "Dados",
+      "PRIORITY": "Prioridade",
+      "START_AFTER": "Começar após",
+      "START_AFTER_HINT": "Segundos a partir de agora, ou uma data ISO. Vazio começa na hora.",
+      "SINGLETON_KEY": "Chave singleton",
+      "RETRY_LIMIT": "Limite de tentativas",
+      "RETRY_DELAY": "Intervalo entre tentativas (segundos)",
+      "RETRY_BACKOFF": "Backoff exponencial",
+      "EXPIRE_IN": "Expirar após (segundos)",
+      "QUEUE_DEFAULT": "Padrão da fila",
+      "SUBMIT": "Enviar"
+    },
+    "SCHEDULES": {
+      "TITLE": "Agendamentos",
+      "EMPTY": "Nenhum agendamento ainda.",
+      "KIND_CRON": "Cron",
+      "KIND_RRULE": "RRULE",
+      "KEY": "Chave",
+      "DEFAULT_KEY": "Chave padrão",
+      "EXPRESSION": "Expressão",
+      "EXPRESSION_HINT": "Uma expressão cron como 0 * * * *, ou uma RRULE no pg-boss 12.31 ou mais novo.",
+      "TIMEZONE": "Fuso horário",
+      "MISSED": "Execuções perdidas",
+      "MISSED_DEFAULT": "Padrão do pg-boss",
+      "MISSED_SKIP": "Ignorar",
+      "MISSED_ONCE": "Executar uma vez",
+      "NEXT_RUNS": "Próximas execuções",
+      "NO_NEXT_RUNS": "O pg-boss em uso não consegue prever este agendamento.",
+      "QUEUE": "Fila",
+      "DATA": "Dados",
+      "OPTIONS": "Opções do job",
+      "ALL_QUEUES": "Todas as filas",
+      "FILTER_BY_QUEUE": "Filtrar por fila",
+      "CREATE": "Novo agendamento",
+      "EDIT": "Editar agendamento",
+      "SAVE": "Salvar",
+      "SAVE_PENDING": "Salvando o agendamento…",
+      "SAVE_DONE": "Agendamento salvo",
+      "REMOVE": "Remover agendamento",
+      "REMOVE_CONFIRM": "Remover este agendamento? Os jobs que ele já enviou continuam na fila.",
+      "REMOVE_PENDING": "Removendo o agendamento…",
+      "REMOVE_DONE": "Agendamento removido",
+      "RUN_NOW": "Executar agora",
+      "RUN_NOW_CONFIRM": "Enviar agora um job a partir do modelo deste agendamento?",
+      "RUN_NOW_PENDING": "Enviando o job…",
+      "RUN_NOW_DONE": "Job enviado",
+      "PREVIEW": "Prever",
+      "PREVIEW_UNAVAILABLE": "A previsão precisa do pg-boss 12.31 ou mais novo.",
+      "COLUMNS": {
+        "QUEUE": "Fila",
+        "KEY": "Chave",
+        "SCHEDULE": "Programação",
+        "NEXT_RUN": "Próxima execução",
+        "LAST_JOB": "Último job",
+        "UPDATED": "Atualizado"
+      }
+    },
+    "PAGINATION": {
+      "LABEL": "Páginas de jobs",
+      "FIRST": "Primeira página",
+      "PREVIOUS": "Anterior",
+      "NEXT": "Próxima"
+    },
+    "COUNT": {
+      "CAPPED": "{{cap}}+",
+      "UNKNOWN": "?",
+      "CAPPED_HINT": "Mais de {{cap}} jobs. A contagem para aí para manter a página rápida.",
+      "TIMEOUT": "A contagem demorou demais. A lista abaixo continua funcionando."
+    },
+    "FILTER": {
+      "ID": "Id do job",
+      "ID_PLACEHOLDER": "Buscar um job pelo id",
+      "SINGLETON_KEY": "Chave singleton",
+      "SINGLETON_KEY_PLACEHOLDER": "Filtrar por chave singleton",
+      "APPLY": "Filtrar",
+      "CLEAR": "Limpar filtros",
+      "INVALID_ID": "O id de um job do pg-boss é um UUID."
+    },
+    "EMPTY": {
+      "QUEUES": "Nenhuma fila do pg-boss para mostrar",
+      "QUEUES_HINT": "As filas aparecem aqui quando a aplicação as cria.",
+      "QUEUES_FILTERED": "Nenhuma fila corresponde a estes filtros",
+      "JOBS": "Nenhum job neste estado",
+      "JOBS_FILTERED": "Nenhum job corresponde a estes filtros"
+    },
+    "BANNER": {
+      "WRITES_DISABLED": "As alterações estão desligadas",
+      "READ_ONLY": "Somente leitura",
+      "UNREADABLE": "Não é possível ler este banco do pg-boss",
+      "SCHEMA_UNSUPPORTED": "O schema do pg-boss aqui está fora da faixa suportada, de {{min}} a {{max}}.",
+      "NOT_INSTALLED": "Instale o pg-boss na aplicação primeiro. O board nunca cria nem migra o schema.",
+      "SLOW_QUERY": "Listar este estado é lento em uma fila grande. Filtre pelo id do job ou pela chave singleton, ou crie o índice que a documentação recomenda."
+    },
+    "DATASTORE": {
+      "TITLE": "Datastore do pg-boss",
+      "SCHEMA": "Schema",
+      "SCHEMA_VERSION": "Versão do schema",
+      "SUPPORTED_RANGE": "Versões suportadas",
+      "RANGE": "{{min}} a {{max}}",
+      "PERSIST_QUEUE_STATS": "Histórico de estatísticas das filas",
+      "WRITABLE": "Escrita",
+      "INSTALLED": "Instalado",
+      "ENABLED": "Ligado",
+      "DISABLED": "Desligado"
+    }
   }
 }

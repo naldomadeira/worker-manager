@@ -141,7 +141,9 @@ tokens are the core surface and interaction set (`background`, `foreground`, `ca
 `sidebar-accent`, `sidebar-accent-foreground`, `sidebar-border`, `sidebar-ring`),
 the chart ramp (`chart-1` through `chart-5`), and the job status colours
 (`status-failed`, `status-completed`, `status-waiting`, `status-waiting-children`,
-`status-prioritized`, `status-active`, `status-delayed`, `status-paused`).
+`status-prioritized`, `status-active`, `status-delayed`, `status-paused`, and the two only a
+[pg-boss board](/queue-adapters/pg-boss) draws: `status-retry` for a failed job waiting for its next
+attempt, and `status-cancelled`).
 
 The interaction states are tokens too: `state-hover`, `state-selected`, `state-selected-hover`
 and `state-selected-foreground`, plus their `sidebar-state-*` counterparts. They are mixed from

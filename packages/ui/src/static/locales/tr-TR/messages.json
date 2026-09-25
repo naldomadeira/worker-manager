@@ -651,5 +651,289 @@
     "PREVIOUS": "Önceki sayfa",
     "NEXT": "Sonraki sayfa",
     "PAGE": "Sayfa {{page}}"
+  },
+  "PGBOSS": {
+    "EXPERIMENTAL": "Deneysel",
+    "EXPERIMENTAL_HINT": "pg-boss motoru deneyseldir: ekranları ve HTTP API'si bir alt sürümde hâlâ değişebilir.",
+    "STATE": {
+      "ALL": "Tümü",
+      "CREATED": "Oluşturuldu",
+      "RETRY": "Yeniden denenecek",
+      "ACTIVE": "Aktif",
+      "COMPLETED": "Tamamlandı",
+      "CANCELLED": "İptal edildi",
+      "FAILED": "Başarısız"
+    },
+    "SUBSTATE": {
+      "DEFERRED": "Ertelendi",
+      "BLOCKED": "Engellendi",
+      "READY": "Hazır"
+    },
+    "KPI": {
+      "READY": "Hazır",
+      "DEFERRED": "Ertelenen",
+      "ACTIVE": "Aktif",
+      "FAILED": "Başarısız",
+      "TOTAL": "Toplam",
+      "BACKLOGGED": "Birikmiş: {{value}}",
+      "NONE_BACKLOGGED": "Birikme yok",
+      "QUEUED_HINT": "Kuyrukta: {{value}}"
+    },
+    "STATS": {
+      "UPDATED_AT": "Sayaçlar: {{time}}",
+      "STALE": "Sayaçlar en son {{time}} yazıldı. O zamandan beri supervise çalıştıran hiçbir pg-boss örneği onları yenilemedi.",
+      "NEVER": "Bu kuyrukları henüz hiçbir pg-boss örneği izlemedi, bu yüzden sayaçları sıfır.",
+      "CACHED_HINT": "pg-boss'un izleyicisi tarafından önbelleğe alındı. Kuyruk sayfasındaki sekmeler canlı sayar."
+    },
+    "QUEUE": {
+      "NAME": "Ad",
+      "POLICY": "İlke",
+      "PARTITION": "Depolama",
+      "PARTITIONED": "Kendi bölümü",
+      "SHARED": "Paylaşılan tablo",
+      "DEAD_LETTER": "Ölü mektup kuyruğu",
+      "RETRY_LIMIT": "Yeniden deneme sınırı",
+      "RETRY_DELAY": "Yeniden deneme gecikmesi",
+      "RETRY_BACKOFF": "Üstel geri çekilme",
+      "RETRY_DELAY_MAX": "En uzun yeniden deneme gecikmesi",
+      "EXPIRE_IN": "Şu süreden sonra dolar",
+      "RETENTION": "Kuyrukta tutulma süresi",
+      "DELETE_AFTER": "Şu süreden sonra silinir",
+      "WARNING_QUEUE_SIZE": "Birikme uyarısı eşiği",
+      "BACKLOGGED": "Birikmiş",
+      "HEARTBEAT": "Kalp atışı",
+      "NOTIFY": "Gönderimde bildir",
+      "SINGLETONS_ACTIVE": "Aktif singleton anahtarları",
+      "SCHEDULES": "Zamanlamalar",
+      "CREATED_ON": "Oluşturulma",
+      "UPDATED_ON": "Güncellenme",
+      "READY_HISTORY": "Hazır işler, son örnekler",
+      "YES": "Evet",
+      "NO": "Hayır",
+      "NONE": "Yok",
+      "SECTIONS": {
+        "GENERAL": "Genel",
+        "RETRIES": "Yeniden denemeler",
+        "LIFECYCLE": "Yaşam döngüsü"
+      },
+      "NOT_FOUND": "Kuyruk bulunamadı"
+    },
+    "POLICY": {
+      "STANDARD": "Standart",
+      "STANDARD_DESC": "İşler önceliğe ve oluşturulma zamanına göre alınır, sınır yoktur.",
+      "SHORT": "Kısa",
+      "SHORT_DESC": "Her singleton anahtarı için kuyrukta en fazla bir iş.",
+      "SINGLETON": "Singleton",
+      "SINGLETON_DESC": "Her singleton anahtarı için en fazla bir aktif iş.",
+      "STATELY": "Duruma göre",
+      "STATELY_DESC": "Her durum ve singleton anahtarı için en fazla bir iş.",
+      "EXCLUSIVE": "Özel",
+      "EXCLUSIVE_DESC": "Her singleton anahtarı için kuyrukta ya da aktif en fazla bir iş.",
+      "KEY_STRICT_FIFO": "Anahtara göre katı FIFO",
+      "KEY_STRICT_FIFO_DESC": "Aynı singleton anahtarını paylaşan işler sırayla, teker teker çalışır."
+    },
+    "JOB": {
+      "PRIORITY": "Öncelik {{priority}}",
+      "ATTEMPT": "Deneme {{attempt}} / {{limit}}",
+      "CREATED_ON": "Oluşturuldu",
+      "START_AFTER": "Başlama zamanı",
+      "STARTED_ON": "Başladı",
+      "COMPLETED_ON": "Bitti",
+      "KEEP_UNTIL": "Bu zamana kadar başlamazsa süresi dolar",
+      "SINGLETON_KEY": "Singleton anahtarı",
+      "SINGLETON_ON": "Singleton zaman aralığı",
+      "GROUP_ID": "Grup",
+      "GROUP_TIER": "Grup kademesi",
+      "HEARTBEAT_ON": "Son kalp atışı",
+      "BLOCKING": "Bağımlı işleri engeller",
+      "NO_OUTPUT": "Bu işin çıktısı yok.",
+      "NO_DATA": "Bu işin verisi yok.",
+      "DEPENDENCIES": "Beklediği işler",
+      "DEPENDENTS": "Onu bekleyen işler",
+      "NO_DEPENDENCIES": "Bu iş başka bir işi beklemiyor.",
+      "NO_DEPENDENTS": "Bu işi bekleyen iş yok.",
+      "PENDING_DEPENDENCIES": "Bekleyen bağımlılıklar: {{value}}",
+      "SOURCE_QUEUE": "Kaynak kuyruk",
+      "SOURCE_JOB": "Kaynak iş",
+      "SOURCE_CREATED_ON": "Kaynağın oluşturulması",
+      "SOURCE_RETRY_COUNT": "Kaynaktaki denemeler",
+      "FROM_QUEUE": "Kaynak: {{queue}}",
+      "NOT_DEAD_LETTER": "Bu iş başka bir kuyruktan buraya taşınmadı.",
+      "TABS": {
+        "DATA": "Veri",
+        "OUTPUT": "Çıktı",
+        "OPTIONS": "Seçenekler",
+        "TIMELINE": "Zaman çizelgesi",
+        "DEPENDENCIES": "Bağımlılıklar",
+        "DEAD_LETTER": "Ölü mektup"
+      }
+    },
+    "ACTIONS": {
+      "QUEUE_ACTIONS": "Kuyruk işlemleri",
+      "AFFECTED": "{{requested}} işten {{affected}} tanesi değişti.",
+      "CANCEL_ACTIVE_WARNING": "İş çalışıyor. İptal etmek onu iptal edildi olarak işaretler, ama üzerinde çalışan işleyiciyi durdurmaz.",
+      "RETRY": {
+        "LABEL": "Yeniden dene",
+        "CONFIRM": "Bu başarısız iş yeniden denensin mi?",
+        "PENDING": "İş yeniden deneniyor…",
+        "DONE": "İş yeniden deneme için kuyruğa alındı"
+      },
+      "CANCEL": {
+        "LABEL": "İptal et",
+        "CONFIRM": "Bu iş iptal edilsin mi?",
+        "PENDING": "İş iptal ediliyor…",
+        "DONE": "İş iptal edildi"
+      },
+      "RESUME": {
+        "LABEL": "Sürdür",
+        "CONFIRM": "İptal edilen bu iş sürdürülsün mü?",
+        "PENDING": "İş sürdürülüyor…",
+        "DONE": "İş sürdürüldü"
+      },
+      "DELETE": {
+        "LABEL": "Sil",
+        "CONFIRM": "Bu iş silinsin mi? Bu geri alınamaz.",
+        "PENDING": "İş siliniyor…",
+        "DONE": "İş silindi"
+      },
+      "DUPLICATE": {
+        "LABEL": "Çoğalt",
+        "PENDING": "Kopya gönderiliyor…",
+        "DONE": "Kopya gönderildi"
+      },
+      "SEND": {
+        "LABEL": "İş gönder",
+        "PENDING": "İş gönderiliyor…",
+        "DONE": "İş gönderildi",
+        "DROPPED": "pg-boss işi düşürdü; büyük olasılıkla aynı anahtarla bir singleton zaten var."
+      },
+      "RETRY_FAILED": {
+        "LABEL": "Tüm başarısızları yeniden dene",
+        "CONFIRM": "Bu kuyruktaki tüm başarısız işler yeniden denensin mi?",
+        "PENDING": "Başarısız işler yeniden deneniyor…",
+        "DONE": "Başarısız işler yeniden deneme için kuyruğa alındı"
+      },
+      "DELETE_QUEUED": {
+        "LABEL": "Kuyruktaki işleri sil",
+        "CONFIRM": "Bu kuyrukta henüz başlamamış tüm işler silinsin mi? Bu geri alınamaz.",
+        "PENDING": "Kuyruktaki işler siliniyor…",
+        "DONE": "Kuyruktaki işler silindi"
+      },
+      "DELETE_STORED": {
+        "LABEL": "Biten işleri sil",
+        "CONFIRM": "Bu kuyruktaki tüm tamamlanmış, iptal edilmiş ve başarısız işler silinsin mi? Bu geri alınamaz.",
+        "PENDING": "Biten işler siliniyor…",
+        "DONE": "Biten işler silindi"
+      }
+    },
+    "SEND": {
+      "TITLE": "İş gönder",
+      "DUPLICATE_TITLE": "İşi çoğalt",
+      "QUEUE": "Kuyruk",
+      "DATA": "Veri",
+      "PRIORITY": "Öncelik",
+      "START_AFTER": "Başlama zamanı",
+      "START_AFTER_HINT": "Şu andan itibaren saniye ya da bir ISO tarihi. Boş bırakılırsa hemen başlar.",
+      "SINGLETON_KEY": "Singleton anahtarı",
+      "RETRY_LIMIT": "Yeniden deneme sınırı",
+      "RETRY_DELAY": "Yeniden deneme gecikmesi (saniye)",
+      "RETRY_BACKOFF": "Üstel geri çekilme",
+      "EXPIRE_IN": "Süre sonu (saniye)",
+      "QUEUE_DEFAULT": "Kuyruk varsayılanı",
+      "SUBMIT": "Gönder"
+    },
+    "SCHEDULES": {
+      "TITLE": "Zamanlamalar",
+      "EMPTY": "Henüz zamanlama yok.",
+      "KIND_CRON": "Cron",
+      "KIND_RRULE": "RRULE",
+      "KEY": "Anahtar",
+      "DEFAULT_KEY": "Varsayılan anahtar",
+      "EXPRESSION": "İfade",
+      "EXPRESSION_HINT": "0 * * * * gibi bir cron ifadesi ya da pg-boss 12.31 ve sonrasında bir RRULE.",
+      "TIMEZONE": "Saat dilimi",
+      "MISSED": "Kaçırılan çalıştırmalar",
+      "MISSED_DEFAULT": "pg-boss varsayılanı",
+      "MISSED_SKIP": "Atla",
+      "MISSED_ONCE": "Bir kez çalıştır",
+      "NEXT_RUNS": "Sonraki çalıştırmalar",
+      "NO_NEXT_RUNS": "Kullanılan pg-boss bu zamanlamanın önizlemesini çıkaramıyor.",
+      "QUEUE": "Kuyruk",
+      "DATA": "Veri",
+      "OPTIONS": "İş seçenekleri",
+      "ALL_QUEUES": "Tüm kuyruklar",
+      "FILTER_BY_QUEUE": "Kuyruğa göre filtrele",
+      "CREATE": "Yeni zamanlama",
+      "EDIT": "Zamanlamayı düzenle",
+      "SAVE": "Kaydet",
+      "SAVE_PENDING": "Zamanlama kaydediliyor…",
+      "SAVE_DONE": "Zamanlama kaydedildi",
+      "REMOVE": "Zamanlamayı kaldır",
+      "REMOVE_CONFIRM": "Bu zamanlama kaldırılsın mı? Daha önce gönderdiği işler kuyrukta kalır.",
+      "REMOVE_PENDING": "Zamanlama kaldırılıyor…",
+      "REMOVE_DONE": "Zamanlama kaldırıldı",
+      "RUN_NOW": "Şimdi çalıştır",
+      "RUN_NOW_CONFIRM": "Bu zamanlamanın şablonundan şimdi bir iş gönderilsin mi?",
+      "RUN_NOW_PENDING": "İş gönderiliyor…",
+      "RUN_NOW_DONE": "İş gönderildi",
+      "PREVIEW": "Önizle",
+      "PREVIEW_UNAVAILABLE": "Önizleme için pg-boss 12.31 veya sonrası gerekir.",
+      "COLUMNS": {
+        "QUEUE": "Kuyruk",
+        "KEY": "Anahtar",
+        "SCHEDULE": "Zamanlama",
+        "NEXT_RUN": "Sonraki çalıştırma",
+        "LAST_JOB": "Son iş",
+        "UPDATED": "Güncellenme"
+      }
+    },
+    "PAGINATION": {
+      "LABEL": "İş sayfaları",
+      "FIRST": "İlk sayfa",
+      "PREVIOUS": "Önceki",
+      "NEXT": "Sonraki"
+    },
+    "COUNT": {
+      "CAPPED": "{{cap}}+",
+      "UNKNOWN": "?",
+      "CAPPED_HINT": "{{cap}} işten fazla. Sayfa hızlı kalsın diye sayım orada durur.",
+      "TIMEOUT": "Sayım çok uzun sürdü. Aşağıdaki liste yine de çalışır."
+    },
+    "FILTER": {
+      "ID": "İş kimliği",
+      "ID_PLACEHOLDER": "Kimliğe göre iş bul",
+      "SINGLETON_KEY": "Singleton anahtarı",
+      "SINGLETON_KEY_PLACEHOLDER": "Singleton anahtarına göre filtrele",
+      "APPLY": "Filtrele",
+      "CLEAR": "Filtreleri temizle",
+      "INVALID_ID": "Bir pg-boss iş kimliği bir UUID'dir."
+    },
+    "EMPTY": {
+      "QUEUES": "Gösterilecek pg-boss kuyruğu yok",
+      "QUEUES_HINT": "Uygulama kuyrukları oluşturduğunda burada görünürler.",
+      "QUEUES_FILTERED": "Bu filtrelere uyan kuyruk yok",
+      "JOBS": "Bu durumda iş yok",
+      "JOBS_FILTERED": "Bu filtrelere uyan iş yok"
+    },
+    "BANNER": {
+      "WRITES_DISABLED": "Değişiklikler kapalı",
+      "READ_ONLY": "Salt okunur",
+      "UNREADABLE": "Bu pg-boss veritabanı okunamıyor",
+      "SCHEMA_UNSUPPORTED": "Buradaki pg-boss şeması desteklenen {{min}} ile {{max}} aralığının dışında.",
+      "NOT_INSTALLED": "Önce uygulamaya pg-boss'u kurun. Pano şemasını asla oluşturmaz veya taşımaz.",
+      "SLOW_QUERY": "Büyük bir kuyrukta bu durumu listelemek yavaş. İş kimliğine veya singleton anahtarına göre filtreleyin ya da belgelerin önerdiği dizini ekleyin."
+    },
+    "DATASTORE": {
+      "TITLE": "pg-boss veri deposu",
+      "SCHEMA": "Şema",
+      "SCHEMA_VERSION": "Şema sürümü",
+      "SUPPORTED_RANGE": "Desteklenen sürümler",
+      "RANGE": "{{min}} - {{max}}",
+      "PERSIST_QUEUE_STATS": "Kuyruk istatistikleri geçmişi",
+      "WRITABLE": "Yazma",
+      "INSTALLED": "Kurulu",
+      "ENABLED": "Açık",
+      "DISABLED": "Kapalı"
+    }
   }
 }

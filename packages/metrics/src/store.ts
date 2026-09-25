@@ -24,7 +24,23 @@ export type LatencyMetric = 'runtime' | 'waittime';
  */
 export interface CounterStore {
   readonly retention: Retention;
-  upsertMinutes(queue: string, metric: string, points: MinutePoint[]): Promise<void>;
+  /**
+   * `rollup` names the cross-queue series the points are also added to, `__global__` unless a
+   * `CounterSource` says otherwise. That is what keeps two boards sharing one store apart.
+   */
+  upsertMinutes(
+    queue: string,
+    metric: string,
+    points: MinutePoint[],
+    rollup?: string
+  ): Promise<void>;
+  /**
+   * The newest minute recorded for a queue inside the minute window, or `null`. A recorder that
+   * restarts reads a `CounterSource` from here instead of from the start of the window, since a
+   * source that counts rows can lose rows it already counted (pg-boss deletes finished jobs) and
+   * re-reading those minutes would write the smaller number back over the recorded one.
+   */
+  latestMinute(queue: string, metric: string): Promise<number | null>;
   /** One entry per requested day: `null` when never recorded, a number (maybe 0) when it was. */
   readDailyTotals(queue: string, metric: string, days: string[]): Promise<(number | null)[]>;
   /** Hourly buckets over the given days, keyed by absolute hour index. */
@@ -40,8 +56,15 @@ export interface CounterStore {
  */
 export interface LatencyStorage {
   readonly retention: Retention;
-  addSamples(queue: string, metric: LatencyMetric, hour: number, vector: number[]): Promise<void>;
-  recordQueueAge(queue: string, hour: number, ms: number): Promise<void>;
+  /** `rollup` as in `CounterStore.upsertMinutes`. */
+  addSamples(
+    queue: string,
+    metric: LatencyMetric,
+    hour: number,
+    vector: number[],
+    rollup?: string
+  ): Promise<void>;
+  recordQueueAge(queue: string, hour: number, ms: number, rollup?: string): Promise<void>;
   /** Keyed by ISO day for `'day'`, by absolute hour index for `'hour'`. */
   readRange(
     queue: string,

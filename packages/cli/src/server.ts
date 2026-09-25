@@ -13,12 +13,24 @@ export interface RunningServer {
   closeAllConnections(): void;
 }
 
+/** A board served under a path of its own, next to the one at the root. */
+export interface MountedBoard {
+  /** Relative to `--base-path`, e.g. `/pg-boss`. */
+  path: string;
+  serverAdapter: ExpressAdapter;
+}
+
 export async function startServer(
   config: CliConfig,
   {
     serverAdapter,
     getConnectionState,
-  }: { serverAdapter: ExpressAdapter; getConnectionState?: () => ConnectionState }
+    boards = [],
+  }: {
+    serverAdapter: ExpressAdapter;
+    getConnectionState?: () => ConnectionState;
+    boards?: MountedBoard[];
+  }
 ): Promise<RunningServer> {
   const app = express();
 
@@ -26,6 +38,11 @@ export async function startServer(
   if (auth) {
     // Mounted at the root, so the status endpoint and the diagnostic page are guarded too.
     app.use(auth as unknown as express.RequestHandler);
+  }
+
+  // Ahead of the Redis gate: a board that does not live in Redis keeps working while it is down.
+  for (const board of boards) {
+    app.use(`${config.basePath}${board.path}`, board.serverAdapter.getRouter());
   }
 
   if (getConnectionState) {

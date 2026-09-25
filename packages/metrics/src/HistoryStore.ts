@@ -5,6 +5,7 @@ import {
   GLOBAL_QUEUE,
   minuteToDay,
   minuteToHour,
+  msToDay,
   shiftDay,
   metricsKeys,
   type MetricsKeys,
@@ -107,7 +108,13 @@ export class HistoryStore implements CounterStore {
     };
   }
 
-  async upsertMinute(queue: string, metric: string, minute: number, value: number): Promise<void> {
+  async upsertMinute(
+    queue: string,
+    metric: string,
+    minute: number,
+    value: number,
+    rollup: string = GLOBAL_QUEUE
+  ): Promise<void> {
     const day = minuteToDay(minute);
     await this.redis.eval(
       UPSERT_MINUTE,
@@ -115,9 +122,9 @@ export class HistoryStore implements CounterStore {
       this.keys.day(queue, metric, day),
       this.keys.hour(queue, metric, day),
       this.keys.totals(queue, metric),
-      this.keys.day(GLOBAL_QUEUE, metric, day),
-      this.keys.hour(GLOBAL_QUEUE, metric, day),
-      this.keys.totals(GLOBAL_QUEUE, metric),
+      this.keys.day(rollup, metric, day),
+      this.keys.hour(rollup, metric, day),
+      this.keys.totals(rollup, metric),
       String(minute),
       String(minuteToHour(minute)),
       day,
@@ -130,10 +137,30 @@ export class HistoryStore implements CounterStore {
   }
 
   /** One EVAL per minute, in order, exactly as a caller looping `upsertMinute` would. */
-  async upsertMinutes(queue: string, metric: string, points: MinutePoint[]): Promise<void> {
+  async upsertMinutes(
+    queue: string,
+    metric: string,
+    points: MinutePoint[],
+    rollup: string = GLOBAL_QUEUE
+  ): Promise<void> {
     for (const point of points) {
-      await this.upsertMinute(queue, metric, point.minute, point.value);
+      await this.upsertMinute(queue, metric, point.minute, point.value, rollup);
     }
+  }
+
+  /**
+   * Walks the minute hashes back from today, one HKEYS per day, and stops at the first day that
+   * holds anything. Bounded by the minute window, which is as far back as a minute can exist.
+   */
+  async latestMinute(queue: string, metric: string): Promise<number | null> {
+    const today = msToDay(Date.now());
+    for (let offset = 0; offset <= this.retention.minutes; offset++) {
+      const fields = await this.redis.hkeys(this.keys.day(queue, metric, shiftDay(today, -offset)));
+      if (fields.length > 0) {
+        return Math.max(...fields.map(Number));
+      }
+    }
+    return null;
   }
 
   async readDailyTotals(queue: string, metric: string, days: string[]): Promise<(number | null)[]> {
