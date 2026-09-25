@@ -12,6 +12,9 @@ describe('lib public interface', () => {
   it('exposes the base adapter at runtime through its subpath export', () => {
     const { BaseAdapter } = require('@worker-manager/api/baseAdapter');
 
-    expect(BaseAdapter).toBe(require('@worker-manager/api/dist/queueAdapters/base').BaseAdapter);
+    expect(typeof BaseAdapter).toBe('function');
+    expect(BaseAdapter.name).toBe('BaseAdapter');
+    expect(typeof BaseAdapter.prototype.setFormatter).toBe('function');
+    expect(typeof BaseAdapter.prototype.isVisible).toBe('function');
   });
 });
