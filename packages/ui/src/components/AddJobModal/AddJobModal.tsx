@@ -15,6 +15,7 @@ import { useQueueJobDataSchema } from '../../hooks/useQueueJobDataSchema';
 import { useQueues } from '../../hooks/useQueues';
 import bullJobOptionsSchema from '../../schemas/bull/jobOptions.json';
 import bullMQJobOptionsSchema from '../../schemas/bullmq/jobOptions.json';
+import { toastManager } from '../../services/toastManager';
 import { jobDataFromSchema } from '../../utils/jobDataFromSchema';
 import { FormDialog } from '../FormDialog/FormDialog';
 import { JsonEditor } from '../JsonEditor/JsonEditor';
@@ -33,7 +34,8 @@ const jobOptionsSchema = {
 
 export const AddJobModal = ({ open, onClose, job, queue: queueProp }: AddJobModalProps) => {
   const { queues, actions } = useQueues();
-  const effectiveQueue = queueProp || useActiveQueue();
+  const activeQueue = useActiveQueue();
+  const effectiveQueue = queueProp ?? activeQueue;
   const [selectedQueue, setSelectedQueue] = useState<AppQueue | null>(effectiveQueue);
   const { t } = useTranslation();
   const { jobDataSchema, loading: jobDataSchemaLoading } = useQueueJobDataSchema(
@@ -54,8 +56,15 @@ export const AddJobModal = ({ open, onClose, job, queue: queueProp }: AddJobModa
         .map((input: any) => [input.name, input.value])
     );
 
-    formData.jobData = JSON.parse(formData.jobData);
-    formData.jobOptions = JSON.parse(formData.jobOptions);
+    // The editor blanks its field while it has lint errors, so an invalid document arrives as
+    // an empty string here rather than as a parse error the user can see.
+    try {
+      formData.jobData = JSON.parse(formData.jobData);
+      formData.jobOptions = JSON.parse(formData.jobOptions);
+    } catch {
+      toastManager.add({ type: 'error', title: t('ERRORS.INVALID_JSON') });
+      return;
+    }
 
     await actions.addJob(
       formData.queueName,

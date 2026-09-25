@@ -7589,6 +7589,8 @@ __metadata:
     fastify: "npm:^5.12.1"
     jest: "npm:^30.4.2"
     ts-jest: "npm:^29.4.12"
+  peerDependencies:
+    fastify: ^5
   languageName: unknown
   linkType: soft
 

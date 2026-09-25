@@ -7,8 +7,6 @@ type IProgress = number | { progress?: number } | string | boolean | null;
 
 interface ProgressProps {
   progress: IProgress;
-  /** Kept for API compatibility with the former circular gauge; the bar ignores it. */
-  strokeWidth?: number;
   status: Status;
   className?: string;
 }

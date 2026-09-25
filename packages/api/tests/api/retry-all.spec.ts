@@ -31,7 +31,13 @@ describe('Retry All', () => {
     await testQueue.close();
   });
 
-  function setupBoard(options: Partial<{ readOnlyMode: boolean }> = {}) {
+  function setupBoard(
+    options: Partial<{
+      readOnlyMode: boolean;
+      allowRetries: boolean;
+      allowCompletedRetries: boolean;
+    }> = {}
+  ) {
     createWorkerManagerBoard({
       queues: [new BullMQAdapter(testQueue, options)],
       serverAdapter,
@@ -132,5 +138,22 @@ describe('Retry All', () => {
     const agent = setupBoard({ readOnlyMode: true });
 
     await agent.put(`/api/queues/${testQueue.name}/retry/failed`).expect(405);
+  });
+
+  it('should return 405 when retries are disabled on the queue', async () => {
+    const agent = setupBoard({ allowRetries: false });
+
+    const res = await agent.put(`/api/queues/${testQueue.name}/retry/failed`).expect(405);
+
+    expect(res.body.error).toEqual({ key: 'ERRORS.RETRIES_DISABLED' });
+  });
+
+  it('should return 405 for completed jobs when completed retries are disabled', async () => {
+    const agent = setupBoard({ allowCompletedRetries: false });
+
+    const res = await agent.put(`/api/queues/${testQueue.name}/retry/completed`).expect(405);
+    expect(res.body.error).toEqual({ key: 'ERRORS.COMPLETED_RETRIES_DISABLED' });
+
+    await agent.put(`/api/queues/${testQueue.name}/retry/failed`).expect(200);
   });
 });

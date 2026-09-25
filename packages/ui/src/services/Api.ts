@@ -31,6 +31,7 @@ import {
   RunJobSchedulerResponse,
 } from '@worker-manager/api/typings/responses';
 import Axios, { AxiosInstance, AxiosResponse } from 'axios';
+import i18n from 'i18next';
 import { translateMessage } from '../utils/translateMessage';
 import { toastManager } from './toastManager';
 
@@ -316,9 +317,19 @@ export class Api {
     return response.data;
   }
 
-  private async handleError(requestError: { response: AxiosResponse }): Promise<any> {
-    const { error, message, code } = (requestError.response.data ??
-      {}) as Partial<ErrorResponseBody>;
+  private async handleError(requestError: { response?: AxiosResponse }): Promise<any> {
+    const { response } = requestError;
+
+    // No response at all: the server is down, the network dropped or the request timed out.
+    // Nothing here can be branched on, so the caller gets a rejection, and the toast is held to
+    // one at a time because polling would raise it again every interval.
+    if (!response) {
+      const description = i18n.t('ERRORS.NETWORK');
+      toastManager.addOnce('network-error', { type: 'error', title: description });
+      return Promise.reject(new Error(description));
+    }
+
+    const { error, message, code } = (response.data ?? {}) as Partial<ErrorResponseBody>;
 
     // Only codes listed above are silenced, since the caller owns what the user sees for those.
     // Anything else still toasts, so a new coded error can never fail silently.
@@ -330,6 +341,6 @@ export class Api {
       });
     }
 
-    return Promise.resolve(requestError.response.data);
+    return Promise.resolve(response.data);
   }
 }

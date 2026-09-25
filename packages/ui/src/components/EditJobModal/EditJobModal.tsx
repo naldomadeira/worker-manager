@@ -17,7 +17,8 @@ export interface EditJobModalProps {
   job: AppJob;
   field: 'delay' | 'priority';
   onClose(): void;
-  onSubmit(value: number): Promise<void>;
+  /** Resolves `true` once the change is saved; the dialog stays open otherwise. */
+  onSubmit(value: number): Promise<boolean>;
 }
 
 export const EditJobModal = ({ open, job, field, onClose, onSubmit }: EditJobModalProps) => {
@@ -31,17 +32,20 @@ export const EditJobModal = ({ open, job, field, onClose, onSubmit }: EditJobMod
   const handleSubmit = async (evt: FormEvent) => {
     evt.preventDefault();
 
+    let saved: boolean;
     if (field === 'delay') {
       const runAt = new Date(value).getTime();
       if (Number.isNaN(runAt)) return;
-      await onSubmit(runAt);
+      saved = await onSubmit(runAt);
     } else {
       const priority = parseInt(value, 10);
       if (!Number.isInteger(priority) || priority < 0 || priority > PRIORITY_LIMIT) return;
-      await onSubmit(priority);
+      saved = await onSubmit(priority);
     }
 
-    onClose();
+    if (saved) {
+      onClose();
+    }
   };
 
   return (

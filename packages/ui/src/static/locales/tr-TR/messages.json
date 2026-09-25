@@ -21,6 +21,8 @@
     "JOBS_COUNT": "{{count}} iş",
     "EMPTY_STATE": "Görüntülenecek kuyruk bulunmuyor.",
     "EMPTY_STATE_FILTERED": "“{{status}}” durumunda iş içeren kuyruk bulunmuyor.",
+    "RETRY": "Tekrar dene",
+    "LOAD_ERROR": "Kuyruklar yüklenemedi.",
     "SORTING": {
       "TITLE": "Sıralama",
       "FAILED": "Başarısız işler",
@@ -60,6 +62,7 @@
     "FAILED_AT": "Başarısız olma zamanı",
     "FINISHED_AT": "Tamamlanma zamanı",
     "ATTEMPTS": "Deneme sayısı: {{attempts}}",
+    "ATTEMPTS_OF": "deneme {{attempts}} / {{max}}",
     "REPEAT": "Tekrar sayısı: {{count}}",
     "REPEAT_WITH_LIMIT": "$t(JOB.REPEAT) / {{limit}}",
     "FLOW": {
@@ -104,6 +107,7 @@
     },
     "DIAGNOSTICS": {
       "PRIORITY": "öncelik {{priority}}",
+      "GROUP": "grup {{id}}",
       "DEDUPLICATED": "dedup {{id}}",
       "STALLED": "takıldı {{times}}",
       "ATTEMPTS_STARTED": "{{starts}} başlatıldı",
@@ -414,6 +418,8 @@
   "ERRORS": {
     "FORBIDDEN": "Forbidden",
     "INTERNAL_SERVER_ERROR": "Sunucu iç hatası",
+    "INVALID_JSON": "JSON geçerli değil. Vurgulanan hataları düzeltip tekrar deneyin.",
+    "NETWORK": "Sunucuya ulaşılamadı. Bağlantınızı kontrol edip tekrar deneyin.",
     "INVALID_BEFORE_DATE": "Geçersiz before değeri: YYYY-MM-DD bekleniyor",
     "INVALID_CONCURRENCY": "Geçersiz eşzamanlılık değeri",
     "INVALID_DATE_RANGE": "Geçersiz from/to aralığı",
@@ -448,6 +454,8 @@
     "QUEUE_NOT_PAUSED": "Kuyruk tamamen silinmeden önce duraklatılmalıdır",
     "QUEUE_READ_ONLY": "Salt okunur kuyrukta bu yönteme izin verilmiyor",
     "RATE_LIMIT_NOT_SUPPORTED": "Bu kuyruk kütüphanesi kuyruk genelinde hız sınırı belirleyemiyor.",
+    "COMPLETED_RETRIES_DISABLED": "Bu kuyruk için tamamlanmış işlerin yeniden denenmesi devre dışı.",
+    "RETRIES_DISABLED": "Bu kuyruk için yeniden denemeler devre dışı.",
     "REDIS_STATS_UNAVAILABLE": "Bu kuyruğun arka ucu için Redis ayrıntıları kullanılamıyor",
     "REDIS_UNAVAILABLE": "Worker Manager Redis'e bağlanamıyor. Ayrıntılar için panoyu açın.",
     "STATUS_NOT_RETRIABLE": "\"{{status}}\" yeniden denenebilir bir durum değil",
@@ -458,6 +466,7 @@
   "METRICS_HISTORY": {
     "TITLE": "Metrik geçmişi",
     "EMPTY": "Henüz geçmiş kaydı yok.",
+    "NOT_CONFIGURED": "Metrik geçmişi etkin değil. Kaydı başlatmak için panoda bir geçmiş sağlayıcısı yapılandırın.",
     "TOTAL_COMPLETED": "Toplam tamamlanan",
     "TOTAL_FAILED": "Toplam başarısız",
     "RANGE_7D": "7 g",

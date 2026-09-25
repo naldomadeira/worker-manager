@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 import { useUIConfig } from '../../../hooks/useUIConfig';
 import { formatDate, TimeStamp } from '../../../utils/formatDate';
+import { formatElapsed } from '../../../utils/formatElapsed';
 import { statusTone } from '../../StatusTone/statusTone';
 
 const formatDuration = (
@@ -17,21 +18,7 @@ const formatDuration = (
   const durationInMs = differenceInMilliseconds(finishedTs, processedTs);
   const durationInSeconds = durationInMs / 1000;
   if (durationInSeconds > 5) {
-    const rtf = new Intl.RelativeTimeFormat(locale, { numeric: 'auto' });
-    const seconds = Math.round(durationInSeconds);
-    if (seconds < 60) {
-      return rtf.format(-seconds, 'second').replace(/ ago$/, '');
-    }
-    const minutes = Math.round(seconds / 60);
-    if (minutes < 60) {
-      return rtf.format(-minutes, 'minute').replace(/ ago$/, '');
-    }
-    const hours = Math.round(minutes / 60);
-    if (hours < 24) {
-      return rtf.format(-hours, 'hour').replace(/ ago$/, '');
-    }
-    const days = Math.round(hours / 24);
-    return rtf.format(-days, 'day').replace(/ ago$/, '');
+    return formatElapsed(durationInSeconds, locale);
   }
   if (durationInSeconds >= 1) {
     return t('JOB.DURATION.SECS', { duration: durationInSeconds.toFixed(2) });

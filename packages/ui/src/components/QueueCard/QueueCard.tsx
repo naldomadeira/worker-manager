@@ -1,6 +1,6 @@
-import type { AppJob, AppQueue } from '@worker-manager/api/typings/app';
+import type { AppQueue } from '@worker-manager/api/typings/app';
 import { InfoIcon, LockIcon, PauseIcon } from 'lucide-react';
-import React, { Suspense, useState } from 'react';
+import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NavLink } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
@@ -9,9 +9,9 @@ import { cn } from '@/lib/utils';
 import { useModal } from '../../hooks/useModal';
 import { useQueues } from '../../hooks/useQueues';
 import { links } from '../../utils/links';
+import { HintTooltip } from '../HintTooltip/HintTooltip';
 import { QueueDropdownActions } from '../QueueDropdownActions/QueueDropdownActions';
 import { RateLimitBadge } from '../RateLimitBadge/RateLimitBadge';
-import { Tooltip } from '../Tooltip/Tooltip';
 import { WorkersBadge } from '../WorkersBadge/WorkersBadge';
 import { QueueStats } from './QueueStats/QueueStats';
 
@@ -42,7 +42,6 @@ export const QueueCard = ({ queue, displayName }: IQueueCardProps) => {
   const { t } = useTranslation();
   const { actions } = useQueues();
   const modal = useModal<'addJob' | 'concurrency' | 'rateLimit'>();
-  const [editJob] = useState<AppJob | null>(null);
   const label = displayName ?? queue.displayName;
   const hasFailures = (queue.counts.failed ?? 0) > 0;
 
@@ -77,9 +76,11 @@ export const QueueCard = ({ queue, displayName }: IQueueCardProps) => {
               {label}
             </NavLink>
             {!!queue.description && (
-              <Tooltip title={queue.description} className="relative z-10 inline-flex shrink-0">
-                <InfoIcon className="size-3.5 text-muted-foreground transition-colors hover:text-foreground" />
-              </Tooltip>
+              <HintTooltip title={queue.description}>
+                <span className="relative z-10 inline-flex shrink-0">
+                  <InfoIcon className="size-3.5 text-muted-foreground transition-colors hover:text-foreground" />
+                </span>
+              </HintTooltip>
             )}
           </div>
 
@@ -126,7 +127,7 @@ export const QueueCard = ({ queue, displayName }: IQueueCardProps) => {
           <AddJobModalLazy
             open={modal.isOpen('addJob')}
             onClose={modal.close('addJob')}
-            job={editJob}
+            job={null}
             queue={queue}
           />
         )}

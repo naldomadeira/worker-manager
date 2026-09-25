@@ -41,7 +41,13 @@ describe('Retry Job', () => {
     await testQueue.close();
   });
 
-  function setupBoard(options: Partial<{ readOnlyMode: boolean }> = {}) {
+  function setupBoard(
+    options: Partial<{
+      readOnlyMode: boolean;
+      allowRetries: boolean;
+      allowCompletedRetries: boolean;
+    }> = {}
+  ) {
     createWorkerManagerBoard({
       queues: [new BullMQAdapter(testQueue, options)],
       serverAdapter,
@@ -61,6 +67,17 @@ describe('Retry Job', () => {
         { connection }
       );
       worker.on('failed', () => resolve());
+    });
+
+    return job.id!;
+  }
+
+  async function completeAJob(): Promise<string> {
+    const job = await testQueue.add('test-job', { foo: 'bar' });
+
+    await new Promise<void>((resolve) => {
+      worker = new Worker('RetryJobTest', async (): Promise<void> => undefined, { connection });
+      worker.on('completed', () => resolve());
     });
 
     return job.id!;
@@ -98,5 +115,40 @@ describe('Retry Job', () => {
     const agent = setupBoard({ readOnlyMode: true });
 
     await agent.put(`/api/queues/${testQueue.name}/${jobId}/retry`).expect(405);
+  });
+
+  it('should return 405 when retries are disabled on the queue', async () => {
+    const jobId = await failAJob();
+    await worker.close();
+    const agent = setupBoard({ allowRetries: false });
+
+    const res = await agent.put(`/api/queues/${testQueue.name}/${jobId}/retry`).expect(405);
+
+    expect(res.body.error).toEqual({ key: 'ERRORS.RETRIES_DISABLED' });
+    const job = await testQueue.getJob(jobId);
+    expect(await job!.getState()).toBe('failed');
+  });
+
+  it('should return 405 for a completed job when completed retries are disabled', async () => {
+    const jobId = await completeAJob();
+    await worker.close();
+    const agent = setupBoard({ allowCompletedRetries: false });
+
+    const res = await agent.put(`/api/queues/${testQueue.name}/${jobId}/retry`).expect(405);
+
+    expect(res.body.error).toEqual({ key: 'ERRORS.COMPLETED_RETRIES_DISABLED' });
+    const job = await testQueue.getJob(jobId);
+    expect(await job!.getState()).toBe('completed');
+  });
+
+  it('should still retry a failed job when only completed retries are disabled', async () => {
+    const jobId = await failAJob();
+    await worker.close();
+    const agent = setupBoard({ allowCompletedRetries: false });
+
+    await agent.put(`/api/queues/${testQueue.name}/${jobId}/retry`).expect(204);
+
+    const job = await testQueue.getJob(jobId);
+    expect(await job!.getState()).toBe('waiting');
   });
 });

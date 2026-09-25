@@ -5,6 +5,7 @@ import type {
   JobRetryStatus,
   QueueRateLimit,
 } from '@worker-manager/api/typings/app';
+import type { ErrorResponseBody } from '@worker-manager/api/typings/app';
 import { GetQueuesResponse } from '@worker-manager/api/typings/responses';
 import { useTranslation } from 'react-i18next';
 import { useShallow } from 'zustand/react/shallow';
@@ -12,6 +13,7 @@ import { QueueActions } from '../../typings/app';
 import { runWithToast } from '../utils/actionToast';
 import type { RetriableFailedJobs } from '../utils/failedRetries';
 import { getConfirmFor } from '../utils/getConfirmFor';
+import { translateMessage } from '../utils/translateMessage';
 import { queryKeys } from './queryKeys';
 import { useActiveQueueName } from './useActiveQueueName';
 import { useApi } from './useApi';
@@ -26,6 +28,8 @@ export type QueuesState = {
   fetching: boolean;
   /** Showing the previous route/filter's data while the next fetch resolves. */
   isTransitioning: boolean;
+  /** Why the last fetch failed, already worded for the user; `null` while it works. */
+  error: Error | null;
 };
 
 export function useQueues(): QueuesState & { actions: QueueActions } {
@@ -47,16 +51,23 @@ export function useQueues(): QueuesState & { actions: QueueActions } {
   const status = activeQueueName ? selectedStatuses[activeQueueName] : undefined;
   const params = { activeQueue: activeQueueName || undefined, status, page, jobsPerPage };
 
-  const { data, isPending, isFetching, isPlaceholderData } = useQuery({
+  const { data, isPending, isFetching, isPlaceholderData, error } = useQuery({
     queryKey: queryKeys.queues.list(params),
     queryFn: () => api.getQueues(params),
     refetchInterval: pollingInterval > 0 ? pollingInterval * 1000 : false,
     placeholderData: keepPreviousData,
     // Non-mutating: lets structural sharing keep stable job references across polls.
-    select: (res) =>
-      res.queues.map((queue) =>
+    select: (res) => {
+      // The interceptor resolves an error body rather than throwing, so a failed poll lands here
+      // without `queues`; surfacing it as the query's error is what lets a page say so.
+      if (!Array.isArray(res?.queues)) {
+        const body = res as unknown as Partial<ErrorResponseBody>;
+        throw new Error(body.error ? translateMessage(body.error) : t('DASHBOARD.LOAD_ERROR'));
+      }
+      return res.queues.map((queue) =>
         queue.displayName ? queue : { ...queue, displayName: queue.name }
-      ),
+      );
+    },
   });
 
   const invalidateQueues = () => queryClient.invalidateQueries({ queryKey: queryKeys.queues.all });
@@ -219,6 +230,7 @@ export function useQueues(): QueuesState & { actions: QueueActions } {
     loading: isPending,
     fetching: isFetching,
     isTransitioning: isPlaceholderData,
+    error: error ?? null,
     actions: {
       pauseAll,
       resumeAll,

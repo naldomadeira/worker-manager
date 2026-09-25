@@ -1,5 +1,6 @@
 import React, { PropsWithChildren } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogClose,
@@ -10,7 +11,6 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
-import { Button } from '../Button/Button';
 
 export interface ModalProps {
   open: boolean;
@@ -74,7 +74,9 @@ export const Modal = ({
         </DialogDescription>
         <DialogFooter className="m-0 shrink-0 rounded-b-xl px-5 py-3.5">
           <DialogClose asChild>
-            <Button theme="basic">{t('MODAL.CLOSE_BTN')}</Button>
+            <Button type="button" variant="outline">
+              {t('MODAL.CLOSE_BTN')}
+            </Button>
           </DialogClose>
           {actionButton}
         </DialogFooter>

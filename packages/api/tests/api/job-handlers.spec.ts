@@ -60,6 +60,20 @@ describe('Job/queue handlers', () => {
     expect(await queue.getDelayedCount()).toBe(1);
   });
 
+  it('rejects a status the queue cannot clean', async () => {
+    const clean = jest.spyOn(BullMQAdapter.prototype, 'clean');
+    const agent = setupBoard();
+
+    const res = await agent.put('/api/queues/HandlersTest/clean/bogus').expect(400);
+
+    expect(res.body.error).toEqual({
+      key: 'ERRORS.INVALID_QUERY_PARAM',
+      options: { field: 'queueStatus' },
+    });
+    expect(clean).not.toHaveBeenCalled();
+    clean.mockRestore();
+  });
+
   it("updates a job's data", async () => {
     const job = await queue.add('editable', { value: 'before' });
     const agent = setupBoard();

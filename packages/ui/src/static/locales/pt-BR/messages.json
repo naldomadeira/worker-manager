@@ -22,6 +22,8 @@
     "JOBS_COUNT": "{{count}} Tarefas",
     "EMPTY_STATE": "Nenhuma fila para exibir.",
     "EMPTY_STATE_FILTERED": "Nenhuma fila possui tarefas {{status}}.",
+    "RETRY": "Tentar novamente",
+    "LOAD_ERROR": "Não foi possível carregar as filas.",
     "SORTING": {
       "TITLE": "Ordenar por",
       "FAILED": "Trabalhos com falha",
@@ -61,6 +63,7 @@
     "FAILED_AT": "Falha em",
     "FINISHED_AT": "Concluído em",
     "ATTEMPTS": "tentativas #{{attempts}}",
+    "ATTEMPTS_OF": "tentativa {{attempts}} de {{max}}",
     "REPEAT": "repetir {{count}}",
     "REPEAT_WITH_LIMIT": "$t(JOB.REPEAT) / {{limit}}",
     "FLOW": {
@@ -105,6 +108,7 @@
     },
     "DIAGNOSTICS": {
       "PRIORITY": "prioridade {{priority}}",
+      "GROUP": "grupo {{id}}",
       "DEDUPLICATED": "dedup {{id}}",
       "STALLED": "travado {{times}}",
       "ATTEMPTS_STARTED": "{{starts}} iniciadas",
@@ -417,6 +421,8 @@
   "ERRORS": {
     "FORBIDDEN": "Forbidden",
     "INTERNAL_SERVER_ERROR": "Erro interno do servidor",
+    "INVALID_JSON": "O JSON não é válido. Corrija os erros destacados e tente novamente.",
+    "NETWORK": "Não foi possível conectar ao servidor. Verifique sua conexão e tente novamente.",
     "INVALID_BEFORE_DATE": "Valor de before inválido: esperado YYYY-MM-DD",
     "INVALID_CONCURRENCY": "Valor de concorrência inválido",
     "INVALID_DATE_RANGE": "Intervalo from/to inválido",
@@ -451,6 +457,8 @@
     "QUEUE_NOT_PAUSED": "A fila precisa estar pausada antes de ser obliterada",
     "QUEUE_READ_ONLY": "Método não permitido em uma fila somente leitura",
     "RATE_LIMIT_NOT_SUPPORTED": "Esta biblioteca de filas não consegue definir um limite de taxa para a fila inteira.",
+    "COMPLETED_RETRIES_DISABLED": "Repetir tarefas concluídas está desativado para esta fila.",
+    "RETRIES_DISABLED": "As repetições estão desativadas para esta fila.",
     "REDIS_STATS_UNAVAILABLE": "Os detalhes do Redis não estão disponíveis para o backend desta fila",
     "REDIS_UNAVAILABLE": "O Worker Manager não consegue se conectar ao Redis. Abra o painel para ver os detalhes.",
     "STATUS_NOT_RETRIABLE": "\"{{status}}\" não é um estado que possa ser repetido",
@@ -461,6 +469,7 @@
   "METRICS_HISTORY": {
     "TITLE": "Histórico de métricas",
     "EMPTY": "Nenhum histórico registrado ainda.",
+    "NOT_CONFIGURED": "O histórico de métricas não está habilitado. Configure um provedor de histórico no painel para começar a registrar.",
     "TOTAL_COMPLETED": "Total de concluídos",
     "TOTAL_FAILED": "Total de falhos",
     "RANGE_7D": "7d",

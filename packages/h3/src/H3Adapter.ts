@@ -11,7 +11,6 @@ import type {
 } from '@worker-manager/api/typings/app';
 import ejs from 'ejs';
 import {
-  createError,
   createRouter,
   eventHandler,
   getQuery,
@@ -201,14 +200,17 @@ export class H3Adapter implements IServerAdapter {
 
             return body;
           } catch (e) {
-            if (this.errorHandler) {
-              const { body, status } = this.errorHandler(e as Error);
-
-              throw createError({
-                statusCode: status,
-                data: body,
-              });
+            if (!this.errorHandler) {
+              throw e;
             }
+
+            // Answered like the success path. Throwing an h3 error here would make h3 serialise
+            // its own envelope (`{ statusCode, data }`) around the body instead of returning the
+            // ErrorResponseBody every other adapter sends.
+            const { body, status } = this.errorHandler(e as Error);
+            setResponseStatus(event, status ?? 500);
+
+            return body;
           }
         })
       );

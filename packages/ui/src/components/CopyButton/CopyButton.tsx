@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { toastManager } from '../../services/toastManager';
-import { Button } from '../Button/Button';
 import { CheckIcon } from '../Icons/Check';
 import { CopyIcon } from '../Icons/Copy';
 
@@ -40,13 +40,18 @@ export const CopyButton = ({ textToCopy, className, tabIndex }: CopyButtonProps)
 
   return (
     <Button
-      compact
+      type="button"
+      variant="ghost"
+      size="icon-sm"
       onClick={handleCopy}
       tabIndex={tabIndex}
       aria-label={label}
       title={label}
       data-copied={copied || undefined}
-      className={cn('relative size-7 min-w-7 overflow-hidden', className)}
+      className={cn(
+        'relative overflow-hidden text-foreground/80 hover:bg-state-hover hover:text-foreground [&_svg]:text-muted-foreground hover:[&_svg]:text-foreground',
+        className
+      )}
     >
       <span className="sr-only" aria-live="polite">
         {copied ? t('CLIPBOARD.COPIED') : ''}

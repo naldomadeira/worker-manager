@@ -68,12 +68,13 @@ export const HistoryMetricsView = ({ queueName, range }: HistoryMetricsViewProps
 
   const rows = toHistoryRows(completed, failed);
 
-  if (rows.length === 0) {
-    return <p className="m-0 py-2 text-sm text-muted-foreground">{t('METRICS.HISTORY_EMPTY')}</p>;
-  }
-
+  // Pending comes first: a range change has no rows yet, and that is not "no history".
   if (loading) {
     return null;
+  }
+
+  if (rows.length === 0) {
+    return <p className="m-0 py-2 text-sm text-muted-foreground">{t('METRICS.HISTORY_EMPTY')}</p>;
   }
 
   const dailyCompletedTotal = sum(rows.map((row) => row.completed));

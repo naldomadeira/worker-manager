@@ -36,21 +36,39 @@ async function getStats(queue: BaseAdapter): Promise<RedisStats | null> {
   };
 }
 
-export async function redisStatsHandler({
-  queues: workerManagerQueues,
-  uiConfig,
-}: WorkerManagerRequest): Promise<ControllerHandlerReturnType<GetRedisStatsResponse>> {
+async function firstVisibleQueue(
+  queues: Iterable<BaseAdapter>,
+  req: WorkerManagerRequest
+): Promise<BaseAdapter | null> {
+  for (const queue of queues) {
+    if (await queue.isVisible(req)) {
+      return queue;
+    }
+  }
+  return null;
+}
+
+export async function redisStatsHandler(
+  req: WorkerManagerRequest
+): Promise<ControllerHandlerReturnType<GetRedisStatsResponse>> {
+  const { queues: workerManagerQueues, uiConfig } = req;
+
   if (uiConfig.hideRedisDetails) {
     return errorResponse(403, 'ERRORS.FORBIDDEN');
   }
 
-  const pairs = [...workerManagerQueues.values()];
-
-  if (pairs.length === 0) {
+  if (workerManagerQueues.size === 0) {
     return { body: {} };
   }
 
-  const body = await getStats(pairs[0]);
+  const queue = await firstVisibleQueue(workerManagerQueues.values(), req);
+
+  // Every queue is hidden from this request, so there is no datastore it may ask about.
+  if (!queue) {
+    return errorResponse(404, 'ERRORS.QUEUE_NOT_FOUND');
+  }
+
+  const body = await getStats(queue);
 
   // A datastore that is neither Redis nor one we can question.
   if (body === null) {

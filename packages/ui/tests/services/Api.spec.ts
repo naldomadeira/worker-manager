@@ -5,7 +5,7 @@ import { toastManager } from '../../src/services/toastManager';
 
 // The axios interceptor that turns a failed response into a toast. It is private on the class,
 // which is why the wiring is reached through the instance rather than called directly.
-type WithErrorHandler = { handleError(error: { response: AxiosResponse }): Promise<any> };
+type WithErrorHandler = { handleError(error: { response?: AxiosResponse }): Promise<any> };
 
 const respondWith = (body: Partial<ErrorResponseBody>) =>
   (new Api() as unknown as WithErrorHandler).handleError({
@@ -75,6 +75,19 @@ describe('Api error handling', () => {
     await respondWith({ error: { key: 'ERRORS.INVALID_QUEUE' }, code: 'SOMETHING_NEW' });
 
     expect(add).toHaveBeenCalled();
+  });
+
+  it('toasts once and rejects when no response arrived at all', async () => {
+    const addOnce = jest.spyOn(toastManager, 'addOnce').mockImplementation(() => 'network-error');
+    const offline = (new Api() as unknown as WithErrorHandler).handleError({} as never);
+
+    await expect(offline).rejects.toThrow('ERRORS.NETWORK');
+    expect(addOnce).toHaveBeenCalledWith('network-error', {
+      type: 'error',
+      title: 'ERRORS.NETWORK',
+    });
+    expect(add).not.toHaveBeenCalled();
+    addOnce.mockRestore();
   });
 
   it('resolves with the body so callers can branch on it', async () => {

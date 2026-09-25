@@ -21,6 +21,8 @@
     "JOBS_COUNT": "{{count}} Jobs",
     "EMPTY_STATE": "Keine Warteschlangen vorhanden.",
     "EMPTY_STATE_FILTERED": "Keine Warteschlange hat {{status}} Jobs.",
+    "RETRY": "Erneut versuchen",
+    "LOAD_ERROR": "Die Warteschlangen konnten nicht geladen werden.",
     "SORTING": {
       "TITLE": "Sortieren nach",
       "FAILED": "Fehlgeschlagene Jobs",
@@ -60,6 +62,7 @@
     "FAILED_AT": "Fehlgeschlagen am",
     "FINISHED_AT": "Abgeschlossen am",
     "ATTEMPTS": "Versuch #{{attempts}}",
+    "ATTEMPTS_OF": "Versuch {{attempts}} von {{max}}",
     "REPEAT": "Wiederholung {{count}}",
     "REPEAT_WITH_LIMIT": "$t(JOB.REPEAT) / {{limit}}",
     "FLOW": {
@@ -104,6 +107,7 @@
     },
     "DIAGNOSTICS": {
       "PRIORITY": "Priorität {{priority}}",
+      "GROUP": "Gruppe {{id}}",
       "DEDUPLICATED": "Dedup {{id}}",
       "STALLED": "hängen geblieben {{times}}",
       "ATTEMPTS_STARTED": "{{starts}} gestartet",
@@ -414,6 +418,8 @@
   "ERRORS": {
     "FORBIDDEN": "Forbidden",
     "INTERNAL_SERVER_ERROR": "Interner Serverfehler",
+    "INVALID_JSON": "Das JSON ist ungültig. Behebe die markierten Fehler und versuche es erneut.",
+    "NETWORK": "Der Server ist nicht erreichbar. Prüfe deine Verbindung und versuche es erneut.",
     "INVALID_BEFORE_DATE": "Ungültiges before: erwartet wird YYYY-MM-DD",
     "INVALID_CONCURRENCY": "Ungültiger Wert für die Parallelität",
     "INVALID_DATE_RANGE": "Ungültiger from/to-Bereich",
@@ -448,6 +454,8 @@
     "QUEUE_NOT_PAUSED": "Die Warteschlange muss vor dem vollständigen Löschen pausiert werden",
     "QUEUE_READ_ONLY": "Methode für eine schreibgeschützte Warteschlange nicht erlaubt",
     "RATE_LIMIT_NOT_SUPPORTED": "Diese Queue-Bibliothek kann kein queue-weites Rate-Limit setzen.",
+    "COMPLETED_RETRIES_DISABLED": "Das Wiederholen abgeschlossener Jobs ist für diese Warteschlange deaktiviert.",
+    "RETRIES_DISABLED": "Wiederholungen sind für diese Warteschlange deaktiviert.",
     "REDIS_STATS_UNAVAILABLE": "Redis-Details sind für das Backend dieser Warteschlange nicht verfügbar",
     "REDIS_UNAVAILABLE": "Worker Manager kann keine Verbindung zu Redis herstellen. Öffnen Sie das Dashboard für Details.",
     "STATUS_NOT_RETRIABLE": "\"{{status}}\" ist kein wiederholbarer Status",
@@ -458,6 +466,7 @@
   "METRICS_HISTORY": {
     "TITLE": "Metrikverlauf",
     "EMPTY": "Noch kein Verlauf aufgezeichnet.",
+    "NOT_CONFIGURED": "Der Metrikverlauf ist nicht aktiviert. Konfiguriere einen Verlaufsanbieter im Board, um mit der Aufzeichnung zu beginnen.",
     "TOTAL_COMPLETED": "Abgeschlossen gesamt",
     "TOTAL_FAILED": "Fehlgeschlagen gesamt",
     "RANGE_7D": "7 T",

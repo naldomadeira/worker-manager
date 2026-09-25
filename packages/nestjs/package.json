@@ -19,6 +19,9 @@
     "directory": "packages/nestjs"
   },
   "main": "dist/index.js",
+  "files": [
+    "dist"
+  ],
   "publishConfig": {
     "access": "public"
   },

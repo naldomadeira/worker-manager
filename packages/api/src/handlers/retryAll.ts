@@ -16,11 +16,19 @@ async function retryAll(
 ): Promise<ControllerHandlerReturnType<RetryAllResponse>> {
   const { queueStatus } = req.params;
 
+  if (!queue.allowRetries) {
+    return errorResponse(405, 'ERRORS.RETRIES_DISABLED');
+  }
+
   if (!isRetriableState(queueStatus)) {
     return errorResponse(400, {
       key: 'ERRORS.STATUS_NOT_RETRIABLE',
       options: { status: queueStatus },
     });
+  }
+
+  if (queueStatus === 'completed' && !queue.allowCompletedRetries) {
+    return errorResponse(405, 'ERRORS.COMPLETED_RETRIES_DISABLED');
   }
 
   // Counted first so a job finishing mid-request understates the gap rather than inventing one.

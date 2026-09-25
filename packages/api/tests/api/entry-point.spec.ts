@@ -93,6 +93,17 @@ describe('entry point routes', () => {
     assertServesShell(res);
   });
 
+  it('titles the board Worker Manager by default', async () => {
+    const queue = new Queue('EntryPointRouteQueue', { connection });
+    queueList.push(queue);
+
+    createWorkerManagerBoard({ queues: [new BullMQAdapter(queue)], serverAdapter });
+
+    const res = await request(serverAdapter.getRouter()).get('/').expect(200);
+    expect(res.text).toContain('<title>Worker Manager</title>');
+    expect(res.text).toContain('"boardTitle":"Worker Manager"');
+  });
+
   it('serves the SPA shell on /metrics-history (regression: used to 404)', async () => {
     const queue = new Queue('EntryPointRouteQueue', { connection });
     queueList.push(queue);

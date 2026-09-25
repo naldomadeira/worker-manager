@@ -19,6 +19,8 @@
     "JOBS_COUNT": "{{count}}개의 작업",
     "EMPTY_STATE": "표시할 큐가 없습니다.",
     "EMPTY_STATE_FILTERED": "{{status}} 작업이 있는 큐가 없습니다.",
+    "RETRY": "다시 시도",
+    "LOAD_ERROR": "큐를 불러올 수 없습니다.",
     "SORTING": {
       "TITLE": "정렬 기준",
       "FAILED": "실패한 작업",
@@ -58,6 +60,7 @@
     "FAILED_AT": "실패 시각",
     "FINISHED_AT": "완료 시각",
     "ATTEMPTS": "시도 #{{attempts}}",
+    "ATTEMPTS_OF": "시도 {{attempts}} / {{max}}",
     "REPEAT": "반복 {{count}}",
     "REPEAT_WITH_LIMIT": "$t(JOB.REPEAT) / {{limit}}",
     "FLOW": {
@@ -102,6 +105,7 @@
     },
     "DIAGNOSTICS": {
       "PRIORITY": "우선순위 {{priority}}",
+      "GROUP": "그룹 {{id}}",
       "DEDUPLICATED": "중복 제거 {{id}}",
       "STALLED": "정체 {{times}}회",
       "ATTEMPTS_STARTED": "{{starts}}회 시작됨",
@@ -408,6 +412,8 @@
   "ERRORS": {
     "FORBIDDEN": "Forbidden",
     "INTERNAL_SERVER_ERROR": "서버 내부 오류",
+    "INVALID_JSON": "JSON이 유효하지 않습니다. 강조된 오류를 수정한 후 다시 시도하세요.",
+    "NETWORK": "서버에 연결할 수 없습니다. 연결을 확인한 후 다시 시도하세요.",
     "INVALID_BEFORE_DATE": "before 값이 올바르지 않습니다. YYYY-MM-DD 형식이어야 합니다",
     "INVALID_CONCURRENCY": "동시성 값이 올바르지 않습니다",
     "INVALID_DATE_RANGE": "from/to 범위가 올바르지 않습니다",
@@ -442,6 +448,8 @@
     "QUEUE_NOT_PAUSED": "완전 삭제하기 전에 큐를 일시 중지해야 합니다",
     "QUEUE_READ_ONLY": "읽기 전용 큐에서는 허용되지 않는 작업입니다",
     "RATE_LIMIT_NOT_SUPPORTED": "이 큐 라이브러리는 큐 전체 속도 제한을 설정할 수 없습니다.",
+    "COMPLETED_RETRIES_DISABLED": "이 큐에서는 완료된 작업의 재시도가 비활성화되어 있습니다.",
+    "RETRIES_DISABLED": "이 큐에서는 재시도가 비활성화되어 있습니다.",
     "REDIS_STATS_UNAVAILABLE": "이 큐의 백엔드에서는 Redis 세부 정보를 사용할 수 없습니다",
     "REDIS_UNAVAILABLE": "Worker Manager가 Redis에 연결할 수 없습니다. 자세한 내용은 대시보드를 여세요.",
     "STATUS_NOT_RETRIABLE": "\"{{status}}\"은(는) 재시도할 수 있는 상태가 아닙니다",
@@ -452,6 +460,7 @@
   "METRICS_HISTORY": {
     "TITLE": "메트릭 기록",
     "EMPTY": "기록된 내역이 아직 없습니다.",
+    "NOT_CONFIGURED": "메트릭 기록이 활성화되어 있지 않습니다. 기록을 시작하려면 보드에 기록 제공자를 설정하세요.",
     "TOTAL_COMPLETED": "완료 합계",
     "TOTAL_FAILED": "실패 합계",
     "RANGE_7D": "7일",

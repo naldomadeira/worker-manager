@@ -12,43 +12,47 @@ export { Status } from '@worker-manager/api/typings/app';
 
 export type SelectedStatuses = Record<AppQueue['name'], Status>;
 
+/** Every action resolves `true` when it ran and succeeded, `false` when cancelled or refused. */
 export interface QueueActions {
-  pauseAll: () => Promise<void>;
-  resumeAll: () => Promise<void>;
-  retryAll: (queueName: string, status: JobRetryStatus) => () => Promise<void>;
-  retryFailedInQueues: (retriable: RetriableFailedJobs) => () => Promise<void>;
-  promoteAll: (queueName: string) => () => Promise<void>;
-  cleanAll: (queueName: string, status: JobCleanStatus) => () => Promise<void>;
-  pauseQueue: (queueName: string) => () => Promise<void>;
-  resumeQueue: (queueName: string) => () => Promise<void>;
-  pauseQueues: (queueNames: string[]) => () => Promise<void>;
-  resumeQueues: (queueNames: string[]) => () => Promise<void>;
-  emptyQueue: (queueName: string) => () => Promise<void>;
-  obliterateQueue: (queueName: string) => () => Promise<void>;
+  pauseAll: () => Promise<boolean>;
+  resumeAll: () => Promise<boolean>;
+  retryAll: (queueName: string, status: JobRetryStatus) => () => Promise<boolean>;
+  retryFailedInQueues: (retriable: RetriableFailedJobs) => () => Promise<boolean>;
+  promoteAll: (queueName: string) => () => Promise<boolean>;
+  cleanAll: (queueName: string, status: JobCleanStatus) => () => Promise<boolean>;
+  pauseQueue: (queueName: string) => () => Promise<boolean>;
+  resumeQueue: (queueName: string) => () => Promise<boolean>;
+  pauseQueues: (queueNames: string[]) => () => Promise<boolean>;
+  resumeQueues: (queueNames: string[]) => () => Promise<boolean>;
+  emptyQueue: (queueName: string) => () => Promise<boolean>;
+  obliterateQueue: (queueName: string) => () => Promise<boolean>;
   updateQueues: () => Promise<void>;
   addJob: (
     queueName: string,
     jobName: string,
     jobData: any,
     jobOptions: any
-  ) => () => Promise<void>;
-  setGlobalConcurrency: (queueName: string, concurrency: number) => () => Promise<void>;
-  setQueueRateLimit: (queueName: string, rateLimit: QueueRateLimit | null) => () => Promise<void>;
-  releaseQueueRateLimit: (queueName: string) => () => Promise<void>;
+  ) => () => Promise<boolean>;
+  setGlobalConcurrency: (queueName: string, concurrency: number) => () => Promise<boolean>;
+  setQueueRateLimit: (
+    queueName: string,
+    rateLimit: QueueRateLimit | null
+  ) => () => Promise<boolean>;
+  releaseQueueRateLimit: (queueName: string) => () => Promise<boolean>;
 }
 
 export interface JobActions {
-  promoteJob: (queueName: string) => (job: AppJob) => () => Promise<void>;
-  retryJob: (queueName: string) => (job: AppJob) => () => Promise<void>;
-  cleanJob: (queueName: string) => (job: AppJob) => () => Promise<void>;
+  promoteJob: (queueName: string) => (job: AppJob) => () => Promise<boolean>;
+  retryJob: (queueName: string) => (job: AppJob) => () => Promise<boolean>;
+  cleanJob: (queueName: string) => (job: AppJob) => () => Promise<boolean>;
   updateJobData: (
     queueName: string,
     job: AppJob,
     newData: Record<string, any>
-  ) => () => Promise<void>;
-  changeJobDelay: (queueName: string, job: AppJob, runAt: number) => () => Promise<void>;
-  changeJobPriority: (queueName: string, job: AppJob, priority: number) => () => Promise<void>;
-  removeUnprocessedChildren: (queueName: string) => (job: AppJob) => () => Promise<void>;
+  ) => () => Promise<boolean>;
+  changeJobDelay: (queueName: string, job: AppJob, runAt: number) => () => Promise<boolean>;
+  changeJobPriority: (queueName: string, job: AppJob, priority: number) => () => Promise<boolean>;
+  removeUnprocessedChildren: (queueName: string) => (job: AppJob) => () => Promise<boolean>;
   getJobLogs: (queueName: string) => (job: AppJob) => () => Promise<string[]>;
   getJob: () => Promise<any>;
 }

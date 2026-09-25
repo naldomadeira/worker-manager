@@ -30,10 +30,10 @@ interface JobCardProps {
     duplicateJob: () => void;
     rescheduleJob: () => void;
     reprioritiseJob: () => void;
-    removeUnprocessedChildren: () => Promise<void>;
-    promoteJob: () => Promise<void>;
-    retryJob: () => Promise<void>;
-    cleanJob: () => Promise<void>;
+    removeUnprocessedChildren: () => Promise<boolean>;
+    promoteJob: () => Promise<boolean>;
+    retryJob: () => Promise<boolean>;
+    cleanJob: () => Promise<boolean>;
     getJobLogs: () => Promise<string[]>;
   };
 }
@@ -61,6 +61,17 @@ export const JobCard = ({
 
   const displayStatus =
     job.isFailed && !greenStatuses.includes(status as any) ? STATUSES.failed : status;
+  const maxAttempts =
+    typeof job.opts?.attempts === 'number' && job.opts.attempts > 1 ? job.opts.attempts : undefined;
+  // A first and only attempt is the norm and says nothing; a retry, or a failure with retries
+  // left, is what an operator wants to see without opening the card.
+  const attemptsLabel =
+    job.attempts > 1 || (job.isFailed && maxAttempts)
+      ? maxAttempts
+        ? t('JOB.ATTEMPTS_OF', { attempts: job.attempts, max: maxAttempts })
+        : t('JOB.ATTEMPTS', { attempts: job.attempts })
+      : null;
+  const failedReasonLine = job.isFailed && !isExpandedCard ? job.failedReason?.trim() : undefined;
   const tone = statusTone(displayStatus);
   const isRunning = displayStatus === STATUSES.active;
   // `justify-start` + a truncating inner span: the badge is a centred inline-flex, so a long value
@@ -112,8 +123,23 @@ export const JobCard = ({
             )}
 
             {job.groupId != null && (
-              <Badge variant="secondary" className={pill} title={`Group: ${job.groupId}`}>
-                <span className="min-w-0 truncate">group: {job.groupId}</span>
+              <Badge
+                variant="secondary"
+                className={pill}
+                title={t('JOB.DIAGNOSTICS.GROUP', { id: job.groupId })}
+              >
+                <span className="min-w-0 truncate">
+                  {t('JOB.DIAGNOSTICS.GROUP', { id: job.groupId })}
+                </span>
+              </Badge>
+            )}
+
+            {attemptsLabel && (
+              <Badge
+                variant="secondary"
+                className={cn(pill, job.isFailed && 'bg-status-failed/12 text-status-failed')}
+              >
+                {attemptsLabel}
               </Badge>
             )}
 
@@ -190,6 +216,15 @@ export const JobCard = ({
           </div>
         </div>
 
+        {!!failedReasonLine && (
+          <p
+            className="m-0 -mt-1 truncate px-5 pb-3 font-mono text-xs text-status-failed"
+            title={failedReasonLine}
+          >
+            {failedReasonLine}
+          </p>
+        )}
+
         <CollapsibleContent className="overflow-hidden data-open:animate-collapsible-down data-closed:animate-collapsible-up">
           <div
             className={cn(
@@ -207,11 +242,6 @@ export const JobCard = ({
               {!isShortId && (
                 <h5 className="m-0 flex min-w-0 flex-wrap items-baseline gap-x-3 text-[0.9375rem] leading-snug font-semibold">
                   <span className="truncate">{job.name}</span>
-                  {job.attempts > 1 && (
-                    <span className="text-xs font-normal text-muted-foreground">
-                      {t('JOB.ATTEMPTS', { attempts: job.attempts })}
-                    </span>
-                  )}
                   {!!job.opts?.repeat?.count && (
                     <span className="text-xs font-normal text-muted-foreground">
                       {t(`JOB.REPEAT${!!job.opts?.repeat?.limit ? '_WITH_LIMIT' : ''}`, {

@@ -12,6 +12,7 @@ import {
   EmptyTitle,
 } from '@/components/ui/empty';
 import { Skeleton } from '@/components/ui/skeleton';
+import { LoadError } from '../../components/LoadError/LoadError';
 import { OverviewTree } from '../../components/OverviewTree/OverviewTree';
 import { QueueCardGrid } from '../../components/QueueCard/QueueCardGrid';
 import { StatusLegend } from '../../components/StatusLegend/StatusLegend';
@@ -54,7 +55,7 @@ const CardsSkeleton = () => (
 
 export const OverviewPage = () => {
   const { t } = useTranslation();
-  const { actions, queues, loading } = useQueues();
+  const { actions, queues, loading, error } = useQueues();
   const query = useSearchParams();
   const { searchTerm, setSearchTerm } = useQueueSearch();
   const groupedSetting = useSettingsStore((state) => state.overview.grouped);
@@ -89,6 +90,10 @@ export const OverviewPage = () => {
   const isLoading = loading && !queues;
 
   const renderContent = () => {
+    if (!queues && error) {
+      return <LoadError error={error} onRetry={actions.updateQueues} />;
+    }
+
     if (isLoading) {
       return <CardsSkeleton />;
     }

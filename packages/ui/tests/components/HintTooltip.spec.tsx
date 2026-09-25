@@ -1,6 +1,6 @@
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Tooltip } from '../../src/components/Tooltip/Tooltip';
+import { HintTooltip } from '../../src/components/HintTooltip/HintTooltip';
 import { render } from '../testUtils';
 
 // Radix mirrors the tooltip text into a visually hidden `role="tooltip"` node for screen
@@ -9,9 +9,9 @@ import { render } from '../testUtils';
 it('opens on hover and names the trigger', async () => {
   const user = userEvent.setup();
   render(
-    <Tooltip title="Retry this job">
+    <HintTooltip title="Retry this job">
       <button type="button">Retry</button>
-    </Tooltip>
+    </HintTooltip>
   );
 
   await user.hover(screen.getByRole('button', { name: 'Retry' }));
@@ -22,9 +22,9 @@ it('opens on hover and names the trigger', async () => {
 it('opens on keyboard focus', async () => {
   const user = userEvent.setup();
   render(
-    <Tooltip title="Retry this job">
+    <HintTooltip title="Retry this job">
       <button type="button">Retry</button>
-    </Tooltip>
+    </HintTooltip>
   );
 
   await user.tab();
@@ -35,9 +35,9 @@ it('opens on keyboard focus', async () => {
 it('closes on escape', async () => {
   const user = userEvent.setup();
   render(
-    <Tooltip title="Retry this job">
+    <HintTooltip title="Retry this job">
       <button type="button">Retry</button>
-    </Tooltip>
+    </HintTooltip>
   );
 
   await user.hover(screen.getByRole('button', { name: 'Retry' }));

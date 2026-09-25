@@ -1,4 +1,4 @@
-import { ChartArea, Database, EllipsisVertical, Inbox } from 'lucide-react';
+import { ChartArea, ChartNoAxesCombined, Database, EllipsisVertical, Inbox } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
@@ -16,7 +16,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Empty, EmptyDescription, EmptyHeader, EmptyMedia } from '@/components/ui/empty';
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from '@/components/ui/empty';
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { LatencyChart } from '../../components/LatencyChart/LatencyChart';
@@ -67,19 +73,26 @@ const P95 = [95];
 
 export const MetricsHistoryPage = () => {
   const { t } = useTranslation();
-  const { hasHistoryUsage, hasLatencyHistory = false } = useUIConfig();
+  const { hasHistoryProvider = false, hasHistoryUsage, hasLatencyHistory = false } = useUIConfig();
   const modal = useModal<'storage'>();
   const [range, setRange] = useState<Range>('7d');
   const activeTab = useSettingsStore((state) => state.metricsChartTab);
 
   const { from, to } = useRangeWindow(range, RANGE_DAYS[range]);
 
-  const { completed, failed, loading } = useHistoryMetrics({ from, to, granularity: 'day' });
+  // The menu hides this page without a history provider, but the URL still resolves; every
+  // request below would 404, so they stay off and the page says what is missing instead.
+  const { completed, failed, loading } = useHistoryMetrics({
+    from,
+    to,
+    granularity: 'day',
+    enabled: hasHistoryProvider,
+  });
 
   // Only fetched while the latency tab is actually showing, matching the by-queue table's p95
   // column: same mechanism (granularity: 'range', percentiles: [95]), same reason to skip it
   // when the tiles that would show it are not on screen.
-  const showLatencyTiles = hasLatencyHistory && activeTab === 'latency';
+  const showLatencyTiles = hasHistoryProvider && hasLatencyHistory && activeTab === 'latency';
 
   const { points: runP95Points } = useLatencyMetrics({
     metric: 'runtime',
@@ -157,6 +170,22 @@ export const MetricsHistoryPage = () => {
     });
 
   const headCell = 'h-9 text-[0.68rem] font-semibold tracking-wide text-muted-foreground uppercase';
+
+  if (!hasHistoryProvider) {
+    return (
+      <section className="flex max-w-[1600px] flex-col gap-4 pt-1">
+        <Empty className="border bg-card/50 py-14 animate-fade-in-up">
+          <EmptyHeader>
+            <EmptyMedia variant="icon" className="size-10 rounded-xl">
+              <ChartNoAxesCombined className="size-5" />
+            </EmptyMedia>
+            <EmptyTitle className="text-base">{t('METRICS_HISTORY.TITLE')}</EmptyTitle>
+            <EmptyDescription>{t('METRICS_HISTORY.NOT_CONFIGURED')}</EmptyDescription>
+          </EmptyHeader>
+        </Empty>
+      </section>
+    );
+  }
 
   return (
     <section className="flex max-w-[1600px] flex-col gap-4 pt-1">

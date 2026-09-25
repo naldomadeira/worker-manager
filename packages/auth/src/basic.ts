@@ -48,7 +48,11 @@ export function createBasicStrategy(options: BasicAuthOptions, basePath: string)
     // Every entry is compared, match or not, so the position of a user in the list is not
     // observable either.
     for (const user of users) {
-      const ok = safeEqual(username, user.username) && safeEqual(password, user.password);
+      // Both comparisons run before they are combined: `&&` alone would skip the password
+      // check whenever the username misses, and the difference would be measurable.
+      const usernameMatches = safeEqual(username, user.username);
+      const passwordMatches = safeEqual(password, user.password);
+      const ok = usernameMatches && passwordMatches;
       if (ok && !match) {
         match = {
           username: user.username,

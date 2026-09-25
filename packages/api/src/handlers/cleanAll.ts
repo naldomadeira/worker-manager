@@ -1,7 +1,22 @@
+import { errorResponse } from '../errors';
 import { queueProvider } from '../providers/queue';
 import { BaseAdapter } from '../queueAdapters/base';
 import { EmptyResponse } from '../schemas/responses';
-import { WorkerManagerRequest, ControllerHandlerReturnType } from '../types';
+import { WorkerManagerRequest, ControllerHandlerReturnType, JobCleanStatus } from '../types';
+
+const GRACE_TIME_MS = 5000;
+
+const CLEANABLE_STATUSES: ReadonlySet<string> = new Set<JobCleanStatus>([
+  'completed',
+  'wait',
+  'active',
+  'delayed',
+  'failed',
+]);
+
+function isCleanableStatus(status: string): status is JobCleanStatus {
+  return CLEANABLE_STATUSES.has(status);
+}
 
 async function cleanAll(
   req: WorkerManagerRequest,
@@ -9,9 +24,14 @@ async function cleanAll(
 ): Promise<ControllerHandlerReturnType<EmptyResponse>> {
   const { queueStatus } = req.params;
 
-  const GRACE_TIME_MS = 5000;
+  if (!isCleanableStatus(queueStatus)) {
+    return errorResponse(400, {
+      key: 'ERRORS.INVALID_QUERY_PARAM',
+      options: { field: 'queueStatus' },
+    });
+  }
 
-  await queue.clean(queueStatus as any, GRACE_TIME_MS);
+  await queue.clean(queueStatus, GRACE_TIME_MS);
 
   return {
     status: 200,

@@ -19,6 +19,8 @@
     "JOBS_COUNT": "{{count}} 个作业",
     "EMPTY_STATE": "没有可显示的队列。",
     "EMPTY_STATE_FILTERED": "没有队列包含 {{status}} 的作业。",
+    "RETRY": "重试",
+    "LOAD_ERROR": "无法加载队列。",
     "SORTING": {
       "TITLE": "排序方式",
       "FAILED": "失败的任务",
@@ -58,6 +60,7 @@
     "FAILED_AT": "失败于",
     "FINISHED_AT": "完成于",
     "ATTEMPTS": "第{{attempts}}次尝试",
+    "ATTEMPTS_OF": "第 {{attempts}} 次尝试，共 {{max}} 次",
     "REPEAT": "重复{{count}}次",
     "REPEAT_WITH_LIMIT": "$t(JOB.REPEAT) / {{limit}}",
     "FLOW": {
@@ -102,6 +105,7 @@
     },
     "DIAGNOSTICS": {
       "PRIORITY": "优先级 {{priority}}",
+      "GROUP": "分组 {{id}}",
       "DEDUPLICATED": "去重 {{id}}",
       "STALLED": "停滞 {{times}} 次",
       "ATTEMPTS_STARTED": "已启动 {{starts}} 次",
@@ -408,6 +412,8 @@
   "ERRORS": {
     "FORBIDDEN": "Forbidden",
     "INTERNAL_SERVER_ERROR": "服务器内部错误",
+    "INVALID_JSON": "JSON 无效。请修正高亮的错误后重试。",
+    "NETWORK": "无法连接到服务器。请检查网络连接后重试。",
     "INVALID_BEFORE_DATE": "before 无效：应为 YYYY-MM-DD",
     "INVALID_CONCURRENCY": "并发数无效",
     "INVALID_DATE_RANGE": "from/to 范围无效",
@@ -442,6 +448,8 @@
     "QUEUE_NOT_PAUSED": "彻底删除队列前必须先暂停队列",
     "QUEUE_READ_ONLY": "只读队列不允许此操作",
     "RATE_LIMIT_NOT_SUPPORTED": "该队列库无法设置队列级别的速率限制。",
+    "COMPLETED_RETRIES_DISABLED": "此队列已停用重试已完成的作业。",
+    "RETRIES_DISABLED": "此队列已停用重试。",
     "REDIS_STATS_UNAVAILABLE": "此队列的后端不提供 Redis 详细信息",
     "REDIS_UNAVAILABLE": "Worker Manager 无法连接到 Redis。请打开仪表盘查看详情。",
     "STATUS_NOT_RETRIABLE": "\"{{status}}\" 不是可重试的状态",
@@ -452,6 +460,7 @@
   "METRICS_HISTORY": {
     "TITLE": "指标历史",
     "EMPTY": "暂无历史记录。",
+    "NOT_CONFIGURED": "指标历史未启用。请在面板中配置历史提供程序以开始记录。",
     "TOTAL_COMPLETED": "已完成总数",
     "TOTAL_FAILED": "失败总数",
     "RANGE_7D": "7天",

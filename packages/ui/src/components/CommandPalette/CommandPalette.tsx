@@ -172,5 +172,3 @@ export const CommandPalette = () => {
     </Dialog>
   );
 };
-
-export const openCommandPalette = () => useCommandPalette.getState().setOpen(true);

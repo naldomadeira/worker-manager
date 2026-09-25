@@ -8,4 +8,10 @@ describe('lib public interface', () => {
       }
     `);
   });
+
+  it('exposes the base adapter at runtime through its subpath export', () => {
+    const { BaseAdapter } = require('@worker-manager/api/baseAdapter');
+
+    expect(BaseAdapter).toBe(require('@worker-manager/api/dist/queueAdapters/base').BaseAdapter);
+  });
 });

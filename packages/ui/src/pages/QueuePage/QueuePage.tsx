@@ -12,6 +12,7 @@ import { cn } from '@/lib/utils';
 import { SchedulersIcon } from '../../components/Icons/Schedulers';
 import { JobCard } from '../../components/JobCard/JobCard';
 import { Loader } from '../../components/Loader/Loader';
+import { LoadError } from '../../components/LoadError/LoadError';
 import { Pagination } from '../../components/Pagination/Pagination';
 import { QueueActions, isStatusActionable } from '../../components/QueueActions/QueueActions';
 import { QueueDropdownActions } from '../../components/QueueDropdownActions/QueueDropdownActions';
@@ -69,7 +70,7 @@ export const QueuePage = () => {
   const { t } = useTranslation();
   const { showMetrics = false } = useUIConfig();
   const selectedStatus = useSelectedStatuses();
-  const { actions, loading, isTransitioning } = useQueues();
+  const { actions, loading, isTransitioning, queues, error } = useQueues();
   const { actions: jobActions } = useJob();
   const queue = useActiveQueue();
   const modal = useModal<
@@ -80,6 +81,9 @@ export const QueuePage = () => {
   const reduceMotion = useReducedMotion();
 
   if (!queue) {
+    if (!queues && error) {
+      return <LoadError error={error} onRetry={actions.updateQueues} />;
+    }
     return (
       <section className="py-10 text-center text-sm text-muted-foreground">
         {loading ? <Loader /> : t('QUEUE.NOT_FOUND')}
@@ -215,10 +219,14 @@ export const QueuePage = () => {
         </Suspense>
       )}
 
-      {isTransitioning ? (
-        <Loader />
-      ) : hasJobs ? (
-        <ul className="relative m-0 flex list-none flex-col gap-3 p-0">
+      {hasJobs ? (
+        <ul
+          aria-busy={isTransitioning || undefined}
+          className={cn(
+            'relative m-0 flex list-none flex-col gap-3 p-0 transition-opacity duration-200',
+            isTransitioning && 'pointer-events-none opacity-60'
+          )}
+        >
           <AnimatePresence initial mode="popLayout">
             {queue.jobs.map((job, index) => (
               <motion.li

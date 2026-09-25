@@ -87,6 +87,20 @@ describe('basic strategy', () => {
     expect(response.headers.get('www-authenticate')).toMatch(/^Basic /);
   });
 
+  it('compares the password of every configured user even when the username misses', async () => {
+    const crypto = jest.requireActual('node:crypto');
+    const spy = jest.spyOn(crypto, 'timingSafeEqual');
+    try {
+      await fetch(`${board.url}/queues/api/queues`, {
+        headers: { authorization: basicHeader('nobody', 'correct-password') },
+      });
+      // Two users, two comparisons each: a username miss must not skip the password check.
+      expect(spy).toHaveBeenCalledTimes(4);
+    } finally {
+      spy.mockRestore();
+    }
+  });
+
   it('refuses a configuration with neither users nor validate', () => {
     expect(() => createAuthMiddleware({ strategy: 'basic' })).toThrow(/users.*validate/);
   });

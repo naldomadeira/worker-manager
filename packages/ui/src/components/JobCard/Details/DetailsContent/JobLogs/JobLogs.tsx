@@ -74,6 +74,10 @@ function highlight(message: string, matcher: RegExp | null) {
 }
 
 function formatLogs(logs: string[]) {
+  // A failed request resolves to its error body rather than a list; the toast already covers it.
+  if (!Array.isArray(logs)) {
+    return [];
+  }
   return logs.map((message, i) => ({ message, lineNumber: i + 1 }));
 }
 

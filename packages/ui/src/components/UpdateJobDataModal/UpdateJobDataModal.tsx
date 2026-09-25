@@ -5,6 +5,7 @@ import { Field, FieldLabel } from '@/components/ui/field';
 import { useActiveQueue } from '../../hooks/useActiveQueue';
 import { useJob } from '../../hooks/useJob';
 import { useQueues } from '../../hooks/useQueues';
+import { toastManager } from '../../services/toastManager';
 import { FormDialog } from '../FormDialog/FormDialog';
 import { JsonEditor } from '../JsonEditor/JsonEditor';
 
@@ -37,12 +38,13 @@ export const UpdateJobDataModal = ({ open, onClose, job }: UpdateJobModalProps) 
 
     try {
       formData.jobData = JSON.parse(formData.jobData);
-
-      await jobActions.updateJobData(activeQueue.name, job, formData)();
-      onClose();
-    } catch (e) {
-      console.error(e);
+    } catch {
+      toastManager.add({ type: 'error', title: t('ERRORS.INVALID_JSON') });
+      return;
     }
+
+    await jobActions.updateJobData(activeQueue.name, job, formData)();
+    onClose();
   };
 
   return (

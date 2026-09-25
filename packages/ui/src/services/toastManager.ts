@@ -55,6 +55,18 @@ export const toastManager = {
     return id;
   },
 
+  /**
+   * Shows a toast under a fixed id, unless one with that id is still on screen. For a failure
+   * that polling would otherwise repeat every interval.
+   */
+  addOnce(id: string, options: ToastOptions): string {
+    if (!current.has(id)) {
+      current.set(id, options);
+      show(id, options);
+    }
+    return id;
+  },
+
   /** Merges into a live toast, e.g. turning a loading toast into its success message. */
   update(id: string, options: ToastOptions) {
     const merged = { ...current.get(id), ...options };

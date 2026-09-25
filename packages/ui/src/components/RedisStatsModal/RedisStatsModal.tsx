@@ -8,6 +8,7 @@ import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
 import { queryKeys } from '../../hooks/queryKeys';
 import { useApi } from '../../hooks/useApi';
+import { formatElapsed } from '../../utils/formatElapsed';
 import { Modal } from '../Modal/Modal';
 
 const getMemoryUsage = (used?: number, total?: number) => {
@@ -68,16 +69,7 @@ export const RedisStatsModal = ({ open, onClose }: RedisStatsModalProps) => {
   const look = DATASTORE_LOOK[isPostgres ? DATASTORES.postgres : DATASTORES.redis];
   const DatastoreIcon = look.icon;
 
-  const uptime = (() => {
-    const rtf = new Intl.RelativeTimeFormat(i18n.language, { numeric: 'auto' });
-    const seconds = stats.uptime;
-    if (seconds < 60) return rtf.format(-Math.round(seconds), 'second').replace(/ ago$/, '');
-    const minutes = seconds / 60;
-    if (minutes < 60) return rtf.format(-Math.round(minutes), 'minute').replace(/ ago$/, '');
-    const hours = minutes / 60;
-    if (hours < 24) return rtf.format(-Math.round(hours), 'hour').replace(/ ago$/, '');
-    return rtf.format(-Math.round(hours / 24), 'day').replace(/ ago$/, '');
-  })();
+  const uptime = formatElapsed(stats.uptime, i18n.language);
 
   const memory = stats.memory;
   const memoryPercent =

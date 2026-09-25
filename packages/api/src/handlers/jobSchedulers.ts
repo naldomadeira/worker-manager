@@ -10,7 +10,7 @@ async function visibleQueues(
   const pairs: [string, BaseAdapter][] = [];
 
   for (const [queueName, queue] of req.queues.entries()) {
-    if (requested && decodeURIComponent(requested) !== queueName) {
+    if (requested && requested !== queueName) {
       continue;
     }
 

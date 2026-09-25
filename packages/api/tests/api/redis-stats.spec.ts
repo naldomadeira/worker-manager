@@ -46,4 +46,36 @@ describe('Redis stats', () => {
 
     expect(res.body.error).toEqual({ key: 'ERRORS.REDIS_STATS_UNAVAILABLE' });
   });
+
+  it('asks the first queue the request may see', async () => {
+    const other = new Queue('StatsVisibleQueue', { connection });
+    const hidden = new BullMQAdapter(queue);
+    hidden.setVisibilityGuard(() => false);
+    const hiddenInfo = jest.spyOn(hidden, 'getRedisInfo');
+    const visible = new BullMQAdapter(other);
+    const visibleInfo = jest.spyOn(visible, 'getRedisInfo');
+
+    try {
+      const serverAdapter = new ExpressAdapter();
+      createWorkerManagerBoard({ queues: [hidden, visible], serverAdapter });
+
+      const res = await request(serverAdapter.getRouter()).get('/api/redis/stats').expect(200);
+
+      expect(res.body.backend).toBe('redis');
+      expect(hiddenInfo).not.toHaveBeenCalled();
+      expect(visibleInfo).toHaveBeenCalledTimes(1);
+    } finally {
+      await other.obliterate({ force: true }).catch(() => undefined);
+      await other.close();
+    }
+  });
+
+  it('reports no queue when every queue is hidden from the request', async () => {
+    const adapter = new BullMQAdapter(queue);
+    adapter.setVisibilityGuard(() => false);
+
+    const res = await setupBoard(adapter).get('/api/redis/stats').expect(404);
+
+    expect(res.body.error).toEqual({ key: 'ERRORS.QUEUE_NOT_FOUND' });
+  });
 });
