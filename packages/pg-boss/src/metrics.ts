@@ -86,14 +86,30 @@ const at = (param: string) => `(timestamptz 'epoch' + ${param}::bigint * interva
  * parent, valid, with no predicate or one that keeps both finished states.
  */
 export function isUsableMetricsIndex(indexdef: string): boolean {
-  const match = /USING btree \(([^()]*)\)(?:\s+INCLUDE\s*\([^()]*\))?(?:\s+WHERE\s+(.*))?$/i.exec(
-    indexdef
-  );
-  if (!match) return false;
-  const columns = match[1].split(',').map((column) => column.trim().replace(/"/g, ''));
-  if (columns[0] !== 'name' || !/^completed_on(\s|$)/.test(columns[1] ?? '')) return false;
-  const predicate = match[2];
-  return !predicate || (/'completed'/.test(predicate) && /'failed'/.test(predicate));
+  // Parsed with plain string scanning: a regex over `indexdef`, which comes from the database,
+  // would be an input-dependent backtracking risk (CodeQL js/polynomial-redos).
+  const lower = indexdef.toLowerCase();
+  const using = lower.indexOf('using btree (');
+  if (using === -1) return false;
+  const open = using + 'using btree ('.length;
+  const close = indexdef.indexOf(')', open);
+  if (close === -1) return false;
+
+  const columns = indexdef
+    .slice(open, close)
+    .split(',')
+    .map((column) => column.trim().replace(/"/g, ''));
+  const second = columns[1] ?? '';
+  const secondIsCompletedOn =
+    second === 'completed_on' ||
+    second.startsWith('completed_on ') ||
+    second.startsWith('completed_on\t');
+  if (columns[0] !== 'name' || !secondIsCompletedOn) return false;
+
+  const where = lower.indexOf(' where ', close);
+  if (where === -1) return true;
+  const predicate = lower.slice(where + ' where '.length);
+  return predicate.includes("'completed'") && predicate.includes("'failed'");
 }
 
 function indexQuery(quoted: string): string {
