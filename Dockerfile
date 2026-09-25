@@ -1,15 +1,25 @@
-FROM node:22-alpine AS deps
+# The install runs on the builder's own platform and asks npm for the target's optional native
+# packages (`msgpackr-extract` ships one per platform). Running npm under QEMU for the arm64 leg
+# died with SIGILL once the dependency graph grew (pg-boss, pg), and nothing here needs a
+# compiler: `--ignore-scripts` skips the one install script, whose prebuilt binary is fetched
+# through `--cpu/--os/--libc` and resolved at runtime.
+FROM --platform=$BUILDPLATFORM node:22-alpine AS deps
 
 ARG WORKER_MANAGER_VERSION=latest
+ARG TARGETOS
+ARG TARGETARCH
 
 WORKDIR /opt/worker-manager
 # Tarballs from `scripts/pack-local.sh docker-dist ...` build the image from this checkout;
 # without any, the published @worker-manager/cli is installed from npm.
 COPY docker-dist/ /tmp/packages/
-RUN if ls /tmp/packages/*.tgz > /dev/null 2>&1; then \
-      npm install --omit=dev --no-audit --no-fund /tmp/packages/*.tgz; \
+RUN cpu="$TARGETARCH"; [ "$cpu" = "amd64" ] && cpu=x64; \
+    set -- --omit=dev --no-audit --no-fund --ignore-scripts \
+           --os="${TARGETOS:-linux}" --cpu="$cpu" --libc=musl; \
+    if ls /tmp/packages/*.tgz > /dev/null 2>&1; then \
+      npm install "$@" /tmp/packages/*.tgz; \
     else \
-      npm install --omit=dev --no-audit --no-fund "@worker-manager/cli@${WORKER_MANAGER_VERSION}"; \
+      npm install "$@" "@worker-manager/cli@${WORKER_MANAGER_VERSION}"; \
     fi \
     && rm -rf /tmp/packages
 
