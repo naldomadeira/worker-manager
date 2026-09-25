@@ -264,6 +264,9 @@ export class FeatureController {
 ```
 
 # Usage examples
-1. [Simple NestJS setup](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-nestjs)
+1. [Redis with `@nestjs/bullmq` and basic auth](https://github.com/naldomadeira/worker-manager/tree/main/examples/nestjs/redis)
+2. [PostgreSQL-backed BullMQ v6 queues](https://github.com/naldomadeira/worker-manager/tree/main/examples/nestjs/postgres)
+3. [Keycloak auth from `ConfigService`](https://github.com/naldomadeira/worker-manager/tree/main/examples/nestjs/keycloak)
+4. [Fastify platform with a custom auth hook](https://github.com/naldomadeira/worker-manager/tree/main/examples/nestjs/fastify-custom-auth)
 
 For more info visit the main [README](https://github.com/naldomadeira/worker-manager#readme)

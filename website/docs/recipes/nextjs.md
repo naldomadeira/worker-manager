@@ -3,8 +3,8 @@
 There is no dedicated Next.js adapter. Worker Manager runs inside a Next.js API
 route using an existing adapter. Two runnable examples:
 
-- [`examples/with-nextjs-app`](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-nextjs-app): App Router, `@worker-manager/hono` adapter.
-- [`examples/with-nextjs-pages`](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-nextjs-pages): Pages Router, `@worker-manager/express` adapter.
+- [`examples/nextjs/app-router`](https://github.com/naldomadeira/worker-manager/tree/main/examples/nextjs/app-router): App Router, `@worker-manager/hono` adapter.
+- [`examples/nextjs/pages-router`](https://github.com/naldomadeira/worker-manager/tree/main/examples/nextjs/pages-router): Pages Router, `@worker-manager/express` adapter.
 
 Both deploy to Vercel. The mounting differs by router; the Vercel-specific
 config is identical and is the part most people miss.

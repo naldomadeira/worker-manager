@@ -17,7 +17,7 @@ Worker Manager is a Yarn 4 workspaces monorepo. The packages live under `package
 | `metrics` | Opt-in Redis-backed metrics recorder behind the core's `historyProvider` seam |
 | `test-utils` | Private (unpublished) test kit powering the adapter contract tests |
 
-Standalone runnable examples live under `examples/*`, and the documentation site lives under `website/`.
+Standalone runnable examples live under `examples/<framework>/<example>` (index in `examples/README.md`), and the documentation site lives under `website/`.
 
 ## Prerequisites
 
@@ -74,10 +74,10 @@ CI enforces `lint:check` and `format:check`, so run both before opening a PR.
 
 ## Running the examples
 
-Each directory under `examples/*` is a self-contained project (Express, Fastify, NestJS, Hono, and more). With Redis running, install and start one directly:
+Each directory under `examples/<framework>/` is a self-contained project (NestJS, Express, Fastify, Next.js, Hapi, and more under `examples/more/`); `examples/README.md` lists them all. With Redis running, install and start one directly:
 
 ```sh
-cd examples/with-express
+cd examples/express/basic
 npm install
 npm start
 ```

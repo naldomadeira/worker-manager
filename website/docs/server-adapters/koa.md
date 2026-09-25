@@ -38,7 +38,7 @@ app.listen(3000);
 
 ## Full runnable example
 
-- Simple setup: [`examples/with-koa`](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-koa)
+- Simple setup: [`examples/more/koa`](https://github.com/naldomadeira/worker-manager/tree/main/examples/more/koa)
 
 ## Next steps
 

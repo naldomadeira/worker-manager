@@ -7720,6 +7720,7 @@ __metadata:
     bullmq: "npm:^5.81.3"
     bullmq-v6: "npm:bullmq@^6"
     jest: "npm:^30.4.2"
+    jose: "npm:^5.10.0"
     nestjs-bull-shared-v11: "npm:@nestjs/bull-shared@^11"
     nestjs-bull-shared-v12: "npm:@nestjs/bull-shared@^12"
     nestjs-bullmq-v11: "npm:@nestjs/bullmq@^11"

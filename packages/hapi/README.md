@@ -18,7 +18,7 @@
 ![UI](https://raw.githubusercontent.com/naldomadeira/worker-manager/main/screenshots/dashboard.png)
 
 # Usage examples
-1. [Simple hapi setup](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-hapi)
-2. [Auth with hapi setup](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-hapi-auth)
+1. [Simple hapi setup](https://github.com/naldomadeira/worker-manager/tree/main/examples/hapi/basic)
+2. [Auth with hapi setup](https://github.com/naldomadeira/worker-manager/tree/main/examples/hapi/auth)
 
 For more info visit the main [README](https://github.com/naldomadeira/worker-manager#readme)

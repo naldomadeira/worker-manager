@@ -40,8 +40,8 @@ await app.start();
 
 ## Full runnable examples
 
-- Simple setup: [`examples/with-hapi`](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-hapi)
-- With basic auth: [`examples/with-hapi-auth`](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-hapi-auth)
+- Simple setup: [`examples/hapi/basic`](https://github.com/naldomadeira/worker-manager/tree/main/examples/hapi/basic)
+- With basic auth: [`examples/hapi/auth`](https://github.com/naldomadeira/worker-manager/tree/main/examples/hapi/auth)
 
 ## Next steps
 

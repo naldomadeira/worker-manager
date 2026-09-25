@@ -1,0 +1,27 @@
+{
+  "name": "worker-manager-nestjs-postgres",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Worker Manager in a NestJS 11 app with BullMQ v6 queues stored in PostgreSQL",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "start": "tsc && node --env-file-if-exists=.env dist/main.js"
+  },
+  "dependencies": {
+    "@nestjs/common": "^11.2.6",
+    "@nestjs/core": "^11.2.6",
+    "@nestjs/platform-express": "^11.2.6",
+    "@worker-manager/api": "^2.0.0",
+    "@worker-manager/express": "^2.0.0",
+    "@worker-manager/nestjs": "^2.0.0",
+    "bullmq": "^6.3.8",
+    "pg": "^8.23.0",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.0",
+    "typescript": "^5.9.3"
+  }
+}

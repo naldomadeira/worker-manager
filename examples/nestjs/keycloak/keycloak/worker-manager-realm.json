@@ -1,0 +1,87 @@
+{
+  "realm": "worker-manager",
+  "enabled": true,
+  "displayName": "Worker Manager example",
+  "sslRequired": "none",
+  "registrationAllowed": false,
+  "loginWithEmailAllowed": true,
+  "accessTokenLifespan": 300,
+  "ssoSessionIdleTimeout": 1800,
+  "roles": {
+    "realm": [
+      {
+        "name": "wm-admin",
+        "description": "Full access to the Worker Manager board"
+      },
+      {
+        "name": "wm-viewer",
+        "description": "Signed in, but without board access"
+      }
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "worker-manager-board",
+      "name": "Worker Manager board",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "example-secret",
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": false,
+      "redirectUris": [
+        "http://localhost:3012/*",
+        "http://127.0.0.1:3012/*"
+      ],
+      "webOrigins": [
+        "+"
+      ],
+      "attributes": {
+        "pkce.code.challenge.method": "S256",
+        "post.logout.redirect.uris": "http://localhost:3012/*##http://127.0.0.1:3012/*"
+      }
+    }
+  ],
+  "users": [
+    {
+      "username": "admin",
+      "enabled": true,
+      "email": "admin@worker-manager.local",
+      "emailVerified": true,
+      "firstName": "Ada",
+      "lastName": "Admin",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "admin",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "wm-admin",
+        "default-roles-worker-manager"
+      ]
+    },
+    {
+      "username": "viewer",
+      "enabled": true,
+      "email": "viewer@worker-manager.local",
+      "emailVerified": true,
+      "firstName": "Victor",
+      "lastName": "Viewer",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "viewer",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "wm-viewer",
+        "default-roles-worker-manager"
+      ]
+    }
+  ]
+}

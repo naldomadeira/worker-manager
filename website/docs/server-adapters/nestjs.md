@@ -223,7 +223,7 @@ import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 
 const invoices = new Queue(
   'invoices',
-  // `migrate: true` creates BullMQ's schema on first connect; see the PostgreSQL recipe.
+  // BullMQ 6.3+: `migrate: true` creates its schema on first connect; see the PostgreSQL recipe.
   { connection: { connectionString: process.env.POSTGRES_URL, migrate: true } },
   createPostgresBackend
 );
@@ -315,9 +315,10 @@ export class QueuesModule implements NestModule {
 
 ## Full runnable examples
 
-- NestJS module (recommended): [`examples/with-nestjs-module`](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-nestjs-module)
-- Plain adapter: [`examples/with-nestjs`](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-nestjs)
-- Fastify platform with auth: [`examples/with-nestjs-fastify-auth`](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-nestjs-fastify-auth)
+- Redis with `@nestjs/bullmq` and basic auth: [`examples/nestjs/redis`](https://github.com/naldomadeira/worker-manager/tree/main/examples/nestjs/redis)
+- PostgreSQL-backed BullMQ v6 queues: [`examples/nestjs/postgres`](https://github.com/naldomadeira/worker-manager/tree/main/examples/nestjs/postgres)
+- Keycloak auth configured from `ConfigService`: [`examples/nestjs/keycloak`](https://github.com/naldomadeira/worker-manager/tree/main/examples/nestjs/keycloak)
+- Fastify platform with a custom auth hook: [`examples/nestjs/fastify-custom-auth`](https://github.com/naldomadeira/worker-manager/tree/main/examples/nestjs/fastify-custom-auth)
 
 ## Next steps
 

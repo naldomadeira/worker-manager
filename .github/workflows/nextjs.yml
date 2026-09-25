@@ -10,8 +10,8 @@ on:
     branches:
       - main
     paths:
-      - 'examples/with-nextjs-app/**'
-      - 'examples/with-nextjs-pages/**'
+      - 'examples/nextjs/app-router/**'
+      - 'examples/nextjs/pages-router/**'
       - 'scripts/check-nextjs-trace.mjs'
       - 'scripts/pack-local.sh'
       - '.github/workflows/nextjs.yml'
@@ -41,7 +41,7 @@ jobs:
         run: |
           set -uo pipefail
           failures=()
-          for example in with-nextjs-app with-nextjs-pages; do
+          for example in nextjs/app-router nextjs/pages-router; do
             for next in 15 16; do
               echo "::group::$example on next@$next"
               if (

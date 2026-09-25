@@ -2,7 +2,7 @@
 
 You might want separate dashboards for different queue groups. One per team, or one read-only and one read-write.
 
-From [`examples/with-multiple-instances`](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-multiple-instances).
+From [`examples/express/multiple-boards`](https://github.com/naldomadeira/worker-manager/tree/main/examples/express/multiple-boards).
 
 ```js
 const serverAdapter1 = new ExpressAdapter();

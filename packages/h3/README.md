@@ -19,6 +19,6 @@
 
 # Usage examples
 
-1. [Simple h3 setup](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-h3)
+1. [Simple h3 setup](https://github.com/naldomadeira/worker-manager/tree/main/examples/more/h3)
 
 For more info visit the main [README](https://github.com/naldomadeira/worker-manager#readme)

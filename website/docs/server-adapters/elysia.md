@@ -46,7 +46,7 @@ Top-level `await` in the example. Wrap the body in `async function main() { ... 
 
 ## Full runnable example
 
-- Simple setup: [`examples/with-elysia`](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-elysia)
+- Simple setup: [`examples/more/elysia`](https://github.com/naldomadeira/worker-manager/tree/main/examples/more/elysia)
 
 ## Next steps
 

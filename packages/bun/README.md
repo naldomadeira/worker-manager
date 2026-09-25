@@ -18,6 +18,6 @@
 ![UI](https://raw.githubusercontent.com/naldomadeira/worker-manager/main/screenshots/dashboard.png)
 
 # Usage examples
-1. [Simple bun setup](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-bun)
+1. [Simple bun setup](https://github.com/naldomadeira/worker-manager/tree/main/examples/more/bun)
 
 For more info visit the main [README](https://github.com/naldomadeira/worker-manager#readme)

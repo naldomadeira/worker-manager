@@ -2,7 +2,7 @@
 
 The dashboard's destructive actions (retry, clean, pause, obliterate) are state-changing PUT/POST calls. If the dashboard lives on the same origin as an untrusted user session, protect those calls with CSRF tokens.
 
-From [`examples/with-express-csrf`](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-express-csrf). The example uses [`csrf-csrf`](https://github.com/Psifi-Solutions/csrf-csrf) (double-submit cookie pattern). The older `csurf` package is deprecated, don't reach for it.
+From [`examples/express/csrf`](https://github.com/naldomadeira/worker-manager/tree/main/examples/express/csrf). The example uses [`csrf-csrf`](https://github.com/Psifi-Solutions/csrf-csrf) (double-submit cookie pattern). The older `csurf` package is deprecated, don't reach for it.
 
 ```js
 const { doubleCsrf } = require('csrf-csrf');

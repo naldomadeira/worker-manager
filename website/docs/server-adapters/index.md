@@ -22,11 +22,11 @@ One server adapter per framework. The core `@worker-manager/api` package is shar
 
 ## Sails
 
-No dedicated Sails adapter. Sails runs on Express, so use `@worker-manager/express` inside a Sails controller. Working example: [`examples/with-sails`](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-sails).
+No dedicated Sails adapter. Sails runs on Express, so use `@worker-manager/express` inside a Sails controller. Working example: [`examples/more/sails`](https://github.com/naldomadeira/worker-manager/tree/main/examples/more/sails).
 
 ## Next.js
 
-No dedicated Next.js adapter. Mount Worker Manager inside a Next.js API route using the Hono adapter (App Router) or the Express adapter (Pages Router). The Vercel deployment needs a small bit of `next.config.js`, see [Next.js & Vercel](/recipes/nextjs) and the [`with-nextjs-app`](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-nextjs-app) / [`with-nextjs-pages`](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-nextjs-pages) examples.
+No dedicated Next.js adapter. Mount Worker Manager inside a Next.js API route using the Hono adapter (App Router) or the Express adapter (Pages Router). The Vercel deployment needs a small bit of `next.config.js`, see [Next.js & Vercel](/recipes/nextjs) and the [`nextjs/app-router`](https://github.com/naldomadeira/worker-manager/tree/main/examples/nextjs/app-router) / [`nextjs/pages-router`](https://github.com/naldomadeira/worker-manager/tree/main/examples/nextjs/pages-router) examples.
 
 ## Shape
 

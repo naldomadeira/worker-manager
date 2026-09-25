@@ -66,7 +66,7 @@ No "locked" state. The UI behaves as if the queue doesn't exist.
 
 ## Full runnable example
 
-- [`examples/with-fastify-visibility-guard`](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-fastify-visibility-guard): cookie-based auth with two users, each limited to a different queue.
+- [`examples/fastify/visibility-guard`](https://github.com/naldomadeira/worker-manager/tree/main/examples/fastify/visibility-guard): cookie-based auth with two users, each limited to a different queue.
 
 ## Source of truth
 

@@ -19,7 +19,7 @@
 
 # Usage examples
 
-1. [Simple Elysia setup](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-elysia)
+1. [Simple Elysia setup](https://github.com/naldomadeira/worker-manager/tree/main/examples/more/elysia)
 
 # Compatibility
 

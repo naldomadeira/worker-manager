@@ -43,7 +43,7 @@ serve({ fetch: app.fetch, port: 3000 });
 
 ## Full runnable example
 
-- Simple setup: [`examples/with-hono`](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-hono)
+- Simple setup: [`examples/more/hono`](https://github.com/naldomadeira/worker-manager/tree/main/examples/more/hono)
 
 ## Next steps
 

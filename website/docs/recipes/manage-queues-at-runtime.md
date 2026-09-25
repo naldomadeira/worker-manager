@@ -58,7 +58,7 @@ Reach for `replaceQueues` when you have the authoritative full list and want the
 
 - Changes take effect on the next request. The functions write to the same `Map` the board reads each time, so there's no cache to bust.
 - Removing a queue only detaches it from the dashboard. It doesn't close the Bull/BullMQ connection or touch Redis, so clean those up yourself if the queue is really gone.
-- On [NestJS](/server-adapters/nestjs) you don't hold the return value of `createWorkerManagerBoard` directly. The module already calls `addQueue` when you register feature queues, and it exposes the same board instance for manual changes via `@InjectWorkerManager() board: WorkerManagerBoard`. See [`examples/with-nestjs-module`](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-nestjs-module).
+- On [NestJS](/server-adapters/nestjs) you don't hold the return value of `createWorkerManagerBoard` directly. The module already calls `addQueue` when you register feature queues, and it exposes the same board instance for manual changes via `@InjectWorkerManager() board: WorkerManagerBoard`. See [`examples/nestjs/redis`](https://github.com/naldomadeira/worker-manager/tree/main/examples/nestjs/redis).
 
 ## Source of truth
 

@@ -41,7 +41,7 @@ Bun.serve({
 
 ## Full runnable example
 
-- Simple setup: [`examples/with-bun`](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-bun)
+- Simple setup: [`examples/more/bun`](https://github.com/naldomadeira/worker-manager/tree/main/examples/more/bun)
 
 ## Next steps
 

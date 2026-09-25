@@ -1,0 +1,15 @@
+name: worker-manager-nestjs-postgres
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: bullmq
+      POSTGRES_PASSWORD: bullmq
+      POSTGRES_DB: bullmq
+    ports:
+      - '5450:5432'
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U bullmq']
+      interval: 2s
+      retries: 15

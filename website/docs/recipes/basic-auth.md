@@ -57,7 +57,7 @@ Here's the minimum per framework if you would rather use its own auth tooling.
 
 ### Express + Passport
 
-From [`examples/with-express-auth`](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-express-auth).
+From [`examples/express/custom-login`](https://github.com/naldomadeira/worker-manager/tree/main/examples/express/custom-login).
 
 ```js
 const passport = require('passport');
@@ -91,14 +91,14 @@ Run it:
 
 ```sh
 git clone https://github.com/naldomadeira/worker-manager
-cd worker-manager/examples/with-express-auth
+cd worker-manager/examples/express/custom-login
 npm install && npm start
 # http://localhost:3000/ui (login: bull / board)
 ```
 
 ### Fastify + @fastify/basic-auth
 
-From [`examples/with-fastify-auth`](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-fastify-auth).
+From [`examples/fastify/auth`](https://github.com/naldomadeira/worker-manager/tree/main/examples/fastify/auth).
 
 ```js
 await app.register(require('@fastify/basic-auth'), {
@@ -125,7 +125,7 @@ The `onRequest` hook covers every route registered after it. Scope the auth plug
 
 ### Hapi + strategy
 
-From [`examples/with-hapi-auth`](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-hapi-auth).
+From [`examples/hapi/auth`](https://github.com/naldomadeira/worker-manager/tree/main/examples/hapi/auth).
 
 ```js
 await app.register(require('@hapi/basic'));
@@ -150,7 +150,7 @@ The plugin options pass straight to Hapi's route config, so the auth strategy ap
 
 ### NestJS + guards
 
-From [`examples/with-nestjs-fastify-auth`](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-nestjs-fastify-auth).
+From [`examples/nestjs/fastify-custom-auth`](https://github.com/naldomadeira/worker-manager/tree/main/examples/nestjs/fastify-custom-auth).
 
 NestJS on the Fastify platform with a standard `@UseGuards()` guard. The example uses passport-local plus `@fastify/secure-session` for session cookies.
 

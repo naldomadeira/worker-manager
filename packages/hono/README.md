@@ -19,6 +19,6 @@
 
 # Usage examples
 
-1. [Simple Hono setup](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-hono)
+1. [Simple Hono setup](https://github.com/naldomadeira/worker-manager/tree/main/examples/more/hono)
 
 For more info visit the main [README](https://github.com/naldomadeira/worker-manager#readme)

@@ -46,9 +46,9 @@ Top-level `await` in the example. Wrap the body in `async function main() { ... 
 
 ## Full runnable examples
 
-- Simple setup: [`examples/with-fastify`](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-fastify)
-- With basic auth: [`examples/with-fastify-auth`](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-fastify-auth)
-- With visibility guard: [`examples/with-fastify-visibility-guard`](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-fastify-visibility-guard)
+- Simple setup: [`examples/fastify/basic`](https://github.com/naldomadeira/worker-manager/tree/main/examples/fastify/basic)
+- With basic auth: [`examples/fastify/auth`](https://github.com/naldomadeira/worker-manager/tree/main/examples/fastify/auth)
+- With visibility guard: [`examples/fastify/visibility-guard`](https://github.com/naldomadeira/worker-manager/tree/main/examples/fastify/visibility-guard)
 
 ## Next steps
 

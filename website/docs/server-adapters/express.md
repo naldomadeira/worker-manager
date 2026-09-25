@@ -36,10 +36,10 @@ The path in `setBasePath()` must match the mount point in `app.use()`.
 
 ## Full runnable examples
 
-- Simple setup: [`examples/with-express`](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-express)
-- With basic auth: [`examples/with-express-auth`](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-express-auth)
-- With CSRF: [`examples/with-express-csrf`](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-express-csrf)
-- Multiple dashboard instances: [`examples/with-multiple-instances`](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-multiple-instances)
+- Simple setup: [`examples/express/basic`](https://github.com/naldomadeira/worker-manager/tree/main/examples/express/basic)
+- With basic auth: [`examples/express/custom-login`](https://github.com/naldomadeira/worker-manager/tree/main/examples/express/custom-login)
+- With CSRF: [`examples/express/csrf`](https://github.com/naldomadeira/worker-manager/tree/main/examples/express/csrf)
+- Multiple dashboard instances: [`examples/express/multiple-boards`](https://github.com/naldomadeira/worker-manager/tree/main/examples/express/multiple-boards)
 
 ## Next steps
 

@@ -31,8 +31,9 @@ app.listen(3000);
 ```
 
 ::: warning A fresh database needs its schema
-BullMQ refuses to start against a database it has not migrated, with
-`SchemaMigrationRequiredError: PostgreSQL schema "bullmq" is not initialized`. Either run its
+Since BullMQ 6.3, it refuses to start against a database it has not migrated, with
+`SchemaMigrationRequiredError: PostgreSQL schema "bullmq" is not initialized` (6.0–6.2 migrated
+on `waitUntilReady()` by themselves and have no `migrate` option). Either run its
 migrations once as a deploy step, or let the connection apply them on first connect. That
 takes the object form of the connection, which is also where a custom `schema` goes:
 

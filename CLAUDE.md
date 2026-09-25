@@ -360,11 +360,25 @@ module.exports = { ...base, displayName: 'express@4', moduleNameMapper: { '^expr
 
 `@worker-manager/nestjs` declares `@nestjs/common` and `@nestjs/core` as `^9 || ^10 || ^11 || ^12`.
 NestJS 11 and 12 are both exercised on every run. `yarn workspace @worker-manager/nestjs test` is two
-`jest` invocations over the same two spec files: `jest.config.js` for 11, then
-`jest.config.v12.js` for 12.
+`jest` invocations over the same spec files: `jest.config.js` for 11, then
+`jest.config.v12.js` for 12. Both match `tests/**/*.spec.ts`:
+
+| Folder | What it holds |
+|---|---|
+| `tests/scenarios/` | One real Nest app per datastore, booted through `WorkerManagerModule` as a user would: `redis` (`@nestjs/bullmq` + Basic auth, Express and Fastify), `postgres` (bullmq@6 `createPostgresBackend`, skips without `POSTGRES_URL`), `keycloak` (in-process fake OIDC provider), `pg-boss` (`it.todo` until the engine exists) |
+| `tests/module/` | Module options the scenarios do not exercise (global prefix, `enabled: false`, `title`, `forRootAsync`, same-name queues, DI tokens) |
+| `tests/contract/` | The shared 12-case adapter contract battery |
+| `tests/support/` | `boot()`/`basic()`/`http()` helpers, Redis connection and unique queue names, the fake OIDC provider, the ESM test-utils shim |
+
+```bash
+POSTGRES_URL=postgres://bullmq:bullmq@localhost:5432/bullmq yarn workspace @worker-manager/nestjs test
+```
+
+Test files carry no comments; keep new scenarios to the essential assertions and give every queue
+a `uniqueName()`.
 
 Both configs take their `moduleNameMapper` from `jest.nest-matrix.js`, which builds the mapping
-for `@nestjs/{bull-shared,bullmq,common,core,platform-express}` out of one list of npm aliases
+for `@nestjs/{bull-shared,bullmq,common,core,platform-express,platform-fastify}` out of one list of npm aliases
 (`nestjs-core-v11`: `npm:@nestjs/core@^11`, and so on). Generating both configs from that single
 list is what stops a mapping entry from being dropped and one major from silently being run
 twice; the helper also reads each alias's installed version off disk and throws at config load if
@@ -389,7 +403,7 @@ exactly.
 
 `@worker-manager/test-utils` cannot be loaded into the ESM config as it stands, because its barrel
 computes `uiFixtureBasePath` from `__dirname`. The v12 config maps `@worker-manager/test-utils` to
-`tests/esmTestUtils.ts`, which re-exports the two modules of the kit that never touch `__dirname`
+`tests/support/esm-test-utils.ts`, which re-exports the two modules of the kit that never touch `__dirname`
 and rebuilds the fixture path from `import.meta.url`. The contract battery itself is shared
 unchanged between both majors.
 

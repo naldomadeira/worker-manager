@@ -18,9 +18,9 @@
 ![UI](https://raw.githubusercontent.com/naldomadeira/worker-manager/main/screenshots/dashboard.png)
 
 # Usage examples
-1. [Simple express setup](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-express)
-2. [Basic authentication example](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-express-auth)
-2. [Multiple instance of the board](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-multiple-instances)
+1. [Simple express setup](https://github.com/naldomadeira/worker-manager/tree/main/examples/express/basic)
+2. [Basic authentication example](https://github.com/naldomadeira/worker-manager/tree/main/examples/express/custom-login)
+2. [Multiple instance of the board](https://github.com/naldomadeira/worker-manager/tree/main/examples/express/multiple-boards)
 
 # Authentication
 

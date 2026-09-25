@@ -18,8 +18,8 @@
 ![UI](https://raw.githubusercontent.com/naldomadeira/worker-manager/main/screenshots/dashboard.png)
 
 # Usage examples
-1. [Simple fastify setup](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-fastify)
-2. [Auth with fastify setup](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-fastify-auth)
+1. [Simple fastify setup](https://github.com/naldomadeira/worker-manager/tree/main/examples/fastify/basic)
+2. [Auth with fastify setup](https://github.com/naldomadeira/worker-manager/tree/main/examples/fastify/auth)
 
 
 # Authentication

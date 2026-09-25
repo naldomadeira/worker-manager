@@ -4,7 +4,7 @@ Show each user only the queues they're allowed to see. One shared dashboard, per
 
 See also: [Visibility guard](/recipes/visibility-guard) for the full reference.
 
-From [`examples/with-fastify-visibility-guard`](https://github.com/naldomadeira/worker-manager/tree/main/examples/with-fastify-visibility-guard) (Fastify + cookie auth + JWT).
+From [`examples/fastify/visibility-guard`](https://github.com/naldomadeira/worker-manager/tree/main/examples/fastify/visibility-guard) (Fastify + cookie auth + JWT).
 
 ## How the Fastify example wires it
 
