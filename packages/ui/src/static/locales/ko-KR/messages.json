@@ -455,7 +455,18 @@
     "STATUS_NOT_RETRIABLE": "\"{{status}}\"은(는) 재시도할 수 있는 상태가 아닙니다",
     "UNAUTHORIZED": "이 보드에 접근하려면 로그인해야 합니다",
     "WORKERS_DISABLED": "워커 정보 표시가 비활성화되어 있습니다",
-    "INVALID_METRIC": "잘못된 메트릭"
+    "INVALID_METRIC": "잘못된 메트릭",
+    "PGBOSS_BULK_LIMIT": "작업 ID는 한 번에 1개에서 {{max}}개까지 보내세요.",
+    "PGBOSS_INVALID_CURSOR": "페이지 커서가 올바르지 않습니다. 첫 페이지로 돌아가세요.",
+    "PGBOSS_INVALID_SCHEDULE": "스케줄 표현식이 올바르지 않습니다.",
+    "PGBOSS_JOB_STATE_CONFLICT": "{{state}} 상태의 작업에는 {{action}}을(를) 실행할 수 없습니다.",
+    "PGBOSS_NOT_INSTALLED": "이 데이터베이스 스키마에 pg-boss가 설치되어 있지 않습니다.",
+    "PGBOSS_PREVIEW_UNAVAILABLE": "스케줄 미리보기에는 pg-boss 12.31 이상이 필요합니다.",
+    "PGBOSS_QUERY_TIMEOUT": "쿼리가 너무 오래 걸렸습니다. 작업 ID나 singleton key로 필터링하세요.",
+    "PGBOSS_SCHEMA_MISMATCH": "데이터베이스는 pg-boss 스키마 {{found}}인데, 여기서 사용할 수 있는 pg-boss는 스키마 {{expected}}를 씁니다.",
+    "PGBOSS_SCHEMA_UNSUPPORTED": "pg-boss 스키마 {{found}}는 지원되지 않습니다. 지원 버전은 {{min}}부터 {{max}}까지입니다.",
+    "PGBOSS_WRITER_UNAVAILABLE": "쓰기에 사용할 pg-boss 인스턴스가 없습니다. 앱의 인스턴스를 전달하거나 보드와 함께 pg-boss를 설치하세요.",
+    "PGBOSS_WRITES_DISABLED": "이 pg-boss 보드에서는 변경이 꺼져 있습니다."
   },
   "METRICS_HISTORY": {
     "TITLE": "메트릭 기록",

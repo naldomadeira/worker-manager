@@ -60,7 +60,7 @@ type RequestPart<K> = [K] extends [never]
     : never;
 
 // `handler` is a property, not a method, so TS checks it contravariantly against the declared schemas.
-function defineRoute<
+export function defineRoute<
   TResponse extends keyof ResponseSchemas,
   TQuery extends keyof RequestSchemas = never,
   TBody extends keyof RequestSchemas = never,

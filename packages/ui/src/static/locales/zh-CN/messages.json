@@ -455,7 +455,18 @@
     "STATUS_NOT_RETRIABLE": "\"{{status}}\" 不是可重试的状态",
     "UNAUTHORIZED": "您需要登录才能访问此面板",
     "WORKERS_DISABLED": "Worker 信息展示已停用",
-    "INVALID_METRIC": "无效的指标"
+    "INVALID_METRIC": "无效的指标",
+    "PGBOSS_BULK_LIMIT": "每次请发送 1 到 {{max}} 个任务 ID。",
+    "PGBOSS_INVALID_CURSOR": "页面游标无效。请返回第一页。",
+    "PGBOSS_INVALID_SCHEDULE": "调度表达式无效。",
+    "PGBOSS_JOB_STATE_CONFLICT": "无法对状态为 {{state}} 的任务执行 {{action}}。",
+    "PGBOSS_NOT_INSTALLED": "此数据库 schema 中未安装 pg-boss。",
+    "PGBOSS_PREVIEW_UNAVAILABLE": "预览调度需要 pg-boss 12.31 或更高版本。",
+    "PGBOSS_QUERY_TIMEOUT": "查询耗时过长。请按任务 ID 或 singleton key 筛选。",
+    "PGBOSS_SCHEMA_MISMATCH": "数据库处于 pg-boss schema {{found}}，但此处可用的 pg-boss 写入的是 schema {{expected}}。",
+    "PGBOSS_SCHEMA_UNSUPPORTED": "不支持 pg-boss schema {{found}}。支持的版本为 {{min}} 到 {{max}}。",
+    "PGBOSS_WRITER_UNAVAILABLE": "没有可用于写入的 pg-boss 实例。请传入应用的实例，或在面板旁安装 pg-boss。",
+    "PGBOSS_WRITES_DISABLED": "此 pg-boss 面板已关闭更改。"
   },
   "METRICS_HISTORY": {
     "TITLE": "指标历史",

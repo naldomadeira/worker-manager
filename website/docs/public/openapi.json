@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Worker Manager HTTP API",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "description": "The dashboard's own UI is a client of this API and nothing else, so anything the UI can do is\navailable here. Every route is served relative to the base path you passed to `setBasePath()`. A\nboard mounted at `/admin/queues` serves `GET /admin/queues/api/queues`.\n\n## Authentication\n\nThere is none. Worker Manager does not authenticate requests and never has: the board inherits\nwhatever protects the route it is mounted on, which is your application's own middleware. See\n[basic auth](https://naldomadeira.github.io/worker-manager/recipes/basic-auth) for the standalone case, and\n[access control hooks](https://naldomadeira.github.io/worker-manager/recipes/access-control-hooks) for per-route rules.\n\nThis matters when pointing a script or an agent at a running board. You send whatever credential\nyour own middleware expects, as an ordinary header, and Worker Manager neither issues nor validates\nit.\n\n## What can reject a call\n\nA route existing in this document does not mean a given board will answer it.\n\n- Queues registered with `readOnlyMode` reject every write with **405** and\n  `ERRORS.QUEUE_READ_ONLY`.\n- A [visibility guard](https://naldomadeira.github.io/worker-manager/recipes/visibility-guard) makes a queue answer **404** as though it were\n  not registered.\n- A [`handlerHooks.before`](https://naldomadeira.github.io/worker-manager/recipes/access-control-hooks) hook can reject any call, by default\n  with **403** and `ERRORS.FORBIDDEN`.\n- The four `/api/metrics/*` routes are registered only when a `historyProvider` is configured,\n  and individually only when the provider implements the matching capability. Without one they\n  are not mounted at all and answer **404**. See [historical metrics](https://naldomadeira.github.io/worker-manager/recipes/historical-metrics).\n\n## Request validation\n\nEvery query string and request body documented here is checked against its schema before the\nroute runs, and a request that does not match is refused with **400** before anything is read or\nwritten. The check runs after `handlerHooks.before`, so a hook that hides a route still answers\nfirst and a malformed request cannot be used to discover that a hidden route exists.\n\nQuery values arrive as strings and are coerced by the schema, which is why parameters such as\n`page` document a string alongside a number: the wire carries `page=2` and the handler receives\n`2`. An empty value reads as an omitted one, so `?page=` is the same request as no `page` at all.\n\n## Error bodies\n\nEvery failure returns `ErrorResponseBody`. Its `error` field is a translation key rather than a\nsentence, because the API never puts user-facing English in a response and the client owns the\nwording. `code` is the stable identifier to branch on when you handle a specific failure rather\nthan display it.\n\n```json\n{\n  \"error\": { \"key\": \"ERRORS.QUEUE_NOT_FOUND\" },\n  \"message\": { \"key\": \"ERRORS.JOB_IS_ACTIVE_DETAILS\", \"options\": { \"jobId\": \"42\" } },\n  \"code\": \"JOB_BELONGS_TO_JOB_SCHEDULER\"\n}\n```\n\n## Response shapes\n\nEvery response documented here is derived from the same schema the handler is type-checked\nagainst, so a handler that stops returning what it advertises does not compile. A board can also\ncheck its responses at runtime with `options.validateResponses`, which is meant for developing a\ncustom adapter or hook rather than for production.\n\n## Versioning\n\nThe `info.version` in the spec describes the shape of this HTTP API and is deliberately\nindependent of the `@worker-manager/api` package version, so a routine release does not churn the\ngenerated artifacts."
   },
   "tags": [
@@ -23,6 +23,10 @@
       "description": "Long-retention counter and latency history. These routes exist only on a board configured with a `historyProvider`, and each one individually only when the provider implements the matching capability, so on a board without one they are not mounted and answer **404**."
     },
     {
+      "name": "pg-boss",
+      "description": "Every route of a board created with engine 'pg-boss' (`createPgBossBoard` from `@worker-manager/pg-boss`). Such a board registers these, the metrics history routes and the entry page, and none of the BullMQ routes; a BullMQ board registers none of these. Reads are SQL against the pg-boss schema, writes go through the pg-boss API. Mutations are not registered on a read-only board, and answer **409** `ERRORS.PGBOSS_WRITES_DISABLED` while the schema guard keeps writes off. Experimental: this part of the contract may change in a minor release."
+    },
+    {
       "name": "Datastore",
       "description": "Statistics for the datastore behind the board's first registered queue. Answers **404** when that queue is backed by something other than Redis that cannot report them, and **403** when the board sets `hideRedisDetails`."
     }
@@ -35,6 +39,7 @@
         "tags": [
           "Datastore"
         ],
+        "description": "Available only when: The board runs engine 'bullmq', the default.",
         "responses": {
           "200": {
             "description": "Success.",
@@ -66,6 +71,7 @@
         "tags": [
           "Queues"
         ],
+        "description": "Available only when: The board runs engine 'bullmq', the default.",
         "parameters": [
           {
             "name": "activeQueue",
@@ -133,6 +139,7 @@
         "tags": [
           "Job schedulers"
         ],
+        "description": "Available only when: The board runs engine 'bullmq', the default.",
         "parameters": [
           {
             "name": "queueName",
@@ -174,6 +181,7 @@
         "tags": [
           "Queues"
         ],
+        "description": "Available only when: The board runs engine 'bullmq', the default.",
         "parameters": [
           {
             "name": "queueName",
@@ -215,6 +223,7 @@
         "tags": [
           "Queues"
         ],
+        "description": "Available only when: The board runs engine 'bullmq', the default.",
         "parameters": [
           {
             "name": "queueName",
@@ -256,6 +265,7 @@
         "tags": [
           "Queues"
         ],
+        "description": "Available only when: The board runs engine 'bullmq', the default.",
         "parameters": [
           {
             "name": "queueName",
@@ -297,6 +307,7 @@
         "tags": [
           "Queues"
         ],
+        "description": "Available only when: The board runs engine 'bullmq', the default.",
         "parameters": [
           {
             "name": "queueName",
@@ -336,6 +347,7 @@
         "tags": [
           "Queues"
         ],
+        "description": "Available only when: The board runs engine 'bullmq', the default.",
         "parameters": [
           {
             "name": "queueName",
@@ -387,6 +399,7 @@
         "tags": [
           "Queues"
         ],
+        "description": "Available only when: The board runs engine 'bullmq', the default.",
         "parameters": [
           {
             "name": "queueName",
@@ -428,6 +441,7 @@
         "tags": [
           "Queues"
         ],
+        "description": "Available only when: The board runs engine 'bullmq', the default.",
         "responses": {
           "200": {
             "description": "Success.",
@@ -459,6 +473,7 @@
         "tags": [
           "Queues"
         ],
+        "description": "Available only when: The board runs engine 'bullmq', the default.",
         "responses": {
           "200": {
             "description": "Success.",
@@ -490,6 +505,7 @@
         "tags": [
           "Jobs"
         ],
+        "description": "Available only when: The board runs engine 'bullmq', the default.",
         "parameters": [
           {
             "name": "queueName",
@@ -539,6 +555,7 @@
         "tags": [
           "Jobs"
         ],
+        "description": "Available only when: The board runs engine 'bullmq', the default.",
         "parameters": [
           {
             "name": "queueName",
@@ -610,6 +627,7 @@
         "tags": [
           "Jobs"
         ],
+        "description": "Available only when: The board runs engine 'bullmq', the default.",
         "parameters": [
           {
             "name": "queueName",
@@ -659,6 +677,7 @@
         "tags": [
           "Queues"
         ],
+        "description": "Available only when: The board runs engine 'bullmq', the default.",
         "parameters": [
           {
             "name": "queueName",
@@ -710,6 +729,7 @@
         "tags": [
           "Queues"
         ],
+        "description": "Available only when: The board runs engine 'bullmq', the default.",
         "parameters": [
           {
             "name": "queueName",
@@ -759,6 +779,7 @@
         "tags": [
           "Queues"
         ],
+        "description": "Available only when: The board runs engine 'bullmq', the default.",
         "parameters": [
           {
             "name": "queueName",
@@ -800,6 +821,7 @@
         "tags": [
           "Queues"
         ],
+        "description": "Available only when: The board runs engine 'bullmq', the default.",
         "parameters": [
           {
             "name": "queueName",
@@ -849,6 +871,7 @@
         "tags": [
           "Queues"
         ],
+        "description": "Available only when: The board runs engine 'bullmq', the default.",
         "parameters": [
           {
             "name": "queueName",
@@ -890,6 +913,7 @@
         "tags": [
           "Queues"
         ],
+        "description": "Available only when: The board runs engine 'bullmq', the default.",
         "parameters": [
           {
             "name": "queueName",
@@ -931,6 +955,7 @@
         "tags": [
           "Queues"
         ],
+        "description": "Available only when: The board runs engine 'bullmq', the default.",
         "parameters": [
           {
             "name": "queueName",
@@ -982,6 +1007,7 @@
         "tags": [
           "Queues"
         ],
+        "description": "Available only when: The board runs engine 'bullmq', the default.",
         "parameters": [
           {
             "name": "queueName",
@@ -1023,6 +1049,7 @@
         "tags": [
           "Queues"
         ],
+        "description": "Available only when: The board runs engine 'bullmq', the default.",
         "parameters": [
           {
             "name": "queueName",
@@ -1064,6 +1091,7 @@
         "tags": [
           "Queues"
         ],
+        "description": "Available only when: The board runs engine 'bullmq', the default.",
         "parameters": [
           {
             "name": "queueName",
@@ -1115,6 +1143,7 @@
         "tags": [
           "Job schedulers"
         ],
+        "description": "Available only when: The board runs engine 'bullmq', the default.",
         "parameters": [
           {
             "name": "queueName",
@@ -1157,6 +1186,7 @@
         "tags": [
           "Job schedulers"
         ],
+        "description": "Available only when: The board runs engine 'bullmq', the default.",
         "parameters": [
           {
             "name": "queueName",
@@ -1209,6 +1239,7 @@
         "tags": [
           "Job schedulers"
         ],
+        "description": "Available only when: The board runs engine 'bullmq', the default.",
         "parameters": [
           {
             "name": "queueName",
@@ -1258,6 +1289,7 @@
         "tags": [
           "Jobs"
         ],
+        "description": "Available only when: The board runs engine 'bullmq', the default.",
         "parameters": [
           {
             "name": "queueName",
@@ -1300,6 +1332,7 @@
         "tags": [
           "Jobs"
         ],
+        "description": "Available only when: The board runs engine 'bullmq', the default.",
         "parameters": [
           {
             "name": "queueName",
@@ -1342,6 +1375,7 @@
         "tags": [
           "Jobs"
         ],
+        "description": "Available only when: The board runs engine 'bullmq', the default.",
         "parameters": [
           {
             "name": "queueName",
@@ -1384,6 +1418,7 @@
         "tags": [
           "Jobs"
         ],
+        "description": "Available only when: The board runs engine 'bullmq', the default.",
         "parameters": [
           {
             "name": "queueName",
@@ -1443,6 +1478,7 @@
         "tags": [
           "Jobs"
         ],
+        "description": "Available only when: The board runs engine 'bullmq', the default.",
         "parameters": [
           {
             "name": "queueName",
@@ -1502,6 +1538,7 @@
         "tags": [
           "Jobs"
         ],
+        "description": "Available only when: The board runs engine 'bullmq', the default.",
         "parameters": [
           {
             "name": "queueName",
@@ -1561,6 +1598,7 @@
         "tags": [
           "Jobs"
         ],
+        "description": "Available only when: The board runs engine 'bullmq', the default.",
         "parameters": [
           {
             "name": "queueName",
@@ -1839,6 +1877,1123 @@
           }
         }
       }
+    },
+    "/api/pg-boss/info": {
+      "get": {
+        "operationId": "getPgBossInfo",
+        "summary": "Report the pg-boss installation, the schema guard and what the board can do.",
+        "tags": [
+          "pg-boss"
+        ],
+        "description": "Available only when: The board was created with engine 'pg-boss'.",
+        "responses": {
+          "200": {
+            "description": "Success.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPgBossInfoResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "The call was rejected or failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/pg-boss/queues": {
+      "get": {
+        "operationId": "getPgBossQueues",
+        "summary": "List every visible pg-boss queue with its cached counters.",
+        "tags": [
+          "pg-boss"
+        ],
+        "description": "Available only when: The board was created with engine 'pg-boss'.",
+        "responses": {
+          "200": {
+            "description": "Success.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPgBossQueuesResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "The call was rejected or failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/pg-boss/queues/{queueName}": {
+      "get": {
+        "operationId": "getPgBossQueuesByQueueName",
+        "summary": "Read one pg-boss queue.",
+        "tags": [
+          "pg-boss"
+        ],
+        "description": "Available only when: The board was created with engine 'pg-boss'.",
+        "parameters": [
+          {
+            "name": "queueName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPgBossQueueResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "The call was rejected or failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/pg-boss/queues/{queueName}/counts": {
+      "get": {
+        "operationId": "getPgBossQueuesByQueueNameCounts",
+        "summary": "Count the jobs of one queue in each state, live and capped.",
+        "tags": [
+          "pg-boss"
+        ],
+        "description": "Available only when: The board was created with engine 'pg-boss'.",
+        "parameters": [
+          {
+            "name": "queueName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPgBossStateCountsResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "The call was rejected or failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/pg-boss/queues/{queueName}/jobs": {
+      "get": {
+        "operationId": "getPgBossQueuesByQueueNameJobs",
+        "summary": "List the jobs of one queue, newest first, one keyset page at a time.",
+        "tags": [
+          "pg-boss"
+        ],
+        "description": "Available only when: The board was created with engine 'pg-boss'.",
+        "parameters": [
+          {
+            "name": "queueName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/PgBossJobState"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "20"
+            }
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "desc",
+                "asc"
+              ],
+              "type": "string",
+              "default": "desc"
+            }
+          },
+          {
+            "name": "id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "singletonKey",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPgBossJobsResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "The call was rejected or failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseBody"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "postPgBossQueuesByQueueNameJobs",
+        "summary": "Send a job to one queue.",
+        "tags": [
+          "pg-boss"
+        ],
+        "description": "Available only when: The board was created with engine 'pg-boss'. The board is not read-only. Answers 409 `ERRORS.PGBOSS_WRITES_DISABLED` while the schema guard has writes off.",
+        "parameters": [
+          {
+            "name": "queueName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendPgBossJobBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SendPgBossJobResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "The call was rejected or failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/pg-boss/queues/{queueName}/jobs/{jobId}": {
+      "get": {
+        "operationId": "getPgBossQueuesByQueueNameJobsByJobId",
+        "summary": "Read one job with its data and output.",
+        "tags": [
+          "pg-boss"
+        ],
+        "description": "Available only when: The board was created with engine 'pg-boss'.",
+        "parameters": [
+          {
+            "name": "queueName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "jobId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPgBossJobResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "The call was rejected or failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/pg-boss/queues/{queueName}/jobs/{jobId}/dependencies": {
+      "get": {
+        "operationId": "getPgBossQueuesByQueueNameJobsByJobIdDependencies",
+        "summary": "List the jobs one job waits on and the jobs waiting on it.",
+        "tags": [
+          "pg-boss"
+        ],
+        "description": "Available only when: The board was created with engine 'pg-boss'.",
+        "parameters": [
+          {
+            "name": "queueName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "jobId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPgBossDependenciesResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "The call was rejected or failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/pg-boss/schedules": {
+      "get": {
+        "operationId": "getPgBossSchedules",
+        "summary": "List the schedules of every visible queue, or one named queue.",
+        "tags": [
+          "pg-boss"
+        ],
+        "description": "Available only when: The board was created with engine 'pg-boss'.",
+        "parameters": [
+          {
+            "name": "queueName",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPgBossSchedulesResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "The call was rejected or failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/pg-boss/schedules/preview": {
+      "post": {
+        "operationId": "postPgBossSchedulesPreview",
+        "summary": "Work out the next occurrences of a cron or RRULE expression.",
+        "tags": [
+          "pg-boss"
+        ],
+        "description": "Available only when: The board was created with engine 'pg-boss'. Needs pg-boss 12.31 or later, else 409 `ERRORS.PGBOSS_PREVIEW_UNAVAILABLE`.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PreviewPgBossScheduleBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PreviewPgBossScheduleResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "The call was rejected or failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/pg-boss/queues/{queueName}/jobs/retry": {
+      "put": {
+        "operationId": "putPgBossQueuesByQueueNameJobsRetry",
+        "summary": "Retry failed jobs, up to 100 ids at once.",
+        "tags": [
+          "pg-boss"
+        ],
+        "description": "Available only when: The board was created with engine 'pg-boss'. The board is not read-only. Answers 409 `ERRORS.PGBOSS_WRITES_DISABLED` while the schema guard has writes off.",
+        "parameters": [
+          {
+            "name": "queueName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PgBossJobIdsBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PgBossCommandResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "The call was rejected or failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/pg-boss/queues/{queueName}/jobs/{jobId}/retry": {
+      "put": {
+        "operationId": "putPgBossQueuesByQueueNameJobsByJobIdRetry",
+        "summary": "Retry one failed job.",
+        "tags": [
+          "pg-boss"
+        ],
+        "description": "Available only when: The board was created with engine 'pg-boss'. The board is not read-only. Answers 409 `ERRORS.PGBOSS_WRITES_DISABLED` while the schema guard has writes off.",
+        "parameters": [
+          {
+            "name": "queueName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "jobId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PgBossCommandResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "The call was rejected or failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/pg-boss/queues/{queueName}/jobs/cancel": {
+      "put": {
+        "operationId": "putPgBossQueuesByQueueNameJobsCancel",
+        "summary": "Cancel jobs that have not finished, up to 100 ids at once.",
+        "tags": [
+          "pg-boss"
+        ],
+        "description": "Available only when: The board was created with engine 'pg-boss'. The board is not read-only. Answers 409 `ERRORS.PGBOSS_WRITES_DISABLED` while the schema guard has writes off.",
+        "parameters": [
+          {
+            "name": "queueName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PgBossJobIdsBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PgBossCommandResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "The call was rejected or failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/pg-boss/queues/{queueName}/jobs/{jobId}/cancel": {
+      "put": {
+        "operationId": "putPgBossQueuesByQueueNameJobsByJobIdCancel",
+        "summary": "Cancel one job that has not finished. A running handler is not interrupted.",
+        "tags": [
+          "pg-boss"
+        ],
+        "description": "Available only when: The board was created with engine 'pg-boss'. The board is not read-only. Answers 409 `ERRORS.PGBOSS_WRITES_DISABLED` while the schema guard has writes off.",
+        "parameters": [
+          {
+            "name": "queueName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "jobId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PgBossCommandResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "The call was rejected or failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/pg-boss/queues/{queueName}/jobs/resume": {
+      "put": {
+        "operationId": "putPgBossQueuesByQueueNameJobsResume",
+        "summary": "Resume cancelled jobs, up to 100 ids at once.",
+        "tags": [
+          "pg-boss"
+        ],
+        "description": "Available only when: The board was created with engine 'pg-boss'. The board is not read-only. Answers 409 `ERRORS.PGBOSS_WRITES_DISABLED` while the schema guard has writes off.",
+        "parameters": [
+          {
+            "name": "queueName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PgBossJobIdsBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PgBossCommandResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "The call was rejected or failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/pg-boss/queues/{queueName}/jobs/{jobId}/resume": {
+      "put": {
+        "operationId": "putPgBossQueuesByQueueNameJobsByJobIdResume",
+        "summary": "Resume one cancelled job.",
+        "tags": [
+          "pg-boss"
+        ],
+        "description": "Available only when: The board was created with engine 'pg-boss'. The board is not read-only. Answers 409 `ERRORS.PGBOSS_WRITES_DISABLED` while the schema guard has writes off.",
+        "parameters": [
+          {
+            "name": "queueName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "jobId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PgBossCommandResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "The call was rejected or failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/pg-boss/queues/{queueName}/jobs/remove": {
+      "put": {
+        "operationId": "putPgBossQueuesByQueueNameJobsRemove",
+        "summary": "Delete jobs, up to 100 ids at once.",
+        "tags": [
+          "pg-boss"
+        ],
+        "description": "Available only when: The board was created with engine 'pg-boss'. The board is not read-only. Answers 409 `ERRORS.PGBOSS_WRITES_DISABLED` while the schema guard has writes off.",
+        "parameters": [
+          {
+            "name": "queueName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PgBossJobIdsBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PgBossCommandResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "The call was rejected or failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/pg-boss/queues/{queueName}/jobs/{jobId}/remove": {
+      "put": {
+        "operationId": "putPgBossQueuesByQueueNameJobsByJobIdRemove",
+        "summary": "Delete one job that is not active.",
+        "tags": [
+          "pg-boss"
+        ],
+        "description": "Available only when: The board was created with engine 'pg-boss'. The board is not read-only. Answers 409 `ERRORS.PGBOSS_WRITES_DISABLED` while the schema guard has writes off.",
+        "parameters": [
+          {
+            "name": "queueName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "jobId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PgBossCommandResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "The call was rejected or failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/pg-boss/queues/{queueName}/retry-failed": {
+      "put": {
+        "operationId": "putPgBossQueuesByQueueNameRetryFailed",
+        "summary": "Retry every failed job of one queue.",
+        "tags": [
+          "pg-boss"
+        ],
+        "description": "Available only when: The board was created with engine 'pg-boss'. The board is not read-only. Answers 409 `ERRORS.PGBOSS_WRITES_DISABLED` while the schema guard has writes off.",
+        "parameters": [
+          {
+            "name": "queueName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PgBossCommandResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "The call was rejected or failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/pg-boss/queues/{queueName}/delete-queued": {
+      "put": {
+        "operationId": "putPgBossQueuesByQueueNameDeleteQueued",
+        "summary": "Delete every job of one queue that has not started.",
+        "tags": [
+          "pg-boss"
+        ],
+        "description": "Available only when: The board was created with engine 'pg-boss'. The board is not read-only. Answers 409 `ERRORS.PGBOSS_WRITES_DISABLED` while the schema guard has writes off.",
+        "parameters": [
+          {
+            "name": "queueName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PgBossCommandResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "The call was rejected or failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/pg-boss/queues/{queueName}/delete-stored": {
+      "put": {
+        "operationId": "putPgBossQueuesByQueueNameDeleteStored",
+        "summary": "Delete every completed, cancelled and failed job of one queue.",
+        "tags": [
+          "pg-boss"
+        ],
+        "description": "Available only when: The board was created with engine 'pg-boss'. The board is not read-only. Answers 409 `ERRORS.PGBOSS_WRITES_DISABLED` while the schema guard has writes off.",
+        "parameters": [
+          {
+            "name": "queueName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PgBossCommandResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "The call was rejected or failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/pg-boss/queues/{queueName}/schedules": {
+      "put": {
+        "operationId": "putPgBossQueuesByQueueNameSchedules",
+        "summary": "Create or replace the schedule with this key on one queue.",
+        "tags": [
+          "pg-boss"
+        ],
+        "description": "Available only when: The board was created with engine 'pg-boss'. The board is not read-only. Answers 409 `ERRORS.PGBOSS_WRITES_DISABLED` while the schema guard has writes off.",
+        "parameters": [
+          {
+            "name": "queueName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpsertPgBossScheduleBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PgBossScheduleResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "The call was rejected or failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/pg-boss/queues/{queueName}/schedules/remove": {
+      "put": {
+        "operationId": "putPgBossQueuesByQueueNameSchedulesRemove",
+        "summary": "Remove one schedule.",
+        "tags": [
+          "pg-boss"
+        ],
+        "description": "Available only when: The board was created with engine 'pg-boss'. The board is not read-only. Answers 409 `ERRORS.PGBOSS_WRITES_DISABLED` while the schema guard has writes off.",
+        "parameters": [
+          {
+            "name": "queueName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RemovePgBossScheduleBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PgBossCommandResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "The call was rejected or failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseBody"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -2099,7 +3254,21 @@
             "type": "boolean"
           },
           "type": {
-            "$ref": "#/components/schemas/QueueType"
+            "enum": [
+              "bull",
+              "bullmq"
+            ],
+            "type": "string",
+            "description": "Deprecated: read `library` for the name and `capabilities` for behaviour."
+          },
+          "library": {
+            "$ref": "#/components/schemas/QueueLibrary"
+          },
+          "datastore": {
+            "$ref": "#/components/schemas/Datastore"
+          },
+          "capabilities": {
+            "$ref": "#/components/schemas/QueueCapabilities"
           },
           "globalConcurrency": {
             "anyOf": [
@@ -2115,7 +3284,8 @@
             "type": "number"
           },
           "supportsGlobalRateLimit": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Deprecated: same as `capabilities.globalRateLimit`."
           },
           "jobSchedulerCount": {
             "type": "number"
@@ -2144,6 +3314,9 @@
           "allowCompletedRetries",
           "isPaused",
           "type",
+          "library",
+          "datastore",
+          "capabilities",
           "globalConcurrency",
           "activeRateLimitTtl",
           "supportsGlobalRateLimit",
@@ -2191,6 +3364,17 @@
                   "ERRORS.JOB_SCHEDULER_NOT_FOUND",
                   "ERRORS.JOB_SCHEDULER_RUN_NOT_SUPPORTED",
                   "ERRORS.JOB_UNPROCESSED_CHILDREN_NOT_SUPPORTED",
+                  "ERRORS.PGBOSS_BULK_LIMIT",
+                  "ERRORS.PGBOSS_INVALID_CURSOR",
+                  "ERRORS.PGBOSS_INVALID_SCHEDULE",
+                  "ERRORS.PGBOSS_JOB_STATE_CONFLICT",
+                  "ERRORS.PGBOSS_NOT_INSTALLED",
+                  "ERRORS.PGBOSS_PREVIEW_UNAVAILABLE",
+                  "ERRORS.PGBOSS_QUERY_TIMEOUT",
+                  "ERRORS.PGBOSS_SCHEMA_MISMATCH",
+                  "ERRORS.PGBOSS_SCHEMA_UNSUPPORTED",
+                  "ERRORS.PGBOSS_WRITER_UNAVAILABLE",
+                  "ERRORS.PGBOSS_WRITES_DISABLED",
                   "ERRORS.QUEUE_HAS_ACTIVE_JOBS",
                   "ERRORS.QUEUE_HAS_ACTIVE_JOBS_DETAILS",
                   "ERRORS.QUEUE_NOT_FOUND",
@@ -2664,6 +3848,126 @@
         ],
         "type": "string"
       },
+      "QueueLibrary": {
+        "enum": [
+          "bull",
+          "bullmq",
+          "bullmq-pro"
+        ],
+        "type": "string"
+      },
+      "QueueCapabilities": {
+        "type": "object",
+        "properties": {
+          "pause": {
+            "type": "boolean"
+          },
+          "logs": {
+            "type": "boolean"
+          },
+          "progress": {
+            "type": "boolean"
+          },
+          "flows": {
+            "type": "boolean"
+          },
+          "promote": {
+            "type": "boolean"
+          },
+          "updateData": {
+            "type": "boolean"
+          },
+          "changeDelay": {
+            "type": "boolean"
+          },
+          "changePriority": {
+            "type": "boolean"
+          },
+          "removeUnprocessedChildren": {
+            "type": "boolean"
+          },
+          "completedRetry": {
+            "type": "boolean",
+            "description": "Whether the library can retry a completed job at all. `allowCompletedRetries` is this combined with the board options."
+          },
+          "globalConcurrency": {
+            "type": "boolean"
+          },
+          "globalRateLimit": {
+            "type": "boolean"
+          },
+          "nativeMetrics": {
+            "type": "boolean"
+          },
+          "workers": {
+            "type": "boolean",
+            "description": "Whether the queue can report its workers. False when `showWorkers` is off."
+          },
+          "jobSchedulers": {
+            "type": "object",
+            "properties": {
+              "update": {
+                "type": "boolean"
+              },
+              "run": {
+                "type": "boolean"
+              },
+              "kinds": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/JobSchedulerKind"
+                }
+              }
+            },
+            "required": [
+              "update",
+              "run",
+              "kinds"
+            ]
+          },
+          "jobOptionsSchema": {
+            "enum": [
+              "bull",
+              "bullmq"
+            ],
+            "type": "string",
+            "description": "Which job options JSON Schema the add-job form validates against."
+          }
+        },
+        "required": [
+          "pause",
+          "logs",
+          "progress",
+          "flows",
+          "promote",
+          "updateData",
+          "changeDelay",
+          "changePriority",
+          "removeUnprocessedChildren",
+          "completedRetry",
+          "globalConcurrency",
+          "globalRateLimit",
+          "nativeMetrics",
+          "workers",
+          "jobSchedulers",
+          "jobOptionsSchema"
+        ],
+        "description": "What the queue library behind this queue can do, so a client can decide which controls to offer without switching on `type`."
+      },
+      "JobSchedulerKind": {
+        "enum": [
+          "every",
+          "cron"
+        ],
+        "type": "string"
+      },
+      "Datastore": {
+        "enum": [
+          "redis",
+          "postgres"
+        ],
+        "type": "string"
+      },
       "Status": {
         "enum": [
           "latest",
@@ -2963,6 +4267,17 @@
               "ERRORS.JOB_SCHEDULER_NOT_FOUND",
               "ERRORS.JOB_SCHEDULER_RUN_NOT_SUPPORTED",
               "ERRORS.JOB_UNPROCESSED_CHILDREN_NOT_SUPPORTED",
+              "ERRORS.PGBOSS_BULK_LIMIT",
+              "ERRORS.PGBOSS_INVALID_CURSOR",
+              "ERRORS.PGBOSS_INVALID_SCHEDULE",
+              "ERRORS.PGBOSS_JOB_STATE_CONFLICT",
+              "ERRORS.PGBOSS_NOT_INSTALLED",
+              "ERRORS.PGBOSS_PREVIEW_UNAVAILABLE",
+              "ERRORS.PGBOSS_QUERY_TIMEOUT",
+              "ERRORS.PGBOSS_SCHEMA_MISMATCH",
+              "ERRORS.PGBOSS_SCHEMA_UNSUPPORTED",
+              "ERRORS.PGBOSS_WRITER_UNAVAILABLE",
+              "ERRORS.PGBOSS_WRITES_DISABLED",
               "ERRORS.QUEUE_HAS_ACTIVE_JOBS",
               "ERRORS.QUEUE_HAS_ACTIVE_JOBS_DETAILS",
               "ERRORS.QUEUE_NOT_FOUND",
@@ -2988,6 +4303,834 @@
         },
         "required": [
           "key"
+        ]
+      },
+      "PgBossJobState": {
+        "enum": [
+          "created",
+          "retry",
+          "active",
+          "completed",
+          "cancelled",
+          "failed"
+        ],
+        "type": "string"
+      },
+      "PgBossQueueCounts": {
+        "type": "object",
+        "properties": {
+          "queued": {
+            "type": "number"
+          },
+          "deferred": {
+            "type": "number"
+          },
+          "ready": {
+            "type": "number"
+          },
+          "active": {
+            "type": "number"
+          },
+          "failed": {
+            "type": "number"
+          },
+          "total": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "queued",
+          "deferred",
+          "ready",
+          "active",
+          "failed",
+          "total"
+        ],
+        "description": "pg-boss's cached counters, written by whichever instance last ran `supervise`. Not live: see `statsCapturedOn`."
+      },
+      "PgBossQueueSummary": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "policy": {
+            "type": "string",
+            "description": "standard, short, singleton, stately, exclusive or key_strict_fifo, as pg-boss reports it."
+          },
+          "partition": {
+            "type": "boolean"
+          },
+          "counts": {
+            "$ref": "#/components/schemas/PgBossQueueCounts"
+          },
+          "statsCapturedOn": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "When `counts` were last written. Null means no instance ever monitored it."
+          },
+          "readyHistory": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          },
+          "deadLetter": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "retryLimit": {
+            "type": "number"
+          },
+          "retryDelay": {
+            "type": "number"
+          },
+          "retryBackoff": {
+            "type": "boolean"
+          },
+          "retryDelayMax": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "expireInSeconds": {
+            "type": "number"
+          },
+          "retentionSeconds": {
+            "type": "number"
+          },
+          "deleteAfterSeconds": {
+            "type": "number"
+          },
+          "warningQueueSize": {
+            "type": "number"
+          },
+          "backlogged": {
+            "type": "boolean"
+          },
+          "heartbeatSeconds": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "notify": {
+            "type": "boolean"
+          },
+          "singletonsActive": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "scheduleCount": {
+            "type": "number"
+          },
+          "createdOn": {
+            "type": "string",
+            "description": "ISO 8601."
+          },
+          "updatedOn": {
+            "type": "string",
+            "description": "ISO 8601."
+          }
+        },
+        "required": [
+          "name",
+          "policy",
+          "partition",
+          "counts",
+          "statsCapturedOn",
+          "readyHistory",
+          "deadLetter",
+          "retryLimit",
+          "retryDelay",
+          "retryBackoff",
+          "retryDelayMax",
+          "expireInSeconds",
+          "retentionSeconds",
+          "deleteAfterSeconds",
+          "warningQueueSize",
+          "backlogged",
+          "heartbeatSeconds",
+          "notify",
+          "singletonsActive",
+          "scheduleCount",
+          "createdOn",
+          "updatedOn"
+        ]
+      },
+      "PgBossStateCount": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Null when the count did not finish inside the query timeout."
+          },
+          "capped": {
+            "type": "boolean",
+            "description": "True when there are more than `cap` jobs."
+          }
+        },
+        "required": [
+          "count",
+          "capped"
+        ]
+      },
+      "PgBossStateCounts": {
+        "type": "object",
+        "properties": {
+          "created": {
+            "$ref": "#/components/schemas/PgBossStateCount"
+          },
+          "retry": {
+            "$ref": "#/components/schemas/PgBossStateCount"
+          },
+          "active": {
+            "$ref": "#/components/schemas/PgBossStateCount"
+          },
+          "completed": {
+            "$ref": "#/components/schemas/PgBossStateCount"
+          },
+          "cancelled": {
+            "$ref": "#/components/schemas/PgBossStateCount"
+          },
+          "failed": {
+            "$ref": "#/components/schemas/PgBossStateCount"
+          }
+        },
+        "required": [
+          "created",
+          "retry",
+          "active",
+          "completed",
+          "cancelled",
+          "failed"
+        ]
+      },
+      "PgBossDeadLetterSource": {
+        "type": "object",
+        "properties": {
+          "queueName": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "createdOn": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "retryCount": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "queueName",
+          "id",
+          "createdOn",
+          "retryCount"
+        ]
+      },
+      "PgBossJobSummary": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "queueName": {
+            "type": "string"
+          },
+          "state": {
+            "$ref": "#/components/schemas/PgBossJobState"
+          },
+          "priority": {
+            "type": "number"
+          },
+          "retryCount": {
+            "type": "number"
+          },
+          "retryLimit": {
+            "type": "number"
+          },
+          "createdOn": {
+            "type": "string",
+            "description": "ISO 8601."
+          },
+          "startAfter": {
+            "type": "string",
+            "description": "ISO 8601."
+          },
+          "startedOn": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "completedOn": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "singletonKey": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "groupId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "deferred": {
+            "type": "boolean",
+            "description": "A `created` job whose `startAfter` is still in the future."
+          },
+          "blocked": {
+            "type": "boolean",
+            "description": "A flow dependent still waiting on its parents."
+          },
+          "deadLetterSource": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PgBossDeadLetterSource"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "queueName",
+          "state",
+          "priority",
+          "retryCount",
+          "retryLimit",
+          "createdOn",
+          "startAfter",
+          "startedOn",
+          "completedOn",
+          "singletonKey",
+          "groupId",
+          "deferred",
+          "blocked",
+          "deadLetterSource"
+        ]
+      },
+      "PgBossJob": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "queueName": {
+            "type": "string"
+          },
+          "state": {
+            "$ref": "#/components/schemas/PgBossJobState"
+          },
+          "priority": {
+            "type": "number"
+          },
+          "retryCount": {
+            "type": "number"
+          },
+          "retryLimit": {
+            "type": "number"
+          },
+          "createdOn": {
+            "type": "string",
+            "description": "ISO 8601."
+          },
+          "startAfter": {
+            "type": "string",
+            "description": "ISO 8601."
+          },
+          "startedOn": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "completedOn": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "singletonKey": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "groupId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "deferred": {
+            "type": "boolean",
+            "description": "A `created` job whose `startAfter` is still in the future."
+          },
+          "blocked": {
+            "type": "boolean",
+            "description": "A flow dependent still waiting on its parents."
+          },
+          "deadLetterSource": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PgBossDeadLetterSource"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "data": {},
+          "output": {},
+          "policy": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "retryDelay": {
+            "type": "number"
+          },
+          "retryBackoff": {
+            "type": "boolean"
+          },
+          "retryDelayMax": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "expireInSeconds": {
+            "type": "number"
+          },
+          "deleteAfterSeconds": {
+            "type": "number"
+          },
+          "keepUntil": {
+            "type": "string",
+            "description": "ISO 8601."
+          },
+          "singletonOn": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "groupTier": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "heartbeatSeconds": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "heartbeatOn": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "deadLetter": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "blocking": {
+            "type": "boolean"
+          },
+          "pendingDependencies": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "id",
+          "queueName",
+          "state",
+          "priority",
+          "retryCount",
+          "retryLimit",
+          "createdOn",
+          "startAfter",
+          "startedOn",
+          "completedOn",
+          "singletonKey",
+          "groupId",
+          "deferred",
+          "blocked",
+          "deadLetterSource",
+          "data",
+          "output",
+          "policy",
+          "retryDelay",
+          "retryBackoff",
+          "retryDelayMax",
+          "expireInSeconds",
+          "deleteAfterSeconds",
+          "keepUntil",
+          "singletonOn",
+          "groupTier",
+          "heartbeatSeconds",
+          "heartbeatOn",
+          "deadLetter",
+          "blocking",
+          "pendingDependencies"
+        ]
+      },
+      "PgBossDependencyRef": {
+        "type": "object",
+        "properties": {
+          "queueName": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "queueName",
+          "id"
+        ]
+      },
+      "PgBossScheduleKind": {
+        "enum": [
+          "cron",
+          "rrule"
+        ],
+        "type": "string"
+      },
+      "PgBossSchedule": {
+        "type": "object",
+        "properties": {
+          "queueName": {
+            "type": "string"
+          },
+          "key": {
+            "type": "string",
+            "description": "pg-boss's default key is the empty string."
+          },
+          "kind": {
+            "$ref": "#/components/schemas/PgBossScheduleKind"
+          },
+          "expression": {
+            "type": "string"
+          },
+          "timezone": {
+            "type": "string"
+          },
+          "data": {},
+          "options": {
+            "type": "object",
+            "propertyNames": {
+              "type": "string"
+            },
+            "additionalProperties": {}
+          },
+          "createdOn": {
+            "type": "string",
+            "description": "ISO 8601."
+          },
+          "updatedOn": {
+            "type": "string",
+            "description": "ISO 8601."
+          },
+          "lastJobId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "nextRuns": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "The next occurrences, worked out on the server. Empty when the pg-boss in use cannot preview."
+          }
+        },
+        "required": [
+          "queueName",
+          "key",
+          "kind",
+          "expression",
+          "timezone",
+          "data",
+          "options",
+          "createdOn",
+          "updatedOn",
+          "lastJobId",
+          "nextRuns"
+        ]
+      },
+      "PgBossCapabilities": {
+        "type": "object",
+        "properties": {
+          "send": {
+            "type": "boolean"
+          },
+          "retry": {
+            "type": "boolean"
+          },
+          "cancel": {
+            "type": "boolean"
+          },
+          "resume": {
+            "type": "boolean"
+          },
+          "delete": {
+            "type": "boolean"
+          },
+          "scheduleWrite": {
+            "type": "boolean"
+          },
+          "schedulePreview": {
+            "type": "boolean"
+          },
+          "bulk": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "send",
+          "retry",
+          "cancel",
+          "resume",
+          "delete",
+          "scheduleWrite",
+          "schedulePreview",
+          "bulk"
+        ]
+      },
+      "PgBossInfo": {
+        "type": "object",
+        "properties": {
+          "schema": {
+            "type": "string"
+          },
+          "delimiter": {
+            "type": "string",
+            "description": "What queue names are split on to group them in the sidebar. Empty for none."
+          },
+          "installed": {
+            "type": "boolean"
+          },
+          "schemaVersion": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "supportedRange": {
+            "type": "object",
+            "properties": {
+              "min": {
+                "type": "number"
+              },
+              "max": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "min",
+              "max"
+            ]
+          },
+          "readable": {
+            "type": "boolean"
+          },
+          "writable": {
+            "type": "boolean"
+          },
+          "readOnly": {
+            "type": "boolean",
+            "description": "The board was created with `readOnly`."
+          },
+          "unavailableReason": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TranslatableMessage"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Why nothing can be read, when `readable` is false."
+          },
+          "writesDisabledReason": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TranslatableMessage"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Why the board cannot write, when `writable` is false."
+          },
+          "persistQueueStats": {
+            "type": "boolean"
+          },
+          "datastore": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RedisStats"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "capabilities": {
+            "$ref": "#/components/schemas/PgBossCapabilities"
+          }
+        },
+        "required": [
+          "schema",
+          "delimiter",
+          "installed",
+          "schemaVersion",
+          "supportedRange",
+          "readable",
+          "writable",
+          "readOnly",
+          "unavailableReason",
+          "writesDisabledReason",
+          "persistQueueStats",
+          "datastore",
+          "capabilities"
         ]
       },
       "GetQueuesResponse": {
@@ -3436,6 +5579,292 @@
         "properties": {},
         "required": []
       },
+      "GetPgBossInfoResponse": {
+        "type": "object",
+        "properties": {
+          "schema": {
+            "type": "string"
+          },
+          "delimiter": {
+            "type": "string",
+            "description": "What queue names are split on to group them in the sidebar. Empty for none."
+          },
+          "installed": {
+            "type": "boolean"
+          },
+          "schemaVersion": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "supportedRange": {
+            "type": "object",
+            "properties": {
+              "min": {
+                "type": "number"
+              },
+              "max": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "min",
+              "max"
+            ]
+          },
+          "readable": {
+            "type": "boolean"
+          },
+          "writable": {
+            "type": "boolean"
+          },
+          "readOnly": {
+            "type": "boolean",
+            "description": "The board was created with `readOnly`."
+          },
+          "unavailableReason": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TranslatableMessage"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Why nothing can be read, when `readable` is false."
+          },
+          "writesDisabledReason": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TranslatableMessage"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Why the board cannot write, when `writable` is false."
+          },
+          "persistQueueStats": {
+            "type": "boolean"
+          },
+          "datastore": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RedisStats"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "capabilities": {
+            "$ref": "#/components/schemas/PgBossCapabilities"
+          }
+        },
+        "required": [
+          "schema",
+          "delimiter",
+          "installed",
+          "schemaVersion",
+          "supportedRange",
+          "readable",
+          "writable",
+          "readOnly",
+          "unavailableReason",
+          "writesDisabledReason",
+          "persistQueueStats",
+          "datastore",
+          "capabilities"
+        ]
+      },
+      "GetPgBossQueuesResponse": {
+        "type": "object",
+        "properties": {
+          "queues": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PgBossQueueSummary"
+            }
+          }
+        },
+        "required": [
+          "queues"
+        ]
+      },
+      "GetPgBossQueueResponse": {
+        "type": "object",
+        "properties": {
+          "queue": {
+            "$ref": "#/components/schemas/PgBossQueueSummary"
+          }
+        },
+        "required": [
+          "queue"
+        ]
+      },
+      "GetPgBossStateCountsResponse": {
+        "type": "object",
+        "properties": {
+          "counts": {
+            "$ref": "#/components/schemas/PgBossStateCounts"
+          },
+          "cap": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "counts",
+          "cap"
+        ]
+      },
+      "GetPgBossJobsResponse": {
+        "type": "object",
+        "properties": {
+          "jobs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PgBossJobSummary"
+            }
+          },
+          "nextCursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Null on the last page."
+          },
+          "prevCursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Null on the first page."
+          }
+        },
+        "required": [
+          "jobs",
+          "nextCursor",
+          "prevCursor"
+        ]
+      },
+      "GetPgBossJobResponse": {
+        "type": "object",
+        "properties": {
+          "job": {
+            "$ref": "#/components/schemas/PgBossJob"
+          }
+        },
+        "required": [
+          "job"
+        ]
+      },
+      "GetPgBossDependenciesResponse": {
+        "type": "object",
+        "properties": {
+          "dependencies": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PgBossDependencyRef"
+            }
+          },
+          "dependents": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PgBossDependencyRef"
+            }
+          }
+        },
+        "required": [
+          "dependencies",
+          "dependents"
+        ]
+      },
+      "GetPgBossSchedulesResponse": {
+        "type": "object",
+        "properties": {
+          "schedules": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PgBossSchedule"
+            }
+          }
+        },
+        "required": [
+          "schedules"
+        ]
+      },
+      "PreviewPgBossScheduleResponse": {
+        "type": "object",
+        "properties": {
+          "runs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "runs"
+        ]
+      },
+      "SendPgBossJobResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Null when pg-boss dropped the job, for instance a duplicate singleton."
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "PgBossCommandResponse": {
+        "type": "object",
+        "properties": {
+          "requested": {
+            "type": "number"
+          },
+          "affected": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "requested",
+          "affected"
+        ]
+      },
+      "PgBossScheduleResponse": {
+        "type": "object",
+        "properties": {
+          "schedule": {
+            "$ref": "#/components/schemas/PgBossSchedule"
+          }
+        },
+        "required": [
+          "schedule"
+        ]
+      },
       "GetQueuesQuery": {
         "type": "object",
         "properties": {
@@ -3706,6 +6135,175 @@
             "type": "string",
             "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
             "description": "ISO `YYYY-MM-DD`. Drops days strictly before it; omit to drop everything in scope."
+          }
+        },
+        "required": []
+      },
+      "GetPgBossJobsQuery": {
+        "type": "object",
+        "properties": {
+          "state": {
+            "$ref": "#/components/schemas/PgBossJobState"
+          },
+          "cursor": {
+            "type": "string"
+          },
+          "limit": {
+            "type": "string",
+            "default": "20"
+          },
+          "order": {
+            "enum": [
+              "desc",
+              "asc"
+            ],
+            "type": "string",
+            "default": "desc"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "singletonKey": {
+            "type": "string"
+          }
+        },
+        "required": []
+      },
+      "GetPgBossSchedulesQuery": {
+        "type": "object",
+        "properties": {
+          "queueName": {
+            "type": "string"
+          }
+        },
+        "required": []
+      },
+      "PreviewPgBossScheduleBody": {
+        "type": "object",
+        "properties": {
+          "expression": {
+            "type": "string",
+            "minLength": 1
+          },
+          "tz": {
+            "type": "string"
+          },
+          "count": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 20,
+            "default": 5
+          }
+        },
+        "required": [
+          "expression"
+        ]
+      },
+      "SendPgBossJobBody": {
+        "type": "object",
+        "properties": {
+          "data": {},
+          "options": {
+            "type": "object",
+            "properties": {
+              "priority": {
+                "type": "integer"
+              },
+              "startAfter": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "number"
+                  }
+                ],
+                "description": "An ISO date, or a number of seconds from now."
+              },
+              "singletonKey": {
+                "type": "string"
+              },
+              "retryLimit": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "retryDelay": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "retryBackoff": {
+                "type": "boolean"
+              },
+              "expireInSeconds": {
+                "type": "integer",
+                "minimum": 1
+              }
+            },
+            "required": [],
+            "default": {}
+          }
+        },
+        "required": []
+      },
+      "PgBossJobIdsBody": {
+        "type": "object",
+        "properties": {
+          "ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "minItems": 1,
+            "maxItems": 100
+          }
+        },
+        "required": [
+          "ids"
+        ]
+      },
+      "UpsertPgBossScheduleBody": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "default": ""
+          },
+          "cron": {
+            "type": "string",
+            "minLength": 1
+          },
+          "tz": {
+            "type": "string"
+          },
+          "data": {},
+          "options": {
+            "type": "object",
+            "propertyNames": {
+              "type": "string"
+            },
+            "additionalProperties": {},
+            "default": {}
+          },
+          "missed": {
+            "enum": [
+              "skip",
+              "once"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "cron"
+        ]
+      },
+      "RemovePgBossScheduleBody": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "default": ""
           }
         },
         "required": []

@@ -132,7 +132,7 @@ export const AddJobModal = ({ open, onClose, job, queue: queueProp }: AddJobModa
           <JsonEditor
             id="job-options"
             name="jobOptions"
-            schema={jobOptionsSchema[selectedQueue.type]}
+            schema={jobOptionsSchema[selectedQueue.capabilities.jobOptionsSchema]}
             doc={job?.opts || {}}
           />
         </Field>

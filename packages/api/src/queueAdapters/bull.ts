@@ -10,6 +10,7 @@ import {
   MetricsType,
   ObliterateOptions,
   QueueAdapterOptions,
+  QueueCapabilities,
   QueueDefaultJobOptions,
   QueueJob,
   QueueJobOptions,
@@ -34,6 +35,18 @@ export class BullAdapter extends BaseAdapter {
     if (!(queue instanceof BullQueue)) {
       throw new Error(`You've used the Bull adapter with a non-Bull queue.`);
     }
+  }
+
+  public override getCapabilities(): QueueCapabilities {
+    return {
+      ...super.getCapabilities(),
+      changeDelay: false,
+      changePriority: false,
+      removeUnprocessedChildren: false,
+      completedRetry: false,
+      globalConcurrency: false,
+      workers: true,
+    };
   }
 
   public getRedisInfo(): Promise<string> {

@@ -18,6 +18,49 @@ export const datastoreSchema = v.picklist(Object.values(DATASTORES));
 
 export const queueTypeSchema = v.picklist(['bull', 'bullmq'] as const);
 
+export const queueLibrarySchema = v.picklist(['bull', 'bullmq', 'bullmq-pro'] as const);
+
+export const jobSchedulerKindSchema = v.picklist(['every', 'cron'] as const);
+
+export const queueCapabilitiesSchema = v.pipe(
+  v.object({
+    pause: v.boolean(),
+    logs: v.boolean(),
+    progress: v.boolean(),
+    flows: v.boolean(),
+    promote: v.boolean(),
+    updateData: v.boolean(),
+    changeDelay: v.boolean(),
+    changePriority: v.boolean(),
+    removeUnprocessedChildren: v.boolean(),
+    completedRetry: v.pipe(
+      v.boolean(),
+      v.description(
+        'Whether the library can retry a completed job at all. `allowCompletedRetries` is this combined with the board options.'
+      )
+    ),
+    globalConcurrency: v.boolean(),
+    globalRateLimit: v.boolean(),
+    nativeMetrics: v.boolean(),
+    workers: v.pipe(
+      v.boolean(),
+      v.description('Whether the queue can report its workers. False when `showWorkers` is off.')
+    ),
+    jobSchedulers: v.object({
+      update: v.boolean(),
+      run: v.boolean(),
+      kinds: v.array(jobSchedulerKindSchema),
+    }),
+    jobOptionsSchema: v.pipe(
+      queueTypeSchema,
+      v.description('Which job options JSON Schema the add-job form validates against.')
+    ),
+  }),
+  v.description(
+    'What the queue library behind this queue can do, so a client can decide which controls to offer without switching on `type`.'
+  )
+);
+
 export const jobCountsSchema = v.record(statusSchema, v.number());
 
 export const paginationSchema = v.object({
@@ -234,10 +277,19 @@ export const appQueueSchema = v.object({
   allowRetries: v.boolean(),
   allowCompletedRetries: v.boolean(),
   isPaused: v.boolean(),
-  type: queueTypeSchema,
+  type: v.pipe(
+    queueTypeSchema,
+    v.description('Deprecated: read `library` for the name and `capabilities` for behaviour.')
+  ),
+  library: queueLibrarySchema,
+  datastore: datastoreSchema,
+  capabilities: queueCapabilitiesSchema,
   globalConcurrency: v.nullable(v.number()),
   activeRateLimitTtl: v.number(),
-  supportsGlobalRateLimit: v.boolean(),
+  supportsGlobalRateLimit: v.pipe(
+    v.boolean(),
+    v.description('Deprecated: same as `capabilities.globalRateLimit`.')
+  ),
   jobSchedulerCount: v.number(),
   hasWorkers: v.pipe(
     v.nullable(v.boolean()),
@@ -372,6 +424,10 @@ export const domainSchemas = {
   MetricsLatencyPoint: metricsLatencyPointSchema,
   Pagination: paginationSchema,
   QueueType: queueTypeSchema,
+  QueueLibrary: queueLibrarySchema,
+  QueueCapabilities: queueCapabilitiesSchema,
+  JobSchedulerKind: jobSchedulerKindSchema,
+  Datastore: datastoreSchema,
   Status: statusSchema,
   QueueDefaultJobOptions: queueDefaultJobOptionsSchema,
   QueueMetrics: queueMetricsSchema,

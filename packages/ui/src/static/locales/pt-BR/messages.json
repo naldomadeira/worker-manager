@@ -464,7 +464,18 @@
     "STATUS_NOT_RETRIABLE": "\"{{status}}\" não é um estado que possa ser repetido",
     "UNAUTHORIZED": "Você precisa entrar para acessar este painel",
     "WORKERS_DISABLED": "O relatório de workers está desativado",
-    "INVALID_METRIC": "Métrica inválida"
+    "INVALID_METRIC": "Métrica inválida",
+    "PGBOSS_BULK_LIMIT": "Envie de 1 a {{max}} ids de job por vez.",
+    "PGBOSS_INVALID_CURSOR": "O cursor da página não é válido. Volte para a primeira página.",
+    "PGBOSS_INVALID_SCHEDULE": "A expressão do agendamento não é válida.",
+    "PGBOSS_JOB_STATE_CONFLICT": "Não é possível executar {{action}} em um job no estado {{state}}.",
+    "PGBOSS_NOT_INSTALLED": "O pg-boss não está instalado neste schema do banco.",
+    "PGBOSS_PREVIEW_UNAVAILABLE": "A prévia de agendamentos exige pg-boss 12.31 ou mais recente.",
+    "PGBOSS_QUERY_TIMEOUT": "A consulta demorou demais. Filtre pelo id do job ou pela singleton key.",
+    "PGBOSS_SCHEMA_MISMATCH": "O banco está no schema {{found}} do pg-boss, mas o pg-boss disponível aqui grava o schema {{expected}}.",
+    "PGBOSS_SCHEMA_UNSUPPORTED": "O schema {{found}} do pg-boss não é suportado. As versões suportadas vão de {{min}} a {{max}}.",
+    "PGBOSS_WRITER_UNAVAILABLE": "Não há instância do pg-boss para gravar. Passe a instância do app ou instale o pg-boss junto do board.",
+    "PGBOSS_WRITES_DISABLED": "As alterações estão desligadas neste board pg-boss."
   },
   "METRICS_HISTORY": {
     "TITLE": "Histórico de métricas",

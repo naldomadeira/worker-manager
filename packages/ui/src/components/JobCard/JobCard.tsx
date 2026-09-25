@@ -1,5 +1,5 @@
 import { STATUSES } from '@worker-manager/api/constants/statuses';
-import type { AppJob, Status } from '@worker-manager/api/typings/app';
+import type { AppJob, QueueCapabilities, Status } from '@worker-manager/api/typings/app';
 import { ChevronDown } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -25,6 +25,7 @@ interface JobCardProps {
   status: Status;
   readOnlyMode: boolean;
   allowRetries: boolean;
+  capabilities?: QueueCapabilities;
   actions: {
     updateJobData: () => void;
     duplicateJob: () => void;
@@ -47,6 +48,7 @@ export const JobCard = ({
   readOnlyMode,
   allowRetries,
   jobUrl,
+  capabilities,
 }: JobCardProps) => {
   const { t } = useTranslation();
   const { collapseJob } = useSettingsStore();
@@ -192,7 +194,12 @@ export const JobCard = ({
 
           <div className="flex shrink-0 items-center gap-1">
             {!readOnlyMode && (
-              <JobActions status={status} actions={actions} allowRetries={allowRetries} />
+              <JobActions
+                status={status}
+                actions={actions}
+                allowRetries={allowRetries}
+                capabilities={capabilities}
+              />
             )}
             {showCollapseExpandBtn && (
               <HintTooltip title={t(isExpandedCard ? 'JOB.COLLAPSE' : 'JOB.EXPAND')}>
@@ -254,7 +261,13 @@ export const JobCard = ({
               )}
               <Progress progress={job.progress} status={displayStatus} />
 
-              <Details status={status} job={job} actions={actions} withTimeline={isMobile} />
+              <Details
+                status={status}
+                job={job}
+                actions={actions}
+                withTimeline={isMobile}
+                capabilities={capabilities}
+              />
             </div>
           </div>
         </CollapsibleContent>

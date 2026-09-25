@@ -4,6 +4,7 @@ import { DATASTORES } from '../constants/datastores';
 import { STATUSES } from '../constants/statuses';
 import {
   AppJobScheduler,
+  Datastore,
   JobCleanStatus,
   JobCounts,
   JobSchedulerRepeatOptions,
@@ -12,6 +13,7 @@ import {
   MetricsType,
   ObliterateOptions,
   QueueAdapterOptions,
+  QueueCapabilities,
   QueueDefaultJobOptions,
   QueueJob,
   QueueJobOptions,
@@ -127,6 +129,16 @@ export class BullMQAdapter extends BaseAdapter {
     ) {
       throw new Error(`You've used the BullMQ adapter with a non-BullMQ queue.`);
     }
+  }
+
+  public override getDatastore(): Datastore {
+    return (this.queue as unknown as VersionedQueue).getBackend?.()?.connection?.pool
+      ? DATASTORES.postgres
+      : DATASTORES.redis;
+  }
+
+  public override getCapabilities(): QueueCapabilities {
+    return { ...super.getCapabilities(), flows: true, workers: true };
   }
 
   public async getRedisInfo(): Promise<string | null> {

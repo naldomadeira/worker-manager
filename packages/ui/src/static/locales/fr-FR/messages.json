@@ -464,7 +464,18 @@
     "STATUS_NOT_RETRIABLE": "\"{{status}}\" n'est pas un état relançable",
     "UNAUTHORIZED": "Vous devez vous connecter pour accéder à ce tableau de bord",
     "WORKERS_DISABLED": "Le rapport des workers est désactivé",
-    "INVALID_METRIC": "Métrique invalide"
+    "INVALID_METRIC": "Métrique invalide",
+    "PGBOSS_BULK_LIMIT": "Envoyez entre 1 et {{max}} identifiants de job à la fois.",
+    "PGBOSS_INVALID_CURSOR": "Le curseur de page n’est pas valide. Revenez à la première page.",
+    "PGBOSS_INVALID_SCHEDULE": "L’expression de planification n’est pas valide.",
+    "PGBOSS_JOB_STATE_CONFLICT": "Impossible d’appliquer {{action}} à un job dans l'état {{state}}.",
+    "PGBOSS_NOT_INSTALLED": "pg-boss n’est pas installé dans ce schéma de la base de données.",
+    "PGBOSS_PREVIEW_UNAVAILABLE": "L’aperçu des planifications nécessite pg-boss 12.31 ou une version ultérieure.",
+    "PGBOSS_QUERY_TIMEOUT": "La requête a pris trop de temps. Filtrez par identifiant de job ou par singleton key.",
+    "PGBOSS_SCHEMA_MISMATCH": "La base de données est au schéma pg-boss {{found}}, mais le pg-boss disponible ici écrit le schéma {{expected}}.",
+    "PGBOSS_SCHEMA_UNSUPPORTED": "Le schéma pg-boss {{found}} n’est pas pris en charge. Les versions prises en charge vont de {{min}} à {{max}}.",
+    "PGBOSS_WRITER_UNAVAILABLE": "Aucune instance pg-boss n’est disponible pour écrire. Passez l’instance de l’application, ou installez pg-boss à côté du tableau de bord.",
+    "PGBOSS_WRITES_DISABLED": "Les modifications sont désactivées sur ce tableau de bord pg-boss."
   },
   "METRICS_HISTORY": {
     "TITLE": "Historique des métriques",

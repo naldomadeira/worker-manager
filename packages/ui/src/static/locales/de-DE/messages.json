@@ -461,7 +461,18 @@
     "STATUS_NOT_RETRIABLE": "\"{{status}}\" ist kein wiederholbarer Status",
     "UNAUTHORIZED": "Du musst dich anmelden, um auf dieses Board zuzugreifen",
     "WORKERS_DISABLED": "Worker-Berichte sind deaktiviert",
-    "INVALID_METRIC": "Ungültige Metrik"
+    "INVALID_METRIC": "Ungültige Metrik",
+    "PGBOSS_BULK_LIMIT": "Sende zwischen 1 und {{max}} Job-IDs auf einmal.",
+    "PGBOSS_INVALID_CURSOR": "Der Seiten-Cursor ist ungültig. Kehre zur ersten Seite zurück.",
+    "PGBOSS_INVALID_SCHEDULE": "Der Zeitplan-Ausdruck ist ungültig.",
+    "PGBOSS_JOB_STATE_CONFLICT": "{{action}} ist für einen Job im Status {{state}} nicht möglich.",
+    "PGBOSS_NOT_INSTALLED": "pg-boss ist in diesem Datenbankschema nicht installiert.",
+    "PGBOSS_PREVIEW_UNAVAILABLE": "Die Vorschau von Zeitplänen erfordert pg-boss 12.31 oder neuer.",
+    "PGBOSS_QUERY_TIMEOUT": "Die Abfrage hat zu lange gedauert. Filtere nach Job-ID oder Singleton-Key.",
+    "PGBOSS_SCHEMA_MISMATCH": "Die Datenbank ist auf pg-boss-Schema {{found}}, aber das hier verfügbare pg-boss schreibt Schema {{expected}}.",
+    "PGBOSS_SCHEMA_UNSUPPORTED": "pg-boss-Schema {{found}} wird nicht unterstützt. Unterstützt werden die Versionen {{min}} bis {{max}}.",
+    "PGBOSS_WRITER_UNAVAILABLE": "Es ist keine pg-boss-Instanz zum Schreiben verfügbar. Übergib die Instanz der Anwendung oder installiere pg-boss neben dem Board.",
+    "PGBOSS_WRITES_DISABLED": "Änderungen sind auf diesem pg-boss-Board deaktiviert."
   },
   "METRICS_HISTORY": {
     "TITLE": "Metrikverlauf",

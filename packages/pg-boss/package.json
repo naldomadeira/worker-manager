@@ -1,0 +1,67 @@
+{
+  "name": "@worker-manager/pg-boss",
+  "version": "2.0.1",
+  "private": true,
+  "description": "Experimental pg-boss engine for Worker Manager: a full board over a pg-boss schema.",
+  "keywords": [
+    "dashboard",
+    "monitoring",
+    "pg-boss",
+    "postgres",
+    "postgresql",
+    "queue"
+  ],
+  "license": "MIT",
+  "author": "naldomadeira",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/naldomadeira/worker-manager.git",
+    "directory": "packages/pg-boss"
+  },
+  "files": [
+    "dist",
+    "LICENSE"
+  ],
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "yarn clean && tsc",
+    "clean": "rm -rf dist",
+    "test": "node scripts/test.mjs",
+    "typecheck:pgboss": "tsc -p tsconfig.typecheck-floor.json && tsc -p tsconfig.typecheck-latest.json"
+  },
+  "dependencies": {
+    "pg": "^8.23.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/node": "^22.20.1",
+    "@types/pg": "^8.23.1",
+    "@types/supertest": "^7.2.1",
+    "@worker-manager/api": "2.0.1",
+    "@worker-manager/express": "2.0.1",
+    "@worker-manager/ui": "2.0.1",
+    "jest": "^30.4.2",
+    "pg-boss": "^12.34.0",
+    "pg-boss-floor": "npm:pg-boss@12.24.0",
+    "pg-boss-latest": "npm:pg-boss@^12.34.0",
+    "supertest": "^7.2.2",
+    "ts-jest": "^29.4.12",
+    "typescript": "^5.9.3"
+  },
+  "peerDependencies": {
+    "@worker-manager/api": "2.0.1",
+    "pg-boss": "^12.24.0"
+  },
+  "peerDependenciesMeta": {
+    "pg-boss": {
+      "optional": true
+    }
+  },
+  "engines": {
+    "node": ">=22.12"
+  }
+}

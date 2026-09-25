@@ -8,7 +8,35 @@ import { ApiContext } from '../src/hooks/useApi';
 import { UIConfigContext } from '../src/hooks/useUIConfig';
 import type { Api } from '../src/services/Api';
 
+/** What the API reports per library, mirrored from `packages/api/tests/api/capabilities.spec.ts`. */
+export function capabilitiesFor(
+  type: AppQueue['type'],
+  { globalRateLimit = type === 'bullmq' }: { globalRateLimit?: boolean } = {}
+): AppQueue['capabilities'] {
+  const isBullMQ = type === 'bullmq';
+  return {
+    pause: true,
+    logs: true,
+    progress: true,
+    flows: isBullMQ,
+    promote: true,
+    updateData: true,
+    changeDelay: isBullMQ,
+    changePriority: isBullMQ,
+    removeUnprocessedChildren: isBullMQ,
+    completedRetry: isBullMQ,
+    globalConcurrency: isBullMQ,
+    globalRateLimit,
+    nativeMetrics: true,
+    workers: true,
+    jobSchedulers: { update: isBullMQ, run: isBullMQ, kinds: ['every', 'cron'] },
+    jobOptionsSchema: type,
+  };
+}
+
 export function makeQueue(name: string, overrides: Partial<AppQueue> = {}): AppQueue {
+  const type = overrides.type ?? 'bullmq';
+  const supportsGlobalRateLimit = overrides.supportsGlobalRateLimit ?? type === 'bullmq';
   return {
     delimiter: '.',
     name,
@@ -30,10 +58,13 @@ export function makeQueue(name: string, overrides: Partial<AppQueue> = {}): AppQ
     allowRetries: true,
     allowCompletedRetries: true,
     isPaused: false,
-    type: 'bullmq',
+    type,
+    library: type,
+    datastore: 'redis',
+    capabilities: capabilitiesFor(type, { globalRateLimit: supportsGlobalRateLimit }),
     globalConcurrency: null,
     activeRateLimitTtl: 0,
-    supportsGlobalRateLimit: true,
+    supportsGlobalRateLimit,
     jobSchedulerCount: 0,
     hasWorkers: true,
     ...overrides,

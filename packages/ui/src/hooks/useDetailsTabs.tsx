@@ -1,5 +1,5 @@
 import { STATUSES } from '@worker-manager/api/constants/statuses';
-import type { JobDetailsTab, Status } from '@worker-manager/api/typings/app';
+import type { JobDetailsTab, QueueCapabilities, Status } from '@worker-manager/api/typings/app';
 import { useEffect, useMemo, useState } from 'react';
 import { useSettingsStore } from './useSettings';
 import { useUIConfig } from './useUIConfig';
@@ -35,21 +35,42 @@ export function resolveSelectedTab(
   return tabs[0];
 }
 
-function buildTabs(currentStatus: Status, withTimeline: boolean): TabsType[] {
-  const base = availableJobTabs.filter((tab) => tab !== 'Error' && tab !== 'Timeline');
+function buildTabs(
+  currentStatus: Status,
+  withTimeline: boolean,
+  capabilities?: Pick<QueueCapabilities, 'logs' | 'progress'>
+): TabsType[] {
+  const base = availableJobTabs.filter(
+    (tab) =>
+      tab !== 'Error' &&
+      tab !== 'Timeline' &&
+      !(tab === 'Logs' && capabilities?.logs === false) &&
+      !(tab === 'Progress' && capabilities?.progress === false)
+  );
   const tabs: TabsType[] =
     currentStatus === STATUSES.failed ? ['Error', ...base] : [...base, 'Error'];
 
   return withTimeline ? [...tabs, 'Timeline'] : tabs;
 }
 
-export function useDetailsTabs(params: { currentStatus: Status; withTimeline: boolean }) {
+export function useDetailsTabs(params: {
+  currentStatus: Status;
+  withTimeline: boolean;
+  capabilities?: Pick<QueueCapabilities, 'logs' | 'progress'>;
+}) {
   const { defaultJobTab } = useSettingsStore();
   const configuredDefault = useUIConfig()?.jobDetails?.defaultTab;
 
+  const logs = params.capabilities?.logs;
+  const progress = params.capabilities?.progress;
   const tabs = useMemo(
-    () => buildTabs(params.currentStatus, params.withTimeline),
-    [params.currentStatus, params.withTimeline]
+    () =>
+      buildTabs(
+        params.currentStatus,
+        params.withTimeline,
+        logs === undefined || progress === undefined ? undefined : { logs, progress }
+      ),
+    [params.currentStatus, params.withTimeline, logs, progress]
   );
 
   const [selectedTab, setSelectedTab] = useState<TabsType>(() =>

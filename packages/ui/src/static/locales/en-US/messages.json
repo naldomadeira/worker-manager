@@ -458,7 +458,18 @@
     "STATUS_NOT_RETRIABLE": "\"{{status}}\" is not a retriable status",
     "UNAUTHORIZED": "You need to sign in to access this board",
     "WORKERS_DISABLED": "Worker reporting is disabled",
-    "INVALID_METRIC": "Invalid metric"
+    "INVALID_METRIC": "Invalid metric",
+    "PGBOSS_BULK_LIMIT": "Send between 1 and {{max}} job ids at a time.",
+    "PGBOSS_INVALID_CURSOR": "The page cursor is not valid. Go back to the first page.",
+    "PGBOSS_INVALID_SCHEDULE": "The schedule expression is not valid.",
+    "PGBOSS_JOB_STATE_CONFLICT": "Cannot {{action}} a job that is {{state}}.",
+    "PGBOSS_NOT_INSTALLED": "pg-boss is not installed in this database schema.",
+    "PGBOSS_PREVIEW_UNAVAILABLE": "Previewing schedules needs pg-boss 12.31 or later.",
+    "PGBOSS_QUERY_TIMEOUT": "The query took too long. Filter by job id or singleton key.",
+    "PGBOSS_SCHEMA_MISMATCH": "The database is on pg-boss schema {{found}}, but the pg-boss available here writes schema {{expected}}.",
+    "PGBOSS_SCHEMA_UNSUPPORTED": "pg-boss schema {{found}} is not supported. Supported versions are {{min}} to {{max}}.",
+    "PGBOSS_WRITER_UNAVAILABLE": "No pg-boss instance is available to write with. Pass the app's instance, or install pg-boss next to the board.",
+    "PGBOSS_WRITES_DISABLED": "Changes are turned off on this pg-boss board."
   },
   "METRICS_HISTORY": {
     "TITLE": "Metrics history",

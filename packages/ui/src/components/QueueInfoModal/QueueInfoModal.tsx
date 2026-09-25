@@ -22,6 +22,7 @@ import { cn } from '@/lib/utils';
 import { useQueueDefaultJobOptions } from '../../hooks/useQueueDefaultJobOptions';
 import { useQueueRateLimit } from '../../hooks/useQueueRateLimit';
 import { useQueueWorkers } from '../../hooks/useQueueWorkers';
+import { can, LIBRARY_LABELS } from '../../utils/capabilities';
 import { Modal } from '../Modal/Modal';
 import { WorkersList } from '../WorkersList/WorkersList';
 
@@ -142,7 +143,7 @@ export const QueueInfoModal = ({
   // Asked for once, when the panel opens. `null` means the queue cannot report workers at all,
   // so the panel says nothing about them.
   const { workers } = useQueueWorkers(queue.name, open);
-  const { rateLimit } = useQueueRateLimit(queue.name, open && queue.supportsGlobalRateLimit);
+  const { rateLimit } = useQueueRateLimit(queue.name, open && can(queue, 'globalRateLimit'));
   const workersIdle = workers?.length === 0 && !queue.isPaused;
 
   return (
@@ -159,7 +160,7 @@ export const QueueInfoModal = ({
             {queue.displayName || queue.name}
           </div>
           <div className="flex flex-wrap items-center gap-1.5">
-            <Badge variant="outline">{queue.type === 'bullmq' ? 'BullMQ' : 'Bull'}</Badge>
+            <Badge variant="outline">{LIBRARY_LABELS[queue.library]}</Badge>
             <Badge
               variant="secondary"
               className={cn(
@@ -205,7 +206,7 @@ export const QueueInfoModal = ({
                 label={t('QUEUE.INFO.GLOBAL_CONCURRENCY')}
                 action={
                   canEdit &&
-                  queue.type === 'bullmq' && (
+                  can(queue, 'globalConcurrency') && (
                     <EditButton
                       ref={concurrencyRef}
                       label={t('QUEUE.ACTIONS.SET_CONCURRENCY')}
@@ -220,7 +221,7 @@ export const QueueInfoModal = ({
                   <span className="text-muted-foreground">{t('QUEUE.INFO.NOT_SET')}</span>
                 )}
               </Row>
-              {queue.supportsGlobalRateLimit && (
+              {can(queue, 'globalRateLimit') && (
                 <Row
                   label={t('QUEUE.INFO.RATE_LIMIT')}
                   action={

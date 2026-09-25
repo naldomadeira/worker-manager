@@ -7,6 +7,7 @@ import {
   ObliterateOptions,
   QueueAdapterOptions,
   QueueJobOptions,
+  QueueLibrary,
 } from '../types';
 import { BullMQAdapter } from './bullMQ';
 import type {
@@ -74,6 +75,10 @@ export class BullMQProAdapter extends BullMQAdapter {
       const baseName = jobProps?.name ?? '';
       return gid != null ? `${baseName} (group: ${gid})` : baseName;
     });
+  }
+
+  public override getLibrary(): QueueLibrary {
+    return 'bullmq-pro';
   }
 
   public async getJobCounts(): Promise<JobCounts> {

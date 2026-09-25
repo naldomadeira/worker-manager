@@ -2,13 +2,15 @@ import fs from 'fs';
 import path from 'path';
 import { toJsonSchema } from '@valibot/to-json-schema';
 import type * as v from 'valibot';
+import { buildPgBossRoutes, PGBOSS_STUB_ENGINE } from '../../dist/engines';
 import { appRoutes, buildHistoryRoutes } from '../../dist/routes';
 import { domainSchemas } from '../../dist/schemas/domain';
+import { pgBossDomainSchemas } from '../../dist/schemas/pgBoss';
 import { requestSchemas } from '../../dist/schemas/requests';
 import { responseSchemas } from '../../dist/schemas/responses';
 import type { AppControllerRoute, MetricsHistoryProvider, RouteSpec } from '../../typings/app';
 
-export const API_CONTRACT_VERSION = '1.0.0';
+export const API_CONTRACT_VERSION = '1.1.0';
 
 const PACKAGE_ROOT = path.resolve(__dirname, '../..');
 const DOCS_ORIGIN = 'https://naldomadeira.github.io/worker-manager';
@@ -25,6 +27,7 @@ type SchemaMap = Record<string, v.GenericSchema>;
 
 const SCHEMA_SOURCES: { schemas: SchemaMap; typeMode: 'input' | 'output' }[] = [
   { schemas: domainSchemas as SchemaMap, typeMode: 'output' },
+  { schemas: pgBossDomainSchemas as SchemaMap, typeMode: 'output' },
   { schemas: responseSchemas as SchemaMap, typeMode: 'output' },
   { schemas: requestSchemas as SchemaMap, typeMode: 'input' },
 ];
@@ -47,7 +50,12 @@ function rewriteRefs<T>(node: T): T {
 
 function collectDefinitions(): Record<string, JsonSchema> {
   const merged: Record<string, JsonSchema> = {};
-  const definitions = { ...domainSchemas, ...responseSchemas, ...requestSchemas } as SchemaMap;
+  const definitions = {
+    ...domainSchemas,
+    ...pgBossDomainSchemas,
+    ...responseSchemas,
+    ...requestSchemas,
+  } as SchemaMap;
 
   for (const source of SCHEMA_SOURCES) {
     for (const [name, schema] of Object.entries(source.schemas)) {
@@ -204,6 +212,17 @@ const TAGS = [
       'matching capability, so on a board without one they are not mounted and answer **404**.',
   },
   {
+    name: 'pg-boss',
+    description:
+      "Every route of a board created with engine 'pg-boss' (`createPgBossBoard` from " +
+      '`@worker-manager/pg-boss`). Such a board registers these, the metrics history routes and ' +
+      'the entry page, and none of the BullMQ routes; a BullMQ board registers none of these. ' +
+      'Reads are SQL against the pg-boss schema, writes go through the pg-boss API. Mutations ' +
+      'are not registered on a read-only board, and answer **409** ' +
+      '`ERRORS.PGBOSS_WRITES_DISABLED` while the schema guard keeps writes off. Experimental: ' +
+      'this part of the contract may change in a minor release.',
+  },
+  {
     name: 'Datastore',
     description:
       "Statistics for the datastore behind the board's first registered queue. Answers **404** " +
@@ -213,6 +232,7 @@ const TAGS = [
 ];
 
 function tagFor(routePath: string): string {
+  if (routePath.startsWith('/api/pg-boss')) return 'pg-boss';
   if (routePath.startsWith('/api/metrics')) return 'Metrics history';
   if (routePath.startsWith('/api/redis')) return 'Datastore';
   if (routePath.includes('/job-schedulers')) return 'Job schedulers';
@@ -246,10 +266,26 @@ const HISTORY_STUB: MetricsHistoryProvider = {
   purge: async () => ({}) as any,
 };
 
+const BULLMQ_AVAILABILITY = "The board runs engine 'bullmq', the default.";
+
+function onBullMQBoards(route: AppControllerRoute): AppControllerRoute {
+  const { availableWhen } = route.spec;
+  return {
+    ...route,
+    spec: {
+      ...route.spec,
+      availableWhen: availableWhen
+        ? `${BULLMQ_AVAILABILITY} ${availableWhen}`
+        : BULLMQ_AVAILABILITY,
+    },
+  };
+}
+
 export function allRoutes(): AppControllerRoute[] {
   return [
-    ...appRoutes.api,
+    ...appRoutes.api.map(onBullMQBoards),
     ...buildHistoryRoutes(HISTORY_STUB, { hasUsage: true, canPurge: true, hasLatency: true }),
+    ...buildPgBossRoutes(PGBOSS_STUB_ENGINE, { readOnly: false }),
   ];
 }
 

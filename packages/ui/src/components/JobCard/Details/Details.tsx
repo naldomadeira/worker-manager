@@ -1,4 +1,4 @@
-import type { AppJob, Status } from '@worker-manager/api/typings/app';
+import type { AppJob, QueueCapabilities, Status } from '@worker-manager/api/typings/app';
 import { useTranslation } from 'react-i18next';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils';
@@ -12,6 +12,7 @@ interface DetailsProps {
   actions: { getJobLogs: () => Promise<string[]> };
   withTimeline?: boolean;
   className?: string;
+  capabilities?: QueueCapabilities;
 }
 
 export const Details = ({
@@ -20,8 +21,13 @@ export const Details = ({
   actions,
   withTimeline = false,
   className,
+  capabilities,
 }: DetailsProps) => {
-  const { tabs, selectedTab, selectTab } = useDetailsTabs({ currentStatus: status, withTimeline });
+  const { tabs, selectedTab, selectTab } = useDetailsTabs({
+    currentStatus: status,
+    withTimeline,
+    capabilities,
+  });
   const { t } = useTranslation();
 
   if (tabs.length === 0) {

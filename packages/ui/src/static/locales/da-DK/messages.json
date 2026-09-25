@@ -461,7 +461,18 @@
     "STATUS_NOT_RETRIABLE": "\"{{status}}\" er ikke en status, der kan prøves igen",
     "UNAUTHORIZED": "Du skal logge ind for at få adgang til dette board",
     "WORKERS_DISABLED": "Worker-rapportering er deaktiveret",
-    "INVALID_METRIC": "Ugyldig metrik"
+    "INVALID_METRIC": "Ugyldig metrik",
+    "PGBOSS_BULK_LIMIT": "Send mellem 1 og {{max}} job-id'er ad gangen.",
+    "PGBOSS_INVALID_CURSOR": "Sidemarkøren er ugyldig. Gå tilbage til første side.",
+    "PGBOSS_INVALID_SCHEDULE": "Planlægningsudtrykket er ugyldigt.",
+    "PGBOSS_JOB_STATE_CONFLICT": "Kan ikke udføre {{action}} på et job med status {{state}}.",
+    "PGBOSS_NOT_INSTALLED": "pg-boss er ikke installeret i dette databaseskema.",
+    "PGBOSS_PREVIEW_UNAVAILABLE": "Forhåndsvisning af planlægninger kræver pg-boss 12.31 eller nyere.",
+    "PGBOSS_QUERY_TIMEOUT": "Forespørgslen tog for lang tid. Filtrér på job-id eller singleton key.",
+    "PGBOSS_SCHEMA_MISMATCH": "Databasen er på pg-boss-skema {{found}}, men den pg-boss, der er tilgængelig her, skriver skema {{expected}}.",
+    "PGBOSS_SCHEMA_UNSUPPORTED": "pg-boss-skema {{found}} understøttes ikke. De understøttede versioner er {{min}} til {{max}}.",
+    "PGBOSS_WRITER_UNAVAILABLE": "Der er ingen pg-boss-instans at skrive med. Giv appens instans med, eller installer pg-boss ved siden af boardet.",
+    "PGBOSS_WRITES_DISABLED": "Ændringer er slået fra på dette pg-boss-board."
   },
   "METRICS_HISTORY": {
     "TITLE": "Metrikhistorik",

@@ -1,10 +1,15 @@
 import type { Job, JobNode } from 'bullmq';
+import type { BaseAdapter } from '../queueAdapters/base';
 import { BullMQAdapter } from '../queueAdapters/bullMQ';
 import { WorkerManagerQueues } from '../types';
 
+function hasFlows(adapter: BaseAdapter | undefined): adapter is BaseAdapter {
+  return !!adapter && adapter.getCapabilities().flows;
+}
+
 function findBullMQAdapter(queues: WorkerManagerQueues): BullMQAdapter | null {
   for (const adapter of queues.values()) {
-    if (adapter.type === 'bullmq') {
+    if (hasFlows(adapter)) {
       return adapter as unknown as BullMQAdapter;
     }
   }
@@ -16,7 +21,7 @@ function findBoardAdapter(
   boardQueueName: string
 ): BullMQAdapter | null {
   const adapter = queues.get(boardQueueName);
-  return adapter?.type === 'bullmq' ? (adapter as unknown as BullMQAdapter) : null;
+  return hasFlows(adapter) ? (adapter as unknown as BullMQAdapter) : null;
 }
 
 // Keyed by the qualified `prefix:name`, which is what a job's `opts.parent.queue` carries and the
@@ -25,7 +30,7 @@ function buildQueueLookup(queues: WorkerManagerQueues): Map<string, BullMQAdapte
   const lookup = new Map<string, BullMQAdapter>();
 
   for (const adapter of queues.values()) {
-    if (adapter.type === 'bullmq') {
+    if (hasFlows(adapter)) {
       const bmq = adapter as unknown as BullMQAdapter;
       lookup.set(bmq.getQueueQualifiedName(), bmq);
     }

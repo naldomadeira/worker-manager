@@ -467,7 +467,18 @@
     "STATUS_NOT_RETRIABLE": "«{{status}}» — не повторяемый статус",
     "UNAUTHORIZED": "Чтобы получить доступ к этой панели, необходимо войти",
     "WORKERS_DISABLED": "Отчётность по воркерам отключена",
-    "INVALID_METRIC": "Некорректная метрика"
+    "INVALID_METRIC": "Некорректная метрика",
+    "PGBOSS_BULK_LIMIT": "Отправляйте от 1 до {{max}} идентификаторов задач за раз.",
+    "PGBOSS_INVALID_CURSOR": "Курсор страницы недействителен. Вернитесь на первую страницу.",
+    "PGBOSS_INVALID_SCHEDULE": "Выражение расписания недействительно.",
+    "PGBOSS_JOB_STATE_CONFLICT": "Нельзя выполнить {{action}} для задачи в состоянии {{state}}.",
+    "PGBOSS_NOT_INSTALLED": "pg-boss не установлен в этой схеме базы данных.",
+    "PGBOSS_PREVIEW_UNAVAILABLE": "Для предпросмотра расписаний нужен pg-boss 12.31 или новее.",
+    "PGBOSS_QUERY_TIMEOUT": "Запрос выполнялся слишком долго. Отфильтруйте по идентификатору задачи или singleton key.",
+    "PGBOSS_SCHEMA_MISMATCH": "База данных использует схему pg-boss {{found}}, а доступный здесь pg-boss записывает схему {{expected}}.",
+    "PGBOSS_SCHEMA_UNSUPPORTED": "Схема pg-boss {{found}} не поддерживается. Поддерживаются версии с {{min}} по {{max}}.",
+    "PGBOSS_WRITER_UNAVAILABLE": "Нет экземпляра pg-boss для записи. Передайте экземпляр приложения или установите pg-boss рядом с панелью.",
+    "PGBOSS_WRITES_DISABLED": "Изменения на этой панели pg-boss отключены."
   },
   "METRICS_HISTORY": {
     "TITLE": "История метрик",

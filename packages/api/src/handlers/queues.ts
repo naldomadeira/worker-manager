@@ -10,6 +10,7 @@ import {
   JobStatus,
   Pagination,
   QueueJob,
+  QueueCapabilities,
   QueueJobJson,
 } from '../types';
 
@@ -89,6 +90,11 @@ async function getHasWorkers(queue: BaseAdapter, showWorkers: boolean): Promise<
   return workers && workers.length > 0;
 }
 
+function capabilitiesFor(queue: BaseAdapter, showWorkers: boolean): QueueCapabilities {
+  const capabilities = queue.getCapabilities();
+  return showWorkers ? capabilities : { ...capabilities, workers: false };
+}
+
 async function getAppQueues(
   pairs: [string, BaseAdapter][],
   query: GetQueuesQuery,
@@ -141,6 +147,9 @@ async function getAppQueues(
         allowCompletedRetries: queue.allowCompletedRetries,
         isPaused,
         type: queue.type,
+        library: queue.getLibrary(),
+        datastore: queue.getDatastore(),
+        capabilities: capabilitiesFor(queue, showWorkers),
         delimiter: queue.delimiter,
         globalConcurrency,
         activeRateLimitTtl,

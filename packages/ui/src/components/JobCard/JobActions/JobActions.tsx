@@ -1,5 +1,5 @@
 import { STATUSES } from '@worker-manager/api/constants/statuses';
-import type { Status } from '@worker-manager/api/typings/app';
+import type { QueueCapabilities, Status } from '@worker-manager/api/typings/app';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -17,6 +17,7 @@ import { UpdateIcon } from '../../Icons/UpdateIcon';
 interface JobActionsProps {
   status: Status;
   allowRetries: boolean;
+  capabilities?: QueueCapabilities;
   actions: {
     promoteJob: () => Promise<boolean>;
     retryJob: () => Promise<boolean>;
@@ -32,6 +33,7 @@ interface JobActionsProps {
 interface ButtonType {
   titleKey: string;
   Icon: React.ElementType;
+  requires?: 'promote' | 'updateData' | 'changePriority' | 'removeUnprocessedChildren';
   actionKey:
     | 'promoteJob'
     | 'cleanJob'
@@ -44,17 +46,30 @@ interface ButtonType {
 }
 
 const buttonTypes: Record<string, ButtonType> = {
-  updateData: { titleKey: 'UPDATE_DATA', Icon: UpdateIcon, actionKey: 'updateJobData' },
-  promote: { titleKey: 'PROMOTE', Icon: PromoteIcon, actionKey: 'promoteJob' },
+  updateData: {
+    titleKey: 'UPDATE_DATA',
+    Icon: UpdateIcon,
+    actionKey: 'updateJobData',
+    requires: 'updateData',
+  },
+  promote: { titleKey: 'PROMOTE', Icon: PromoteIcon, actionKey: 'promoteJob', requires: 'promote' },
   clean: { titleKey: 'CLEAN', Icon: TrashIcon, actionKey: 'cleanJob' },
   retry: { titleKey: 'RETRY', Icon: RetryIcon, actionKey: 'retryJob' },
   duplicate: { titleKey: 'DUPLICATE', Icon: DuplicateIcon, actionKey: 'duplicateJob' },
+  // Not gated on `changeDelay`: Bull reports it false, and hiding the button there is a visible
+  // change this refactor is not allowed to make.
   reschedule: { titleKey: 'RESCHEDULE', Icon: ClockIcon, actionKey: 'rescheduleJob' },
-  reprioritise: { titleKey: 'REPRIORITISE', Icon: PriorityIcon, actionKey: 'reprioritiseJob' },
+  reprioritise: {
+    titleKey: 'REPRIORITISE',
+    Icon: PriorityIcon,
+    actionKey: 'reprioritiseJob',
+    requires: 'changePriority',
+  },
   removeChildren: {
     titleKey: 'REMOVE_UNPROCESSED_CHILDREN',
     Icon: RemoveChildrenIcon,
     actionKey: 'removeUnprocessedChildren',
+    requires: 'removeUnprocessedChildren',
   },
 } as const;
 
@@ -89,7 +104,7 @@ const statusToButtonsMap: Record<string, ButtonType[]> = {
   [STATUSES.paused]: [buttonTypes.duplicate, buttonTypes.updateData, buttonTypes.clean],
 } as const;
 
-export const JobActions = ({ actions, status, allowRetries }: JobActionsProps) => {
+export const JobActions = ({ actions, status, allowRetries, capabilities }: JobActionsProps) => {
   let buttons = statusToButtonsMap[status];
   const { t } = useTranslation();
   if (!buttons) {
@@ -98,6 +113,10 @@ export const JobActions = ({ actions, status, allowRetries }: JobActionsProps) =
 
   if (!allowRetries) {
     buttons = buttons.filter((btn) => btn.actionKey !== 'retryJob');
+  }
+
+  if (capabilities) {
+    buttons = buttons.filter((btn) => !btn.requires || capabilities[btn.requires]);
   }
 
   return (

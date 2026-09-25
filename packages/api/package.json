@@ -20,7 +20,8 @@
   "files": [
     "dist",
     "typings",
-    "*Adapter.*"
+    "*Adapter.*",
+    "engine.*"
   ],
   "main": "dist/index.js",
   "exports": {
@@ -33,6 +34,10 @@
     "./baseAdapter": {
       "types": "./baseAdapter.d.ts",
       "default": "./baseAdapter.js"
+    },
+    "./engine": {
+      "types": "./engine.d.ts",
+      "default": "./engine.js"
     },
     "./constants/statuses": "./dist/constants/statuses.js",
     "./constants/datastores": "./dist/constants/datastores.js"

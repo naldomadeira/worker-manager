@@ -157,7 +157,7 @@ async function getJobFlow(
   queue: BaseAdapter
 ): Promise<ControllerHandlerReturnType<GetJobFlowResponse>> {
   const jobId = (job as Job).id;
-  if (queue.type !== 'bullmq') {
+  if (!queue.getCapabilities().flows) {
     return emptyNodeResponse(jobId!);
   }
 

@@ -158,7 +158,7 @@ export const QueuePage = () => {
             </Badge>
             {queue.readOnlyMode && <Badge variant="outline">{t('QUEUE.INFO.READ_ONLY')}</Badge>}
             <Badge variant="outline" className="font-mono text-[0.625rem] tracking-wide uppercase">
-              {queue.type}
+              {queue.library}
             </Badge>
           </div>
           {!!queue.displayName && (
@@ -279,6 +279,7 @@ export const QueuePage = () => {
                   }}
                   readOnlyMode={queue?.readOnlyMode}
                   allowRetries={(job.isFailed || queue.allowCompletedRetries) && queue.allowRetries}
+                  capabilities={queue.capabilities}
                 />
               </motion.li>
             ))}

@@ -22,6 +22,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
 import { QueueActions } from '../../../typings/app';
+import { can } from '../../utils/capabilities';
 import { canRetryFailedJobs } from '../../utils/failedRetries';
 
 export const QueueDropdownActions = ({
@@ -38,8 +39,8 @@ export const QueueDropdownActions = ({
   className?: string;
 }) => {
   const { t } = useTranslation();
-  const showConcurrency = queue.type === 'bullmq' && !!actions.onConcurrency;
-  const showRateLimit = queue.supportsGlobalRateLimit && !!actions.onRateLimit;
+  const showConcurrency = can(queue, 'globalConcurrency') && !!actions.onConcurrency;
+  const showRateLimit = can(queue, 'globalRateLimit') && !!actions.onRateLimit;
 
   return (
     // Not modal: several items open a dialog of their own, and a modal menu handing focus back
@@ -67,23 +68,25 @@ export const QueueDropdownActions = ({
             {t('QUEUE.ACTIONS.RETRY_ALL_FAILED', { count: queue.counts.failed })}
           </DropdownMenuItem>
         )}
-        <DropdownMenuItem
-          onClick={
-            queue.isPaused ? actions.resumeQueue(queue.name) : actions.pauseQueue(queue.name)
-          }
-        >
-          {queue.isPaused ? (
-            <>
-              <PlayIcon />
-              {t('QUEUE.ACTIONS.RESUME')}
-            </>
-          ) : (
-            <>
-              <PauseIcon />
-              {t('QUEUE.ACTIONS.PAUSE')}
-            </>
-          )}
-        </DropdownMenuItem>
+        {can(queue, 'pause') && (
+          <DropdownMenuItem
+            onClick={
+              queue.isPaused ? actions.resumeQueue(queue.name) : actions.pauseQueue(queue.name)
+            }
+          >
+            {queue.isPaused ? (
+              <>
+                <PlayIcon />
+                {t('QUEUE.ACTIONS.RESUME')}
+              </>
+            ) : (
+              <>
+                <PauseIcon />
+                {t('QUEUE.ACTIONS.PAUSE')}
+              </>
+            )}
+          </DropdownMenuItem>
+        )}
         {(showConcurrency || showRateLimit) && <DropdownMenuSeparator />}
         {showConcurrency && (
           <DropdownMenuItem onClick={actions.onConcurrency}>

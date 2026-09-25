@@ -6,6 +6,7 @@ import {
   metricsLatencyMetricSchema,
   statusSchema,
 } from './domain';
+import { pgBossRequestSchemas } from './pgBoss';
 import { key } from './support';
 
 const DAY_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
@@ -214,6 +215,7 @@ export const requestSchemas = {
   ObliterateQueueBody: obliterateQueueBodySchema,
   UpdateJobSchedulerBody: updateJobSchedulerBodySchema,
   PurgeMetricsHistoryBody: purgeMetricsHistoryBodySchema,
+  ...pgBossRequestSchemas,
 };
 
 export type RequestSchemaName = keyof typeof requestSchemas;
@@ -238,3 +240,10 @@ export type SetRateLimitBody = RequestSchemas['SetRateLimitBody'];
 export type ObliterateQueueBody = RequestSchemas['ObliterateQueueBody'];
 export type UpdateJobSchedulerBody = RequestSchemas['UpdateJobSchedulerBody'];
 export type PurgeMetricsHistoryBody = RequestSchemas['PurgeMetricsHistoryBody'];
+export type GetPgBossJobsQuery = RequestSchemas['GetPgBossJobsQuery'];
+export type GetPgBossSchedulesQuery = RequestSchemas['GetPgBossSchedulesQuery'];
+export type PreviewPgBossScheduleBody = RequestSchemas['PreviewPgBossScheduleBody'];
+export type SendPgBossJobBody = RequestSchemas['SendPgBossJobBody'];
+export type PgBossJobIdsBody = RequestSchemas['PgBossJobIdsBody'];
+export type UpsertPgBossScheduleBody = RequestSchemas['UpsertPgBossScheduleBody'];
+export type RemovePgBossScheduleBody = RequestSchemas['RemovePgBossScheduleBody'];

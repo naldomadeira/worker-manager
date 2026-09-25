@@ -461,7 +461,18 @@
     "STATUS_NOT_RETRIABLE": "\"{{status}}\" yeniden denenebilir bir durum değil",
     "UNAUTHORIZED": "Bu panoya erişmek için oturum açmanız gerekiyor",
     "WORKERS_DISABLED": "Worker raporlaması devre dışı",
-    "INVALID_METRIC": "Geçersiz metrik"
+    "INVALID_METRIC": "Geçersiz metrik",
+    "PGBOSS_BULK_LIMIT": "Tek seferde 1 ile {{max}} arasında iş kimliği gönderin.",
+    "PGBOSS_INVALID_CURSOR": "Sayfa imleci geçerli değil. İlk sayfaya dönün.",
+    "PGBOSS_INVALID_SCHEDULE": "Zamanlama ifadesi geçerli değil.",
+    "PGBOSS_JOB_STATE_CONFLICT": "{{state}} durumundaki bir işe {{action}} uygulanamaz.",
+    "PGBOSS_NOT_INSTALLED": "pg-boss bu veritabanı şemasında kurulu değil.",
+    "PGBOSS_PREVIEW_UNAVAILABLE": "Zamanlama önizlemesi için pg-boss 12.31 veya üstü gerekir.",
+    "PGBOSS_QUERY_TIMEOUT": "Sorgu çok uzun sürdü. İş kimliğine veya singleton key değerine göre filtreleyin.",
+    "PGBOSS_SCHEMA_MISMATCH": "Veritabanı pg-boss şeması {{found}} üzerinde, ancak burada kullanılabilen pg-boss {{expected}} şemasını yazıyor.",
+    "PGBOSS_SCHEMA_UNSUPPORTED": "pg-boss şeması {{found}} desteklenmiyor. Desteklenen sürümler {{min}} ile {{max}} arası.",
+    "PGBOSS_WRITER_UNAVAILABLE": "Yazmak için kullanılabilecek bir pg-boss örneği yok. Uygulamanın örneğini verin veya pg-boss'u panonun yanına kurun.",
+    "PGBOSS_WRITES_DISABLED": "Bu pg-boss panosunda değişiklikler kapalı."
   },
   "METRICS_HISTORY": {
     "TITLE": "Metrik geçmişi",

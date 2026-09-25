@@ -16,6 +16,7 @@ import {
   redisStatsSchema,
   translatableMessageSchema,
 } from './domain';
+import { pgBossResponseSchemas } from './pgBoss';
 
 export const getQueuesResponseSchema = v.object({
   queues: v.array(appQueueSchema),
@@ -128,6 +129,7 @@ export const responseSchemas = {
   RemoveUnprocessedChildrenResponse: removeUnprocessedChildrenResponseSchema,
   JobBelongsToJobSchedulerResponse: jobBelongsToJobSchedulerResponseSchema,
   EmptyResponse: emptyResponseSchema,
+  ...pgBossResponseSchemas,
 };
 
 export type ResponseSchemaName = keyof typeof responseSchemas;
@@ -158,6 +160,18 @@ export type RetryAllResponse = ResponseSchemas['RetryAllResponse'];
 export type RemoveUnprocessedChildrenResponse =
   ResponseSchemas['RemoveUnprocessedChildrenResponse'];
 export type EmptyResponse = ResponseSchemas['EmptyResponse'];
+export type GetPgBossInfoResponse = ResponseSchemas['GetPgBossInfoResponse'];
+export type GetPgBossQueuesResponse = ResponseSchemas['GetPgBossQueuesResponse'];
+export type GetPgBossQueueResponse = ResponseSchemas['GetPgBossQueueResponse'];
+export type GetPgBossStateCountsResponse = ResponseSchemas['GetPgBossStateCountsResponse'];
+export type GetPgBossJobsResponse = ResponseSchemas['GetPgBossJobsResponse'];
+export type GetPgBossJobResponse = ResponseSchemas['GetPgBossJobResponse'];
+export type GetPgBossDependenciesResponse = ResponseSchemas['GetPgBossDependenciesResponse'];
+export type GetPgBossSchedulesResponse = ResponseSchemas['GetPgBossSchedulesResponse'];
+export type PreviewPgBossScheduleResponse = ResponseSchemas['PreviewPgBossScheduleResponse'];
+export type SendPgBossJobResponse = ResponseSchemas['SendPgBossJobResponse'];
+export type PgBossCommandResponse = ResponseSchemas['PgBossCommandResponse'];
+export type PgBossScheduleResponse = ResponseSchemas['PgBossScheduleResponse'];
 
 export type JobBelongsToJobSchedulerResponse = ResponseSchemas['JobBelongsToJobSchedulerResponse'];
 // Optional at the top level, which no route can declare as its response, so it stays out of

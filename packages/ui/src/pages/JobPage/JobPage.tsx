@@ -20,6 +20,7 @@ import { useJob } from '../../hooks/useJob';
 import { useModal } from '../../hooks/useModal';
 import { useQueues } from '../../hooks/useQueues';
 import { useSelectedStatuses } from '../../hooks/useSelectedStatuses';
+import { can } from '../../utils/capabilities';
 import { links } from '../../utils/links';
 
 const AddJobModalLazy = React.lazy(() =>
@@ -134,10 +135,11 @@ export const JobPage = () => {
             }}
             readOnlyMode={queue.readOnlyMode}
             allowRetries={(job.isFailed || queue.allowCompletedRetries) && queue.allowRetries}
+            capabilities={queue.capabilities}
           />
         </motion.div>
       )}
-      <JobFlow />
+      {can(queue, 'flows') && <JobFlow />}
       <Suspense fallback={null}>
         {modal.isMounted('addJob') && (
           <AddJobModalLazy

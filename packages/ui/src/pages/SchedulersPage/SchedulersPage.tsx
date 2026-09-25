@@ -44,6 +44,7 @@ import { useJobSchedulers } from '../../hooks/useJobSchedulers';
 import { useQueues } from '../../hooks/useQueues';
 import { type SchedulersView, useSettingsStore } from '../../hooks/useSettings';
 import { useUIConfig } from '../../hooks/useUIConfig';
+import { canScheduler } from '../../utils/capabilities';
 import { formatDate, formatRelativeToNow } from '../../utils/formatDate';
 import { links } from '../../utils/links';
 import { describeSchedule } from './schedule';
@@ -185,7 +186,7 @@ export const SchedulersPage = () => {
    */
   const selectScheduler = (scheduler: AppJobScheduler) => {
     const queue = queuesByName.get(scheduler.queueName);
-    if (queue?.type === 'bullmq' && !queue.readOnlyMode) {
+    if (canScheduler(queue, 'update') && !queue?.readOnlyMode) {
       setEditing(scheduler);
     } else if (scheduler.nextRunJobId) {
       history.push(links.jobPage(scheduler.queueName, scheduler.nextRunJobId));
@@ -397,7 +398,8 @@ export const SchedulersPage = () => {
                     // Editing needs an upsert and running on demand needs a stored template, and
                     // Bull has neither. An unknown queue is treated the same way until the queues
                     // list arrives.
-                    const isBullMQ = queue?.type === 'bullmq';
+                    const canRun = canScheduler(queue, 'run');
+                    const canUpdate = canScheduler(queue, 'update');
                     const isExpanded = expanded.includes(rowKey(scheduler));
                     const hasTemplate = !!scheduler.template?.data || !!scheduler.template?.opts;
                     const status = schedulerStatus(scheduler, now);
@@ -482,7 +484,7 @@ export const SchedulersPage = () => {
                           <TableCell className="py-2.5 pr-3 text-right">
                             <div className="inline-flex items-center gap-0.5 opacity-80 transition-opacity group-hover/row:opacity-100 focus-within:opacity-100">
                               {!isReadOnly &&
-                                isBullMQ &&
+                                canRun &&
                                 iconAction(
                                   t('SCHEDULERS.ACTIONS.RUN'),
                                   <Play />,
@@ -490,7 +492,7 @@ export const SchedulersPage = () => {
                                   'hover:text-status-completed'
                                 )}
                               {!isReadOnly &&
-                                isBullMQ &&
+                                canUpdate &&
                                 iconAction(t('SCHEDULERS.ACTIONS.EDIT'), <Pencil />, () =>
                                   setEditing(scheduler)
                                 )}

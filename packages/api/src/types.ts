@@ -263,6 +263,22 @@ export type JobSchedulerUpdateResult = 'updated' | 'not-found' | 'invalid-schedu
 
 export type QueueType = v.InferOutput<typeof schemas.queueTypeSchema>;
 
+export type PgBossJobState = v.InferOutput<typeof schemas.pgBossJobStateSchema>;
+export type PgBossQueueSummary = v.InferOutput<typeof schemas.pgBossQueueSummarySchema>;
+export type PgBossStateCounts = v.InferOutput<typeof schemas.pgBossStateCountsSchema>;
+export type PgBossJobSummary = v.InferOutput<typeof schemas.pgBossJobSummarySchema>;
+export type PgBossJob = v.InferOutput<typeof schemas.pgBossJobSchema>;
+export type PgBossDependencyRef = v.InferOutput<typeof schemas.pgBossDependencyRefSchema>;
+export type PgBossSchedule = v.InferOutput<typeof schemas.pgBossScheduleSchema>;
+export type PgBossCapabilities = v.InferOutput<typeof schemas.pgBossCapabilitiesSchema>;
+export type PgBossInfo = v.InferOutput<typeof schemas.pgBossInfoSchema>;
+
+export type QueueLibrary = v.InferOutput<typeof schemas.queueLibrarySchema>;
+
+export type QueueCapabilities = v.InferOutput<typeof schemas.queueCapabilitiesSchema>;
+
+export type Datastore = v.InferOutput<typeof schemas.datastoreSchema>;
+
 export interface ObliterateOptions {
   /**
    * Obliterate even while jobs are active. Both Bull and BullMQ refuse to obliterate a queue that
@@ -373,6 +389,11 @@ export type Pagination = v.InferOutput<typeof schemas.paginationSchema>;
 
 export type FormatterField = 'data' | 'returnValue' | 'name' | 'progress';
 
+export type { PgBossEngine, PgBossJobAction } from './engines/pgBoss/types';
+
+/** Which queue library a board runs. One board runs exactly one. */
+export type BoardEngine = 'bullmq' | 'pg-boss';
+
 export type BoardOptions = {
   uiBasePath?: string;
   uiConfig?: UIConfig;
@@ -462,6 +483,8 @@ export type UITheme = {
 };
 
 export type UIConfig = Partial<{
+  /** Set by the board from the engine it was mounted with; any caller-supplied value is replaced. */
+  engine: BoardEngine;
   boardTitle: string;
   boardLogo: { path: string; width?: number | string; height?: number | string };
   miscLinks: Array<IMiscLink>;

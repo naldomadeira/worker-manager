@@ -457,7 +457,18 @@
     "STATUS_NOT_RETRIABLE": "\"{{status}}\" は再試行できるステータスではありません",
     "UNAUTHORIZED": "このボードにアクセスするにはサインインが必要です",
     "WORKERS_DISABLED": "ワーカーの表示は無効です",
-    "INVALID_METRIC": "無効なメトリクス"
+    "INVALID_METRIC": "無効なメトリクス",
+    "PGBOSS_BULK_LIMIT": "ジョブ ID は一度に 1〜{{max}} 件まで送信してください。",
+    "PGBOSS_INVALID_CURSOR": "ページカーソルが無効です。最初のページに戻ってください。",
+    "PGBOSS_INVALID_SCHEDULE": "スケジュールの式が無効です。",
+    "PGBOSS_JOB_STATE_CONFLICT": "状態が {{state}} のジョブには {{action}} を実行できません。",
+    "PGBOSS_NOT_INSTALLED": "このデータベーススキーマには pg-boss がインストールされていません。",
+    "PGBOSS_PREVIEW_UNAVAILABLE": "スケジュールのプレビューには pg-boss 12.31 以降が必要です。",
+    "PGBOSS_QUERY_TIMEOUT": "クエリに時間がかかりすぎました。ジョブ ID または singleton key で絞り込んでください。",
+    "PGBOSS_SCHEMA_MISMATCH": "データベースは pg-boss スキーマ {{found}} ですが、ここで利用できる pg-boss はスキーマ {{expected}} を書き込みます。",
+    "PGBOSS_SCHEMA_UNSUPPORTED": "pg-boss スキーマ {{found}} はサポートされていません。サポート対象は {{min}}〜{{max}} です。",
+    "PGBOSS_WRITER_UNAVAILABLE": "書き込みに使える pg-boss インスタンスがありません。アプリのインスタンスを渡すか、ボードと同じ場所に pg-boss をインストールしてください。",
+    "PGBOSS_WRITES_DISABLED": "この pg-boss ボードでは変更が無効になっています。"
   },
   "METRICS_HISTORY": {
     "TITLE": "メトリクス履歴",

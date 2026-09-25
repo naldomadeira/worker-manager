@@ -79,6 +79,9 @@ jobs:
       - name: Typecheck against the BullMQ peer floor and every supported major
         run: yarn workspace @worker-manager/api typecheck:bullmq
 
+      - name: Typecheck the pg-boss engine against both ends of its peer range
+        run: yarn workspace @worker-manager/pg-boss typecheck:pgboss
+
       - name: Check the generated OpenAPI artifacts are current
         run: |
           yarn workspace @worker-manager/api openapi

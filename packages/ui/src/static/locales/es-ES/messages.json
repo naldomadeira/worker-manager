@@ -464,7 +464,18 @@
     "STATUS_NOT_RETRIABLE": "\"{{status}}\" no es un estado reintentable",
     "UNAUTHORIZED": "Debes iniciar sesión para acceder a este panel",
     "WORKERS_DISABLED": "El informe de workers está desactivado",
-    "INVALID_METRIC": "Métrica no válida"
+    "INVALID_METRIC": "Métrica no válida",
+    "PGBOSS_BULK_LIMIT": "Envía entre 1 y {{max}} ids de trabajo a la vez.",
+    "PGBOSS_INVALID_CURSOR": "El cursor de la página no es válido. Vuelve a la primera página.",
+    "PGBOSS_INVALID_SCHEDULE": "La expresión de la programación no es válida.",
+    "PGBOSS_JOB_STATE_CONFLICT": "No se puede aplicar {{action}} a un trabajo en estado {{state}}.",
+    "PGBOSS_NOT_INSTALLED": "pg-boss no está instalado en este esquema de la base de datos.",
+    "PGBOSS_PREVIEW_UNAVAILABLE": "La vista previa de programaciones necesita pg-boss 12.31 o posterior.",
+    "PGBOSS_QUERY_TIMEOUT": "La consulta tardó demasiado. Filtra por id de trabajo o por singleton key.",
+    "PGBOSS_SCHEMA_MISMATCH": "La base de datos está en el esquema {{found}} de pg-boss, pero el pg-boss disponible aquí escribe el esquema {{expected}}.",
+    "PGBOSS_SCHEMA_UNSUPPORTED": "El esquema {{found}} de pg-boss no es compatible. Las versiones compatibles van de {{min}} a {{max}}.",
+    "PGBOSS_WRITER_UNAVAILABLE": "No hay ninguna instancia de pg-boss con la que escribir. Pasa la instancia de la aplicación o instala pg-boss junto al panel.",
+    "PGBOSS_WRITES_DISABLED": "Los cambios están desactivados en este panel de pg-boss."
   },
   "METRICS_HISTORY": {
     "TITLE": "Historial de métricas",

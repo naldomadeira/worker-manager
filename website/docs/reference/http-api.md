@@ -85,6 +85,8 @@ Board-level and per-queue operations. `GET /api/queues` is the one the dashboard
 
 List every visible queue with its job counts, and the jobs of the active queue.
 
+> Available only when: The board runs engine 'bullmq', the default.
+
 | Parameter | In | Required | Type |
 | --- | --- | --- | --- |
 | `activeQueue` | query | no | string |
@@ -98,6 +100,8 @@ Responds `200` with [`GetQueuesResponse`](#getqueuesresponse).
 
 Read the BullMQ completed and failed counter metrics of one queue.
 
+> Available only when: The board runs engine 'bullmq', the default.
+
 | Parameter | In | Required | Type |
 | --- | --- | --- | --- |
 | `queueName` | path | yes | string |
@@ -107,6 +111,8 @@ Responds `200` with [`GetQueueMetricsResponse`](#getqueuemetricsresponse).
 ### `GET /api/queues/{queueName}/default-job-options`
 
 Read the default job options configured on one queue.
+
+> Available only when: The board runs engine 'bullmq', the default.
 
 | Parameter | In | Required | Type |
 | --- | --- | --- | --- |
@@ -118,6 +124,8 @@ Responds `200` with [`GetQueueDefaultJobOptionsResponse`](#getqueuedefaultjobopt
 
 List the workers currently consuming one queue.
 
+> Available only when: The board runs engine 'bullmq', the default.
+
 | Parameter | In | Required | Type |
 | --- | --- | --- | --- |
 | `queueName` | path | yes | string |
@@ -128,6 +136,8 @@ Responds `200` with [`GetQueueWorkersResponse`](#getqueueworkersresponse).
 
 Read the configured rate limit of one queue.
 
+> Available only when: The board runs engine 'bullmq', the default.
+
 | Parameter | In | Required | Type |
 | --- | --- | --- | --- |
 | `queueName` | path | yes | string |
@@ -137,6 +147,8 @@ Responds `200` with [`GetQueueRateLimitResponse`](#getqueueratelimitresponse).
 ### `PUT /api/queues/{queueName}/rate-limit`
 
 Set the rate limit of one queue.
+
+> Available only when: The board runs engine 'bullmq', the default.
 
 | Parameter | In | Required | Type |
 | --- | --- | --- | --- |
@@ -150,6 +162,8 @@ Responds `200` with [`EmptyResponse`](#emptyresponse).
 
 Read the JSON Schema describing the job data of one queue.
 
+> Available only when: The board runs engine 'bullmq', the default.
+
 | Parameter | In | Required | Type |
 | --- | --- | --- | --- |
 | `queueName` | path | yes | string |
@@ -160,17 +174,23 @@ Responds `200` with [`GetQueueJobDataSchemaResponse`](#getqueuejobdataschemaresp
 
 Pause every writable queue on the board.
 
+> Available only when: The board runs engine 'bullmq', the default.
+
 Responds `200` with [`EmptyResponse`](#emptyresponse).
 
 ### `PUT /api/queues/resume`
 
 Resume every writable queue on the board.
 
+> Available only when: The board runs engine 'bullmq', the default.
+
 Responds `200` with [`EmptyResponse`](#emptyresponse).
 
 ### `POST /api/queues/{queueName}/add`
 
 Add a job to one queue.
+
+> Available only when: The board runs engine 'bullmq', the default.
 
 | Parameter | In | Required | Type |
 | --- | --- | --- | --- |
@@ -184,6 +204,8 @@ Responds `200` with [`AddJobResponse`](#addjobresponse).
 
 Retry every job of one queue in the given status.
 
+> Available only when: The board runs engine 'bullmq', the default.
+
 | Parameter | In | Required | Type |
 | --- | --- | --- | --- |
 | `queueName` | path | yes | string |
@@ -195,6 +217,8 @@ Responds `200` with [`RetryAllResponse`](#retryallresponse).
 
 Promote every delayed job of one queue.
 
+> Available only when: The board runs engine 'bullmq', the default.
+
 | Parameter | In | Required | Type |
 | --- | --- | --- | --- |
 | `queueName` | path | yes | string |
@@ -204,6 +228,8 @@ Responds `200` with [`EmptyResponse`](#emptyresponse).
 ### `PUT /api/queues/{queueName}/clean/{queueStatus}`
 
 Remove every job of one queue in the given status.
+
+> Available only when: The board runs engine 'bullmq', the default.
 
 | Parameter | In | Required | Type |
 | --- | --- | --- | --- |
@@ -216,6 +242,8 @@ Responds `200` with [`EmptyResponse`](#emptyresponse).
 
 Pause one queue.
 
+> Available only when: The board runs engine 'bullmq', the default.
+
 | Parameter | In | Required | Type |
 | --- | --- | --- | --- |
 | `queueName` | path | yes | string |
@@ -226,6 +254,8 @@ Responds `200` with [`EmptyResponse`](#emptyresponse).
 
 Resume one queue.
 
+> Available only when: The board runs engine 'bullmq', the default.
+
 | Parameter | In | Required | Type |
 | --- | --- | --- | --- |
 | `queueName` | path | yes | string |
@@ -235,6 +265,8 @@ Responds `200` with [`EmptyResponse`](#emptyresponse).
 ### `PUT /api/queues/{queueName}/concurrency`
 
 Set the global concurrency limit of one queue.
+
+> Available only when: The board runs engine 'bullmq', the default.
 
 | Parameter | In | Required | Type |
 | --- | --- | --- | --- |
@@ -248,6 +280,8 @@ Responds `200` with [`EmptyResponse`](#emptyresponse).
 
 Release an active rate limit on one queue.
 
+> Available only when: The board runs engine 'bullmq', the default.
+
 | Parameter | In | Required | Type |
 | --- | --- | --- | --- |
 | `queueName` | path | yes | string |
@@ -258,6 +292,8 @@ Responds `200` with [`EmptyResponse`](#emptyresponse).
 
 Remove every job from one queue.
 
+> Available only when: The board runs engine 'bullmq', the default.
+
 | Parameter | In | Required | Type |
 | --- | --- | --- | --- |
 | `queueName` | path | yes | string |
@@ -267,6 +303,8 @@ Responds `200` with [`EmptyResponse`](#emptyresponse).
 ### `PUT /api/queues/{queueName}/obliterate`
 
 Obliterate one queue, removing the queue itself along with all of its jobs.
+
+> Available only when: The board runs engine 'bullmq', the default.
 
 | Parameter | In | Required | Type |
 | --- | --- | --- | --- |
@@ -284,6 +322,8 @@ Reads and mutations for one job, addressed by its queue and id. Removing a job t
 
 Read the logs of one job.
 
+> Available only when: The board runs engine 'bullmq', the default.
+
 | Parameter | In | Required | Type |
 | --- | --- | --- | --- |
 | `queueName` | path | yes | string |
@@ -294,6 +334,8 @@ Responds `200` with [`GetJobLogsResponse`](#getjoblogsresponse).
 ### `GET /api/queues/{queueName}/{jobId}/flow`
 
 Read the flow tree one job belongs to.
+
+> Available only when: The board runs engine 'bullmq', the default.
 
 | Parameter | In | Required | Type |
 | --- | --- | --- | --- |
@@ -309,6 +351,8 @@ Responds `200` with [`GetJobFlowResponse`](#getjobflowresponse).
 
 Read one job and its current status.
 
+> Available only when: The board runs engine 'bullmq', the default.
+
 | Parameter | In | Required | Type |
 | --- | --- | --- | --- |
 | `queueName` | path | yes | string |
@@ -319,6 +363,8 @@ Responds `200` with [`GetJobResponse`](#getjobresponse).
 ### `PUT /api/queues/{queueName}/{jobId}/retry`
 
 Retry one job.
+
+> Available only when: The board runs engine 'bullmq', the default.
 
 | Parameter | In | Required | Type |
 | --- | --- | --- | --- |
@@ -331,6 +377,8 @@ Responds `204` with no body.
 
 Remove one job.
 
+> Available only when: The board runs engine 'bullmq', the default.
+
 | Parameter | In | Required | Type |
 | --- | --- | --- | --- |
 | `queueName` | path | yes | string |
@@ -342,6 +390,8 @@ Responds `204` with no body.
 
 Promote one delayed job.
 
+> Available only when: The board runs engine 'bullmq', the default.
+
 | Parameter | In | Required | Type |
 | --- | --- | --- | --- |
 | `queueName` | path | yes | string |
@@ -352,6 +402,8 @@ Responds `204` with no body.
 ### `PATCH /api/queues/{queueName}/{jobId}/update-data`
 
 Replace the data of one job.
+
+> Available only when: The board runs engine 'bullmq', the default.
 
 | Parameter | In | Required | Type |
 | --- | --- | --- | --- |
@@ -366,6 +418,8 @@ Responds `200` with [`EmptyResponse`](#emptyresponse).
 
 Reschedule one delayed job.
 
+> Available only when: The board runs engine 'bullmq', the default.
+
 | Parameter | In | Required | Type |
 | --- | --- | --- | --- |
 | `queueName` | path | yes | string |
@@ -379,6 +433,8 @@ Responds `200` with [`EmptyResponse`](#emptyresponse).
 
 Change the priority of one job.
 
+> Available only when: The board runs engine 'bullmq', the default.
+
 | Parameter | In | Required | Type |
 | --- | --- | --- | --- |
 | `queueName` | path | yes | string |
@@ -391,6 +447,8 @@ Responds `200` with [`EmptyResponse`](#emptyresponse).
 ### `PUT /api/queues/{queueName}/{jobId}/remove-unprocessed-children`
 
 Remove the unprocessed children of one job.
+
+> Available only when: The board runs engine 'bullmq', the default.
 
 | Parameter | In | Required | Type |
 | --- | --- | --- | --- |
@@ -407,6 +465,8 @@ Repeatable job definitions, meaning the schedule itself rather than the runs it 
 
 List job schedulers across every visible queue, or one named queue.
 
+> Available only when: The board runs engine 'bullmq', the default.
+
 | Parameter | In | Required | Type |
 | --- | --- | --- | --- |
 | `queueName` | query | no | string |
@@ -416,6 +476,8 @@ Responds `200` with [`GetJobSchedulersResponse`](#getjobschedulersresponse).
 ### `PUT /api/queues/{queueName}/job-schedulers/{schedulerId}/remove`
 
 Remove one job scheduler.
+
+> Available only when: The board runs engine 'bullmq', the default.
 
 | Parameter | In | Required | Type |
 | --- | --- | --- | --- |
@@ -427,6 +489,8 @@ Responds `204` with no body.
 ### `PATCH /api/queues/{queueName}/job-schedulers/{schedulerId}`
 
 Update the schedule of one job scheduler.
+
+> Available only when: The board runs engine 'bullmq', the default.
 
 | Parameter | In | Required | Type |
 | --- | --- | --- | --- |
@@ -440,6 +504,8 @@ Responds `204` with no body.
 ### `PUT /api/queues/{queueName}/job-schedulers/{schedulerId}/run`
 
 Run one job scheduler now, leaving its schedule untouched.
+
+> Available only when: The board runs engine 'bullmq', the default.
 
 | Parameter | In | Required | Type |
 | --- | --- | --- | --- |
@@ -503,6 +569,302 @@ Read recorded runtime or wait-time latency percentiles over a time range.
 
 Responds `200` with [`GetMetricsLatencyResponse`](#getmetricslatencyresponse).
 
+## pg-boss
+
+Every route of a board created with engine 'pg-boss' (`createPgBossBoard` from `@worker-manager/pg-boss`). Such a board registers these, the metrics history routes and the entry page, and none of the BullMQ routes; a BullMQ board registers none of these. Reads are SQL against the pg-boss schema, writes go through the pg-boss API. Mutations are not registered on a read-only board, and answer **409** `ERRORS.PGBOSS_WRITES_DISABLED` while the schema guard keeps writes off. Experimental: this part of the contract may change in a minor release.
+
+### `GET /api/pg-boss/info`
+
+Report the pg-boss installation, the schema guard and what the board can do.
+
+> Available only when: The board was created with engine 'pg-boss'.
+
+Responds `200` with [`GetPgBossInfoResponse`](#getpgbossinforesponse).
+
+### `GET /api/pg-boss/queues`
+
+List every visible pg-boss queue with its cached counters.
+
+> Available only when: The board was created with engine 'pg-boss'.
+
+Responds `200` with [`GetPgBossQueuesResponse`](#getpgbossqueuesresponse).
+
+### `GET /api/pg-boss/queues/{queueName}`
+
+Read one pg-boss queue.
+
+> Available only when: The board was created with engine 'pg-boss'.
+
+| Parameter | In | Required | Type |
+| --- | --- | --- | --- |
+| `queueName` | path | yes | string |
+
+Responds `200` with [`GetPgBossQueueResponse`](#getpgbossqueueresponse).
+
+### `GET /api/pg-boss/queues/{queueName}/counts`
+
+Count the jobs of one queue in each state, live and capped.
+
+> Available only when: The board was created with engine 'pg-boss'.
+
+| Parameter | In | Required | Type |
+| --- | --- | --- | --- |
+| `queueName` | path | yes | string |
+
+Responds `200` with [`GetPgBossStateCountsResponse`](#getpgbossstatecountsresponse).
+
+### `GET /api/pg-boss/queues/{queueName}/jobs`
+
+List the jobs of one queue, newest first, one keyset page at a time.
+
+> Available only when: The board was created with engine 'pg-boss'.
+
+| Parameter | In | Required | Type |
+| --- | --- | --- | --- |
+| `queueName` | path | yes | string |
+| `state` | query | no | PgBossJobState |
+| `cursor` | query | no | string |
+| `limit` | query | no | string |
+| `order` | query | no | `desc` \| `asc` |
+| `id` | query | no | string |
+| `singletonKey` | query | no | string |
+
+Responds `200` with [`GetPgBossJobsResponse`](#getpgbossjobsresponse).
+
+### `POST /api/pg-boss/queues/{queueName}/jobs`
+
+Send a job to one queue.
+
+> Available only when: The board was created with engine 'pg-boss'. The board is not read-only. Answers 409 `ERRORS.PGBOSS_WRITES_DISABLED` while the schema guard has writes off.
+
+| Parameter | In | Required | Type |
+| --- | --- | --- | --- |
+| `queueName` | path | yes | string |
+
+Request body: [`SendPgBossJobBody`](#sendpgbossjobbody)
+
+Responds `200` with [`SendPgBossJobResponse`](#sendpgbossjobresponse).
+
+### `GET /api/pg-boss/queues/{queueName}/jobs/{jobId}`
+
+Read one job with its data and output.
+
+> Available only when: The board was created with engine 'pg-boss'.
+
+| Parameter | In | Required | Type |
+| --- | --- | --- | --- |
+| `queueName` | path | yes | string |
+| `jobId` | path | yes | string |
+
+Responds `200` with [`GetPgBossJobResponse`](#getpgbossjobresponse).
+
+### `GET /api/pg-boss/queues/{queueName}/jobs/{jobId}/dependencies`
+
+List the jobs one job waits on and the jobs waiting on it.
+
+> Available only when: The board was created with engine 'pg-boss'.
+
+| Parameter | In | Required | Type |
+| --- | --- | --- | --- |
+| `queueName` | path | yes | string |
+| `jobId` | path | yes | string |
+
+Responds `200` with [`GetPgBossDependenciesResponse`](#getpgbossdependenciesresponse).
+
+### `GET /api/pg-boss/schedules`
+
+List the schedules of every visible queue, or one named queue.
+
+> Available only when: The board was created with engine 'pg-boss'.
+
+| Parameter | In | Required | Type |
+| --- | --- | --- | --- |
+| `queueName` | query | no | string |
+
+Responds `200` with [`GetPgBossSchedulesResponse`](#getpgbossschedulesresponse).
+
+### `POST /api/pg-boss/schedules/preview`
+
+Work out the next occurrences of a cron or RRULE expression.
+
+> Available only when: The board was created with engine 'pg-boss'. Needs pg-boss 12.31 or later, else 409 `ERRORS.PGBOSS_PREVIEW_UNAVAILABLE`.
+
+Request body: [`PreviewPgBossScheduleBody`](#previewpgbossschedulebody)
+
+Responds `200` with [`PreviewPgBossScheduleResponse`](#previewpgbossscheduleresponse).
+
+### `PUT /api/pg-boss/queues/{queueName}/jobs/retry`
+
+Retry failed jobs, up to 100 ids at once.
+
+> Available only when: The board was created with engine 'pg-boss'. The board is not read-only. Answers 409 `ERRORS.PGBOSS_WRITES_DISABLED` while the schema guard has writes off.
+
+| Parameter | In | Required | Type |
+| --- | --- | --- | --- |
+| `queueName` | path | yes | string |
+
+Request body: [`PgBossJobIdsBody`](#pgbossjobidsbody)
+
+Responds `200` with [`PgBossCommandResponse`](#pgbosscommandresponse).
+
+### `PUT /api/pg-boss/queues/{queueName}/jobs/{jobId}/retry`
+
+Retry one failed job.
+
+> Available only when: The board was created with engine 'pg-boss'. The board is not read-only. Answers 409 `ERRORS.PGBOSS_WRITES_DISABLED` while the schema guard has writes off.
+
+| Parameter | In | Required | Type |
+| --- | --- | --- | --- |
+| `queueName` | path | yes | string |
+| `jobId` | path | yes | string |
+
+Responds `200` with [`PgBossCommandResponse`](#pgbosscommandresponse).
+
+### `PUT /api/pg-boss/queues/{queueName}/jobs/cancel`
+
+Cancel jobs that have not finished, up to 100 ids at once.
+
+> Available only when: The board was created with engine 'pg-boss'. The board is not read-only. Answers 409 `ERRORS.PGBOSS_WRITES_DISABLED` while the schema guard has writes off.
+
+| Parameter | In | Required | Type |
+| --- | --- | --- | --- |
+| `queueName` | path | yes | string |
+
+Request body: [`PgBossJobIdsBody`](#pgbossjobidsbody)
+
+Responds `200` with [`PgBossCommandResponse`](#pgbosscommandresponse).
+
+### `PUT /api/pg-boss/queues/{queueName}/jobs/{jobId}/cancel`
+
+Cancel one job that has not finished. A running handler is not interrupted.
+
+> Available only when: The board was created with engine 'pg-boss'. The board is not read-only. Answers 409 `ERRORS.PGBOSS_WRITES_DISABLED` while the schema guard has writes off.
+
+| Parameter | In | Required | Type |
+| --- | --- | --- | --- |
+| `queueName` | path | yes | string |
+| `jobId` | path | yes | string |
+
+Responds `200` with [`PgBossCommandResponse`](#pgbosscommandresponse).
+
+### `PUT /api/pg-boss/queues/{queueName}/jobs/resume`
+
+Resume cancelled jobs, up to 100 ids at once.
+
+> Available only when: The board was created with engine 'pg-boss'. The board is not read-only. Answers 409 `ERRORS.PGBOSS_WRITES_DISABLED` while the schema guard has writes off.
+
+| Parameter | In | Required | Type |
+| --- | --- | --- | --- |
+| `queueName` | path | yes | string |
+
+Request body: [`PgBossJobIdsBody`](#pgbossjobidsbody)
+
+Responds `200` with [`PgBossCommandResponse`](#pgbosscommandresponse).
+
+### `PUT /api/pg-boss/queues/{queueName}/jobs/{jobId}/resume`
+
+Resume one cancelled job.
+
+> Available only when: The board was created with engine 'pg-boss'. The board is not read-only. Answers 409 `ERRORS.PGBOSS_WRITES_DISABLED` while the schema guard has writes off.
+
+| Parameter | In | Required | Type |
+| --- | --- | --- | --- |
+| `queueName` | path | yes | string |
+| `jobId` | path | yes | string |
+
+Responds `200` with [`PgBossCommandResponse`](#pgbosscommandresponse).
+
+### `PUT /api/pg-boss/queues/{queueName}/jobs/remove`
+
+Delete jobs, up to 100 ids at once.
+
+> Available only when: The board was created with engine 'pg-boss'. The board is not read-only. Answers 409 `ERRORS.PGBOSS_WRITES_DISABLED` while the schema guard has writes off.
+
+| Parameter | In | Required | Type |
+| --- | --- | --- | --- |
+| `queueName` | path | yes | string |
+
+Request body: [`PgBossJobIdsBody`](#pgbossjobidsbody)
+
+Responds `200` with [`PgBossCommandResponse`](#pgbosscommandresponse).
+
+### `PUT /api/pg-boss/queues/{queueName}/jobs/{jobId}/remove`
+
+Delete one job that is not active.
+
+> Available only when: The board was created with engine 'pg-boss'. The board is not read-only. Answers 409 `ERRORS.PGBOSS_WRITES_DISABLED` while the schema guard has writes off.
+
+| Parameter | In | Required | Type |
+| --- | --- | --- | --- |
+| `queueName` | path | yes | string |
+| `jobId` | path | yes | string |
+
+Responds `200` with [`PgBossCommandResponse`](#pgbosscommandresponse).
+
+### `PUT /api/pg-boss/queues/{queueName}/retry-failed`
+
+Retry every failed job of one queue.
+
+> Available only when: The board was created with engine 'pg-boss'. The board is not read-only. Answers 409 `ERRORS.PGBOSS_WRITES_DISABLED` while the schema guard has writes off.
+
+| Parameter | In | Required | Type |
+| --- | --- | --- | --- |
+| `queueName` | path | yes | string |
+
+Responds `200` with [`PgBossCommandResponse`](#pgbosscommandresponse).
+
+### `PUT /api/pg-boss/queues/{queueName}/delete-queued`
+
+Delete every job of one queue that has not started.
+
+> Available only when: The board was created with engine 'pg-boss'. The board is not read-only. Answers 409 `ERRORS.PGBOSS_WRITES_DISABLED` while the schema guard has writes off.
+
+| Parameter | In | Required | Type |
+| --- | --- | --- | --- |
+| `queueName` | path | yes | string |
+
+Responds `200` with [`PgBossCommandResponse`](#pgbosscommandresponse).
+
+### `PUT /api/pg-boss/queues/{queueName}/delete-stored`
+
+Delete every completed, cancelled and failed job of one queue.
+
+> Available only when: The board was created with engine 'pg-boss'. The board is not read-only. Answers 409 `ERRORS.PGBOSS_WRITES_DISABLED` while the schema guard has writes off.
+
+| Parameter | In | Required | Type |
+| --- | --- | --- | --- |
+| `queueName` | path | yes | string |
+
+Responds `200` with [`PgBossCommandResponse`](#pgbosscommandresponse).
+
+### `PUT /api/pg-boss/queues/{queueName}/schedules`
+
+Create or replace the schedule with this key on one queue.
+
+> Available only when: The board was created with engine 'pg-boss'. The board is not read-only. Answers 409 `ERRORS.PGBOSS_WRITES_DISABLED` while the schema guard has writes off.
+
+| Parameter | In | Required | Type |
+| --- | --- | --- | --- |
+| `queueName` | path | yes | string |
+
+Request body: [`UpsertPgBossScheduleBody`](#upsertpgbossschedulebody)
+
+Responds `200` with [`PgBossScheduleResponse`](#pgbossscheduleresponse).
+
+### `PUT /api/pg-boss/queues/{queueName}/schedules/remove`
+
+Remove one schedule.
+
+> Available only when: The board was created with engine 'pg-boss'. The board is not read-only. Answers 409 `ERRORS.PGBOSS_WRITES_DISABLED` while the schema guard has writes off.
+
+| Parameter | In | Required | Type |
+| --- | --- | --- | --- |
+| `queueName` | path | yes | string |
+
+Request body: [`RemovePgBossScheduleBody`](#removepgbossschedulebody)
+
+Responds `200` with [`PgBossCommandResponse`](#pgbosscommandresponse).
+
 ## Datastore
 
 Statistics for the datastore behind the board's first registered queue. Answers **404** when that queue is backed by something other than Redis that cannot report them, and **403** when the board sets `hideRedisDetails`.
@@ -510,6 +872,8 @@ Statistics for the datastore behind the board's first registered queue. Answers 
 ### `GET /api/redis/stats`
 
 Read the datastore statistics of the board's first visible queue.
+
+> Available only when: The board runs engine 'bullmq', the default.
 
 Responds `200` with [`GetRedisStatsResponse`](#getredisstatsresponse).
 
@@ -578,7 +942,10 @@ Responds `200` with [`GetRedisStatsResponse`](#getredisstatsresponse).
 | `allowRetries` | boolean | yes |
 | `allowCompletedRetries` | boolean | yes |
 | `isPaused` | boolean | yes |
-| `type` | QueueType | yes |
+| `type` | `bull` \| `bullmq` | yes |
+| `library` | QueueLibrary | yes |
+| `datastore` | Datastore | yes |
+| `capabilities` | QueueCapabilities | yes |
 | `globalConcurrency` | number \| null | yes |
 | `activeRateLimitTtl` | number | yes |
 | `supportsGlobalRateLimit` | boolean | yes |
@@ -723,6 +1090,39 @@ Responds `200` with [`GetRedisStatsResponse`](#getredisstatsresponse).
 
 ``bull` \| `bullmq``
 
+### QueueLibrary
+
+``bull` \| `bullmq` \| `bullmq-pro``
+
+### QueueCapabilities
+
+| Field | Type | Required |
+| --- | --- | --- |
+| `pause` | boolean | yes |
+| `logs` | boolean | yes |
+| `progress` | boolean | yes |
+| `flows` | boolean | yes |
+| `promote` | boolean | yes |
+| `updateData` | boolean | yes |
+| `changeDelay` | boolean | yes |
+| `changePriority` | boolean | yes |
+| `removeUnprocessedChildren` | boolean | yes |
+| `completedRetry` | boolean | yes |
+| `globalConcurrency` | boolean | yes |
+| `globalRateLimit` | boolean | yes |
+| `nativeMetrics` | boolean | yes |
+| `workers` | boolean | yes |
+| `jobSchedulers` | object | yes |
+| `jobOptionsSchema` | `bull` \| `bullmq` | yes |
+
+### JobSchedulerKind
+
+``every` \| `cron``
+
+### Datastore
+
+``redis` \| `postgres``
+
 ### Status
 
 ``latest` \| `active` \| `waiting` \| `waiting-children` \| `prioritized` \| `completed` \| `failed` \| `delayed` \| `paused``
@@ -780,8 +1180,191 @@ Responds `200` with [`GetRedisStatsResponse`](#getredisstatsresponse).
 
 | Field | Type | Required |
 | --- | --- | --- |
-| `key` | `ERRORS.COMPLETED_RETRIES_DISABLED` \| `ERRORS.FORBIDDEN` \| `ERRORS.INTERNAL_SERVER_ERROR` \| `ERRORS.INVALID_BEFORE_DATE` \| `ERRORS.INVALID_CONCURRENCY` \| `ERRORS.INVALID_DATE_RANGE` \| `ERRORS.INVALID_GRANULARITY` \| `ERRORS.INVALID_METRIC` \| `ERRORS.INVALID_PRIORITY` \| `ERRORS.INVALID_QUEUE` \| `ERRORS.INVALID_QUERY_PARAM` \| `ERRORS.INVALID_RATE_LIMIT` \| `ERRORS.INVALID_REQUEST_BODY` \| `ERRORS.INVALID_RUN_AT` \| `ERRORS.INVALID_SCHEDULER_END_DATE` \| `ERRORS.INVALID_SCHEDULER_INTERVAL` \| `ERRORS.INVALID_SCHEDULER_LIMIT` \| `ERRORS.INVALID_SCHEDULER_PATTERN` \| `ERRORS.INVALID_SCHEDULER_SCHEDULE` \| `ERRORS.JOB_BELONGS_TO_JOB_SCHEDULER` \| `ERRORS.JOB_BELONGS_TO_JOB_SCHEDULER_DETAILS` \| `ERRORS.JOB_EDIT_NOT_SUPPORTED` \| `ERRORS.JOB_HAS_NO_UNPROCESSED_CHILDREN` \| `ERRORS.JOB_IS_ACTIVE` \| `ERRORS.JOB_IS_ACTIVE_DETAILS` \| `ERRORS.JOB_NOT_DELAYED` \| `ERRORS.JOB_NOT_FOUND` \| `ERRORS.JOB_NOT_RETRIABLE` \| `ERRORS.JOB_SCHEDULER_EDIT_NOT_SUPPORTED` \| `ERRORS.JOB_SCHEDULER_NOT_FOUND` \| `ERRORS.JOB_SCHEDULER_RUN_NOT_SUPPORTED` \| `ERRORS.JOB_UNPROCESSED_CHILDREN_NOT_SUPPORTED` \| `ERRORS.QUEUE_HAS_ACTIVE_JOBS` \| `ERRORS.QUEUE_HAS_ACTIVE_JOBS_DETAILS` \| `ERRORS.QUEUE_NOT_FOUND` \| `ERRORS.QUEUE_NOT_PAUSED` \| `ERRORS.QUEUE_READ_ONLY` \| `ERRORS.RATE_LIMIT_NOT_SUPPORTED` \| `ERRORS.REDIS_STATS_UNAVAILABLE` \| `ERRORS.REDIS_UNAVAILABLE` \| `ERRORS.RETRIES_DISABLED` \| `ERRORS.STATUS_NOT_RETRIABLE` \| `ERRORS.UNAUTHORIZED` \| `ERRORS.WORKERS_DISABLED` | yes |
+| `key` | `ERRORS.COMPLETED_RETRIES_DISABLED` \| `ERRORS.FORBIDDEN` \| `ERRORS.INTERNAL_SERVER_ERROR` \| `ERRORS.INVALID_BEFORE_DATE` \| `ERRORS.INVALID_CONCURRENCY` \| `ERRORS.INVALID_DATE_RANGE` \| `ERRORS.INVALID_GRANULARITY` \| `ERRORS.INVALID_METRIC` \| `ERRORS.INVALID_PRIORITY` \| `ERRORS.INVALID_QUEUE` \| `ERRORS.INVALID_QUERY_PARAM` \| `ERRORS.INVALID_RATE_LIMIT` \| `ERRORS.INVALID_REQUEST_BODY` \| `ERRORS.INVALID_RUN_AT` \| `ERRORS.INVALID_SCHEDULER_END_DATE` \| `ERRORS.INVALID_SCHEDULER_INTERVAL` \| `ERRORS.INVALID_SCHEDULER_LIMIT` \| `ERRORS.INVALID_SCHEDULER_PATTERN` \| `ERRORS.INVALID_SCHEDULER_SCHEDULE` \| `ERRORS.JOB_BELONGS_TO_JOB_SCHEDULER` \| `ERRORS.JOB_BELONGS_TO_JOB_SCHEDULER_DETAILS` \| `ERRORS.JOB_EDIT_NOT_SUPPORTED` \| `ERRORS.JOB_HAS_NO_UNPROCESSED_CHILDREN` \| `ERRORS.JOB_IS_ACTIVE` \| `ERRORS.JOB_IS_ACTIVE_DETAILS` \| `ERRORS.JOB_NOT_DELAYED` \| `ERRORS.JOB_NOT_FOUND` \| `ERRORS.JOB_NOT_RETRIABLE` \| `ERRORS.JOB_SCHEDULER_EDIT_NOT_SUPPORTED` \| `ERRORS.JOB_SCHEDULER_NOT_FOUND` \| `ERRORS.JOB_SCHEDULER_RUN_NOT_SUPPORTED` \| `ERRORS.JOB_UNPROCESSED_CHILDREN_NOT_SUPPORTED` \| `ERRORS.PGBOSS_BULK_LIMIT` \| `ERRORS.PGBOSS_INVALID_CURSOR` \| `ERRORS.PGBOSS_INVALID_SCHEDULE` \| `ERRORS.PGBOSS_JOB_STATE_CONFLICT` \| `ERRORS.PGBOSS_NOT_INSTALLED` \| `ERRORS.PGBOSS_PREVIEW_UNAVAILABLE` \| `ERRORS.PGBOSS_QUERY_TIMEOUT` \| `ERRORS.PGBOSS_SCHEMA_MISMATCH` \| `ERRORS.PGBOSS_SCHEMA_UNSUPPORTED` \| `ERRORS.PGBOSS_WRITER_UNAVAILABLE` \| `ERRORS.PGBOSS_WRITES_DISABLED` \| `ERRORS.QUEUE_HAS_ACTIVE_JOBS` \| `ERRORS.QUEUE_HAS_ACTIVE_JOBS_DETAILS` \| `ERRORS.QUEUE_NOT_FOUND` \| `ERRORS.QUEUE_NOT_PAUSED` \| `ERRORS.QUEUE_READ_ONLY` \| `ERRORS.RATE_LIMIT_NOT_SUPPORTED` \| `ERRORS.REDIS_STATS_UNAVAILABLE` \| `ERRORS.REDIS_UNAVAILABLE` \| `ERRORS.RETRIES_DISABLED` \| `ERRORS.STATUS_NOT_RETRIABLE` \| `ERRORS.UNAUTHORIZED` \| `ERRORS.WORKERS_DISABLED` | yes |
 | `options` | object | no |
+
+### PgBossJobState
+
+``created` \| `retry` \| `active` \| `completed` \| `cancelled` \| `failed``
+
+### PgBossQueueCounts
+
+| Field | Type | Required |
+| --- | --- | --- |
+| `queued` | number | yes |
+| `deferred` | number | yes |
+| `ready` | number | yes |
+| `active` | number | yes |
+| `failed` | number | yes |
+| `total` | number | yes |
+
+### PgBossQueueSummary
+
+| Field | Type | Required |
+| --- | --- | --- |
+| `name` | string | yes |
+| `policy` | string | yes |
+| `partition` | boolean | yes |
+| `counts` | PgBossQueueCounts | yes |
+| `statsCapturedOn` | string \| null | yes |
+| `readyHistory` | number[] | yes |
+| `deadLetter` | string \| null | yes |
+| `retryLimit` | number | yes |
+| `retryDelay` | number | yes |
+| `retryBackoff` | boolean | yes |
+| `retryDelayMax` | number \| null | yes |
+| `expireInSeconds` | number | yes |
+| `retentionSeconds` | number | yes |
+| `deleteAfterSeconds` | number | yes |
+| `warningQueueSize` | number | yes |
+| `backlogged` | boolean | yes |
+| `heartbeatSeconds` | number \| null | yes |
+| `notify` | boolean | yes |
+| `singletonsActive` | string[] \| null | yes |
+| `scheduleCount` | number | yes |
+| `createdOn` | string | yes |
+| `updatedOn` | string | yes |
+
+### PgBossStateCount
+
+| Field | Type | Required |
+| --- | --- | --- |
+| `count` | number \| null | yes |
+| `capped` | boolean | yes |
+
+### PgBossStateCounts
+
+| Field | Type | Required |
+| --- | --- | --- |
+| `created` | PgBossStateCount | yes |
+| `retry` | PgBossStateCount | yes |
+| `active` | PgBossStateCount | yes |
+| `completed` | PgBossStateCount | yes |
+| `cancelled` | PgBossStateCount | yes |
+| `failed` | PgBossStateCount | yes |
+
+### PgBossDeadLetterSource
+
+| Field | Type | Required |
+| --- | --- | --- |
+| `queueName` | string | yes |
+| `id` | string | yes |
+| `createdOn` | string \| null | yes |
+| `retryCount` | number \| null | yes |
+
+### PgBossJobSummary
+
+| Field | Type | Required |
+| --- | --- | --- |
+| `id` | string | yes |
+| `queueName` | string | yes |
+| `state` | PgBossJobState | yes |
+| `priority` | number | yes |
+| `retryCount` | number | yes |
+| `retryLimit` | number | yes |
+| `createdOn` | string | yes |
+| `startAfter` | string | yes |
+| `startedOn` | string \| null | yes |
+| `completedOn` | string \| null | yes |
+| `singletonKey` | string \| null | yes |
+| `groupId` | string \| null | yes |
+| `deferred` | boolean | yes |
+| `blocked` | boolean | yes |
+| `deadLetterSource` | PgBossDeadLetterSource \| null | yes |
+
+### PgBossJob
+
+| Field | Type | Required |
+| --- | --- | --- |
+| `id` | string | yes |
+| `queueName` | string | yes |
+| `state` | PgBossJobState | yes |
+| `priority` | number | yes |
+| `retryCount` | number | yes |
+| `retryLimit` | number | yes |
+| `createdOn` | string | yes |
+| `startAfter` | string | yes |
+| `startedOn` | string \| null | yes |
+| `completedOn` | string \| null | yes |
+| `singletonKey` | string \| null | yes |
+| `groupId` | string \| null | yes |
+| `deferred` | boolean | yes |
+| `blocked` | boolean | yes |
+| `deadLetterSource` | PgBossDeadLetterSource \| null | yes |
+| `data` | any | yes |
+| `output` | any | yes |
+| `policy` | string \| null | yes |
+| `retryDelay` | number | yes |
+| `retryBackoff` | boolean | yes |
+| `retryDelayMax` | number \| null | yes |
+| `expireInSeconds` | number | yes |
+| `deleteAfterSeconds` | number | yes |
+| `keepUntil` | string | yes |
+| `singletonOn` | string \| null | yes |
+| `groupTier` | string \| null | yes |
+| `heartbeatSeconds` | number \| null | yes |
+| `heartbeatOn` | string \| null | yes |
+| `deadLetter` | string \| null | yes |
+| `blocking` | boolean | yes |
+| `pendingDependencies` | number | yes |
+
+### PgBossDependencyRef
+
+| Field | Type | Required |
+| --- | --- | --- |
+| `queueName` | string | yes |
+| `id` | string | yes |
+
+### PgBossScheduleKind
+
+``cron` \| `rrule``
+
+### PgBossSchedule
+
+| Field | Type | Required |
+| --- | --- | --- |
+| `queueName` | string | yes |
+| `key` | string | yes |
+| `kind` | PgBossScheduleKind | yes |
+| `expression` | string | yes |
+| `timezone` | string | yes |
+| `data` | any | yes |
+| `options` | object | yes |
+| `createdOn` | string | yes |
+| `updatedOn` | string | yes |
+| `lastJobId` | string \| null | yes |
+| `nextRuns` | string[] | yes |
+
+### PgBossCapabilities
+
+| Field | Type | Required |
+| --- | --- | --- |
+| `send` | boolean | yes |
+| `retry` | boolean | yes |
+| `cancel` | boolean | yes |
+| `resume` | boolean | yes |
+| `delete` | boolean | yes |
+| `scheduleWrite` | boolean | yes |
+| `schedulePreview` | boolean | yes |
+| `bulk` | boolean | yes |
+
+### PgBossInfo
+
+| Field | Type | Required |
+| --- | --- | --- |
+| `schema` | string | yes |
+| `delimiter` | string | yes |
+| `installed` | boolean | yes |
+| `schemaVersion` | number \| null | yes |
+| `supportedRange` | object | yes |
+| `readable` | boolean | yes |
+| `writable` | boolean | yes |
+| `readOnly` | boolean | yes |
+| `unavailableReason` | TranslatableMessage \| null | yes |
+| `writesDisabledReason` | TranslatableMessage \| null | yes |
+| `persistQueueStats` | boolean | yes |
+| `datastore` | RedisStats \| null | yes |
+| `capabilities` | PgBossCapabilities | yes |
 
 ### GetQueuesResponse
 
@@ -925,6 +1508,95 @@ Responds `200` with [`GetRedisStatsResponse`](#getredisstatsresponse).
 | Field | Type | Required |
 | --- | --- | --- |
 
+### GetPgBossInfoResponse
+
+| Field | Type | Required |
+| --- | --- | --- |
+| `schema` | string | yes |
+| `delimiter` | string | yes |
+| `installed` | boolean | yes |
+| `schemaVersion` | number \| null | yes |
+| `supportedRange` | object | yes |
+| `readable` | boolean | yes |
+| `writable` | boolean | yes |
+| `readOnly` | boolean | yes |
+| `unavailableReason` | TranslatableMessage \| null | yes |
+| `writesDisabledReason` | TranslatableMessage \| null | yes |
+| `persistQueueStats` | boolean | yes |
+| `datastore` | RedisStats \| null | yes |
+| `capabilities` | PgBossCapabilities | yes |
+
+### GetPgBossQueuesResponse
+
+| Field | Type | Required |
+| --- | --- | --- |
+| `queues` | PgBossQueueSummary[] | yes |
+
+### GetPgBossQueueResponse
+
+| Field | Type | Required |
+| --- | --- | --- |
+| `queue` | PgBossQueueSummary | yes |
+
+### GetPgBossStateCountsResponse
+
+| Field | Type | Required |
+| --- | --- | --- |
+| `counts` | PgBossStateCounts | yes |
+| `cap` | number | yes |
+
+### GetPgBossJobsResponse
+
+| Field | Type | Required |
+| --- | --- | --- |
+| `jobs` | PgBossJobSummary[] | yes |
+| `nextCursor` | string \| null | yes |
+| `prevCursor` | string \| null | yes |
+
+### GetPgBossJobResponse
+
+| Field | Type | Required |
+| --- | --- | --- |
+| `job` | PgBossJob | yes |
+
+### GetPgBossDependenciesResponse
+
+| Field | Type | Required |
+| --- | --- | --- |
+| `dependencies` | PgBossDependencyRef[] | yes |
+| `dependents` | PgBossDependencyRef[] | yes |
+
+### GetPgBossSchedulesResponse
+
+| Field | Type | Required |
+| --- | --- | --- |
+| `schedules` | PgBossSchedule[] | yes |
+
+### PreviewPgBossScheduleResponse
+
+| Field | Type | Required |
+| --- | --- | --- |
+| `runs` | string[] | yes |
+
+### SendPgBossJobResponse
+
+| Field | Type | Required |
+| --- | --- | --- |
+| `id` | string \| null | yes |
+
+### PgBossCommandResponse
+
+| Field | Type | Required |
+| --- | --- | --- |
+| `requested` | number | yes |
+| `affected` | number | yes |
+
+### PgBossScheduleResponse
+
+| Field | Type | Required |
+| --- | --- | --- |
+| `schedule` | PgBossSchedule | yes |
+
 ### GetQueuesQuery
 
 | Field | Type | Required |
@@ -1027,3 +1699,58 @@ Responds `200` with [`GetRedisStatsResponse`](#getredisstatsresponse).
 | --- | --- | --- |
 | `queue` | string | no |
 | `before` | string | no |
+
+### GetPgBossJobsQuery
+
+| Field | Type | Required |
+| --- | --- | --- |
+| `state` | PgBossJobState | no |
+| `cursor` | string | no |
+| `limit` | string | no |
+| `order` | `desc` \| `asc` | no |
+| `id` | string | no |
+| `singletonKey` | string | no |
+
+### GetPgBossSchedulesQuery
+
+| Field | Type | Required |
+| --- | --- | --- |
+| `queueName` | string | no |
+
+### PreviewPgBossScheduleBody
+
+| Field | Type | Required |
+| --- | --- | --- |
+| `expression` | string | yes |
+| `tz` | string | no |
+| `count` | integer | no |
+
+### SendPgBossJobBody
+
+| Field | Type | Required |
+| --- | --- | --- |
+| `data` | any | no |
+| `options` | object | no |
+
+### PgBossJobIdsBody
+
+| Field | Type | Required |
+| --- | --- | --- |
+| `ids` | string[] | yes |
+
+### UpsertPgBossScheduleBody
+
+| Field | Type | Required |
+| --- | --- | --- |
+| `key` | string | no |
+| `cron` | string | yes |
+| `tz` | string | no |
+| `data` | any | no |
+| `options` | object | no |
+| `missed` | `skip` \| `once` | no |
+
+### RemovePgBossScheduleBody
+
+| Field | Type | Required |
+| --- | --- | --- |
+| `key` | string | no |

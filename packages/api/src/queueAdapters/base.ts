@@ -1,5 +1,7 @@
+import { DATASTORES } from '../constants/datastores';
 import {
   AppJobScheduler,
+  Datastore,
   WorkerManagerRequest,
   FormatterField,
   JobCleanStatus,
@@ -10,10 +12,12 @@ import {
   MetricsType,
   ObliterateOptions,
   QueueAdapterOptions,
+  QueueCapabilities,
   QueueDefaultJobOptions,
   QueueJob,
   QueueJobOptions,
   QueueMetrics,
+  QueueLibrary,
   QueueRateLimit,
   QueueType,
   QueueWorker,
@@ -52,6 +56,47 @@ export abstract class BaseAdapter {
     this.jobDataSchema = options.jobDataSchema;
     this.type = type;
     this.externalJobUrl = options.externalJobUrl;
+  }
+
+  public getLibrary(): QueueLibrary {
+    return this.type;
+  }
+
+  public getDatastore(): Datastore {
+    return DATASTORES.redis;
+  }
+
+  /**
+   * What the library behind this adapter can do, read by the dashboard instead of `type`.
+   *
+   * The defaults describe what the board already offered every adapter: the per-job actions and
+   * tabs are backed by abstract methods every adapter implements, and the rest is derived from
+   * the same getters the board read before. Flows default off because they need a BullMQ flow
+   * producer.
+   */
+  public getCapabilities(): QueueCapabilities {
+    return {
+      pause: true,
+      logs: true,
+      progress: true,
+      flows: false,
+      promote: true,
+      updateData: true,
+      changeDelay: true,
+      changePriority: true,
+      removeUnprocessedChildren: true,
+      completedRetry: true,
+      globalConcurrency: this.type === 'bullmq',
+      globalRateLimit: this.supportsGlobalRateLimit,
+      nativeMetrics: true,
+      workers: this.getWorkers !== BaseAdapter.prototype.getWorkers,
+      jobSchedulers: {
+        update: this.supportsJobSchedulerUpdate,
+        run: this.supportsJobSchedulerRun,
+        kinds: ['every', 'cron'],
+      },
+      jobOptionsSchema: this.type,
+    };
   }
 
   public getDescription(): string {

@@ -7,6 +7,7 @@ import type {
   JobSchedulerUpdateResult,
   JobStatus,
   MetricsType,
+  QueueCapabilities,
   QueueJob,
   QueueDefaultJobOptions,
   QueueRateLimit,
@@ -51,6 +52,11 @@ export class MockAdapter extends BaseAdapter {
       delimiter: mockQueue.delimiter,
       jobDataSchema: mockQueue.jobDataSchema,
     });
+  }
+
+  // The demo answers the flow route with its own handler, so it has flows without a producer.
+  override getCapabilities(): QueueCapabilities {
+    return { ...super.getCapabilities(), flows: true };
   }
 
   getQueueDefaultJobOptions(): QueueDefaultJobOptions {
