@@ -1,6 +1,6 @@
 {
   "name": "@worker-manager/root",
-  "version": "2.0.1",
+  "version": "2.1.0-next.0",
   "private": true,
   "description": "Worker Manager: a dashboard for BullMQ and Bull queues on Redis or PostgreSQL",
   "keywords": [

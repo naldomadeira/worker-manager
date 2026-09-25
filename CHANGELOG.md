@@ -1,3 +1,14 @@
+### [v2.1.0-next.0](https://github.com/naldomadeira/worker-manager/compare/v2.0.1...v2.1.0-next.0)
+
+> 2026-09-25
+
+### Features
+- pg-boss board end to end (phases 4-7) (@github) [`de3ddcc`](https://github.com/naldomadeira/worker-manager/commit/de3ddccaeacc293e6c5d60435eecedbc2043217a)
+- capability flags and an experimental pg-boss engine (phases 0-3) (@github) [`9b515af`](https://github.com/naldomadeira/worker-manager/commit/9b515afa8f08d0fe1ecd88664b9f909e0349bf9d)
+
+### Bug Fixes
+- parse index definitions without a backtracking regex (@github) [`8b0cc5b`](https://github.com/naldomadeira/worker-manager/commit/8b0cc5b5010775ecd8f57677cb92a376a3e38e74)
+
 ### [v2.0.1](https://github.com/naldomadeira/worker-manager/compare/v2.0.0...v2.0.1)
 
 > 2026-09-25

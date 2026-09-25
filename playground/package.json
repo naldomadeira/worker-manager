@@ -1,6 +1,6 @@
 {
   "name": "@worker-manager/playground",
-  "version": "2.0.1",
+  "version": "2.1.0-next.0",
   "private": true,
   "description": "A NestJS app that exercises Worker Manager end to end: Redis and PostgreSQL queues, basic and Keycloak auth, live traffic.",
   "license": "MIT",

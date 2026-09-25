@@ -1,6 +1,6 @@
 {
   "name": "@worker-manager/demo",
-  "version": "2.0.1",
+  "version": "2.1.0-next.0",
   "private": true,
   "description": "Interactive demo of the Worker Manager dashboard, powered by MSW and in-memory fixtures.",
   "type": "module",
