@@ -30,7 +30,7 @@
     "playground"
   ],
   "scripts": {
-    "build": "yarn workspaces foreach -A -t --exclude '@worker-manager/website' --exclude '@worker-manager/demo' --exclude '@worker-manager/playground' run build",
+    "build": "yarn workspaces foreach -A --topological-dev --exclude '@worker-manager/website' --exclude '@worker-manager/demo' --exclude '@worker-manager/playground' run build",
     "clean": "yarn workspaces foreach -A --exclude '@worker-manager/website' --exclude '@worker-manager/demo' --exclude '@worker-manager/playground' run clean",
     "postinstall": "npx simple-git-hooks",
     "dev": "concurrently --names \"UI,API\" -c \"bgBlue.bold,bgMagenta.bold\" \"yarn dev:ui\" \"yarn dev:server\"",
