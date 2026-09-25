@@ -1,6 +1,6 @@
 {
   "name": "@worker-manager/bun",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "A Bun server adapter for the Worker Manager dashboard.",
   "keywords": [
     "bull",
@@ -29,13 +29,13 @@
     "test": "bun test"
   },
   "dependencies": {
-    "@worker-manager/api": "2.0.0",
-    "@worker-manager/ui": "2.0.0",
+    "@worker-manager/api": "2.0.1",
+    "@worker-manager/ui": "2.0.1",
     "ejs": "^6.0.1"
   },
   "devDependencies": {
     "@types/ejs": "^3.1.5",
-    "@worker-manager/test-utils": "2.0.0",
+    "@worker-manager/test-utils": "2.0.1",
     "bullmq": "^5.81.3",
     "bun-types": "^1.4.0"
   },
