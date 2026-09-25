@@ -1,3 +1,4 @@
+import * as bullmq from 'bullmq';
 import { FlowProducer, Job, JobSchedulerJson, Queue, type RedisClient } from 'bullmq';
 import { DATASTORES } from '../constants/datastores';
 import { STATUSES } from '../constants/statuses';
@@ -56,9 +57,40 @@ type FlowProducerWithBackend = new (
   backendFactory: () => unknown
 ) => FlowProducer;
 
-// One producer per connection, however many adapters share it: each producer pins listeners on
-// the client (or backend) and is never closed, so the entry must die with the connection.
-const flowProducerCache = new WeakMap<object, FlowProducer>();
+// One producer per connection and prefix, however many adapters share them: each producer pins
+// listeners on the client (or backend) and is never closed, so the entry must die with the
+// connection. A producer reads flows under the prefix it was built with, so two queues on one
+// connection under different prefixes cannot share one.
+const flowProducerCache = new WeakMap<object, Map<string, FlowProducer>>();
+
+function cachedFlowProducer(
+  owner: object,
+  prefix: string | undefined,
+  create: () => FlowProducer
+): FlowProducer {
+  let byPrefix = flowProducerCache.get(owner);
+  if (!byPrefix) {
+    byPrefix = new Map();
+    flowProducerCache.set(owner, byPrefix);
+  }
+
+  const key = prefix ?? '';
+  let producer = byPrefix.get(key);
+  if (!producer) {
+    producer = create();
+    byPrefix.set(key, producer);
+  }
+  return producer;
+}
+
+// Whether the `bullmq` this package resolved is v6, whose FlowProducer takes a backend factory as
+// its second argument. A v6 queue can still arrive through a v5 `bullmq` (two majors installed in
+// one process, or a workspace link resolving the adapter's own copy), and the v5 constructor
+// treats that second argument as a connection class: `new Connection(...)` then throws
+// "Connection is not a constructor". The queue's version is probed per instance; this is the
+// producer's, and only when both are v6 can the queue's backend be reused.
+const IMPORTED_BULLMQ_HAS_BACKENDS =
+  typeof (bullmq as { getDefaultBackendFactory?: unknown }).getDefaultBackendFactory === 'function';
 
 // BullMQ's PostgreSQL getMetrics reports meta.prevTS and prevCount as 0 although it stores
 // both, which leaves the in-progress minute out of the chart and its buckets unanchored.
@@ -447,31 +479,29 @@ export class BullMQAdapter extends BaseAdapter {
     const queue = this.queue as unknown as VersionedQueue;
 
     // v6: reuse the queue's backend, so the producer works on any datastore, Redis or not.
-    if (typeof queue.getBackend === 'function') {
+    if (typeof queue.getBackend === 'function' && IMPORTED_BULLMQ_HAS_BACKENDS) {
       const backend = queue.getBackend();
       if (!backend) return null;
 
-      let producer = flowProducerCache.get(backend);
-      if (!producer) {
-        producer = new (FlowProducer as unknown as FlowProducerWithBackend)(
-          this.queue.opts,
-          () => backend
-        );
-        flowProducerCache.set(backend, producer);
-      }
-      return producer;
+      return cachedFlowProducer(
+        backend,
+        this.getQueuePrefix(),
+        () =>
+          new (FlowProducer as unknown as FlowProducerWithBackend)(this.queue.opts, () => backend)
+      );
     }
 
-    const client = await queue.client;
+    // Either major's FlowProducer accepts a Redis client, so a queue seen through the other
+    // major still gets its flows on Redis; only a Postgres queue has nothing to offer here.
+    const client = await this.resolveRedisClient();
     if (!client) return null;
 
-    let producer = flowProducerCache.get(client);
-    if (!producer) {
-      const prefix = this.getQueuePrefix();
-      producer = new FlowProducer({ connection: client, ...(prefix ? { prefix } : {}) });
-      flowProducerCache.set(client, producer);
-    }
-    return producer;
+    const prefix = this.getQueuePrefix();
+    return cachedFlowProducer(
+      client,
+      prefix,
+      () => new FlowProducer({ connection: client, ...(prefix ? { prefix } : {}) })
+    );
   }
 
   public getQueuePrefix(): string | undefined {

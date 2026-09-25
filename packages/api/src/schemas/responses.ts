@@ -126,6 +126,7 @@ export const responseSchemas = {
   PurgeMetricsHistoryResponse: purgeMetricsHistoryResponseSchema,
   RetryAllResponse: retryAllResponseSchema,
   RemoveUnprocessedChildrenResponse: removeUnprocessedChildrenResponseSchema,
+  JobBelongsToJobSchedulerResponse: jobBelongsToJobSchedulerResponseSchema,
   EmptyResponse: emptyResponseSchema,
 };
 
@@ -158,7 +159,7 @@ export type RemoveUnprocessedChildrenResponse =
   ResponseSchemas['RemoveUnprocessedChildrenResponse'];
 export type EmptyResponse = ResponseSchemas['EmptyResponse'];
 
-export type JobBelongsToJobSchedulerResponse = v.InferOutput<
-  typeof jobBelongsToJobSchedulerResponseSchema
->;
+export type JobBelongsToJobSchedulerResponse = ResponseSchemas['JobBelongsToJobSchedulerResponse'];
+// Optional at the top level, which no route can declare as its response, so it stays out of
+// `responseSchemas` and is derived directly.
 export type CleanJobResponse = v.InferOutput<typeof cleanJobResponseSchema>;

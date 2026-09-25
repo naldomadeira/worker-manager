@@ -21,6 +21,8 @@
     "JOBS_COUNT": "{{count}} Jobs",
     "EMPTY_STATE": "No queues to display.",
     "EMPTY_STATE_FILTERED": "No queues have {{status}} jobs.",
+    "RETRY": "Try again",
+    "LOAD_ERROR": "Could not load the queues.",
     "SORTING": {
       "TITLE": "Sort by",
       "FAILED": "Failed Jobs",
@@ -60,6 +62,7 @@
     "FAILED_AT": "Failed at",
     "FINISHED_AT": "Finished at",
     "ATTEMPTS": "attempt #{{attempts}}",
+    "ATTEMPTS_OF": "attempt {{attempts}} of {{max}}",
     "REPEAT": "repeat {{count}}",
     "REPEAT_WITH_LIMIT": "$t(JOB.REPEAT) / {{limit}}",
     "FLOW": {
@@ -104,6 +107,7 @@
     },
     "DIAGNOSTICS": {
       "PRIORITY": "priority {{priority}}",
+      "GROUP": "group {{id}}",
       "DEDUPLICATED": "dedup {{id}}",
       "STALLED": "stalled {{times}}",
       "ATTEMPTS_STARTED": "{{starts}} started",
@@ -414,6 +418,8 @@
   "ERRORS": {
     "FORBIDDEN": "Forbidden",
     "INTERNAL_SERVER_ERROR": "Internal server error",
+    "INVALID_JSON": "The JSON is not valid. Fix the highlighted errors and try again.",
+    "NETWORK": "Could not reach the server. Check your connection and try again.",
     "INVALID_BEFORE_DATE": "Invalid before: expected YYYY-MM-DD",
     "INVALID_CONCURRENCY": "Invalid concurrency value",
     "INVALID_DATE_RANGE": "Invalid from/to range",
@@ -448,6 +454,8 @@
     "QUEUE_NOT_PAUSED": "Queue must be paused before obliteration",
     "QUEUE_READ_ONLY": "Method not allowed on read only queue",
     "RATE_LIMIT_NOT_SUPPORTED": "This queue library cannot set a queue-wide rate limit.",
+    "COMPLETED_RETRIES_DISABLED": "Retrying completed jobs is disabled for this queue.",
+    "RETRIES_DISABLED": "Retries are disabled for this queue.",
     "REDIS_STATS_UNAVAILABLE": "Redis details are not available for this queue's backend",
     "REDIS_UNAVAILABLE": "Worker Manager cannot reach Redis. Open the dashboard for details.",
     "STATUS_NOT_RETRIABLE": "\"{{status}}\" is not a retriable status",
@@ -458,6 +466,7 @@
   "METRICS_HISTORY": {
     "TITLE": "Metrics history",
     "EMPTY": "No history recorded yet.",
+    "NOT_CONFIGURED": "Metrics history is not enabled. Configure a history provider on the board to start recording.",
     "TOTAL_COMPLETED": "Completed total",
     "TOTAL_FAILED": "Failed total",
     "RANGE_7D": "7d",

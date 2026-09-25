@@ -325,7 +325,7 @@ Retry one job.
 | `queueName` | path | yes | string |
 | `jobId` | path | yes | string |
 
-Responds `200` with [`EmptyResponse`](#emptyresponse).
+Responds `204` with no body.
 
 ### `PUT /api/queues/{queueName}/{jobId}/clean`
 
@@ -347,7 +347,7 @@ Promote one delayed job.
 | `queueName` | path | yes | string |
 | `jobId` | path | yes | string |
 
-Responds `200` with [`EmptyResponse`](#emptyresponse).
+Responds `204` with no body.
 
 ### `PATCH /api/queues/{queueName}/{jobId}/update-data`
 
@@ -422,7 +422,7 @@ Remove one job scheduler.
 | `queueName` | path | yes | string |
 | `schedulerId` | path | yes | string |
 
-Responds `200` with [`EmptyResponse`](#emptyresponse).
+Responds `204` with no body.
 
 ### `PATCH /api/queues/{queueName}/job-schedulers/{schedulerId}`
 
@@ -435,7 +435,7 @@ Update the schedule of one job scheduler.
 
 Request body: [`UpdateJobSchedulerBody`](#updatejobschedulerbody)
 
-Responds `200` with [`EmptyResponse`](#emptyresponse).
+Responds `204` with no body.
 
 ### `PUT /api/queues/{queueName}/job-schedulers/{schedulerId}/run`
 
@@ -509,7 +509,7 @@ Statistics for the datastore behind the board's first registered queue. Answers 
 
 ### `GET /api/redis/stats`
 
-Read the datastore statistics of the board's first queue.
+Read the datastore statistics of the board's first visible queue.
 
 Responds `200` with [`GetRedisStatsResponse`](#getredisstatsresponse).
 
@@ -780,7 +780,7 @@ Responds `200` with [`GetRedisStatsResponse`](#getredisstatsresponse).
 
 | Field | Type | Required |
 | --- | --- | --- |
-| `key` | `ERRORS.FORBIDDEN` \| `ERRORS.INTERNAL_SERVER_ERROR` \| `ERRORS.INVALID_BEFORE_DATE` \| `ERRORS.INVALID_CONCURRENCY` \| `ERRORS.INVALID_DATE_RANGE` \| `ERRORS.INVALID_GRANULARITY` \| `ERRORS.INVALID_METRIC` \| `ERRORS.INVALID_PRIORITY` \| `ERRORS.INVALID_QUEUE` \| `ERRORS.INVALID_QUERY_PARAM` \| `ERRORS.INVALID_RATE_LIMIT` \| `ERRORS.INVALID_REQUEST_BODY` \| `ERRORS.INVALID_RUN_AT` \| `ERRORS.INVALID_SCHEDULER_END_DATE` \| `ERRORS.INVALID_SCHEDULER_INTERVAL` \| `ERRORS.INVALID_SCHEDULER_LIMIT` \| `ERRORS.INVALID_SCHEDULER_PATTERN` \| `ERRORS.INVALID_SCHEDULER_SCHEDULE` \| `ERRORS.JOB_BELONGS_TO_JOB_SCHEDULER` \| `ERRORS.JOB_BELONGS_TO_JOB_SCHEDULER_DETAILS` \| `ERRORS.JOB_EDIT_NOT_SUPPORTED` \| `ERRORS.JOB_HAS_NO_UNPROCESSED_CHILDREN` \| `ERRORS.JOB_IS_ACTIVE` \| `ERRORS.JOB_IS_ACTIVE_DETAILS` \| `ERRORS.JOB_NOT_DELAYED` \| `ERRORS.JOB_NOT_FOUND` \| `ERRORS.JOB_NOT_RETRIABLE` \| `ERRORS.JOB_SCHEDULER_EDIT_NOT_SUPPORTED` \| `ERRORS.JOB_SCHEDULER_NOT_FOUND` \| `ERRORS.JOB_SCHEDULER_RUN_NOT_SUPPORTED` \| `ERRORS.JOB_UNPROCESSED_CHILDREN_NOT_SUPPORTED` \| `ERRORS.QUEUE_HAS_ACTIVE_JOBS` \| `ERRORS.QUEUE_HAS_ACTIVE_JOBS_DETAILS` \| `ERRORS.QUEUE_NOT_FOUND` \| `ERRORS.QUEUE_NOT_PAUSED` \| `ERRORS.QUEUE_READ_ONLY` \| `ERRORS.RATE_LIMIT_NOT_SUPPORTED` \| `ERRORS.REDIS_STATS_UNAVAILABLE` \| `ERRORS.REDIS_UNAVAILABLE` \| `ERRORS.STATUS_NOT_RETRIABLE` \| `ERRORS.UNAUTHORIZED` \| `ERRORS.WORKERS_DISABLED` | yes |
+| `key` | `ERRORS.COMPLETED_RETRIES_DISABLED` \| `ERRORS.FORBIDDEN` \| `ERRORS.INTERNAL_SERVER_ERROR` \| `ERRORS.INVALID_BEFORE_DATE` \| `ERRORS.INVALID_CONCURRENCY` \| `ERRORS.INVALID_DATE_RANGE` \| `ERRORS.INVALID_GRANULARITY` \| `ERRORS.INVALID_METRIC` \| `ERRORS.INVALID_PRIORITY` \| `ERRORS.INVALID_QUEUE` \| `ERRORS.INVALID_QUERY_PARAM` \| `ERRORS.INVALID_RATE_LIMIT` \| `ERRORS.INVALID_REQUEST_BODY` \| `ERRORS.INVALID_RUN_AT` \| `ERRORS.INVALID_SCHEDULER_END_DATE` \| `ERRORS.INVALID_SCHEDULER_INTERVAL` \| `ERRORS.INVALID_SCHEDULER_LIMIT` \| `ERRORS.INVALID_SCHEDULER_PATTERN` \| `ERRORS.INVALID_SCHEDULER_SCHEDULE` \| `ERRORS.JOB_BELONGS_TO_JOB_SCHEDULER` \| `ERRORS.JOB_BELONGS_TO_JOB_SCHEDULER_DETAILS` \| `ERRORS.JOB_EDIT_NOT_SUPPORTED` \| `ERRORS.JOB_HAS_NO_UNPROCESSED_CHILDREN` \| `ERRORS.JOB_IS_ACTIVE` \| `ERRORS.JOB_IS_ACTIVE_DETAILS` \| `ERRORS.JOB_NOT_DELAYED` \| `ERRORS.JOB_NOT_FOUND` \| `ERRORS.JOB_NOT_RETRIABLE` \| `ERRORS.JOB_SCHEDULER_EDIT_NOT_SUPPORTED` \| `ERRORS.JOB_SCHEDULER_NOT_FOUND` \| `ERRORS.JOB_SCHEDULER_RUN_NOT_SUPPORTED` \| `ERRORS.JOB_UNPROCESSED_CHILDREN_NOT_SUPPORTED` \| `ERRORS.QUEUE_HAS_ACTIVE_JOBS` \| `ERRORS.QUEUE_HAS_ACTIVE_JOBS_DETAILS` \| `ERRORS.QUEUE_NOT_FOUND` \| `ERRORS.QUEUE_NOT_PAUSED` \| `ERRORS.QUEUE_READ_ONLY` \| `ERRORS.RATE_LIMIT_NOT_SUPPORTED` \| `ERRORS.REDIS_STATS_UNAVAILABLE` \| `ERRORS.REDIS_UNAVAILABLE` \| `ERRORS.RETRIES_DISABLED` \| `ERRORS.STATUS_NOT_RETRIABLE` \| `ERRORS.UNAUTHORIZED` \| `ERRORS.WORKERS_DISABLED` | yes |
 | `options` | object | no |
 
 ### GetQueuesResponse
@@ -910,6 +910,15 @@ Responds `200` with [`GetRedisStatsResponse`](#getredisstatsresponse).
 | Field | Type | Required |
 | --- | --- | --- |
 | `removed` | number | yes |
+
+### JobBelongsToJobSchedulerResponse
+
+| Field | Type | Required |
+| --- | --- | --- |
+| `error` | TranslatableMessage | yes |
+| `message` | TranslatableMessage | yes |
+| `code` | object | yes |
+| `jobSchedulerId` | string | yes |
 
 ### EmptyResponse
 

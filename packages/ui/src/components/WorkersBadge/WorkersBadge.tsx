@@ -4,7 +4,7 @@ import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Badge } from '@/components/ui/badge';
 import { useModal } from '../../hooks/useModal';
-import { Tooltip } from '../Tooltip/Tooltip';
+import { HintTooltip } from '../HintTooltip/HintTooltip';
 
 const QueueInfoModalLazy = React.lazy(() =>
   import('../QueueInfoModal/QueueInfoModal').then(({ QueueInfoModal }) => ({
@@ -32,18 +32,20 @@ export const WorkersBadge = ({ queue }: { queue: AppQueue }) => {
 
   return (
     <>
-      <Tooltip title={description} className="relative z-10 inline-flex items-center">
-        <Badge
-          asChild
-          variant="secondary"
-          className="bg-status-waiting/15 text-status-waiting transition-colors hover:bg-status-waiting/25 focus-visible:ring-status-waiting/40"
-        >
-          <button type="button" aria-label={description} onClick={() => modal.open('workers')}>
-            <UserRoundXIcon aria-hidden="true" />
-            {t('QUEUE.WORKERS.NONE')}
-          </button>
-        </Badge>
-      </Tooltip>
+      <HintTooltip title={description}>
+        <span className="relative z-10 inline-flex items-center">
+          <Badge
+            asChild
+            variant="secondary"
+            className="bg-status-waiting/15 text-status-waiting transition-colors hover:bg-status-waiting/25 focus-visible:ring-status-waiting/40"
+          >
+            <button type="button" aria-label={description} onClick={() => modal.open('workers')}>
+              <UserRoundXIcon aria-hidden="true" />
+              {t('QUEUE.WORKERS.NONE')}
+            </button>
+          </Badge>
+        </span>
+      </HintTooltip>
       <Suspense fallback={null}>
         {modal.isMounted('workers') && (
           // The queue info panel owns this list, so the badge opens it on that section

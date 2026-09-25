@@ -59,12 +59,16 @@ export async function getFlowTree(
   const producer = await (adapter ?? findBullMQAdapter(queues))?.getFlowProducer();
   if (!producer) return null;
 
+  // The root's own prefix, so the lookup never falls back to the producer's default prefix.
+  const prefix = adapter?.getQueuePrefix();
+
   return await producer
     .getFlow({
       queueName: adapter?.getQueueName() ?? boardQueueName,
       id: jobId,
       depth: window.depth,
       maxChildren: window.maxChildren,
+      ...(prefix ? { prefix } : {}),
     })
     .catch(() => null);
 }

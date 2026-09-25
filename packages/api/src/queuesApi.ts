@@ -1,6 +1,21 @@
 import { BaseAdapter } from './queueAdapters/base';
 import { WorkerManagerQueues } from './types';
 
+/**
+ * A board is read-only when every queue on it is. An empty board is not: nothing has said it
+ * is read-only yet, and queues registered later decide.
+ */
+export function isReadOnlyBoard(queues: Iterable<BaseAdapter>): boolean {
+  let seen = false;
+  for (const queue of queues) {
+    if (!queue.readOnlyMode) {
+      return false;
+    }
+    seen = true;
+  }
+  return seen;
+}
+
 export function getQueuesApi(queues: ReadonlyArray<BaseAdapter>) {
   const workerManagerQueues: WorkerManagerQueues = new Map<string, BaseAdapter>();
 

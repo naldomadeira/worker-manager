@@ -18,6 +18,7 @@ import { StickyHeader } from '../../components/StickyHeader/StickyHeader';
 import { useActiveQueue } from '../../hooks/useActiveQueue';
 import { useJob } from '../../hooks/useJob';
 import { useModal } from '../../hooks/useModal';
+import { useQueues } from '../../hooks/useQueues';
 import { useSelectedStatuses } from '../../hooks/useSelectedStatuses';
 import { links } from '../../utils/links';
 
@@ -46,6 +47,7 @@ export const JobPage = () => {
   const history = useHistory();
 
   const queue = useActiveQueue();
+  const { loading: queuesLoading } = useQueues();
   const { job, status, actions, loading, isTransitioning } = useJob();
   const selectedStatuses = useSelectedStatuses();
   const modal = useModal<'updateJobData' | 'addJob' | 'rescheduleJob' | 'reprioritiseJob'>();
@@ -54,7 +56,7 @@ export const JobPage = () => {
   if (!queue) {
     return (
       <section className="py-10 text-center text-sm text-muted-foreground">
-        {t('QUEUE.NOT_FOUND')}
+        {queuesLoading ? <Loader /> : t('QUEUE.NOT_FOUND')}
       </section>
     );
   }
@@ -67,9 +69,13 @@ export const JobPage = () => {
     );
   }
 
+  // Only a removed job leaves the page: a cancelled confirm or a refused removal keeps it in view.
   const cleanJob = async () => {
-    await actions.cleanJob(queue.name)(job)();
-    history.replace(links.queuePage(queue.name, selectedStatuses));
+    const removed = await actions.cleanJob(queue.name)(job)();
+    if (removed) {
+      history.replace(links.queuePage(queue.name, selectedStatuses));
+    }
+    return removed;
   };
 
   const idPrefix = /^\d+$/.test(`${job.id}`) ? '#' : '';

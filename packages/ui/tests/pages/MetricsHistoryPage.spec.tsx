@@ -17,12 +17,27 @@ beforeEach(() => {
 
 function renderPage(
   getHistoryMetrics: jest.Mock,
-  getQueues: jest.Mock = jest.fn(() => Promise.resolve<GetQueuesResponse>({ queues: [] }))
+  getQueues: jest.Mock = jest.fn(() => Promise.resolve<GetQueuesResponse>({ queues: [] })),
+  uiConfig: Parameters<typeof createWrapper>[0]['uiConfig'] = { hasHistoryProvider: true }
 ) {
   const api = { getHistoryMetrics, getQueues };
-  const { Wrapper } = createWrapper({ api });
+  const { Wrapper } = createWrapper({ api, uiConfig });
   return render(<MetricsHistoryPage />, { wrapper: Wrapper });
 }
+
+it('explains that history is not configured, without requesting it, when there is no provider', async () => {
+  const getHistoryMetrics = jest.fn();
+  const getQueues = jest.fn(() =>
+    Promise.resolve<GetQueuesResponse>({ queues: [makeQueue('Q1')] })
+  );
+
+  renderPage(getHistoryMetrics, getQueues, { hasHistoryProvider: false });
+
+  expect(screen.getByText('METRICS_HISTORY.NOT_CONFIGURED')).toBeTruthy();
+  expect(screen.queryByText('LOADING')).toBeNull();
+  await waitFor(() => expect(getQueues).toHaveBeenCalled());
+  expect(getHistoryMetrics).not.toHaveBeenCalled();
+});
 
 it('shows a loading state, then the chart region and summary totals once the metrics resolve', async () => {
   const call = deferred<GetMetricsHistoryResponse>();

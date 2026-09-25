@@ -1,6 +1,6 @@
 import { createReadStream } from 'node:fs';
 import { readdir } from 'node:fs/promises';
-import { extname, resolve } from 'node:path';
+import { extname, relative, resolve, sep } from 'node:path';
 import type {
   AppControllerRoute,
   AppViewRoute,
@@ -26,6 +26,16 @@ async function collectFilesRecursively(dir: string): Promise<string[]> {
     })
   );
   return nested.flat();
+}
+
+// Elysia's built-in errors expose `status`; errors thrown through the API carry `statusCode`.
+function httpStatusOf(error: unknown): number | undefined {
+  const { status, statusCode } = (error ?? {}) as { status?: unknown; statusCode?: unknown };
+  const candidate = typeof statusCode === 'number' ? statusCode : status;
+
+  return typeof candidate === 'number' && candidate >= 100 && candidate < 600
+    ? candidate
+    : undefined;
 }
 
 export class ElysiaAdapter implements IServerAdapter {
@@ -58,9 +68,26 @@ export class ElysiaAdapter implements IServerAdapter {
   }
 
   public setErrorHandler(handler: (error: Readonly<Error>) => ControllerHandlerReturnType) {
-    this.plugin.onError(({ error, set }) => {
+    // The hook stays local to the plugin (see `registerPlugin`), so it only ever sees errors
+    // raised while serving the board's own routes.
+    this.plugin.onError(({ code, error, set }) => {
+      // A route Elysia could not match is answered by Elysia itself, never by the board.
+      if (code === 'NOT_FOUND') return;
+
+      // Elysia rejects a malformed body before the handler runs. The other adapters hand the
+      // API an empty body in that case and let request validation name the problem, so the
+      // key here is the one that validation would use.
+      if (code === 'PARSE') {
+        set.status = 400;
+
+        return { error: { key: 'ERRORS.INVALID_REQUEST_BODY' } };
+      }
+
       const response = handler(error as any);
-      set.status = response.status || 500;
+      // Elysia's own errors (ParseError, ValidationError, ...) carry `status`, not the
+      // `statusCode` the API's error handler reads, so without this every one of them came
+      // back as a 500.
+      set.status = httpStatusOf(error) ?? response.status ?? 500;
 
       return response.body;
     });
@@ -142,9 +169,14 @@ export class ElysiaAdapter implements IServerAdapter {
     const paths = await collectFilesRecursively(staticsPath);
 
     for (const path of paths) {
-      const relativePath = path.substring(path.indexOf('dist') + 4).replaceAll('\\', '/');
+      const relativePath = relative(staticsPath, path).split(sep).join('/');
+      // The UI build content-hashes everything under js/ and css/, so those files can be
+      // cached forever; the rest (favicons, locales, fonts) keeps the default policy.
+      const cacheControl: Record<string, string> = /^(js|css)\//.test(relativePath)
+        ? { 'cache-control': 'public, max-age=31536000, immutable' }
+        : {};
       this.plugin.get(
-        relativePath,
+        `${this.statics.route}/${relativePath}`,
         async () => {
           const nodeStream = createReadStream(path);
           const stream = new ReadableStream({
@@ -160,6 +192,7 @@ export class ElysiaAdapter implements IServerAdapter {
           return new Response(stream, {
             headers: {
               'content-type': mime.getType(extname(path)) ?? 'text/plain',
+              ...cacheControl,
             },
           });
         },
@@ -168,7 +201,10 @@ export class ElysiaAdapter implements IServerAdapter {
       );
     }
 
-    return this.plugin.as('scoped');
+    // Returned as is, without promoting its hooks: `.as('scoped')` used to lift the error hook
+    // onto the host application, which then answered every unknown route of its own with the
+    // board's 500 body instead of its 404.
+    return this.plugin;
   }
 
   private registerRoute(

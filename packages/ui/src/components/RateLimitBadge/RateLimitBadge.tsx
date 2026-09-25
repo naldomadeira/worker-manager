@@ -3,7 +3,7 @@ import { TimerIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Badge } from '@/components/ui/badge';
 import { useQueues } from '../../hooks/useQueues';
-import { Tooltip } from '../Tooltip/Tooltip';
+import { HintTooltip } from '../HintTooltip/HintTooltip';
 
 export const RateLimitBadge = ({ queue }: { queue: AppQueue }) => {
   const { t } = useTranslation();
@@ -17,22 +17,24 @@ export const RateLimitBadge = ({ queue }: { queue: AppQueue }) => {
   const description = t('RATE_LIMIT.BADGE_TOOLTIP', { seconds });
 
   return (
-    <Tooltip title={description} className="relative z-10 inline-flex items-center">
-      <Badge
-        asChild
-        variant="secondary"
-        className="bg-status-delayed/15 text-status-delayed transition-colors hover:bg-status-delayed/25 focus-visible:ring-status-delayed/40 disabled:cursor-default disabled:hover:bg-status-delayed/15"
-      >
-        <button
-          type="button"
-          aria-label={description}
-          disabled={queue.readOnlyMode}
-          onClick={actions.releaseQueueRateLimit(queue.name)}
+    <HintTooltip title={description}>
+      <span className="relative z-10 inline-flex items-center">
+        <Badge
+          asChild
+          variant="secondary"
+          className="bg-status-delayed/15 text-status-delayed transition-colors hover:bg-status-delayed/25 focus-visible:ring-status-delayed/40 disabled:cursor-default disabled:hover:bg-status-delayed/15"
         >
-          <TimerIcon aria-hidden="true" />
-          {t('RATE_LIMIT.BADGE', { seconds })}
-        </button>
-      </Badge>
-    </Tooltip>
+          <button
+            type="button"
+            aria-label={description}
+            disabled={queue.readOnlyMode}
+            onClick={actions.releaseQueueRateLimit(queue.name)}
+          >
+            <TimerIcon aria-hidden="true" />
+            {t('RATE_LIMIT.BADGE', { seconds })}
+          </button>
+        </Badge>
+      </span>
+    </HintTooltip>
   );
 };

@@ -31,7 +31,7 @@
     "/api/redis/stats": {
       "get": {
         "operationId": "getRedisStats",
-        "summary": "Read the datastore statistics of the board's first queue.",
+        "summary": "Read the datastore statistics of the board's first visible queue.",
         "tags": [
           "Datastore"
         ],
@@ -1134,15 +1134,8 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "Success.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/EmptyResponse"
-                }
-              }
-            }
+          "204": {
+            "description": "Success. The response has no body."
           },
           "default": {
             "description": "The call was rejected or failed.",
@@ -1193,15 +1186,8 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "Success.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/EmptyResponse"
-                }
-              }
-            }
+          "204": {
+            "description": "Success. The response has no body."
           },
           "default": {
             "description": "The call was rejected or failed.",
@@ -1291,15 +1277,8 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "Success.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/EmptyResponse"
-                }
-              }
-            }
+          "204": {
+            "description": "Success. The response has no body."
           },
           "default": {
             "description": "The call was rejected or failed.",
@@ -1382,15 +1361,8 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "Success.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/EmptyResponse"
-                }
-              }
-            }
+          "204": {
+            "description": "Success. The response has no body."
           },
           "default": {
             "description": "The call was rejected or failed.",
@@ -2187,6 +2159,7 @@
             "properties": {
               "key": {
                 "enum": [
+                  "ERRORS.COMPLETED_RETRIES_DISABLED",
                   "ERRORS.FORBIDDEN",
                   "ERRORS.INTERNAL_SERVER_ERROR",
                   "ERRORS.INVALID_BEFORE_DATE",
@@ -2226,6 +2199,7 @@
                   "ERRORS.RATE_LIMIT_NOT_SUPPORTED",
                   "ERRORS.REDIS_STATS_UNAVAILABLE",
                   "ERRORS.REDIS_UNAVAILABLE",
+                  "ERRORS.RETRIES_DISABLED",
                   "ERRORS.STATUS_NOT_RETRIABLE",
                   "ERRORS.UNAUTHORIZED",
                   "ERRORS.WORKERS_DISABLED"
@@ -2957,6 +2931,7 @@
         "properties": {
           "key": {
             "enum": [
+              "ERRORS.COMPLETED_RETRIES_DISABLED",
               "ERRORS.FORBIDDEN",
               "ERRORS.INTERNAL_SERVER_ERROR",
               "ERRORS.INVALID_BEFORE_DATE",
@@ -2996,6 +2971,7 @@
               "ERRORS.RATE_LIMIT_NOT_SUPPORTED",
               "ERRORS.REDIS_STATS_UNAVAILABLE",
               "ERRORS.REDIS_UNAVAILABLE",
+              "ERRORS.RETRIES_DISABLED",
               "ERRORS.STATUS_NOT_RETRIABLE",
               "ERRORS.UNAUTHORIZED",
               "ERRORS.WORKERS_DISABLED"
@@ -3430,6 +3406,30 @@
         "required": [
           "removed"
         ]
+      },
+      "JobBelongsToJobSchedulerResponse": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/TranslatableMessage"
+          },
+          "message": {
+            "$ref": "#/components/schemas/TranslatableMessage"
+          },
+          "code": {
+            "const": "JOB_BELONGS_TO_JOB_SCHEDULER"
+          },
+          "jobSchedulerId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "error",
+          "message",
+          "code",
+          "jobSchedulerId"
+        ],
+        "description": "Returned with a 400 when the job being cleaned is the next run of a job scheduler. Removing that run on its own would leave the scheduler registered but unable to fire again, so the caller has to decide whether to remove the whole scheduler instead."
       },
       "EmptyResponse": {
         "type": "object",

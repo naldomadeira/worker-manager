@@ -21,6 +21,8 @@
     "JOBS_COUNT": "{{count}} Jobs",
     "EMPTY_STATE": "Ingen køer at vise.",
     "EMPTY_STATE_FILTERED": "Ingen køer har {{status}} jobs.",
+    "RETRY": "Prøv igen",
+    "LOAD_ERROR": "Køerne kunne ikke indlæses.",
     "SORTING": {
       "TITLE": "Sortér efter",
       "FAILED": "Fejlede Jobs",
@@ -60,6 +62,7 @@
     "FAILED_AT": "Fejlede den",
     "FINISHED_AT": "Afsluttet den",
     "ATTEMPTS": "forsøg #{{attempts}}",
+    "ATTEMPTS_OF": "forsøg {{attempts}} af {{max}}",
     "REPEAT": "gentag {{count}}",
     "REPEAT_WITH_LIMIT": "$t(JOB.REPEAT) / {{limit}}",
     "FLOW": {
@@ -104,6 +107,7 @@
     },
     "DIAGNOSTICS": {
       "PRIORITY": "prioritet {{priority}}",
+      "GROUP": "gruppe {{id}}",
       "DEDUPLICATED": "dedup {{id}}",
       "STALLED": "gået i stå {{times}}",
       "ATTEMPTS_STARTED": "{{starts}} startet",
@@ -414,6 +418,8 @@
   "ERRORS": {
     "FORBIDDEN": "Forbidden",
     "INTERNAL_SERVER_ERROR": "Intern serverfejl",
+    "INVALID_JSON": "JSON'en er ikke gyldig. Ret de markerede fejl, og prøv igen.",
+    "NETWORK": "Kunne ikke nå serveren. Tjek din forbindelse, og prøv igen.",
     "INVALID_BEFORE_DATE": "Ugyldig before: forventede YYYY-MM-DD",
     "INVALID_CONCURRENCY": "Ugyldig værdi for samtidighed",
     "INVALID_DATE_RANGE": "Ugyldigt from/to-interval",
@@ -448,6 +454,8 @@
     "QUEUE_NOT_PAUSED": "Køen skal sættes på pause, før den kan udryddes",
     "QUEUE_READ_ONLY": "Metoden er ikke tilladt på en skrivebeskyttet kø",
     "RATE_LIMIT_NOT_SUPPORTED": "Dette kø-bibliotek kan ikke sætte en kø-dækkende hastighedsgrænse.",
+    "COMPLETED_RETRIES_DISABLED": "Genforsøg af fuldførte jobs er deaktiveret for denne kø.",
+    "RETRIES_DISABLED": "Genforsøg er deaktiveret for denne kø.",
     "REDIS_STATS_UNAVAILABLE": "Redis-oplysninger er ikke tilgængelige for denne køs backend",
     "REDIS_UNAVAILABLE": "Worker Manager kan ikke få forbindelse til Redis. Åbn dashboardet for at se detaljer.",
     "STATUS_NOT_RETRIABLE": "\"{{status}}\" er ikke en status, der kan prøves igen",
@@ -458,6 +466,7 @@
   "METRICS_HISTORY": {
     "TITLE": "Metrikhistorik",
     "EMPTY": "Ingen historik registreret endnu.",
+    "NOT_CONFIGURED": "Metrikhistorik er ikke aktiveret. Konfigurer en historikudbyder på boardet for at begynde at registrere.",
     "TOTAL_COMPLETED": "Gennemført i alt",
     "TOTAL_FAILED": "Fejlet i alt",
     "RANGE_7D": "7d",

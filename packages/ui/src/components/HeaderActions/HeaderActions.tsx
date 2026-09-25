@@ -1,14 +1,14 @@
 import { BookOpen, Database, Maximize, Minimize, Search, Settings } from 'lucide-react';
-import React, { ReactNode, Suspense, useEffect, useState } from 'react';
+import React, { Suspense, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Kbd } from '@/components/ui/kbd';
 import { Separator } from '@/components/ui/separator';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useModal } from '../../hooks/useModal';
 import { useUIConfig } from '../../hooks/useUIConfig';
 import { useCommandPalette } from '../CommandPalette/CommandPalette';
 import { CustomLinksDropdown } from '../CustomLinksDropdown/CustomLinksDropdown';
+import { HintTooltip } from '../HintTooltip/HintTooltip';
 import { searchShortcut } from '../Menu/Menu';
 import { ThemeToggle } from '../ThemeToggle/ThemeToggle';
 import { UserMenu } from '../UserMenu/UserMenu';
@@ -36,13 +36,6 @@ const onClickFullScreen = async () => {
 const DOCS_URL = 'https://naldomadeira.github.io/worker-manager/';
 
 const iconButtonClass = 'text-muted-foreground hover:text-foreground';
-
-const WithTooltip = ({ label, children }: { label: string; children: ReactNode }) => (
-  <Tooltip>
-    <TooltipTrigger asChild>{children}</TooltipTrigger>
-    <TooltipContent side="bottom">{label}</TooltipContent>
-  </Tooltip>
-);
 
 function useIsFullscreen() {
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -76,7 +69,7 @@ export const HeaderActions = () => {
           <span className="flex-1 text-left">{t('HEADER.SEARCH')}…</span>
           <Kbd className="border bg-background font-mono text-[0.65rem]">{searchShortcut}</Kbd>
         </Button>
-        <WithTooltip label={t('HEADER.SEARCH')}>
+        <HintTooltip title={t('HEADER.SEARCH')} side="bottom">
           <Button
             variant="ghost"
             size="icon-sm"
@@ -86,12 +79,12 @@ export const HeaderActions = () => {
           >
             <Search aria-hidden="true" />
           </Button>
-        </WithTooltip>
+        </HintTooltip>
 
         <Separator orientation="vertical" className="mx-1 h-5! max-md:hidden" />
 
         {!hideRedisDetails && (
-          <WithTooltip label={t('REDIS.TITLE')}>
+          <HintTooltip title={t('REDIS.TITLE')} side="bottom">
             <Button
               variant="ghost"
               size="icon-sm"
@@ -101,10 +94,10 @@ export const HeaderActions = () => {
             >
               <Database aria-hidden="true" />
             </Button>
-          </WithTooltip>
+          </HintTooltip>
         )}
         {!hideDocsLink && (
-          <WithTooltip label={t('HEADER.DOCS')}>
+          <HintTooltip title={t('HEADER.DOCS')} side="bottom">
             <Button variant="ghost" size="icon-sm" className={iconButtonClass} asChild>
               <a
                 href={DOCS_URL}
@@ -115,9 +108,9 @@ export const HeaderActions = () => {
                 <BookOpen aria-hidden="true" />
               </a>
             </Button>
-          </WithTooltip>
+          </HintTooltip>
         )}
-        <WithTooltip label={t('HEADER.FULLSCREEN')}>
+        <HintTooltip title={t('HEADER.FULLSCREEN')} side="bottom">
           <Button
             variant="ghost"
             size="icon-sm"
@@ -128,9 +121,9 @@ export const HeaderActions = () => {
           >
             {isFullscreen ? <Minimize aria-hidden="true" /> : <Maximize aria-hidden="true" />}
           </Button>
-        </WithTooltip>
+        </HintTooltip>
         <ThemeToggle />
-        <WithTooltip label={t('SETTINGS.TITLE')}>
+        <HintTooltip title={t('SETTINGS.TITLE')} side="bottom">
           <Button
             variant="ghost"
             size="icon-sm"
@@ -140,7 +133,7 @@ export const HeaderActions = () => {
           >
             <Settings aria-hidden="true" />
           </Button>
-        </WithTooltip>
+        </HintTooltip>
         {miscLinks.length > 0 && <CustomLinksDropdown options={miscLinks} />}
         <UserMenu />
       </div>

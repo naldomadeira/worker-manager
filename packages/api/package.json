@@ -30,7 +30,10 @@
     "./bullMQAdapter": "./bullMQAdapter.js",
     "./bullMQProAdapter": "./bullMQProAdapter.js",
     "./bullAdapter": "./bullAdapter.js",
-    "./baseAdapter": "./baseAdapter.d.ts",
+    "./baseAdapter": {
+      "types": "./baseAdapter.d.ts",
+      "default": "./baseAdapter.js"
+    },
     "./constants/statuses": "./dist/constants/statuses.js",
     "./constants/datastores": "./dist/constants/datastores.js"
   },

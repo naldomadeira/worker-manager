@@ -162,7 +162,7 @@ export const appRoutes: AppRouteDefs = {
       method: 'get',
       route: '/api/redis/stats',
       spec: {
-        summary: "Read the datastore statistics of the board's first queue.",
+        summary: "Read the datastore statistics of the board's first visible queue.",
         response: 'GetRedisStatsResponse',
       },
       handler: redisStatsHandler,
@@ -360,7 +360,7 @@ export const appRoutes: AppRouteDefs = {
     defineRoute({
       method: 'put',
       route: '/api/queues/:queueName/job-schedulers/:schedulerId/remove',
-      spec: { summary: 'Remove one job scheduler.', response: 'EmptyResponse' },
+      spec: { summary: 'Remove one job scheduler.', response: 'EmptyResponse', successStatus: 204 },
       handler: removeJobSchedulerHandler,
     }),
     defineRoute({
@@ -370,6 +370,7 @@ export const appRoutes: AppRouteDefs = {
         summary: 'Update the schedule of one job scheduler.',
         response: 'EmptyResponse',
         body: 'UpdateJobSchedulerBody',
+        successStatus: 204,
       },
       handler: updateJobSchedulerHandler,
     }),
@@ -385,7 +386,7 @@ export const appRoutes: AppRouteDefs = {
     defineRoute({
       method: 'put',
       route: '/api/queues/:queueName/:jobId/retry',
-      spec: { summary: 'Retry one job.', response: 'EmptyResponse' },
+      spec: { summary: 'Retry one job.', response: 'EmptyResponse', successStatus: 204 },
       handler: retryJobHandler,
     }),
     defineRoute({
@@ -397,7 +398,7 @@ export const appRoutes: AppRouteDefs = {
     defineRoute({
       method: 'put',
       route: '/api/queues/:queueName/:jobId/promote',
-      spec: { summary: 'Promote one delayed job.', response: 'EmptyResponse' },
+      spec: { summary: 'Promote one delayed job.', response: 'EmptyResponse', successStatus: 204 },
       handler: promoteJobHandler,
     }),
     defineRoute({

@@ -20,6 +20,8 @@
     "JOBS_COUNT_other": "{{count}} ジョブ",
     "EMPTY_STATE": "表示するキューがありません。",
     "EMPTY_STATE_FILTERED": "{{status}}ジョブがあるキューはありません。",
+    "RETRY": "再試行",
+    "LOAD_ERROR": "キューを読み込めませんでした。",
     "SORTING": {
       "TITLE": "並び順",
       "FAILED": "失敗したジョブ",
@@ -59,6 +61,7 @@
     "FAILED_AT": "失敗日時",
     "FINISHED_AT": "完了日時",
     "ATTEMPTS": "試行回数 #{{attempts}}",
+    "ATTEMPTS_OF": "試行 {{attempts}} / {{max}}",
     "REPEAT": "繰り返し {{count}}",
     "REPEAT_WITH_LIMIT": "$t(JOB.REPEAT) / {{limit}}",
     "FLOW": {
@@ -103,6 +106,7 @@
     },
     "DIAGNOSTICS": {
       "PRIORITY": "優先度 {{priority}}",
+      "GROUP": "グループ {{id}}",
       "DEDUPLICATED": "重複排除 {{id}}",
       "STALLED": "停滞 {{times}} 回",
       "ATTEMPTS_STARTED": "{{starts}} 回開始",
@@ -410,6 +414,8 @@
   "ERRORS": {
     "FORBIDDEN": "Forbidden",
     "INTERNAL_SERVER_ERROR": "サーバー内部エラー",
+    "INVALID_JSON": "JSONが無効です。ハイライトされたエラーを修正して、もう一度お試しください。",
+    "NETWORK": "サーバーに接続できませんでした。接続を確認して、もう一度お試しください。",
     "INVALID_BEFORE_DATE": "before が不正です。YYYY-MM-DD 形式で指定してください",
     "INVALID_CONCURRENCY": "同時実行数の値が不正です",
     "INVALID_DATE_RANGE": "from/to の範囲が不正です",
@@ -444,6 +450,8 @@
     "QUEUE_NOT_PAUSED": "完全削除の前にキューを一時停止する必要があります",
     "QUEUE_READ_ONLY": "読み取り専用のキューでは許可されていない操作です",
     "RATE_LIMIT_NOT_SUPPORTED": "このキューライブラリはキュー全体のレート制限を設定できません。",
+    "COMPLETED_RETRIES_DISABLED": "このキューでは完了したジョブの再試行が無効になっています。",
+    "RETRIES_DISABLED": "このキューでは再試行が無効になっています。",
     "REDIS_STATS_UNAVAILABLE": "このキューのバックエンドでは Redis の詳細を利用できません",
     "REDIS_UNAVAILABLE": "Worker Manager が Redis に接続できません。詳細はダッシュボードを開いて確認してください。",
     "STATUS_NOT_RETRIABLE": "\"{{status}}\" は再試行できるステータスではありません",
@@ -454,6 +462,7 @@
   "METRICS_HISTORY": {
     "TITLE": "メトリクス履歴",
     "EMPTY": "履歴はまだ記録されていません。",
+    "NOT_CONFIGURED": "メトリクス履歴は有効になっていません。記録を開始するには、ボードに履歴プロバイダーを設定してください。",
     "TOTAL_COMPLETED": "完了の合計",
     "TOTAL_FAILED": "失敗の合計",
     "RANGE_7D": "7日",

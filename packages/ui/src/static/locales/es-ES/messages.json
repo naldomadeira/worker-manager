@@ -22,6 +22,8 @@
     "JOBS_COUNT": "{{count}} Tareas",
     "EMPTY_STATE": "No hay colas para mostrar.",
     "EMPTY_STATE_FILTERED": "No hay colas con trabajos {{status}}.",
+    "RETRY": "Reintentar",
+    "LOAD_ERROR": "No se pudieron cargar las colas.",
     "SORTING": {
       "TITLE": "Ordenar por",
       "FAILED": "Trabajos fallidos",
@@ -61,6 +63,7 @@
     "FAILED_AT": "Falló el",
     "FINISHED_AT": "Finalizada el",
     "ATTEMPTS": "intento #{{attempts}}",
+    "ATTEMPTS_OF": "intento {{attempts}} de {{max}}",
     "REPEAT": "repetir {{count}}",
     "REPEAT_WITH_LIMIT": "$t(JOB.REPEAT) / {{limit}}",
     "FLOW": {
@@ -105,6 +108,7 @@
     },
     "DIAGNOSTICS": {
       "PRIORITY": "prioridad {{priority}}",
+      "GROUP": "grupo {{id}}",
       "DEDUPLICATED": "dedup {{id}}",
       "STALLED": "estancado {{times}}",
       "ATTEMPTS_STARTED": "{{starts}} iniciados",
@@ -417,6 +421,8 @@
   "ERRORS": {
     "FORBIDDEN": "Forbidden",
     "INTERNAL_SERVER_ERROR": "Error interno del servidor",
+    "INVALID_JSON": "El JSON no es válido. Corrige los errores resaltados e inténtalo de nuevo.",
+    "NETWORK": "No se pudo conectar con el servidor. Comprueba tu conexión e inténtalo de nuevo.",
     "INVALID_BEFORE_DATE": "Valor de before no válido: se esperaba YYYY-MM-DD",
     "INVALID_CONCURRENCY": "Valor de concurrencia no válido",
     "INVALID_DATE_RANGE": "Rango from/to no válido",
@@ -451,6 +457,8 @@
     "QUEUE_NOT_PAUSED": "La cola debe estar pausada antes de obliterarla",
     "QUEUE_READ_ONLY": "Método no permitido en una cola de solo lectura",
     "RATE_LIMIT_NOT_SUPPORTED": "Esta biblioteca de colas no puede establecer un límite de tasa para toda la cola.",
+    "COMPLETED_RETRIES_DISABLED": "Reintentar tareas completadas está desactivado para esta cola.",
+    "RETRIES_DISABLED": "Los reintentos están desactivados para esta cola.",
     "REDIS_STATS_UNAVAILABLE": "Los detalles de Redis no están disponibles para el backend de esta cola",
     "REDIS_UNAVAILABLE": "Worker Manager no puede conectarse a Redis. Abre el panel para ver los detalles.",
     "STATUS_NOT_RETRIABLE": "\"{{status}}\" no es un estado reintentable",
@@ -461,6 +469,7 @@
   "METRICS_HISTORY": {
     "TITLE": "Historial de métricas",
     "EMPTY": "Aún no hay historial registrado.",
+    "NOT_CONFIGURED": "El historial de métricas no está habilitado. Configura un proveedor de historial en el panel para empezar a registrar.",
     "TOTAL_COMPLETED": "Total completados",
     "TOTAL_FAILED": "Total fallidos",
     "RANGE_7D": "7d",

@@ -11,7 +11,7 @@ import {
   AlertDialogMedia,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { Button } from '../Button/Button';
+import { Button } from '@/components/ui/button';
 import { CheckboxField } from '../Form/CheckboxField/CheckboxField';
 
 /** An extra opt-in the confirm can ask for, e.g. forcing an obliterate past its active jobs. */
@@ -95,7 +95,7 @@ const ConfirmContent = ({
       )}
       <AlertDialogFooter>
         <AlertDialogCancel>{t('CONFIRM.CANCEL_BTN')}</AlertDialogCancel>
-        <Button theme="primary" onClick={() => onConfirm({ checked })}>
+        <Button type="button" onClick={() => onConfirm({ checked })}>
           {t('CONFIRM.CONFIRM_BTN')}
         </Button>
       </AlertDialogFooter>

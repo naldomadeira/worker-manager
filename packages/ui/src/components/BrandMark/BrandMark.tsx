@@ -56,7 +56,14 @@ export const WorkerManagerGlyph = ({ className }: { className?: string }) => (
     <rect x="4" y="7" width="20" height="6" rx="3" fill="white" fillOpacity={0.55} />
     <rect x="4" y="16" width="28" height="6" rx="3" fill="white" fillOpacity={0.8} />
     <rect x="4" y="25" width="15" height="6" rx="3" fill="white" />
-    <circle cx="28.5" cy="28" r="6" fill="#22C55E" stroke="white" strokeWidth={2.5} />
+    <circle
+      cx="28.5"
+      cy="28"
+      r="6"
+      fill="var(--status-completed)"
+      stroke="white"
+      strokeWidth={2.5}
+    />
     <path
       d="M25.9 28.1l1.8 1.8 3.6-3.8"
       stroke="white"

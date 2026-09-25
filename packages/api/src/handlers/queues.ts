@@ -96,7 +96,7 @@ async function getAppQueues(
 ): Promise<AppQueue[]> {
   return Promise.all(
     pairs.map(async ([queueName, queue]) => {
-      const isActiveQueue = decodeURIComponent(query.activeQueue ?? '') === queueName;
+      const isActiveQueue = query.activeQueue === queueName;
       const jobsPerPage = query.jobsPerPage;
 
       const jobStatuses = queue.getJobStatuses();

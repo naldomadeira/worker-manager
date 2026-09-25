@@ -22,7 +22,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/nicolas/bull-board-sails-example.git"
+    "url": "git+https://github.com/naldomadeira/worker-manager.git",
+    "directory": "examples/more/sails"
   },
   "author": "Cicolas_",
   "engines": {

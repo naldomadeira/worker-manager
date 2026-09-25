@@ -119,6 +119,42 @@ describe('metrics history storage endpoints', () => {
       await router.post('/api/metrics/history/purge').send({}).expect(404);
     });
 
+    it('refuses purge per request when every queue added later is read-only', async () => {
+      const purges: MetricsHistoryPurgeOptions[] = [];
+      const { addQueue } = createWorkerManagerBoard({
+        queues: [],
+        serverAdapter,
+        options: { historyProvider: fullProvider(purges) },
+      });
+      addQueue(makeQueue('StorageLateReadOnlyQueue', { readOnlyMode: true }));
+
+      const res = await request(serverAdapter.getRouter())
+        .post('/api/metrics/history/purge')
+        .send({})
+        .expect(405);
+
+      expect(res.body.error).toEqual({ key: 'ERRORS.QUEUE_READ_ONLY' });
+      expect(purges).toEqual([]);
+    });
+
+    it('allows purge once a writable queue is added later', async () => {
+      const purges: MetricsHistoryPurgeOptions[] = [];
+      const { addQueue } = createWorkerManagerBoard({
+        queues: [],
+        serverAdapter,
+        options: { historyProvider: fullProvider(purges) },
+      });
+      addQueue(makeQueue('StorageLateMixedReadOnlyQueue', { readOnlyMode: true }));
+      addQueue(makeQueue('StorageLateMixedWritableQueue'));
+
+      await request(serverAdapter.getRouter())
+        .post('/api/metrics/history/purge')
+        .send({})
+        .expect(200);
+
+      expect(purges).toHaveLength(1);
+    });
+
     it('allows purge when at least one queue is writable', async () => {
       createWorkerManagerBoard({
         queues: [
@@ -162,6 +198,31 @@ describe('metrics history storage endpoints', () => {
         .then((res) => {
           expect(res.text).toContain('"hasHistoryUsage":false');
           expect(res.text).toContain('"canPurgeHistory":false');
+        });
+    });
+
+    it('reports canPurgeHistory from the queues registered at request time', async () => {
+      const { addQueue } = createWorkerManagerBoard({
+        queues: [],
+        serverAdapter,
+        options: { historyProvider: fullProvider() },
+      });
+      const router = request(serverAdapter.getRouter());
+
+      addQueue(makeQueue('StorageFlagsLateReadOnlyQueue', { readOnlyMode: true }));
+      await router
+        .get('/')
+        .expect(200)
+        .then((res) => {
+          expect(res.text).toContain('"canPurgeHistory":false');
+        });
+
+      addQueue(makeQueue('StorageFlagsLateWritableQueue'));
+      await router
+        .get('/')
+        .expect(200)
+        .then((res) => {
+          expect(res.text).toContain('"canPurgeHistory":true');
         });
     });
 

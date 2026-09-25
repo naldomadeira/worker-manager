@@ -18,14 +18,14 @@ interface JobActionsProps {
   status: Status;
   allowRetries: boolean;
   actions: {
-    promoteJob: () => Promise<void>;
-    retryJob: () => Promise<void>;
-    cleanJob: () => Promise<void>;
+    promoteJob: () => Promise<boolean>;
+    retryJob: () => Promise<boolean>;
+    cleanJob: () => Promise<boolean>;
     updateJobData: () => void;
     duplicateJob: () => void;
     rescheduleJob: () => void;
     reprioritiseJob: () => void;
-    removeUnprocessedChildren: () => Promise<void>;
+    removeUnprocessedChildren: () => Promise<boolean>;
   };
 }
 
