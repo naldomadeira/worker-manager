@@ -1,6 +1,6 @@
 {
   "name": "@worker-manager/h3",
-  "version": "2.1.0-next.0",
+  "version": "2.1.0",
   "description": "A H3 server adapter for the Worker Manager dashboard.",
   "keywords": [
     "adapter",
@@ -33,8 +33,8 @@
     "test": "jest && NODE_OPTIONS=--experimental-vm-modules jest -c jest.config.v2.js"
   },
   "dependencies": {
-    "@worker-manager/api": "2.1.0-next.0",
-    "@worker-manager/ui": "2.1.0-next.0",
+    "@worker-manager/api": "2.1.0",
+    "@worker-manager/ui": "2.1.0",
     "ejs": "^6.0.1",
     "h3": "^1.15.11 || ^2.0.0"
   },
@@ -42,7 +42,7 @@
     "@types/ejs": "^3.1.5",
     "@types/jest": "^30.0.0",
     "@types/supertest": "^7.2.1",
-    "@worker-manager/test-utils": "2.1.0-next.0",
+    "@worker-manager/test-utils": "2.1.0",
     "bullmq": "^5.81.3",
     "h3-v1": "npm:h3@^1.15.11",
     "h3-v2": "npm:h3@2.0.1-rc.29",

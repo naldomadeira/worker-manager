@@ -1,3 +1,7 @@
+### [v2.1.0](https://github.com/naldomadeira/worker-manager/compare/v2.1.0-next.0...v2.1.0)
+
+> 2026-09-25
+
 ### [v2.1.0-next.0](https://github.com/naldomadeira/worker-manager/compare/v2.0.1...v2.1.0-next.0)
 
 > 2026-09-25
