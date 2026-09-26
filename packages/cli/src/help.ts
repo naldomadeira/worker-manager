@@ -40,11 +40,16 @@ Options:
                           Comma separated realm/client roles, any grants access
       --keycloak-bearer-only
                           Accept only Authorization: Bearer tokens, no login page
+      --token <list>      Comma separated access tokens instead: sent as
+                          Authorization: Bearer, or typed once into a login form
+      --token-header <name>
+                          Also accept the token in this header, e.g. X-Board-Token
       --public-url <url>  External URL of the board, base path included, used
-                          for the OIDC redirect URI     [derived from the request]
+                          for the OIDC redirect URI and the login form's origin
+                          check                         [derived from the request]
       --session-secret <s>
                           Key the session cookie is encrypted with
-                                                        [--keycloak-client-secret]
+                          [--keycloak-client-secret, or random per process]
       --postgres <url>    Also serve BullMQ v6 queues stored in PostgreSQL
                           (postgres://user:pass@host:5432/db)
       --postgres-schema <name>
@@ -119,11 +124,18 @@ through the OIDC authorization code flow (PKCE), API clients may send an
 Authorization: Bearer access token. The redirect URI to register in Keycloak
 is <public url>/auth/callback.
 
+--token protects the board with static tokens. Scripts send
+Authorization: Bearer <token> (or the --token-header header); a browser gets a
+login form at <base path>/auth/login that trades the token for an encrypted,
+SameSite=Strict session cookie. Set --session-secret so sessions survive a
+restart.
+
 Environment variables mirror every flag, for example WORKER_MANAGER_REDIS_URL,
 WORKER_MANAGER_SENTINELS, WORKER_MANAGER_SENTINEL_NAME, WORKER_MANAGER_CLUSTER_NODES,
 WORKER_MANAGER_PORT, WORKER_MANAGER_READ_ONLY, WORKER_MANAGER_KEYCLOAK_URL,
 WORKER_MANAGER_KEYCLOAK_REALM, WORKER_MANAGER_KEYCLOAK_CLIENT_ID,
 WORKER_MANAGER_KEYCLOAK_CLIENT_SECRET, WORKER_MANAGER_KEYCLOAK_ROLES,
+WORKER_MANAGER_TOKENS, WORKER_MANAGER_TOKEN_HEADER,
 WORKER_MANAGER_PUBLIC_URL, WORKER_MANAGER_SESSION_SECRET, WORKER_MANAGER_POSTGRES_URL,
 WORKER_MANAGER_POSTGRES_SCHEMA, WORKER_MANAGER_PGBOSS_URL, WORKER_MANAGER_PGBOSS_SCHEMA,
 WORKER_MANAGER_PGBOSS_QUEUES, WORKER_MANAGER_PGBOSS_PATH.
@@ -138,6 +150,7 @@ Examples:
   worker-manager --postgres postgres://bullmq:bullmq@localhost:5432/bullmq
   worker-manager --pg-boss postgres://app:secret@localhost:5432/app
   worker-manager -r redis://localhost:6379 --pg-boss postgres://localhost/app
+  worker-manager --token $BOARD_TOKEN --session-secret $SECRET --host 0.0.0.0
   worker-manager --keycloak-url https://sso.example.com --keycloak-realm ops \\
     --keycloak-client-id board --keycloak-client-secret $SECRET \\
     --keycloak-roles wm-admin --public-url https://ops.example.com

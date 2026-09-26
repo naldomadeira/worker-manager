@@ -8,7 +8,7 @@ export interface AuthUser {
   roles: string[];
 }
 
-export type AuthStrategy = 'basic' | 'keycloak';
+export type AuthStrategy = 'basic' | 'keycloak' | 'token' | 'custom';
 
 /**
  * Called once per authenticated request, after role checks. Returning `false` (or a promise of
@@ -47,7 +47,8 @@ export interface BasicAuthOptions extends CommonAuthOptions {
   realm?: string;
 }
 
-export interface KeycloakCookieOptions {
+/** The browser session cookie of the `keycloak` and `token` strategies. */
+export interface SessionCookieOptions {
   /** Session cookie name. Defaults to `wm_session`. */
   name?: string;
   /** Key material the session cookie is encrypted with (AES-256-GCM). Use 32+ random chars. */
@@ -57,6 +58,8 @@ export interface KeycloakCookieOptions {
   /** Lifetime of the session cookie. Defaults to 8 hours. */
   maxAgeSeconds?: number;
 }
+
+export type KeycloakCookieOptions = SessionCookieOptions;
 
 export interface KeycloakAuthOptions extends CommonAuthOptions {
   strategy: 'keycloak';
@@ -86,7 +89,67 @@ export interface KeycloakAuthOptions extends CommonAuthOptions {
   clockToleranceSeconds?: number;
 }
 
-export type AuthOptions = BasicAuthOptions | KeycloakAuthOptions;
+export interface TokenAuthOptions extends CommonAuthOptions {
+  strategy: 'token';
+  /**
+   * Accepted tokens. Compared in constant time, every entry on every request. Use long random
+   * values (32+ characters); there is no lockout, so the token's entropy is the only defence
+   * against guessing.
+   */
+  tokens?: string[];
+  /**
+   * Custom token check, tried when no static token matched. Return the user to attach, `true` to
+   * accept with the identity from `user`, or `false` to reject. Runs on every request, the
+   * browser session included, so revoking a token takes effect immediately.
+   */
+  validate?: (
+    token: string
+  ) => AuthUser | boolean | null | undefined | Promise<AuthUser | boolean | null | undefined>;
+  /**
+   * A header carrying the bare token, e.g. `X-Board-Token`, accepted next to
+   * `Authorization: Bearer <token>`, which is always read.
+   */
+  header?: string;
+  /** The identity attached to `req.user` for a static token. `username` defaults to `token`. */
+  user?: Partial<AuthUser>;
+  /**
+   * Enables the browser flow: an unauthenticated page load is sent to a login form at
+   * `${basePath}/auth/login`, which exchanges the token for an encrypted, `SameSite=Strict`
+   * session cookie. Without it only requests carrying the token in a header get in.
+   */
+  cookie?: SessionCookieOptions;
+  /**
+   * External URL of the board, e.g. `https://ops.example.com/queues`. The login form is only
+   * accepted when the browser posts it from this origin. Defaults to the request's own origin
+   * (honouring `X-Forwarded-Proto` / `X-Forwarded-Host`); set it when a proxy rewrites `Host`.
+   */
+  publicUrl?: string;
+}
+
+export interface CustomAuthOptions extends CommonAuthOptions {
+  strategy: 'custom';
+  /**
+   * Resolves the user behind a request, or `null`/`undefined` to reject it with 401. Throwing
+   * fails the request with the error, as a thrown `validate` does.
+   */
+  authenticate: (
+    req: IncomingMessage
+  ) => AuthUser | null | undefined | Promise<AuthUser | null | undefined>;
+  /**
+   * Answers a request `authenticate` rejected, instead of the default 401 JSON body: a redirect
+   * to an identity provider, a challenge header, a page. If it leaves the response unsent, the
+   * default 401 is sent after it.
+   */
+  onUnauthenticated?: (req: IncomingMessage, res: ServerResponse) => void | Promise<void>;
+  /** Where the dashboard's "Sign out" item points, e.g. `/cdn-cgi/access/logout`. Hidden when unset. */
+  logoutUrl?: string;
+}
+
+export type AuthOptions =
+  | BasicAuthOptions
+  | KeycloakAuthOptions
+  | TokenAuthOptions
+  | CustomAuthOptions;
 
 export interface AuthMiddlewareContext {
   /** The path the board is mounted under, e.g. `/queues`. `''` or `/` for the root. */

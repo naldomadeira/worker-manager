@@ -1,8 +1,9 @@
 {
   "name": "@worker-manager/auth",
   "version": "2.1.2",
-  "description": "Framework-agnostic authentication middleware (Basic and Keycloak/OIDC) for the Worker Manager dashboard.",
+  "description": "Framework-agnostic authentication middleware (Basic, Keycloak/OIDC, static token and custom) for the Worker Manager dashboard.",
   "keywords": [
+    "api-key",
     "auth",
     "basic-auth",
     "bull",
@@ -10,7 +11,8 @@
     "dashboard",
     "keycloak",
     "middleware",
-    "oidc"
+    "oidc",
+    "token"
   ],
   "license": "MIT",
   "author": "naldomadeira",

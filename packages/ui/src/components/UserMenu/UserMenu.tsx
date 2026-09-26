@@ -21,7 +21,7 @@ export interface AuthUser {
 }
 
 export interface AuthMe {
-  strategy: 'basic' | 'keycloak';
+  strategy: 'basic' | 'keycloak' | 'token' | 'custom';
   user: AuthUser;
   logoutUrl: string | null;
 }
@@ -53,6 +53,13 @@ export async function fetchAuthMe(): Promise<AuthMe | null> {
   }
 }
 
+/** Product names, not translated. A custom strategy has no name worth showing. */
+const STRATEGY_LABELS: Partial<Record<string, string>> = {
+  basic: 'Basic',
+  keycloak: 'Keycloak',
+  token: 'Token',
+};
+
 export function getInitials(user: AuthUser): string {
   const source = (user.name || user.username || '').trim();
   const parts = source.split(/[\s._@-]+/).filter(Boolean);
@@ -75,6 +82,7 @@ export const UserMenu = () => {
   const { user, logoutUrl, strategy } = me;
   const displayName = user.name || user.username;
   const initials = getInitials(user);
+  const strategyLabel = STRATEGY_LABELS[strategy];
 
   return (
     <DropdownMenu>
@@ -122,10 +130,12 @@ export const UserMenu = () => {
             </DropdownMenuGroup>
           </>
         )}
-        <DropdownMenuSeparator />
-        <p className="px-2 py-1 text-[0.7rem] text-muted-foreground">
-          {t('USER.SIGNED_IN_WITH', { strategy: strategy === 'keycloak' ? 'Keycloak' : 'Basic' })}
-        </p>
+        {(!!strategyLabel || !!logoutUrl) && <DropdownMenuSeparator />}
+        {!!strategyLabel && (
+          <p className="px-2 py-1 text-[0.7rem] text-muted-foreground">
+            {t('USER.SIGNED_IN_WITH', { strategy: strategyLabel })}
+          </p>
+        )}
         {!!logoutUrl && (
           <DropdownMenuItem variant="destructive" asChild>
             <a href={logoutUrl}>

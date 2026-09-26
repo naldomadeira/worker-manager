@@ -72,8 +72,9 @@ export type WorkerManagerModuleOptions = {
   /** Nest middleware applied to the board's routes, after `auth`. */
   middleware?: any;
   /**
-   * Protects the board with `@worker-manager/auth`: Basic credentials or Keycloak (OIDC code
-   * flow + bearer tokens). Runs before `middleware` and before every board route.
+   * Protects the board with `@worker-manager/auth`: Basic credentials, Keycloak (OIDC code
+   * flow + bearer tokens), static tokens with an optional login form, or a custom
+   * `authenticate(req)`. Runs before `middleware` and before every board route.
    */
   auth?: AuthOptions;
   /** `false` registers nothing: no routes, no middleware, and forFeature becomes a no-op. */

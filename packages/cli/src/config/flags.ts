@@ -24,6 +24,8 @@ export const FLAG_OPTIONS = {
   'keycloak-client-secret': { type: 'string' },
   'keycloak-roles': { type: 'string' },
   'keycloak-bearer-only': { type: 'boolean' },
+  token: { type: 'string' },
+  'token-header': { type: 'string' },
   'public-url': { type: 'string' },
   'session-secret': { type: 'string' },
   postgres: { type: 'string' },

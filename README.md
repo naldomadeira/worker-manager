@@ -36,7 +36,7 @@ A modern dashboard for [BullMQ](https://github.com/taskforcesh/bullmq) and [Bull
 ## Highlights
 
 - **A new interface**: shadcn/ui components on Tailwind CSS v4, a collapsible sidebar, a `Ctrl/⌘ K` command palette, KPI tiles, animated status bars and transitions (reduced motion respected), light, dark and system themes, and whitelabel design tokens.
-- **Authentication built in**: `@worker-manager/auth` protects any adapter with HTTP Basic or Keycloak (OpenID Connect with PKCE, encrypted session cookie, bearer tokens, required roles). The signed-in user shows up in the header.
+- **Authentication built in**: `@worker-manager/auth` protects any adapter with HTTP Basic, Keycloak (OpenID Connect with PKCE, encrypted session cookie, bearer tokens, required roles), static tokens with a browser login form, or your own `authenticate(req)`. The signed-in user shows up in the header.
 - **Redis and PostgreSQL**: BullMQ `>= 5.56` and all of v6, including v6 queues stored in PostgreSQL, from the libraries, the NestJS module and the CLI.
 - **pg-boss, experimental**: a board over a pg-boss schema with pages of its own (six job states, schedules, dead letters), on the same shell, auth, server adapters, NestJS module and CLI. It never migrates or alters your database.
 - **A NestJS module that does more for you**: adapter auto-detection, `auth`, `readOnly`, `enabled`, root-level `queues`, `title`/`logo`/`theme` shortcuts and `forRootAsync` with `useFactory`, `useClass` or `useExisting`.
@@ -172,7 +172,28 @@ app.use(
 );
 ```
 
-Keycloak gives you single sign-on with PKCE, an AES-GCM encrypted session cookie, silent refresh, bearer tokens for scripts and `requiredRoles`. See the [Basic auth](https://naldomadeira.github.io/worker-manager/recipes/basic-auth) and [Keycloak](https://naldomadeira.github.io/worker-manager/recipes/keycloak-auth) recipes.
+Four strategies, all with constant-time credential checks and the same `req.user`, `onAuthenticated` hook and `GET <base>/auth/me` endpoint:
+
+| Strategy | For | |
+|---|---|---|
+| `basic` | A quick shared login | Static users or a `validate(username, password)` callback, HTTP Basic challenge. |
+| `keycloak` | Single sign-on | OIDC with PKCE, an AES-GCM encrypted session cookie, silent refresh, bearer tokens for scripts and `requiredRoles`. |
+| `token` | Internal boards and scripts | Static tokens (or `validate(token)`) in `Authorization: Bearer` or a header of your choice; browsers type the token once into a built-in login form and get a `SameSite=Strict` encrypted session cookie. |
+| `custom` | Anything else | Your `authenticate(req)`, e.g. a verified Cloudflare Access JWT or your app's API-key check. |
+
+```ts
+WorkerManagerModule.forRoot({
+  route: '/admin/queues',
+  auth: {
+    strategy: 'token',
+    tokens: [process.env.BOARD_TOKEN!],
+    header: 'X-Board-Token',
+    cookie: { secret: process.env.BOARD_SESSION_SECRET! },
+  },
+});
+```
+
+See the [Basic auth](https://naldomadeira.github.io/worker-manager/recipes/basic-auth), [Keycloak](https://naldomadeira.github.io/worker-manager/recipes/keycloak-auth), [Token](https://naldomadeira.github.io/worker-manager/recipes/token-auth) and [Custom](https://naldomadeira.github.io/worker-manager/recipes/custom-auth) recipes.
 
 ## PostgreSQL
 

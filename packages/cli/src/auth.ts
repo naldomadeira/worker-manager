@@ -19,6 +19,9 @@ export function createCliAuth(config: CliConfig): AuthMiddleware | null {
   if (config.keycloak) {
     return createAuthMiddleware(config.keycloak, { basePath: config.basePath });
   }
+  if (config.token) {
+    return createAuthMiddleware(config.token, { basePath: config.basePath });
+  }
   if (config.auth) {
     return createAuthMiddleware(
       {

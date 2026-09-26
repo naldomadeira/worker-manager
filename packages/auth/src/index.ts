@@ -1,7 +1,9 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import { createBasicStrategy, type StrategyHandler } from './basic';
+import { createCustomStrategy } from './custom';
 import { forbidden, normalizeBasePath, requestUrl, sendJson } from './http';
 import { createKeycloakStrategy } from './keycloak';
+import { createTokenStrategy } from './token';
 import type {
   AuthMeResponse,
   AuthMiddleware,
@@ -15,9 +17,26 @@ export * from './types';
 export { safeEqual } from './basic';
 export { rolesFromClaims, userFromClaims } from './keycloak';
 
+function createStrategy(options: AuthOptions, basePath: string): StrategyHandler {
+  switch (options.strategy) {
+    case 'basic':
+      return createBasicStrategy(options, basePath);
+    case 'keycloak':
+      return createKeycloakStrategy(options, basePath);
+    case 'token':
+      return createTokenStrategy(options, basePath);
+    case 'custom':
+      return createCustomStrategy(options);
+    default:
+      throw new Error(
+        `@worker-manager/auth: unknown strategy "${(options as { strategy?: string }).strategy}".`
+      );
+  }
+}
+
 /**
  * Builds a connect-style `(req, res, next)` middleware that authenticates every request it
- * sees and serves `${basePath}/auth/{me,login,callback,logout}`. It only touches the Node
+ * sees and serves `${basePath}/auth/{me,login,callback,logout}` (the ones its strategy has). It only touches the Node
  * `IncomingMessage` / `ServerResponse` pair, so it runs in front of Express, Koa (through
  * koa-connect), Nest, plain `http`, and Fastify (see `createFastifyAuthHook`).
  *
@@ -29,16 +48,7 @@ export function createAuthMiddleware(
   context: AuthMiddlewareContext = {}
 ): AuthMiddleware {
   const basePath = normalizeBasePath(context.basePath);
-  const strategy: StrategyHandler =
-    options.strategy === 'basic'
-      ? createBasicStrategy(options, basePath)
-      : options.strategy === 'keycloak'
-        ? createKeycloakStrategy(options, basePath)
-        : (() => {
-            throw new Error(
-              `@worker-manager/auth: unknown strategy "${(options as { strategy?: string }).strategy}".`
-            );
-          })();
+  const strategy: StrategyHandler = createStrategy(options, basePath);
 
   const handle = async (req: IncomingMessage, res: ServerResponse): Promise<boolean> => {
     const path = requestUrl(req).pathname.replace(/\/+$/, '');
@@ -130,6 +140,7 @@ export function createFastifyAuthHook(
 interface FastifyLikeScope {
   addHook(name: 'onRequest', hook: (request: any, reply: any) => Promise<void>): unknown;
   get(path: string, handler: (request: any, reply: any) => unknown): unknown;
+  post?(path: string, handler: (request: any, reply: any) => unknown): unknown;
   register(plugin: any, options?: any): unknown;
 }
 
@@ -154,6 +165,10 @@ export function createFastifyAuthPlugin(
     // Fastify only runs a scope's hooks for routes it knows, so the auth endpoints need a
     // route to hang off. The hook answers the real ones; anything else under /auth is a 404.
     scope.get('/auth/:action', (_request, reply) => reply.code(404).send());
+    // The token strategy's login form posts back to /auth/login.
+    if (auth.strategy === 'token') {
+      scope.post?.('/auth/:action', (_request, reply) => reply.code(404).send());
+    }
     await scope.register(boardPlugin);
   };
 }

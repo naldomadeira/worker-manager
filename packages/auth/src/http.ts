@@ -25,7 +25,7 @@ export function requestTarget(req: IncomingMessage): string {
   return `${url.pathname}${url.search}`;
 }
 
-function firstHeader(req: IncomingMessage, name: string): string | undefined {
+export function firstHeader(req: IncomingMessage, name: string): string | undefined {
   const value = req.headers[name];
   const first = Array.isArray(value) ? value[0] : value;
 
@@ -67,8 +67,8 @@ export function sendJson(res: ServerResponse, status: number, body: unknown): vo
   res.end(payload);
 }
 
-export function redirect(res: ServerResponse, location: string): void {
-  res.statusCode = 302;
+export function redirect(res: ServerResponse, location: string, status = 302): void {
+  res.statusCode = status;
   res.setHeader('Location', location);
   res.setHeader('Cache-Control', 'no-store');
   res.end();
@@ -109,10 +109,16 @@ export interface CookieAttributes {
   maxAge?: number;
   secure: boolean;
   httpOnly?: boolean;
+  /** Defaults to `Lax`. */
+  sameSite?: 'Lax' | 'Strict';
 }
 
 export function serializeCookie(name: string, value: string, attrs: CookieAttributes): string {
-  const parts = [`${name}=${encodeURIComponent(value)}`, `Path=${attrs.path}`, 'SameSite=Lax'];
+  const parts = [
+    `${name}=${encodeURIComponent(value)}`,
+    `Path=${attrs.path}`,
+    `SameSite=${attrs.sameSite ?? 'Lax'}`,
+  ];
   if (attrs.httpOnly !== false) parts.push('HttpOnly');
   if (attrs.secure) parts.push('Secure');
   if (attrs.maxAge !== undefined) {
@@ -137,4 +143,94 @@ export function safeReturnTo(value: string | null | undefined, fallback: string)
   }
 
   return value;
+}
+
+const HTML_ESCAPES: Record<string, string> = {
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;',
+  "'": '&#39;',
+};
+
+export function escapeHtml(value: string): string {
+  return value.replace(/[&<>"']/g, (char) => HTML_ESCAPES[char]);
+}
+
+/**
+ * Sends a self-contained page. The CSP allows nothing but the page's own inline styles and a form
+ * posting back to its own origin, and the page cannot be framed.
+ */
+export function sendHtml(res: ServerResponse, status: number, html: string): void {
+  res.statusCode = status;
+  res.setHeader('Content-Type', 'text/html; charset=utf-8');
+  res.setHeader('Cache-Control', 'no-store');
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'none'; style-src 'unsafe-inline'; form-action 'self'; frame-ancestors 'none'; base-uri 'none'"
+  );
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('Referrer-Policy', 'same-origin');
+  res.setHeader('Content-Length', Buffer.byteLength(html));
+  res.end(html);
+}
+
+export class BodyTooLargeError extends Error {}
+
+/**
+ * The fields of an `application/x-www-form-urlencoded` body. A host that parsed the body
+ * already (Nest registers body parsers ahead of any middleware) leaves it on `req.body`;
+ * otherwise the stream is read here, up to `limit` bytes.
+ */
+export async function readForm(req: IncomingMessage, limit: number): Promise<URLSearchParams> {
+  const parsed = (req as IncomingMessage & { body?: unknown }).body;
+  if (typeof parsed === 'string') return new URLSearchParams(parsed);
+  if (Buffer.isBuffer(parsed)) return new URLSearchParams(parsed.toString('utf8'));
+  // `express.json()` sets an empty `req.body` on a form post without reading it.
+  if (
+    parsed &&
+    typeof parsed === 'object' &&
+    (Object.keys(parsed).length > 0 || req.readableEnded)
+  ) {
+    const form = new URLSearchParams();
+    for (const [key, value] of Object.entries(parsed)) {
+      if (typeof value === 'string') form.set(key, value);
+    }
+    return form;
+  }
+  if (req.readableEnded) return new URLSearchParams();
+
+  const contentType = String(req.headers['content-type'] ?? '').toLowerCase();
+  if (!contentType.startsWith('application/x-www-form-urlencoded')) {
+    req.resume();
+    return new URLSearchParams();
+  }
+
+  return new Promise((resolve, reject) => {
+    const chunks: Buffer[] = [];
+    let size = 0;
+    let settled = false;
+    // Past the limit the rest is still drained, not destroyed, so the 413 can be sent.
+    req.on('data', (chunk: Buffer) => {
+      if (settled) return;
+      size += chunk.length;
+      if (size > limit) {
+        settled = true;
+        reject(new BodyTooLargeError());
+        return;
+      }
+      chunks.push(chunk);
+    });
+    req.on('end', () => {
+      if (settled) return;
+      settled = true;
+      resolve(new URLSearchParams(Buffer.concat(chunks).toString('utf8')));
+    });
+    req.on('error', (error) => {
+      if (settled) return;
+      settled = true;
+      reject(error);
+    });
+  });
 }

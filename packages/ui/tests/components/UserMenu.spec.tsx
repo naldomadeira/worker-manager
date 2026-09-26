@@ -74,3 +74,27 @@ it('hides sign-out when there is no logout URL', async () => {
   await screen.findByRole('menu');
   expect(screen.queryByText('USER.SIGN_OUT')).toBeNull();
 });
+
+it.each([
+  ['token', true],
+  ['custom', false],
+])('names the %s strategy only when it has a product name', async (strategy, named) => {
+  mockFetch(200, {
+    strategy,
+    user: { username: 'ops', roles: [] },
+    logoutUrl: '/cdn-cgi/access/logout',
+  });
+  renderMenu();
+
+  fireEvent.pointerDown(await screen.findByRole('button', { name: 'USER.MENU' }), {
+    button: 0,
+    ctrlKey: false,
+    pointerType: 'mouse',
+  });
+
+  await screen.findByRole('menu');
+  expect(!!screen.queryByText('USER.SIGNED_IN_WITH')).toBe(named);
+  expect(screen.getByText('USER.SIGN_OUT').closest('a')?.getAttribute('href')).toBe(
+    '/cdn-cgi/access/logout'
+  );
+});

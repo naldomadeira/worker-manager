@@ -1,5 +1,6 @@
+import { randomBytes } from 'node:crypto';
 import type { QueueAdapterOptions } from '@worker-manager/api/typings/app';
-import type { KeycloakAuthOptions } from '@worker-manager/auth';
+import type { KeycloakAuthOptions, TokenAuthOptions } from '@worker-manager/auth';
 import { resolveConnection } from './connection';
 import type { FlagValues } from './flags';
 import type {
@@ -93,6 +94,10 @@ export function resolveConfig({
   if (keycloak && user) {
     throw new Error('Use either --user/--password (Basic auth) or Keycloak, not both.');
   }
+  const token = resolveToken({ flags, env, file });
+  if (token && (user || keycloak)) {
+    throw new Error('Use one of --user/--password (Basic auth), Keycloak or --token, not several.');
+  }
 
   const uiConfig = { ...file.uiConfig };
   const boardTitle = firstDefined(flags['board-title'], env.WORKER_MANAGER_BOARD_TITLE);
@@ -139,6 +144,7 @@ export function resolveConfig({
     readOnly,
     auth: user && password ? { user, password } : null,
     keycloak,
+    token,
     postgres,
     pgBoss: resolvePgBoss({ flags, env, file, bullmq: bullmqSource }),
     open:
@@ -247,6 +253,54 @@ function resolveKeycloak({
     ...(bearerOnly !== undefined ? { bearerOnly } : {}),
     ...(publicUrl ? { publicUrl } : {}),
     ...(sessionSecret ? { cookie: { ...fromFile?.cookie, secret: sessionSecret } } : {}),
+  };
+}
+
+function resolveToken({
+  flags,
+  env,
+  file,
+}: {
+  flags: FlagValues;
+  env: NodeJS.ProcessEnv;
+  file: FileConfig;
+}): TokenAuthOptions | null {
+  const fromFile = file.token;
+  const tokens =
+    toList(flags.token) ?? toList(env.WORKER_MANAGER_TOKENS) ?? toList(fromFile?.tokens);
+  if (!tokens && !fromFile?.validate) return null;
+
+  const header = firstDefined(
+    flags['token-header'],
+    env.WORKER_MANAGER_TOKEN_HEADER,
+    fromFile?.header
+  );
+  const publicUrl = firstDefined(
+    flags['public-url'],
+    env.WORKER_MANAGER_PUBLIC_URL,
+    fromFile?.publicUrl
+  );
+  let secret = firstDefined(
+    flags['session-secret'],
+    env.WORKER_MANAGER_SESSION_SECRET,
+    fromFile?.cookie?.secret
+  );
+  if (!secret) {
+    secret = randomBytes(32).toString('base64url');
+    // oxlint-disable-next-line no-console
+    console.warn(
+      'No --session-secret set: browser sessions are encrypted with a random per-process key, ' +
+        'so they end when the process restarts.'
+    );
+  }
+
+  return {
+    ...fromFile,
+    strategy: 'token',
+    tokens,
+    ...(header ? { header } : {}),
+    ...(publicUrl ? { publicUrl } : {}),
+    cookie: { ...fromFile?.cookie, secret },
   };
 }
 

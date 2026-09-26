@@ -3,7 +3,7 @@ import type { HttpAdapterHost } from '@nestjs/core';
 import { ModuleRef } from '@nestjs/core';
 import { createWorkerManagerBoard } from '@worker-manager/api';
 import type { BoardOptions } from '@worker-manager/api/typings/app';
-import type { AuthOptions, KeycloakCookieOptions } from '@worker-manager/auth';
+import type { AuthOptions, SessionCookieOptions } from '@worker-manager/auth';
 import {
   WorkerManagerExpressAdapter,
   WorkerManagerFastifyAdapter,
@@ -230,15 +230,20 @@ async function createPgBossBoard(
 }
 
 /**
- * Keycloak keeps its session in a `wm_session` cookie scoped to the board's path. Two boards on
- * nested paths (`/` and `/pg-boss`, or `/ops` and `/ops/pg-boss`) would both see the outer
+ * Keycloak and token sessions live in a `wm_session` cookie scoped to the board's path. Two boards
+ * on nested paths (`/` and `/pg-boss`, or `/ops` and `/ops/pg-boss`) would both see the outer
  * board's cookie, so a named board gets `wm_session_<name>` unless a cookie name is configured.
  */
 export function scopeAuthToBoard(auth: AuthOptions, name: string | undefined): AuthOptions {
-  if (name === undefined || auth.strategy !== 'keycloak' || auth.cookie?.name) return auth;
-
-  return {
-    ...auth,
-    cookie: { ...auth.cookie, name: `wm_session_${name}` } as KeycloakCookieOptions,
-  };
+  if (name === undefined) return auth;
+  if (auth.strategy === 'keycloak' && !auth.cookie?.name) {
+    return {
+      ...auth,
+      cookie: { ...auth.cookie, name: `wm_session_${name}` } as SessionCookieOptions,
+    };
+  }
+  if (auth.strategy === 'token' && auth.cookie && !auth.cookie.name) {
+    return { ...auth, cookie: { ...auth.cookie, name: `wm_session_${name}` } };
+  }
+  return auth;
 }
