@@ -1,0 +1,30 @@
+{
+  "name": "worker-manager-nestjs-pg-boss",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Worker Manager's pg-boss board in a NestJS 11 app with basic auth",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.12"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "tsc && node --env-file-if-exists=.env dist/main.js"
+  },
+  "dependencies": {
+    "@nestjs/common": "^11.2.6",
+    "@nestjs/core": "^11.2.6",
+    "@nestjs/platform-express": "^11.2.6",
+    "@worker-manager/api": "^2.1.0",
+    "@worker-manager/express": "^2.1.0",
+    "@worker-manager/nestjs": "^2.1.0",
+    "@worker-manager/pg-boss": "^2.1.0",
+    "pg-boss": "^12.24.0",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.0",
+    "typescript": "^5.9.3"
+  }
+}

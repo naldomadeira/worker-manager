@@ -25,7 +25,20 @@ const QueueInfoModalLazy = React.lazy(() =>
   }))
 );
 
-type Crumb = { label: string; to?: string | { pathname: string; search: string } };
+type Crumb = {
+  label: string;
+  title?: string;
+  to?: string | { pathname: string; search: string };
+};
+
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/** The job crumb as the job card shows it: `#` for numeric ids, a UUID's first block. */
+function jobCrumb(jobId: string): Crumb {
+  if (/^\d+$/.test(jobId)) return { label: `#${jobId}` };
+  if (UUID.test(jobId)) return { label: jobId.split('-')[0] ?? jobId, title: jobId };
+  return { label: jobId };
+}
 
 /** Where the page sits in the board: Overview › queue › job, or Overview › section page. */
 export const Title = () => {
@@ -57,7 +70,7 @@ export const Title = () => {
       label: queue.displayName || queue.name,
       to: jobId ? links.queuePage(queue.name, selectedStatuses) : undefined,
     });
-    if (jobId) crumbs.push({ label: `#${jobId}` });
+    if (jobId) crumbs.push(jobCrumb(jobId));
   }
   const last = crumbs.length - 1;
 
@@ -71,7 +84,7 @@ export const Title = () => {
               {index === last ? (
                 <BreadcrumbPage
                   className="animate-in truncate font-medium duration-300 fade-in-0 slide-in-from-left-1"
-                  title={crumb.label}
+                  title={crumb.title ?? crumb.label}
                 >
                   {crumb.label}
                 </BreadcrumbPage>

@@ -448,6 +448,7 @@ export class QueuesModule implements NestModule {
 - PostgreSQL-backed BullMQ v6 queues: [`examples/nestjs/postgres`](https://github.com/naldomadeira/worker-manager/tree/main/examples/nestjs/postgres)
 - Keycloak auth configured from `ConfigService`: [`examples/nestjs/keycloak`](https://github.com/naldomadeira/worker-manager/tree/main/examples/nestjs/keycloak)
 - Fastify platform with a custom auth hook: [`examples/nestjs/fastify-custom-auth`](https://github.com/naldomadeira/worker-manager/tree/main/examples/nestjs/fastify-custom-auth)
+- The pg-boss board over the app's own pg-boss instance: [`examples/nestjs/pg-boss`](https://github.com/naldomadeira/worker-manager/tree/main/examples/nestjs/pg-boss)
 
 ## Next steps
 

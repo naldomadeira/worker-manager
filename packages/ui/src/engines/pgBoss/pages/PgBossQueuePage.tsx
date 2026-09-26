@@ -192,18 +192,20 @@ export const PgBossQueuePage = () => {
           <Input
             aria-label={t('PGBOSS.FILTER.ID')}
             aria-invalid={invalidId || undefined}
+            title={t('PGBOSS.FILTER.ID_PLACEHOLDER')}
             placeholder={t('PGBOSS.FILTER.ID_PLACEHOLDER')}
             value={idFilter}
             onChange={(evt) => setIdFilter(evt.target.value)}
-            className="h-8 w-56 pl-8 font-mono text-xs"
+            className="h-8 w-56 pl-8 font-mono text-xs placeholder:font-sans"
           />
         </div>
         <Input
-          aria-label={t('PGBOSS.FILTER.SINGLETON_KEY')}
-          placeholder={t('PGBOSS.FILTER.SINGLETON_KEY_PLACEHOLDER')}
+          aria-label={t('PGBOSS.FILTER.SINGLETON_KEY_PLACEHOLDER')}
+          title={t('PGBOSS.FILTER.SINGLETON_KEY_PLACEHOLDER')}
+          placeholder={t('PGBOSS.FILTER.SINGLETON_KEY')}
           value={keyFilter}
           onChange={(evt) => setKeyFilter(evt.target.value)}
-          className="h-8 w-48 font-mono text-xs"
+          className="h-8 w-48 font-mono text-xs placeholder:font-sans"
         />
         <Button type="submit" size="sm" variant="outline">
           {t('PGBOSS.FILTER.APPLY')}

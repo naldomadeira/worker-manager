@@ -1,0 +1,15 @@
+name: worker-manager-nestjs-pg-boss
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: pgboss
+      POSTGRES_PASSWORD: pgboss
+      POSTGRES_DB: pgboss
+    ports:
+      - '5451:5432'
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U pgboss']
+      interval: 2s
+      retries: 15

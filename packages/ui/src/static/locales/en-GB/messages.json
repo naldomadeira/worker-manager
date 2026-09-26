@@ -16,20 +16,20 @@
     "RELEASES": "Release notes"
   },
   "DASHBOARD": {
-    "JOBS_COUNT_one": "{{count}} Job",
-    "JOBS_COUNT_other": "{{count}} Jobs",
-    "JOBS_COUNT": "{{count}} Jobs",
+    "JOBS_COUNT_one": "{{count}} job",
+    "JOBS_COUNT_other": "{{count}} jobs",
+    "JOBS_COUNT": "{{count}} jobs",
     "EMPTY_STATE": "No queues to display.",
     "EMPTY_STATE_FILTERED": "No queues have {{status}} jobs.",
     "RETRY": "Try again",
     "LOAD_ERROR": "Could not load the queues.",
     "SORTING": {
       "TITLE": "Sort by",
-      "FAILED": "Failed Jobs",
-      "DELAYED": "Delayed Jobs",
-      "WAITING": "Waiting Jobs",
-      "ACTIVE": "Active Jobs",
-      "COMPLETED": "Completed Jobs",
+      "FAILED": "Failed jobs",
+      "DELAYED": "Delayed jobs",
+      "WAITING": "Waiting jobs",
+      "ACTIVE": "Active jobs",
+      "COMPLETED": "Completed jobs",
       "ALPHABETICAL": "Alphabetical (A-Z)",
       "ASC": "Ascending",
       "DESC": "Descending"

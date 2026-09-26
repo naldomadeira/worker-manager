@@ -1,3 +1,15 @@
+### [v2.1.1](https://github.com/naldomadeira/worker-manager/compare/v2.1.0...v2.1.1)
+
+> 2026-09-26
+
+### Bug Fixes
+- use one word for "job" per locale across the BullMQ and pg-boss boards, lowercase mid-sentence: "tarefa" in pt-BR, "tarea" in es-ES, "tâche" in fr-FR and "作业" in zh-CN, which mixed it with "job", "trabalho", "trabajo" and "任务"; also "{{count}} jobs" instead of "{{count}} Jobs" on queue cards
+- show a pg-boss job's id once, as its first block with the full UUID in a tooltip and a copy button, on job rows, the job page and the header breadcrumb
+- stop the pg-boss singleton key filter from cutting its placeholder short in long locales: the placeholder is the short label and the full hint is the field's tooltip and accessible name
+
+### Documentation
+- add a runnable NestJS example for the pg-boss board (`examples/nestjs/pg-boss`), replacing the placeholder README
+
 ### [v2.1.0](https://github.com/naldomadeira/worker-manager/compare/v2.1.0-next.0...v2.1.0)
 
 > 2026-09-25
