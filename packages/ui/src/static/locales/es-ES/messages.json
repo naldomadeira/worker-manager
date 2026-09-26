@@ -16,21 +16,21 @@
     "RELEASES": "Notas de la versión"
   },
   "DASHBOARD": {
-    "JOBS_COUNT_one": "{{count}} Tarea",
-    "JOBS_COUNT_many": "{{count}} Tareas",
-    "JOBS_COUNT_other": "{{count}} Tareas",
-    "JOBS_COUNT": "{{count}} Tareas",
+    "JOBS_COUNT_one": "{{count}} tarea",
+    "JOBS_COUNT_many": "{{count}} tareas",
+    "JOBS_COUNT_other": "{{count}} tareas",
+    "JOBS_COUNT": "{{count}} tareas",
     "EMPTY_STATE": "No hay colas para mostrar.",
-    "EMPTY_STATE_FILTERED": "No hay colas con trabajos {{status}}.",
+    "EMPTY_STATE_FILTERED": "No hay colas con tareas {{status}}.",
     "RETRY": "Reintentar",
     "LOAD_ERROR": "No se pudieron cargar las colas.",
     "SORTING": {
       "TITLE": "Ordenar por",
-      "FAILED": "Trabajos fallidos",
-      "DELAYED": "Trabajos retrasados",
-      "WAITING": "Trabajos en espera",
-      "ACTIVE": "Trabajos activos",
-      "COMPLETED": "Trabajos completados",
+      "FAILED": "Tareas fallidas",
+      "DELAYED": "Tareas retrasadas",
+      "WAITING": "Tareas en espera",
+      "ACTIVE": "Tareas activas",
+      "COMPLETED": "Tareas completadas",
       "ALPHABETICAL": "Alfabético (A-Z)",
       "ASC": "Ascendente",
       "DESC": "Descendente"
@@ -44,7 +44,7 @@
       "QUEUES": "Colas",
       "PAUSED": "{{count}} en pausa",
       "ALL_RUNNING": "Todas en ejecución",
-      "SHARE": "{{percent}}% de los trabajos"
+      "SHARE": "{{percent}}% de las tareas"
     },
     "CLEAR_SEARCH": "Borrar búsqueda",
     "EMPTY_STATE_SEARCH": "Ninguna cola coincide con «{{term}}».",
@@ -98,9 +98,9 @@
       "FIT_VIEW": "Ajustar todo el flujo"
     },
     "EDIT": {
-      "DELAY_TITLE": "Reprogramar trabajo",
+      "DELAY_TITLE": "Reprogramar tarea",
       "PRIORITY_TITLE": "Cambiar prioridad",
-      "DELAY_HINT": "Elige una nueva hora para este trabajo retrasado. Una hora pasada lo ejecuta en cuanto haya un worker libre.",
+      "DELAY_HINT": "Elige una nueva hora para esta tarea retrasada. Una hora pasada la ejecuta en cuanto haya un worker libre.",
       "PRIORITY_HINT": "Los números más bajos van primero. 0 quita la prioridad.",
       "RUN_AT": "Ejecutar el",
       "PRIORITY": "Prioridad",
@@ -113,7 +113,7 @@
       "STALLED": "estancado {{times}}",
       "ATTEMPTS_STARTED": "{{starts}} iniciados",
       "WILL_FAIL": "fallará",
-      "WILL_FAIL_WITH_REASON": "Este trabajo está marcado para fallar en cuanto un worker lo tome: {{reason}}"
+      "WILL_FAIL_WITH_REASON": "Esta tarea está marcada para fallar en cuanto un worker la tome: {{reason}}"
     },
     "DURATION": {
       "SECS": "{{duration}} segundos",
@@ -147,9 +147,9 @@
         "PROMOTE": "¿Estás seguro de que quieres promover esta tarea?",
         "RETRY": "¿Estás seguro de que quieres reintentar esta tarea?",
         "CLEAN": "¿Estás seguro de que quieres limpiar esta tarea?",
-        "REMOVE_UNPROCESSED_CHILDREN": "¿Eliminar los trabajos hijos que este trabajo aún espera? Se borran, y el padre queda libre para continuar.",
+        "REMOVE_UNPROCESSED_CHILDREN": "¿Eliminar las tareas hijas que esta tarea aún espera? Se borran, y la tarea padre queda libre para continuar.",
         "REMOVE_JOB_SCHEDULER_TITLE": "¿Eliminar toda la programación?",
-        "REMOVE_JOB_SCHEDULER": "Este trabajo es la próxima ejecución del programador \"{{schedulerId}}\" y no se puede eliminar por sí solo. Eliminar el programador detiene la programación y borra este trabajo."
+        "REMOVE_JOB_SCHEDULER": "Esta tarea es la próxima ejecución del programador \"{{schedulerId}}\" y no se puede eliminar por sí sola. Eliminar el programador detiene la programación y borra esta tarea."
       }
     },
     "TABS": {
@@ -161,12 +161,12 @@
       "ERROR": "Error",
       "TIMELINE": "Línea de tiempo"
     },
-    "EXPAND": "Expandir trabajo",
-    "COLLAPSE": "Contraer trabajo"
+    "EXPAND": "Expandir tarea",
+    "COLLAPSE": "Contraer tarea"
   },
   "QUEUE": {
     "NOT_FOUND": "Cola no encontrada",
-    "EMPTY_STATE": "No hay trabajos {{status}} en esta cola.",
+    "EMPTY_STATE": "No hay tareas {{status}} en esta cola.",
     "ACTIONS": {
       "MODAL_TITLE": "",
       "RETRY_ALL": "Reintentar todas",
@@ -193,7 +193,7 @@
         "EMPTY_QUEUE": "¿Estás seguro de que quieres vaciar la cola?",
         "OBLITERATE_QUEUE": "¿Estás seguro de que quieres obliterar esta cola?\n\nEsto eliminará completamente la cola y todas sus claves de Redis.\nLa cola debe estar pausada primero.",
         "OBLITERATE_FORCE": "Forzar obliteración",
-        "OBLITERATE_FORCE_DESCRIPTION": "{{jobs}} trabajos siguen en proceso. Obliterar de todos modos: sus workers siguen ejecutándose y pueden fallar cuando la cola desaparezca.",
+        "OBLITERATE_FORCE_DESCRIPTION": "{{jobs}} tareas siguen en proceso. Obliterar de todos modos: sus workers siguen ejecutándose y pueden fallar cuando la cola desaparezca.",
         "RESUME_QUEUE": "¿Estás seguro de que quieres reanudar el procesamiento de la cola?",
         "PAUSE_ALL": "¿Estás seguro de que deseas pausar todas las colas?",
         "RESUME_ALL": "¿Estás seguro de que deseas reanudar todas las colas?",
@@ -239,8 +239,8 @@
       "RATE_LIMIT": "Límite de tasa",
       "WORKERS": "Workers",
       "DELIMITER": "Delimitador de grupo",
-      "TOTAL_JOBS": "Total de trabajos",
-      "DEFAULTS": "Opciones de trabajo predeterminadas",
+      "TOTAL_JOBS": "Total de tareas",
+      "DEFAULTS": "Opciones de tarea predeterminadas",
       "DESCRIPTION": "Descripción",
       "NOT_SET": "No establecido",
       "YES": "Sí",
@@ -262,7 +262,7 @@
     "RANGE": "{{start}}–{{end}} de {{total}}"
   },
   "METRICS": {
-    "TITLE": "Rendimiento (trabajos / min)",
+    "TITLE": "Rendimiento (tareas / min)",
     "COMPLETED": "Completados",
     "FAILED": "Fallidos",
     "COMPLETED_PER_MIN": "Completados / min",
@@ -291,7 +291,7 @@
     "TREND_LABEL": "{{value}} frente a la primera mitad del periodo"
   },
   "LATENCY": {
-    "TITLE": "Latencia de trabajos",
+    "TITLE": "Latencia de tareas",
     "GROUP_RUN": "Ejecución",
     "GROUP_WAIT": "Espera",
     "RUN_P50": "Ejecución p50",
@@ -300,7 +300,7 @@
     "WAIT_P50": "Espera p50",
     "WAIT_P95": "Espera p95",
     "WAIT_P99": "Espera p99",
-    "QUEUE_AGE": "Trabajo más antiguo en espera",
+    "QUEUE_AGE": "Tarea más antigua en espera",
     "P50": "p50",
     "P95": "p95",
     "P99": "p99",
@@ -310,7 +310,7 @@
     "LOW_CONFIDENCE_many": "Confianza baja: {{count}} muestras",
     "LOW_CONFIDENCE_other": "Confianza baja: {{count}} muestras",
     "EMPTY_NO_DATA": "Aún no se han registrado datos de latencia para este intervalo.",
-    "EMPTY_NO_COMPLETIONS": "Esta cola no ha completado ningún trabajo en este intervalo.",
+    "EMPTY_NO_COMPLETIONS": "Esta cola no ha completado ninguna tarea en este intervalo.",
     "HOURLY_GRANULARITY_ONLY": "El historial de latencia se registra con granularidad horaria, por lo que no hay nada que mostrar en los últimos 60 minutos. Cambia a 7d, 30d o 90d para verlo."
   },
   "CONFIRM": {
@@ -374,15 +374,15 @@
     "SECTIONS": {
       "GENERAL": "General",
       "QUEUES": "Colas",
-      "JOBS": "Trabajos"
+      "JOBS": "Tareas"
     },
     "GROUP_QUEUES": "Agrupar colas por categoría",
     "GROUP_QUEUES_HELP": "Divide la vista general en secciones plegables a partir del delimitador en los nombres de las colas, la misma agrupación que usa la barra lateral."
   },
   "RATE_LIMIT": {
     "TITLE": "Límite de tasa",
-    "DESCRIPTION": "Número máximo de trabajos procesados entre todos los workers en una ventana de tiempo. Deja ambos campos vacíos para quitar el límite.",
-    "MAX": "Máx. trabajos",
+    "DESCRIPTION": "Número máximo de tareas procesadas entre todos los workers en una ventana de tiempo. Deja ambos campos vacíos para quitar el límite.",
+    "MAX": "Máx. tareas",
     "DURATION": "Duración (ms)",
     "SAVE": "Guardar",
     "VALUE": "{{max}} / {{duration}} ms",
@@ -390,11 +390,11 @@
     "RELEASE": "Liberar ahora",
     "CONFIRM_RELEASE": "¿Liberar el límite de tasa de esta cola?",
     "BADGE": "limitada {{seconds}} s",
-    "BADGE_TOOLTIP": "Un worker limitó esta cola. Los trabajos se reanudan en {{seconds}} s, o libérala ahora."
+    "BADGE_TOOLTIP": "Un worker limitó esta cola. Las tareas se reanudan en {{seconds}} s, o libérala ahora."
   },
   "CONCURRENCY": {
     "TITLE": "Concurrencia global",
-    "DESCRIPTION": "Número máximo de trabajos procesados en paralelo en todos los workers. Establecer a 0 para eliminar el límite.",
+    "DESCRIPTION": "Número máximo de tareas procesadas en paralelo en todos los workers. Establecer a 0 para eliminar el límite.",
     "CONCURRENCY": "Concurrencia",
     "SAVE": "Guardar"
   },
@@ -430,7 +430,7 @@
     "INVALID_PRIORITY": "La prioridad debe ser un número entero entre 0 y {{max}}.",
     "INVALID_QUERY_PARAM": "El parámetro de consulta \"{{field}}\" no es válido.",
     "INVALID_QUEUE": "Cola no válida",
-    "INVALID_RATE_LIMIT": "El límite de tasa debe ser un número positivo de trabajos sobre una duración positiva en milisegundos.",
+    "INVALID_RATE_LIMIT": "El límite de tasa debe ser un número positivo de tareas sobre una duración positiva en milisegundos.",
     "INVALID_REQUEST_BODY": "El campo \"{{field}}\" del cuerpo de la petición no es válido.",
     "INVALID_RUN_AT": "La hora de ejecución debe ser una marca de tiempo en milisegundos.",
     "INVALID_SCHEDULER_END_DATE": "La fecha de fin debe ser futura",
@@ -440,19 +440,19 @@
     "INVALID_SCHEDULER_SCHEDULE": "Indica un patrón cron o un intervalo, no ambos",
     "JOB_BELONGS_TO_JOB_SCHEDULER": "La tarea pertenece a un programador",
     "JOB_BELONGS_TO_JOB_SCHEDULER_DETAILS": "La tarea {{jobId}} es la próxima ejecución del programador \"{{jobSchedulerId}}\" y no se puede eliminar por sí sola. Elimina el programador para detener la programación.",
-    "JOB_EDIT_NOT_SUPPORTED": "Esta biblioteca de colas no puede editar un trabajo en el sitio.",
-    "JOB_HAS_NO_UNPROCESSED_CHILDREN": "Este trabajo no tiene hijos sin procesar que eliminar.",
+    "JOB_EDIT_NOT_SUPPORTED": "Esta biblioteca de colas no puede editar una tarea en el sitio.",
+    "JOB_HAS_NO_UNPROCESSED_CHILDREN": "Esta tarea no tiene hijas sin procesar que eliminar.",
     "JOB_IS_ACTIVE": "La tarea está en ejecución",
     "JOB_IS_ACTIVE_DETAILS": "La tarea {{jobId}} está siendo procesada por un worker y no se puede eliminar hasta que termine.",
-    "JOB_NOT_DELAYED": "Solo se puede reprogramar un trabajo retrasado. Este está {{status}}.",
+    "JOB_NOT_DELAYED": "Solo se puede reprogramar una tarea retrasada. Esta está {{status}}.",
     "JOB_NOT_FOUND": "Tarea no encontrada",
     "JOB_NOT_RETRIABLE": "La tarea está en estado \"{{state}}\" y no se puede reintentar",
-    "JOB_UNPROCESSED_CHILDREN_NOT_SUPPORTED": "Esta biblioteca de colas no puede eliminar los hijos sin procesar de un trabajo.",
+    "JOB_UNPROCESSED_CHILDREN_NOT_SUPPORTED": "Esta biblioteca de colas no puede eliminar las hijas sin procesar de una tarea.",
     "JOB_SCHEDULER_EDIT_NOT_SUPPORTED": "Este tipo de cola no admite editar un horario",
     "JOB_SCHEDULER_NOT_FOUND": "Programador no encontrado",
     "JOB_SCHEDULER_RUN_NOT_SUPPORTED": "Este tipo de cola no admite ejecutar un horario bajo demanda",
-    "QUEUE_HAS_ACTIVE_JOBS": "La cola tiene trabajos activos",
-    "QUEUE_HAS_ACTIVE_JOBS_DETAILS": "Los workers todavía están procesando trabajos de esta cola. Marca \"Forzar obliteración\" para obliterarla de todos modos.",
+    "QUEUE_HAS_ACTIVE_JOBS": "La cola tiene tareas activas",
+    "QUEUE_HAS_ACTIVE_JOBS_DETAILS": "Los workers todavía están procesando tareas de esta cola. Marca \"Forzar obliteración\" para obliterarla de todos modos.",
     "QUEUE_NOT_FOUND": "Cola no encontrada",
     "QUEUE_NOT_PAUSED": "La cola debe estar pausada antes de obliterarla",
     "QUEUE_READ_ONLY": "Método no permitido en una cola de solo lectura",
@@ -465,13 +465,13 @@
     "UNAUTHORIZED": "Debes iniciar sesión para acceder a este panel",
     "WORKERS_DISABLED": "El informe de workers está desactivado",
     "INVALID_METRIC": "Métrica no válida",
-    "PGBOSS_BULK_LIMIT": "Envía entre 1 y {{max}} ids de trabajo a la vez.",
+    "PGBOSS_BULK_LIMIT": "Envía entre 1 y {{max}} ids de tarea a la vez.",
     "PGBOSS_INVALID_CURSOR": "El cursor de la página no es válido. Vuelve a la primera página.",
     "PGBOSS_INVALID_SCHEDULE": "La expresión de la programación no es válida.",
-    "PGBOSS_JOB_STATE_CONFLICT": "No se puede aplicar {{action}} a un trabajo en estado {{state}}.",
+    "PGBOSS_JOB_STATE_CONFLICT": "No se puede aplicar {{action}} a una tarea en estado {{state}}.",
     "PGBOSS_NOT_INSTALLED": "pg-boss no está instalado en este esquema de la base de datos.",
     "PGBOSS_PREVIEW_UNAVAILABLE": "La vista previa de programaciones necesita pg-boss 12.31 o posterior.",
-    "PGBOSS_QUERY_TIMEOUT": "La consulta tardó demasiado. Filtra por id de trabajo o por singleton key.",
+    "PGBOSS_QUERY_TIMEOUT": "La consulta tardó demasiado. Filtra por id de tarea o por clave singleton.",
     "PGBOSS_SCHEMA_MISMATCH": "La base de datos está en el esquema {{found}} de pg-boss, pero el pg-boss disponible aquí escribe el esquema {{expected}}.",
     "PGBOSS_SCHEMA_UNSUPPORTED": "El esquema {{found}} de pg-boss no es compatible. Las versiones compatibles van de {{min}} a {{max}}.",
     "PGBOSS_WRITER_UNAVAILABLE": "No hay ninguna instancia de pg-boss con la que escribir. Pasa la instancia de la aplicación o instala pg-boss junto al panel.",
@@ -515,11 +515,11 @@
       "CONFIRM_TRIM": "Todo lo registrado antes de {{date}} se eliminará, conservando el último {{range}}. Esto no se puede deshacer y los días eliminados ya no aparecerán en ningún gráfico.",
       "CONFIRM_CLEAR": "Se eliminarán todos los {{size}} del historial registrado de todas las colas. Esto no se puede deshacer. La grabación continúa, por lo que los nuevos datos comenzarán a acumularse a partir de la siguiente instantánea."
     },
-    "SUBTITLE": "Trabajos completados y fallidos de todas las colas, día a día.",
+    "SUBTITLE": "Tareas completadas y fallidas de todas las colas, día a día.",
     "TREND": "Tendencia",
     "ACTIVITY": {
       "TITLE": "Actividad diaria",
-      "DESCRIPTION": "Trabajos por día en todas las colas, una celda por día.",
+      "DESCRIPTION": "Tareas por día en todas las colas, una celda por día.",
       "MEASURE": "Medida de actividad",
       "MODE_COMPLETED": "Completados",
       "MODE_FAILED": "Fallidos",
@@ -540,7 +540,7 @@
     "EMPTY": "No hay programaciones registradas.",
     "FILTER_BY_QUEUE": "Filtrar por cola",
     "ALL_QUEUES": "Todas las colas",
-    "TEMPLATE": "Plantilla del trabajo",
+    "TEMPLATE": "Plantilla de la tarea",
     "EVERY": "cada {{interval}}",
     "OF_LIMIT": "de {{limit}}",
     "COLUMNS": {
@@ -566,7 +566,7 @@
     },
     "CONFIRM": {
       "REMOVE": "¿Seguro que quieres eliminar la programación \"{{id}}\"? Sus próximas ejecuciones se detienen hasta que la aplicación vuelva a registrarla.",
-      "RUN": "¿Seguro que quieres ejecutar la programación \"{{id}}\" ahora? Esto añade de inmediato un trabajo a partir de su plantilla y deja el horario intacto."
+      "RUN": "¿Seguro que quieres ejecutar la programación \"{{id}}\" ahora? Esto añade de inmediato una tarea a partir de su plantilla y deja el horario intacto."
     },
     "TOAST": {
       "REMOVE_PENDING": "Eliminando la programación {{id}}",
@@ -578,7 +578,7 @@
     },
     "EDIT": {
       "TITLE": "Editar la programación {{id}}",
-      "DESCRIPTION": "Solo cambia el horario. El trabajo que crea conserva su nombre, datos y opciones.",
+      "DESCRIPTION": "Solo cambia el horario. La tarea que crea conserva su nombre, datos y opciones.",
       "OVERWRITE_NOTE": "La aplicación puede volver a registrar esta programación al reiniciarse, lo que sobrescribe el horario definido aquí.",
       "SAVE": "Guardar",
       "KIND": "Tipo de horario",

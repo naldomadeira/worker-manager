@@ -17,7 +17,7 @@
   },
   "DASHBOARD": {
     "JOBS_COUNT_one": "{{count}} Job",
-    "JOBS_COUNT_other": "{{count}} Job",
+    "JOBS_COUNT_other": "{{count}} Jobs",
     "JOBS_COUNT": "{{count}} Jobs",
     "EMPTY_STATE": "Keine Warteschlangen vorhanden.",
     "EMPTY_STATE_FILTERED": "Keine Warteschlange hat {{status}} Jobs.",

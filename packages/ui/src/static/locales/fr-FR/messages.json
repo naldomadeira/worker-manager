@@ -16,10 +16,10 @@
     "RELEASES": "Notes de version"
   },
   "DASHBOARD": {
-    "JOBS_COUNT_one": "{{count}} Tâche",
-    "JOBS_COUNT_many": "{{count}} Tâches",
-    "JOBS_COUNT_other": "{{count}} Tâches",
-    "JOBS_COUNT": "{{count}} Tâches",
+    "JOBS_COUNT_one": "{{count}} tâche",
+    "JOBS_COUNT_many": "{{count}} tâches",
+    "JOBS_COUNT_other": "{{count}} tâches",
+    "JOBS_COUNT": "{{count}} tâches",
     "EMPTY_STATE": "Aucune file à afficher.",
     "EMPTY_STATE_FILTERED": "Aucune file n'a de tâches {{status}}.",
     "RETRY": "Réessayer",
@@ -193,7 +193,7 @@
         "EMPTY_QUEUE": "Êtes-vous sûr de vouloir vider la file ?",
         "OBLITERATE_QUEUE": "Êtes-vous sûr de vouloir oblitérer cette file?\n\nCela supprimera complètement la file et toutes ses clés Redis.\nLa file doit d'abord être mise en pause.",
         "OBLITERATE_FORCE": "Forcer l'oblitération",
-        "OBLITERATE_FORCE_DESCRIPTION": "{{jobs}} jobs sont encore en cours de traitement. Oblitérer quand même : leurs workers continuent de s'exécuter et peuvent échouer une fois la file supprimée.",
+        "OBLITERATE_FORCE_DESCRIPTION": "{{jobs}} tâches sont encore en cours de traitement. Oblitérer quand même : leurs workers continuent de s'exécuter et peuvent échouer une fois la file supprimée.",
         "RESUME_QUEUE": "Êtes-vous sûr de vouloir reprendre le traitement de la file ?",
         "PAUSE_ALL": "Êtes-vous sûr de vouloir mettre toutes les files d'attente en pause ?",
         "RESUME_ALL": "Êtes-vous sûr de vouloir reprendre toutes les files d'attente ?",
@@ -262,7 +262,7 @@
     "RANGE": "{{start}}–{{end}} sur {{total}}"
   },
   "METRICS": {
-    "TITLE": "Débit (jobs / min)",
+    "TITLE": "Débit (tâches / min)",
     "COMPLETED": "Terminés",
     "FAILED": "Échoués",
     "COMPLETED_PER_MIN": "Terminés / min",
@@ -291,7 +291,7 @@
     "TREND_LABEL": "{{value}} par rapport à la première moitié de la période"
   },
   "LATENCY": {
-    "TITLE": "Latence des jobs",
+    "TITLE": "Latence des tâches",
     "GROUP_RUN": "Exécution",
     "GROUP_WAIT": "Attente",
     "RUN_P50": "Exécution p50",
@@ -300,7 +300,7 @@
     "WAIT_P50": "Attente p50",
     "WAIT_P95": "Attente p95",
     "WAIT_P99": "Attente p99",
-    "QUEUE_AGE": "Job le plus ancien en attente",
+    "QUEUE_AGE": "Tâche la plus ancienne en attente",
     "P50": "p50",
     "P95": "p95",
     "P99": "p99",
@@ -310,7 +310,7 @@
     "LOW_CONFIDENCE_many": "Fiabilité faible : {{count}} échantillons",
     "LOW_CONFIDENCE_other": "Fiabilité faible : {{count}} échantillons",
     "EMPTY_NO_DATA": "Aucune donnée de latence enregistrée pour cette période.",
-    "EMPTY_NO_COMPLETIONS": "Cette file n'a terminé aucun job sur cette période.",
+    "EMPTY_NO_COMPLETIONS": "Cette file n'a terminé aucune tâche sur cette période.",
     "HOURLY_GRANULARITY_ONLY": "L'historique de latence est enregistré avec une granularité horaire, il n'y a donc rien à afficher pour les 60 dernières minutes. Passez à 7 j, 30 j ou 90 j pour le voir."
   },
   "CONFIRM": {
@@ -451,8 +451,8 @@
     "JOB_SCHEDULER_EDIT_NOT_SUPPORTED": "Ce type de file ne permet pas de modifier une planification",
     "JOB_SCHEDULER_NOT_FOUND": "Planificateur non trouvé",
     "JOB_SCHEDULER_RUN_NOT_SUPPORTED": "Ce type de file ne permet pas d’exécuter une planification à la demande",
-    "QUEUE_HAS_ACTIVE_JOBS": "La file a des jobs actifs",
-    "QUEUE_HAS_ACTIVE_JOBS_DETAILS": "Des workers traitent encore des jobs de cette file. Cochez \"Forcer l'oblitération\" pour l'oblitérer quand même.",
+    "QUEUE_HAS_ACTIVE_JOBS": "La file a des tâches actives",
+    "QUEUE_HAS_ACTIVE_JOBS_DETAILS": "Des workers traitent encore des tâches de cette file. Cochez \"Forcer l'oblitération\" pour l'oblitérer quand même.",
     "QUEUE_NOT_FOUND": "File non trouvée",
     "QUEUE_NOT_PAUSED": "La file doit être en pause avant d'être oblitérée",
     "QUEUE_READ_ONLY": "Méthode non autorisée sur une file en lecture seule",
@@ -465,13 +465,13 @@
     "UNAUTHORIZED": "Vous devez vous connecter pour accéder à ce tableau de bord",
     "WORKERS_DISABLED": "Le rapport des workers est désactivé",
     "INVALID_METRIC": "Métrique invalide",
-    "PGBOSS_BULK_LIMIT": "Envoyez entre 1 et {{max}} identifiants de job à la fois.",
+    "PGBOSS_BULK_LIMIT": "Envoyez entre 1 et {{max}} identifiants de tâche à la fois.",
     "PGBOSS_INVALID_CURSOR": "Le curseur de page n’est pas valide. Revenez à la première page.",
     "PGBOSS_INVALID_SCHEDULE": "L’expression de planification n’est pas valide.",
-    "PGBOSS_JOB_STATE_CONFLICT": "Impossible d’appliquer {{action}} à un job dans l'état {{state}}.",
+    "PGBOSS_JOB_STATE_CONFLICT": "Impossible d’appliquer {{action}} à une tâche dans l'état {{state}}.",
     "PGBOSS_NOT_INSTALLED": "pg-boss n’est pas installé dans ce schéma de la base de données.",
     "PGBOSS_PREVIEW_UNAVAILABLE": "L’aperçu des planifications nécessite pg-boss 12.31 ou une version ultérieure.",
-    "PGBOSS_QUERY_TIMEOUT": "La requête a pris trop de temps. Filtrez par identifiant de job ou par singleton key.",
+    "PGBOSS_QUERY_TIMEOUT": "La requête a pris trop de temps. Filtrez par identifiant de tâche ou par clé singleton.",
     "PGBOSS_SCHEMA_MISMATCH": "La base de données est au schéma pg-boss {{found}}, mais le pg-boss disponible ici écrit le schéma {{expected}}.",
     "PGBOSS_SCHEMA_UNSUPPORTED": "Le schéma pg-boss {{found}} n’est pas pris en charge. Les versions prises en charge vont de {{min}} à {{max}}.",
     "PGBOSS_WRITER_UNAVAILABLE": "Aucune instance pg-boss n’est disponible pour écrire. Passez l’instance de l’application, ou installez pg-boss à côté du tableau de bord.",
@@ -566,7 +566,7 @@
     },
     "CONFIRM": {
       "REMOVE": "Voulez-vous vraiment supprimer le planificateur « {{id}} » ? Ses prochaines exécutions sont arrêtées jusqu'à ce que l'application l'enregistre de nouveau.",
-      "RUN": "Voulez-vous vraiment exécuter le planificateur « {{id}} » maintenant ? Cela ajoute immédiatement un job à partir de son modèle et laisse la planification inchangée."
+      "RUN": "Voulez-vous vraiment exécuter le planificateur « {{id}} » maintenant ? Cela ajoute immédiatement une tâche à partir de son modèle et laisse la planification inchangée."
     },
     "TOAST": {
       "REMOVE_PENDING": "Suppression du planificateur {{id}}",

@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
+import { CopyButton } from '../../../components/CopyButton/CopyButton';
 import { HintTooltip } from '../../../components/HintTooltip/HintTooltip';
 import { useMobileQuery } from '../../../hooks/useMobileQuery';
 import { useUIConfig } from '../../../hooks/useUIConfig';
@@ -47,17 +48,11 @@ export const PgBossJobCard = ({
   const lastEvent = job.completedOn ?? job.startedOn ?? job.createdOn;
 
   const title = (
-    <>
-      <span
-        className="shrink-0 font-mono text-xs tracking-tight text-muted-foreground"
-        title={job.id}
-      >
+    <HintTooltip title={job.id}>
+      <span className="shrink-0 font-mono text-[0.8125rem] font-medium tracking-tight text-foreground">
         {shortId(job.id)}
       </span>
-      <span className="truncate font-mono text-[0.8125rem] font-medium text-foreground max-sm:hidden">
-        {job.id}
-      </span>
-    </>
+    </HintTooltip>
   );
 
   return (
@@ -89,6 +84,7 @@ export const PgBossJobCard = ({
           ) : (
             <span className="flex min-w-0 items-baseline gap-2">{title}</span>
           )}
+          <CopyButton textToCopy={job.id} className="-ml-1.5 size-6" />
 
           <Badge variant="secondary" className={cn(pill, tone.soft, tone.text)}>
             {stateLabel(job.state, t)}

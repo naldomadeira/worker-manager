@@ -8,7 +8,7 @@ Open its README for the commands to run it.
 - [`nestjs/redis`](./nestjs/redis): NestJS 11 with `@nestjs/bullmq` on Redis, `forRoot` + `forFeature`, basic auth.
 - [`nestjs/postgres`](./nestjs/postgres): BullMQ v6 queues stored in PostgreSQL, registered through the root `queues` option, basic auth.
 - [`nestjs/keycloak`](./nestjs/keycloak): `@nestjs/bullmq` on Redis behind Keycloak, configured with `forRootAsync` and `ConfigService`.
-- [`nestjs/pg-boss`](./nestjs/pg-boss): placeholder until the pg-boss engine ships.
+- [`nestjs/pg-boss`](./nestjs/pg-boss): the experimental pg-boss board over the app's own started pg-boss instance, with workers, a schedule and basic auth.
 - [`nestjs/fastify-custom-auth`](./nestjs/fastify-custom-auth): Nest on the Fastify platform with a custom session login in front of the board.
 
 ## Express

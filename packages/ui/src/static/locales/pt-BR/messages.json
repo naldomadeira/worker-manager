@@ -16,21 +16,21 @@
     "RELEASES": "Notas de versão"
   },
   "DASHBOARD": {
-    "JOBS_COUNT_one": "{{count}} Tarefa",
-    "JOBS_COUNT_many": "{{count}} Tarefas",
-    "JOBS_COUNT_other": "{{count}} Tarefas",
-    "JOBS_COUNT": "{{count}} Tarefas",
+    "JOBS_COUNT_one": "{{count}} tarefa",
+    "JOBS_COUNT_many": "{{count}} tarefas",
+    "JOBS_COUNT_other": "{{count}} tarefas",
+    "JOBS_COUNT": "{{count}} tarefas",
     "EMPTY_STATE": "Nenhuma fila para exibir.",
     "EMPTY_STATE_FILTERED": "Nenhuma fila possui tarefas {{status}}.",
     "RETRY": "Tentar novamente",
     "LOAD_ERROR": "Não foi possível carregar as filas.",
     "SORTING": {
       "TITLE": "Ordenar por",
-      "FAILED": "Trabalhos com falha",
-      "DELAYED": "Trabalhos atrasados",
-      "WAITING": "Trabalhos em espera",
-      "ACTIVE": "Trabalhos ativos",
-      "COMPLETED": "Trabalhos concluídos",
+      "FAILED": "Tarefas com falha",
+      "DELAYED": "Tarefas atrasadas",
+      "WAITING": "Tarefas em espera",
+      "ACTIVE": "Tarefas ativas",
+      "COMPLETED": "Tarefas concluídas",
       "ALPHABETICAL": "Alfabético (A-Z)",
       "ASC": "Crescente",
       "DESC": "Decrescente"
@@ -44,7 +44,7 @@
       "QUEUES": "Filas",
       "PAUSED": "{{count}} pausadas",
       "ALL_RUNNING": "Todas em execução",
-      "SHARE": "{{percent}}% dos jobs"
+      "SHARE": "{{percent}}% das tarefas"
     },
     "CLEAR_SEARCH": "Limpar busca",
     "EMPTY_STATE_SEARCH": "Nenhuma fila corresponde a “{{term}}”.",
@@ -98,9 +98,9 @@
       "FIT_VIEW": "Ajustar o fluxo inteiro"
     },
     "EDIT": {
-      "DELAY_TITLE": "Reagendar job",
+      "DELAY_TITLE": "Reagendar tarefa",
       "PRIORITY_TITLE": "Alterar prioridade",
-      "DELAY_HINT": "Escolha um novo horário para este job atrasado. Um horário no passado o executa assim que houver um worker livre.",
+      "DELAY_HINT": "Escolha um novo horário para esta tarefa atrasada. Um horário no passado a executa assim que houver um worker livre.",
       "PRIORITY_HINT": "Números menores rodam primeiro. 0 remove a prioridade.",
       "RUN_AT": "Executar em",
       "PRIORITY": "Prioridade",
@@ -113,7 +113,7 @@
       "STALLED": "travado {{times}}",
       "ATTEMPTS_STARTED": "{{starts}} iniciadas",
       "WILL_FAIL": "vai falhar",
-      "WILL_FAIL_WITH_REASON": "Este job está marcado para falhar assim que um worker o pegar: {{reason}}"
+      "WILL_FAIL_WITH_REASON": "Esta tarefa está marcada para falhar assim que um worker a pegar: {{reason}}"
     },
     "DURATION": {
       "SECS": "{{duration}} segundos",
@@ -144,12 +144,12 @@
       "REPRIORITISE": "Alterar prioridade",
       "REMOVE_UNPROCESSED_CHILDREN": "Remover filhos não processados",
       "CONFIRM": {
-        "PROMOTE": "Você tem certeza de que deseja promover este trabalho?",
-        "RETRY": "Você tem certeza de que deseja tentar novamente este trabalho?",
-        "CLEAN": "Você tem certeza de que deseja limpar este trabalho?",
-        "REMOVE_UNPROCESSED_CHILDREN": "Remover os jobs filhos que este job ainda espera? Eles são excluídos, e o pai fica livre para seguir.",
+        "PROMOTE": "Você tem certeza de que deseja promover esta tarefa?",
+        "RETRY": "Você tem certeza de que deseja tentar novamente esta tarefa?",
+        "CLEAN": "Você tem certeza de que deseja limpar esta tarefa?",
+        "REMOVE_UNPROCESSED_CHILDREN": "Remover as tarefas filhas que esta tarefa ainda espera? Elas são excluídas, e a tarefa pai fica livre para seguir.",
         "REMOVE_JOB_SCHEDULER_TITLE": "Remover todo o agendamento?",
-        "REMOVE_JOB_SCHEDULER": "Este trabalho é a próxima execução do agendador \"{{schedulerId}}\" e não pode ser removido sozinho. Remover o agendador interrompe o agendamento e exclui este trabalho."
+        "REMOVE_JOB_SCHEDULER": "Esta tarefa é a próxima execução do agendador \"{{schedulerId}}\" e não pode ser removida sozinha. Remover o agendador interrompe o agendamento e exclui esta tarefa."
       }
     },
     "TABS": {
@@ -161,8 +161,8 @@
       "ERROR": "Erros",
       "TIMELINE": "Linha do tempo"
     },
-    "EXPAND": "Expandir job",
-    "COLLAPSE": "Recolher job"
+    "EXPAND": "Expandir tarefa",
+    "COLLAPSE": "Recolher tarefa"
   },
   "QUEUE": {
     "NOT_FOUND": "Fila não encontrada",
@@ -170,9 +170,9 @@
     "ACTIONS": {
       "MODAL_TITLE": "",
       "RETRY_ALL": "Tentar novamente todos",
-      "RETRY_ALL_FAILED": "Tentar novamente os {{count}} trabalhos com falha",
-      "RETRY_FAILED_IN_ALL_QUEUES": "Tentar novamente {{count}} trabalhos com falha de todas as filas",
-      "RETRY_FAILED_IN_GROUP": "Tentar novamente {{count}} trabalhos com falha do grupo",
+      "RETRY_ALL_FAILED": "Tentar novamente as {{count}} tarefas com falha",
+      "RETRY_FAILED_IN_ALL_QUEUES": "Tentar novamente {{count}} tarefas com falha de todas as filas",
+      "RETRY_FAILED_IN_GROUP": "Tentar novamente {{count}} tarefas com falha do grupo",
       "PROMOTE_ALL": "Promover todos",
       "CLEAN_ALL": "Limpar todos",
       "RESUME": "Resumir",
@@ -181,19 +181,19 @@
       "PAUSE_ALL": "Pausar tudo",
       "EMPTY": "Limpar",
       "OBLITERATE": "Obliterar",
-      "ADD_JOB": "Adicionar trabalho",
+      "ADD_JOB": "Adicionar tarefa",
       "SET_CONCURRENCY": "Definir concorrência",
       "SET_RATE_LIMIT": "Definir limite de taxa",
       "CONFIRM": {
-        "RETRY_ALL": "Deseja realmente reprocessar todos as {{status}} tarefas?",
-        "RETRY_FAILED_QUEUES": "Tem certeza de que deseja tentar novamente {{jobs}} trabalhos com falha em {{count}} filas?",
-        "CLEAN_ALL": "Deseja realmente limpar todos as {{status}} tarefas?",
+        "RETRY_ALL": "Deseja realmente reprocessar todas as {{status}} tarefas?",
+        "RETRY_FAILED_QUEUES": "Tem certeza de que deseja tentar novamente {{jobs}} tarefas com falha em {{count}} filas?",
+        "CLEAN_ALL": "Deseja realmente limpar todas as {{status}} tarefas?",
         "PROMOTE_ALL": "Deseja realmente promover todas as tarefas atrasadas?",
         "PAUSE_QUEUE": "Deseja realmente pausar o processamento da fila?",
         "EMPTY_QUEUE": "Deseja realmente limpar a fila?",
         "OBLITERATE_QUEUE": "Tem certeza de que deseja obliterar esta fila?\n\nIsso removerá completamente a fila e todas as suas chaves Redis.\nA fila deve ser pausada primeiro.",
         "OBLITERATE_FORCE": "Forçar obliteração",
-        "OBLITERATE_FORCE_DESCRIPTION": "{{jobs}} jobs ainda estão em processamento. Obliterar mesmo assim — os workers continuam em execução e podem falhar depois que a fila for removida.",
+        "OBLITERATE_FORCE_DESCRIPTION": "{{jobs}} tarefas ainda estão em processamento. Obliterar mesmo assim — os workers continuam em execução e podem falhar depois que a fila for removida.",
         "RESUME_QUEUE": "Deseja realmente retomar o processamento da fila?",
         "PAUSE_ALL": "Tem certeza de que deseja pausar todas as filas?",
         "RESUME_ALL": "Tem certeza de que deseja retomar todas as filas?",
@@ -201,11 +201,11 @@
         "RESUME_GROUP": "Tem certeza de que deseja retomar todas as {{count}} filas neste grupo?"
       },
       "TOAST": {
-        "RETRY_PENDING": "Tentando novamente todos os trabalhos {{status}}...",
-        "RETRY_DONE": "Todos os trabalhos {{status}} voltaram para a fila",
-        "RETRY_SKIPPED": "{{count}} ids ignorados por não terem dados de trabalho. Os dados costumam se perder por uma política de remoção do Redis diferente de noeviction.",
-        "RETRY_QUEUES_PENDING": "Tentando novamente {{jobs}} trabalhos com falha em {{count}} filas...",
-        "RETRY_QUEUES_DONE": "{{jobs}} trabalhos com falha de {{count}} filas voltaram para suas filas"
+        "RETRY_PENDING": "Tentando novamente todas as tarefas {{status}}...",
+        "RETRY_DONE": "Todas as tarefas {{status}} voltaram para a fila",
+        "RETRY_SKIPPED": "{{count}} ids ignorados por não terem dados de tarefa. Os dados costumam se perder por uma política de remoção do Redis diferente de noeviction.",
+        "RETRY_QUEUES_PENDING": "Tentando novamente {{jobs}} tarefas com falha em {{count}} filas...",
+        "RETRY_QUEUES_DONE": "{{jobs}} tarefas com falha de {{count}} filas voltaram para suas filas"
       },
       "PAUSE_GROUP": "Pausar todas as filas do grupo",
       "RESUME_GROUP": "Retomar todas as filas do grupo",
@@ -239,8 +239,8 @@
       "RATE_LIMIT": "Limite de taxa",
       "WORKERS": "Workers",
       "DELIMITER": "Delimitador de grupo",
-      "TOTAL_JOBS": "Total de trabalhos",
-      "DEFAULTS": "Opções padrão de trabalho",
+      "TOTAL_JOBS": "Total de tarefas",
+      "DEFAULTS": "Opções padrão das tarefas",
       "DESCRIPTION": "Descrição",
       "NOT_SET": "Não definido",
       "YES": "Sim",
@@ -262,7 +262,7 @@
     "RANGE": "{{start}}–{{end}} de {{total}}"
   },
   "METRICS": {
-    "TITLE": "Taxa de transferência (trabalhos / min)",
+    "TITLE": "Taxa de transferência (tarefas / min)",
     "COMPLETED": "Concluídos",
     "FAILED": "Falhos",
     "COMPLETED_PER_MIN": "Concluídos / min",
@@ -291,7 +291,7 @@
     "TREND_LABEL": "{{value}} em relação à primeira metade do período"
   },
   "LATENCY": {
-    "TITLE": "Latência dos jobs",
+    "TITLE": "Latência das tarefas",
     "GROUP_RUN": "Execução",
     "GROUP_WAIT": "Espera",
     "RUN_P50": "Execução p50",
@@ -300,7 +300,7 @@
     "WAIT_P50": "Espera p50",
     "WAIT_P95": "Espera p95",
     "WAIT_P99": "Espera p99",
-    "QUEUE_AGE": "Trabalho mais antigo em espera",
+    "QUEUE_AGE": "Tarefa mais antiga em espera",
     "P50": "p50",
     "P95": "p95",
     "P99": "p99",
@@ -310,7 +310,7 @@
     "LOW_CONFIDENCE_many": "Confiança baixa: {{count}} amostras",
     "LOW_CONFIDENCE_other": "Confiança baixa: {{count}} amostras",
     "EMPTY_NO_DATA": "Nenhum dado de latência registrado para este período ainda.",
-    "EMPTY_NO_COMPLETIONS": "Esta fila não concluiu nenhum trabalho neste período.",
+    "EMPTY_NO_COMPLETIONS": "Esta fila não concluiu nenhuma tarefa neste período.",
     "HOURLY_GRANULARITY_ONLY": "O histórico de latência é registrado apenas em granularidade horária, portanto não há nada para mostrar nos últimos 60 minutos. Mude para 7d, 30d ou 90d para visualizá-lo."
   },
   "CONFIRM": {
@@ -381,8 +381,8 @@
   },
   "RATE_LIMIT": {
     "TITLE": "Limite de taxa",
-    "DESCRIPTION": "Número máximo de jobs processados entre todos os workers em uma janela de tempo. Deixe os dois campos vazios para remover o limite.",
-    "MAX": "Máx. de jobs",
+    "DESCRIPTION": "Número máximo de tarefas processadas entre todos os workers em uma janela de tempo. Deixe os dois campos vazios para remover o limite.",
+    "MAX": "Máx. de tarefas",
     "DURATION": "Duração (ms)",
     "SAVE": "Salvar",
     "VALUE": "{{max}} / {{duration}} ms",
@@ -390,11 +390,11 @@
     "RELEASE": "Liberar agora",
     "CONFIRM_RELEASE": "Liberar o limite de taxa desta fila?",
     "BADGE": "limitada {{seconds}} s",
-    "BADGE_TOOLTIP": "Um worker limitou esta fila. Os jobs voltam em {{seconds}} s, ou libere agora."
+    "BADGE_TOOLTIP": "Um worker limitou esta fila. As tarefas voltam em {{seconds}} s, ou libere agora."
   },
   "CONCURRENCY": {
     "TITLE": "Concorrência global",
-    "DESCRIPTION": "Número máximo de jobs processados em paralelo em todos os workers. Defina como 0 para remover o limite.",
+    "DESCRIPTION": "Número máximo de tarefas processadas em paralelo em todos os workers. Defina como 0 para remover o limite.",
     "CONCURRENCY": "Concorrência",
     "SAVE": "Salvar"
   },
@@ -409,9 +409,9 @@
     "DUPLICATE": "Duplicar"
   },
   "UPDATE_JOB_DATA": {
-    "TITLE": "Atualizar dados do tarefa",
+    "TITLE": "Atualizar dados da tarefa",
     "UPDATE": "Atualizar",
-    "JOB_DATA": "Dados do tarefa"
+    "JOB_DATA": "Dados da tarefa"
   },
   "CLIPBOARD": {
     "COPY_FAILED": "Falha ao copiar para a área de transferência. Seu navegador pode não suportar este recurso ou a página não está sendo servida via HTTPS.",
@@ -430,7 +430,7 @@
     "INVALID_PRIORITY": "A prioridade deve ser um número inteiro entre 0 e {{max}}.",
     "INVALID_QUERY_PARAM": "O parâmetro de consulta \"{{field}}\" não é válido.",
     "INVALID_QUEUE": "Fila inválida",
-    "INVALID_RATE_LIMIT": "O limite de taxa deve ser um número positivo de jobs em uma duração positiva em milissegundos.",
+    "INVALID_RATE_LIMIT": "O limite de taxa deve ser um número positivo de tarefas em uma duração positiva em milissegundos.",
     "INVALID_REQUEST_BODY": "O campo \"{{field}}\" no corpo da requisição não é válido.",
     "INVALID_RUN_AT": "O horário de execução deve ser um timestamp em milissegundos.",
     "INVALID_SCHEDULER_END_DATE": "A data final deve estar no futuro",
@@ -440,19 +440,19 @@
     "INVALID_SCHEDULER_SCHEDULE": "Informe um padrão cron ou um intervalo, não os dois",
     "JOB_BELONGS_TO_JOB_SCHEDULER": "A tarefa pertence a um agendador",
     "JOB_BELONGS_TO_JOB_SCHEDULER_DETAILS": "A tarefa {{jobId}} é a próxima execução do agendador \"{{jobSchedulerId}}\" e não pode ser removida sozinha. Remova o agendador para interromper o agendamento.",
-    "JOB_EDIT_NOT_SUPPORTED": "Esta biblioteca de filas não consegue editar um job no lugar.",
-    "JOB_HAS_NO_UNPROCESSED_CHILDREN": "Este job não tem filhos não processados para remover.",
+    "JOB_EDIT_NOT_SUPPORTED": "Esta biblioteca de filas não consegue editar uma tarefa no lugar.",
+    "JOB_HAS_NO_UNPROCESSED_CHILDREN": "Esta tarefa não tem filhas não processadas para remover.",
     "JOB_IS_ACTIVE": "A tarefa está em execução",
     "JOB_IS_ACTIVE_DETAILS": "A tarefa {{jobId}} está sendo processada por um worker e não pode ser removida até terminar.",
-    "JOB_NOT_DELAYED": "Só um job atrasado pode ser reagendado. Este está {{status}}.",
+    "JOB_NOT_DELAYED": "Só uma tarefa atrasada pode ser reagendada. Esta está {{status}}.",
     "JOB_NOT_FOUND": "Tarefa não encontrada",
     "JOB_NOT_RETRIABLE": "A tarefa está no estado \"{{state}}\" e não pode ser repetida",
-    "JOB_UNPROCESSED_CHILDREN_NOT_SUPPORTED": "Esta biblioteca de filas não consegue remover os filhos não processados de um job.",
+    "JOB_UNPROCESSED_CHILDREN_NOT_SUPPORTED": "Esta biblioteca de filas não consegue remover as filhas não processadas de uma tarefa.",
     "JOB_SCHEDULER_EDIT_NOT_SUPPORTED": "Este tipo de fila não permite editar uma programação",
     "JOB_SCHEDULER_NOT_FOUND": "Agendador não encontrado",
     "JOB_SCHEDULER_RUN_NOT_SUPPORTED": "Este tipo de fila não permite executar uma programação sob demanda",
-    "QUEUE_HAS_ACTIVE_JOBS": "A fila tem jobs ativos",
-    "QUEUE_HAS_ACTIVE_JOBS_DETAILS": "Workers ainda estão processando jobs desta fila. Marque \"Forçar obliteração\" para obliterá-la mesmo assim.",
+    "QUEUE_HAS_ACTIVE_JOBS": "A fila tem tarefas ativas",
+    "QUEUE_HAS_ACTIVE_JOBS_DETAILS": "Workers ainda estão processando tarefas desta fila. Marque \"Forçar obliteração\" para obliterá-la mesmo assim.",
     "QUEUE_NOT_FOUND": "Fila não encontrada",
     "QUEUE_NOT_PAUSED": "A fila precisa estar pausada antes de ser obliterada",
     "QUEUE_READ_ONLY": "Método não permitido em uma fila somente leitura",
@@ -465,13 +465,13 @@
     "UNAUTHORIZED": "Você precisa entrar para acessar este painel",
     "WORKERS_DISABLED": "O relatório de workers está desativado",
     "INVALID_METRIC": "Métrica inválida",
-    "PGBOSS_BULK_LIMIT": "Envie de 1 a {{max}} ids de job por vez.",
+    "PGBOSS_BULK_LIMIT": "Envie de 1 a {{max}} ids de tarefa por vez.",
     "PGBOSS_INVALID_CURSOR": "O cursor da página não é válido. Volte para a primeira página.",
     "PGBOSS_INVALID_SCHEDULE": "A expressão do agendamento não é válida.",
-    "PGBOSS_JOB_STATE_CONFLICT": "Não é possível executar {{action}} em um job no estado {{state}}.",
+    "PGBOSS_JOB_STATE_CONFLICT": "Não é possível executar {{action}} em uma tarefa no estado {{state}}.",
     "PGBOSS_NOT_INSTALLED": "O pg-boss não está instalado neste schema do banco.",
     "PGBOSS_PREVIEW_UNAVAILABLE": "A prévia de agendamentos exige pg-boss 12.31 ou mais recente.",
-    "PGBOSS_QUERY_TIMEOUT": "A consulta demorou demais. Filtre pelo id do job ou pela singleton key.",
+    "PGBOSS_QUERY_TIMEOUT": "A consulta demorou demais. Filtre pelo id da tarefa ou pela chave singleton.",
     "PGBOSS_SCHEMA_MISMATCH": "O banco está no schema {{found}} do pg-boss, mas o pg-boss disponível aqui grava o schema {{expected}}.",
     "PGBOSS_SCHEMA_UNSUPPORTED": "O schema {{found}} do pg-boss não é suportado. As versões suportadas vão de {{min}} a {{max}}.",
     "PGBOSS_WRITER_UNAVAILABLE": "Não há instância do pg-boss para gravar. Passe a instância do app ou instale o pg-boss junto do board.",
@@ -515,11 +515,11 @@
       "CONFIRM_TRIM": "Tudo registrado antes de {{date}} será excluído, mantendo os últimos {{range}}. Isso não pode ser desfeito, e os dias excluídos não aparecerão mais em nenhum gráfico.",
       "CONFIRM_CLEAR": "Todo o {{size}} do histórico registrado será excluído para todas as filas. Isso não pode ser desfeito. A gravação continua, então novos dados começarão a se acumular a partir do próximo snapshot."
     },
-    "SUBTITLE": "Jobs concluídos e com falha de todas as filas, dia a dia.",
+    "SUBTITLE": "Tarefas concluídas e com falha de todas as filas, dia a dia.",
     "TREND": "Tendência",
     "ACTIVITY": {
       "TITLE": "Atividade diária",
-      "DESCRIPTION": "Jobs por dia em todas as filas, uma célula por dia.",
+      "DESCRIPTION": "Tarefas por dia em todas as filas, uma célula por dia.",
       "MEASURE": "Medida de atividade",
       "MODE_COMPLETED": "Concluídos",
       "MODE_FAILED": "Falhos",
@@ -540,7 +540,7 @@
     "EMPTY": "Nenhum agendamento registrado.",
     "FILTER_BY_QUEUE": "Filtrar por fila",
     "ALL_QUEUES": "Todas as filas",
-    "TEMPLATE": "Modelo do job",
+    "TEMPLATE": "Modelo da tarefa",
     "EVERY": "a cada {{interval}}",
     "OF_LIMIT": "de {{limit}}",
     "COLUMNS": {
@@ -566,7 +566,7 @@
     },
     "CONFIRM": {
       "REMOVE": "Tem certeza de que deseja remover o agendamento \"{{id}}\"? As próximas execuções param até que a aplicação o registre novamente.",
-      "RUN": "Tem certeza de que deseja executar o agendamento \"{{id}}\" agora? Isso adiciona imediatamente um job a partir do seu modelo e mantém a programação intacta."
+      "RUN": "Tem certeza de que deseja executar o agendamento \"{{id}}\" agora? Isso adiciona imediatamente uma tarefa a partir do seu modelo e mantém a programação intacta."
     },
     "TOAST": {
       "REMOVE_PENDING": "Removendo o agendamento {{id}}",
@@ -578,7 +578,7 @@
     },
     "EDIT": {
       "TITLE": "Editar o agendamento {{id}}",
-      "DESCRIPTION": "Apenas a programação muda. O job criado mantém nome, dados e opções.",
+      "DESCRIPTION": "Apenas a programação muda. A tarefa criada mantém nome, dados e opções.",
       "OVERWRITE_NOTE": "A aplicação pode registrar este agendamento novamente ao reiniciar, o que sobrescreve a programação definida aqui.",
       "SAVE": "Salvar",
       "KIND": "Tipo de programação",
@@ -673,9 +673,9 @@
       "READY": "Pronto"
     },
     "KPI": {
-      "READY": "Prontos",
-      "DEFERRED": "Adiados",
-      "ACTIVE": "Ativos",
+      "READY": "Prontas",
+      "DEFERRED": "Adiadas",
+      "ACTIVE": "Ativas",
       "FAILED": "Com erro",
       "TOTAL": "Total",
       "BACKLOGGED": "Acumuladas: {{value}}",
@@ -710,7 +710,7 @@
       "SCHEDULES": "Agendamentos",
       "CREATED_ON": "Criada",
       "UPDATED_ON": "Atualizada",
-      "READY_HISTORY": "Jobs prontos, últimas amostras",
+      "READY_HISTORY": "Tarefas prontas, últimas amostras",
       "YES": "Sim",
       "NO": "Não",
       "NONE": "Nenhum",
@@ -723,17 +723,17 @@
     },
     "POLICY": {
       "STANDARD": "Padrão",
-      "STANDARD_DESC": "Os jobs são buscados por prioridade e data de criação, sem limites.",
+      "STANDARD_DESC": "As tarefas são buscadas por prioridade e data de criação, sem limites.",
       "SHORT": "Curta",
-      "SHORT_DESC": "No máximo um job na fila por chave singleton.",
+      "SHORT_DESC": "No máximo uma tarefa na fila por chave singleton.",
       "SINGLETON": "Singleton",
-      "SINGLETON_DESC": "No máximo um job ativo por chave singleton.",
+      "SINGLETON_DESC": "No máximo uma tarefa ativa por chave singleton.",
       "STATELY": "Por estado",
-      "STATELY_DESC": "No máximo um job por estado e chave singleton.",
+      "STATELY_DESC": "No máximo uma tarefa por estado e chave singleton.",
       "EXCLUSIVE": "Exclusiva",
-      "EXCLUSIVE_DESC": "No máximo um job na fila ou ativo por chave singleton.",
+      "EXCLUSIVE_DESC": "No máximo uma tarefa na fila ou ativa por chave singleton.",
       "KEY_STRICT_FIFO": "FIFO estrito por chave",
-      "KEY_STRICT_FIFO_DESC": "Jobs com a mesma chave singleton rodam um de cada vez, em ordem."
+      "KEY_STRICT_FIFO_DESC": "Tarefas com a mesma chave singleton rodam uma de cada vez, em ordem."
     },
     "JOB": {
       "PRIORITY": "Prioridade {{priority}}",
@@ -749,19 +749,19 @@
       "GROUP_TIER": "Nível do grupo",
       "HEARTBEAT_ON": "Último heartbeat",
       "BLOCKING": "Bloqueia dependentes",
-      "NO_OUTPUT": "Este job não tem saída.",
-      "NO_DATA": "Este job não tem dados.",
+      "NO_OUTPUT": "Esta tarefa não tem saída.",
+      "NO_DATA": "Esta tarefa não tem dados.",
       "DEPENDENCIES": "Aguarda",
       "DEPENDENTS": "Aguardado por",
-      "NO_DEPENDENCIES": "Este job não aguarda nenhum outro.",
-      "NO_DEPENDENTS": "Nenhum job aguarda este.",
+      "NO_DEPENDENCIES": "Esta tarefa não aguarda nenhuma outra.",
+      "NO_DEPENDENTS": "Nenhuma tarefa aguarda esta.",
       "PENDING_DEPENDENCIES": "Dependências pendentes: {{value}}",
       "SOURCE_QUEUE": "Fila de origem",
-      "SOURCE_JOB": "Job de origem",
+      "SOURCE_JOB": "Tarefa de origem",
       "SOURCE_CREATED_ON": "Origem criada em",
       "SOURCE_RETRY_COUNT": "Tentativas na origem",
       "FROM_QUEUE": "Veio de {{queue}}",
-      "NOT_DEAD_LETTER": "Este job não foi movido de outra fila.",
+      "NOT_DEAD_LETTER": "Esta tarefa não foi movida de outra fila.",
       "TABS": {
         "DATA": "Dados",
         "OUTPUT": "Saída",
@@ -773,31 +773,31 @@
     },
     "ACTIONS": {
       "QUEUE_ACTIONS": "Ações da fila",
-      "AFFECTED": "{{affected}} de {{requested}} jobs alterados.",
-      "CANCEL_ACTIVE_WARNING": "O job está rodando. Cancelar marca o job como cancelado, mas não interrompe o handler que já está trabalhando nele.",
+      "AFFECTED": "{{affected}} de {{requested}} tarefas alteradas.",
+      "CANCEL_ACTIVE_WARNING": "A tarefa está rodando. Cancelar marca a tarefa como cancelada, mas não interrompe o handler que já está trabalhando nela.",
       "RETRY": {
         "LABEL": "Tentar de novo",
-        "CONFIRM": "Tentar de novo este job com erro?",
-        "PENDING": "Tentando o job de novo…",
-        "DONE": "Job colocado para nova tentativa"
+        "CONFIRM": "Tentar de novo esta tarefa com erro?",
+        "PENDING": "Tentando a tarefa de novo…",
+        "DONE": "Tarefa colocada para nova tentativa"
       },
       "CANCEL": {
         "LABEL": "Cancelar",
-        "CONFIRM": "Cancelar este job?",
-        "PENDING": "Cancelando o job…",
-        "DONE": "Job cancelado"
+        "CONFIRM": "Cancelar esta tarefa?",
+        "PENDING": "Cancelando a tarefa…",
+        "DONE": "Tarefa cancelada"
       },
       "RESUME": {
         "LABEL": "Retomar",
-        "CONFIRM": "Retomar este job cancelado?",
-        "PENDING": "Retomando o job…",
-        "DONE": "Job retomado"
+        "CONFIRM": "Retomar esta tarefa cancelada?",
+        "PENDING": "Retomando a tarefa…",
+        "DONE": "Tarefa retomada"
       },
       "DELETE": {
         "LABEL": "Apagar",
-        "CONFIRM": "Apagar este job? Isso não pode ser desfeito.",
-        "PENDING": "Apagando o job…",
-        "DONE": "Job apagado"
+        "CONFIRM": "Apagar esta tarefa? Isso não pode ser desfeito.",
+        "PENDING": "Apagando a tarefa…",
+        "DONE": "Tarefa apagada"
       },
       "DUPLICATE": {
         "LABEL": "Duplicar",
@@ -805,33 +805,33 @@
         "DONE": "Cópia enviada"
       },
       "SEND": {
-        "LABEL": "Enviar job",
-        "PENDING": "Enviando o job…",
-        "DONE": "Job enviado",
-        "DROPPED": "O pg-boss descartou o job, provavelmente porque já existe um singleton com a mesma chave."
+        "LABEL": "Enviar tarefa",
+        "PENDING": "Enviando a tarefa…",
+        "DONE": "Tarefa enviada",
+        "DROPPED": "O pg-boss descartou a tarefa, provavelmente porque já existe um singleton com a mesma chave."
       },
       "RETRY_FAILED": {
         "LABEL": "Tentar de novo todos com erro",
-        "CONFIRM": "Tentar de novo todos os jobs com erro desta fila?",
-        "PENDING": "Tentando de novo os jobs com erro…",
-        "DONE": "Jobs com erro colocados para nova tentativa"
+        "CONFIRM": "Tentar de novo todas as tarefas com erro desta fila?",
+        "PENDING": "Tentando de novo as tarefas com erro…",
+        "DONE": "Tarefas com erro colocadas para nova tentativa"
       },
       "DELETE_QUEUED": {
-        "LABEL": "Apagar jobs na fila",
-        "CONFIRM": "Apagar todos os jobs desta fila que ainda não começaram? Isso não pode ser desfeito.",
-        "PENDING": "Apagando os jobs na fila…",
-        "DONE": "Jobs na fila apagados"
+        "LABEL": "Apagar tarefas na fila",
+        "CONFIRM": "Apagar todas as tarefas desta fila que ainda não começaram? Isso não pode ser desfeito.",
+        "PENDING": "Apagando as tarefas na fila…",
+        "DONE": "Tarefas na fila apagadas"
       },
       "DELETE_STORED": {
-        "LABEL": "Apagar jobs finalizados",
-        "CONFIRM": "Apagar todos os jobs completos, cancelados e com erro desta fila? Isso não pode ser desfeito.",
-        "PENDING": "Apagando os jobs finalizados…",
-        "DONE": "Jobs finalizados apagados"
+        "LABEL": "Apagar tarefas finalizadas",
+        "CONFIRM": "Apagar todas as tarefas concluídas, canceladas e com erro desta fila? Isso não pode ser desfeito.",
+        "PENDING": "Apagando as tarefas finalizadas…",
+        "DONE": "Tarefas finalizadas apagadas"
       }
     },
     "SEND": {
-      "TITLE": "Enviar um job",
-      "DUPLICATE_TITLE": "Duplicar um job",
+      "TITLE": "Enviar uma tarefa",
+      "DUPLICATE_TITLE": "Duplicar uma tarefa",
       "QUEUE": "Fila",
       "DATA": "Dados",
       "PRIORITY": "Prioridade",
@@ -863,7 +863,7 @@
       "NO_NEXT_RUNS": "O pg-boss em uso não consegue prever este agendamento.",
       "QUEUE": "Fila",
       "DATA": "Dados",
-      "OPTIONS": "Opções do job",
+      "OPTIONS": "Opções da tarefa",
       "ALL_QUEUES": "Todas as filas",
       "FILTER_BY_QUEUE": "Filtrar por fila",
       "CREATE": "Novo agendamento",
@@ -872,13 +872,13 @@
       "SAVE_PENDING": "Salvando o agendamento…",
       "SAVE_DONE": "Agendamento salvo",
       "REMOVE": "Remover agendamento",
-      "REMOVE_CONFIRM": "Remover este agendamento? Os jobs que ele já enviou continuam na fila.",
+      "REMOVE_CONFIRM": "Remover este agendamento? As tarefas que ele já enviou continuam na fila.",
       "REMOVE_PENDING": "Removendo o agendamento…",
       "REMOVE_DONE": "Agendamento removido",
       "RUN_NOW": "Executar agora",
-      "RUN_NOW_CONFIRM": "Enviar agora um job a partir do modelo deste agendamento?",
-      "RUN_NOW_PENDING": "Enviando o job…",
-      "RUN_NOW_DONE": "Job enviado",
+      "RUN_NOW_CONFIRM": "Enviar agora uma tarefa a partir do modelo deste agendamento?",
+      "RUN_NOW_PENDING": "Enviando a tarefa…",
+      "RUN_NOW_DONE": "Tarefa enviada",
       "PREVIEW": "Prever",
       "PREVIEW_UNAVAILABLE": "A previsão precisa do pg-boss 12.31 ou mais novo.",
       "COLUMNS": {
@@ -886,12 +886,12 @@
         "KEY": "Chave",
         "SCHEDULE": "Programação",
         "NEXT_RUN": "Próxima execução",
-        "LAST_JOB": "Último job",
+        "LAST_JOB": "Última tarefa",
         "UPDATED": "Atualizado"
       }
     },
     "PAGINATION": {
-      "LABEL": "Páginas de jobs",
+      "LABEL": "Páginas de tarefas",
       "FIRST": "Primeira página",
       "PREVIOUS": "Anterior",
       "NEXT": "Próxima"
@@ -899,24 +899,24 @@
     "COUNT": {
       "CAPPED": "{{cap}}+",
       "UNKNOWN": "?",
-      "CAPPED_HINT": "Mais de {{cap}} jobs. A contagem para aí para manter a página rápida.",
+      "CAPPED_HINT": "Mais de {{cap}} tarefas. A contagem para aí para manter a página rápida.",
       "TIMEOUT": "A contagem demorou demais. A lista abaixo continua funcionando."
     },
     "FILTER": {
-      "ID": "Id do job",
-      "ID_PLACEHOLDER": "Buscar um job pelo id",
+      "ID": "Id da tarefa",
+      "ID_PLACEHOLDER": "Buscar uma tarefa pelo id",
       "SINGLETON_KEY": "Chave singleton",
       "SINGLETON_KEY_PLACEHOLDER": "Filtrar por chave singleton",
       "APPLY": "Filtrar",
       "CLEAR": "Limpar filtros",
-      "INVALID_ID": "O id de um job do pg-boss é um UUID."
+      "INVALID_ID": "O id de uma tarefa do pg-boss é um UUID."
     },
     "EMPTY": {
       "QUEUES": "Nenhuma fila do pg-boss para mostrar",
       "QUEUES_HINT": "As filas aparecem aqui quando a aplicação as cria.",
       "QUEUES_FILTERED": "Nenhuma fila corresponde a estes filtros",
-      "JOBS": "Nenhum job neste estado",
-      "JOBS_FILTERED": "Nenhum job corresponde a estes filtros"
+      "JOBS": "Nenhuma tarefa neste estado",
+      "JOBS_FILTERED": "Nenhuma tarefa corresponde a estes filtros"
     },
     "BANNER": {
       "WRITES_DISABLED": "As alterações estão desligadas",
@@ -924,7 +924,7 @@
       "UNREADABLE": "Não é possível ler este banco do pg-boss",
       "SCHEMA_UNSUPPORTED": "O schema do pg-boss aqui está fora da faixa suportada, de {{min}} a {{max}}.",
       "NOT_INSTALLED": "Instale o pg-boss na aplicação primeiro. O board nunca cria nem migra o schema.",
-      "SLOW_QUERY": "Listar este estado é lento em uma fila grande. Filtre pelo id do job ou pela chave singleton, ou crie o índice que a documentação recomenda."
+      "SLOW_QUERY": "Listar este estado é lento em uma fila grande. Filtre pelo id da tarefa ou pela chave singleton, ou crie o índice que a documentação recomenda."
     },
     "DATASTORE": {
       "TITLE": "Datastore do pg-boss",

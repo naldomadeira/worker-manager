@@ -65,7 +65,8 @@ it('lists the jobs of the state in the URL', async () => {
   });
   const { container } = renderPage(pgBossApi, '/queue/emails?state=failed');
 
-  await waitFor(() => expect(container.textContent).toContain(job.id));
+  await waitFor(() => expect(container.textContent).toContain(job.id.split('-')[0]));
+  expect(container.textContent).not.toContain(job.id);
   expect(pgBossApi.getJobs).toHaveBeenCalledWith(
     'emails',
     expect.objectContaining({ state: 'failed', limit: 10 })
@@ -115,7 +116,12 @@ it('offers the actions each state allows', async () => {
   const names = (state: string) =>
     card(state)
       .queryAllByRole('button')
-      .map((button) => button.getAttribute('aria-label'));
+      .map((button) => button.getAttribute('aria-label'))
+      .filter((name) => name !== 'CLIPBOARD.COPY');
+
+  for (const state of ['failed', 'active', 'cancelled']) {
+    expect(card(state).getAllByRole('button', { name: 'CLIPBOARD.COPY' })).toHaveLength(1);
+  }
 
   expect(names('failed')).toEqual([
     'PGBOSS.ACTIONS.RETRY.LABEL',

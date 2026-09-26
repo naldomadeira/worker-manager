@@ -20,6 +20,7 @@ import { PgBossLoadError } from '../hooks/query';
 import { usePgBossActions } from '../hooks/usePgBossActions';
 import { permissionsOf, usePgBossInfo } from '../hooks/usePgBossInfo';
 import { usePgBossJob } from '../hooks/usePgBossJob';
+import { shortId } from '../utils/jobs';
 import { pgBossLinks } from '../utils/links';
 import { parseState } from '../utils/states';
 
@@ -80,7 +81,9 @@ export const PgBossJobPage = () => {
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
-                <BreadcrumbPage className="font-mono text-xs">{job.id}</BreadcrumbPage>
+                <BreadcrumbPage className="font-mono text-xs" title={job.id}>
+                  {shortId(job.id)}
+                </BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>

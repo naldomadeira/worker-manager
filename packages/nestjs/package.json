@@ -1,6 +1,6 @@
 {
   "name": "@worker-manager/nestjs",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "A NestJS module for the Worker Manager dashboard.",
   "keywords": [
     "bull",
@@ -31,7 +31,7 @@
     "test": "NODE_OPTIONS=--experimental-vm-modules jest && NODE_OPTIONS=--experimental-vm-modules jest -c jest.config.v12.js"
   },
   "dependencies": {
-    "@worker-manager/auth": "2.1.0"
+    "@worker-manager/auth": "2.1.1"
   },
   "devDependencies": {
     "@nestjs/bull-shared": "^11.0.5",
@@ -42,10 +42,10 @@
     "@nestjs/platform-fastify": "^11.2.6",
     "@types/node": "^22.20.1",
     "@types/supertest": "^7.2.1",
-    "@worker-manager/api": "^2.1.0",
-    "@worker-manager/express": "^2.1.0",
-    "@worker-manager/fastify": "^2.1.0",
-    "@worker-manager/pg-boss": "^2.1.0",
+    "@worker-manager/api": "^2.1.1",
+    "@worker-manager/express": "^2.1.1",
+    "@worker-manager/fastify": "^2.1.1",
+    "@worker-manager/pg-boss": "^2.1.1",
     "@worker-manager/test-utils": "workspace:*",
     "bull": "^4.16.5",
     "bullmq": "^5.81.3",
@@ -76,10 +76,10 @@
     "@nestjs/bull-shared": "^10.0.0 || ^11.0.0 || ^12.0.0",
     "@nestjs/common": "^9.0.0 || ^10.0.0 || ^11.0.0 || ^12.0.0",
     "@nestjs/core": "^9.0.0 || ^10.0.0 || ^11.0.0 || ^12.0.0",
-    "@worker-manager/api": "^2.1.0",
-    "@worker-manager/express": "^2.1.0",
-    "@worker-manager/fastify": "^2.1.0",
-    "@worker-manager/pg-boss": "^2.1.0",
+    "@worker-manager/api": "^2.1.1",
+    "@worker-manager/express": "^2.1.1",
+    "@worker-manager/fastify": "^2.1.1",
+    "@worker-manager/pg-boss": "^2.1.1",
     "reflect-metadata": "^0.1.13 || ^0.2.0",
     "rxjs": "^7.8.1"
   },
