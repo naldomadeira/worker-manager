@@ -40,6 +40,7 @@
     },
     "KPI": {
       "QUEUES": "Queues",
+      "PAUSED_one": "{{count}} paused",
       "PAUSED": "{{count}} paused",
       "ALL_RUNNING": "All running",
       "SHARE": "{{percent}}% of jobs"
@@ -68,10 +69,14 @@
       "TITLE": "Job flow",
       "LOADING": "Loading the job flow",
       "ERROR_TITLE": "Could not load the job flow",
-      "PROCESSED": "{{n}} done",
-      "UNPROCESSED": "{{n}} unfinished",
-      "FAILED": "{{n}} failed",
-      "IGNORED": "{{n}} ignored",
+      "PROCESSED_one": "{{count}} done",
+      "PROCESSED": "{{count}} done",
+      "UNPROCESSED_one": "{{count}} unfinished",
+      "UNPROCESSED": "{{count}} unfinished",
+      "FAILED_one": "{{count}} failed",
+      "FAILED": "{{count}} failed",
+      "IGNORED_one": "{{count}} ignored",
+      "IGNORED": "{{count}} ignored",
       "PROGRESS": "{{n}}%",
       "EXPAND": "Load {{n}} more",
       "CAPPED": "{{shown}} of {{total}} shown, open the queue for the rest",
@@ -108,14 +113,17 @@
       "PRIORITY": "priority {{priority}}",
       "GROUP": "group {{id}}",
       "DEDUPLICATED": "dedup {{id}}",
-      "STALLED": "stalled {{times}}",
-      "ATTEMPTS_STARTED": "{{starts}} started",
+      "STALLED_one": "stalled {{count}} time",
+      "STALLED": "stalled {{count}} times",
+      "ATTEMPTS_STARTED_one": "{{count}} attempt started",
+      "ATTEMPTS_STARTED": "{{count}} attempts started",
       "WILL_FAIL": "will fail",
       "WILL_FAIL_WITH_REASON": "This job is marked to fail as soon as a worker picks it up: {{reason}}"
     },
     "DURATION": {
       "SECS": "{{duration}} seconds",
-      "MILLI_SECS": "{{duration}} milliseconds"
+      "MILLI_SECS_one": "{{count}} millisecond",
+      "MILLI_SECS": "{{count}} milliseconds"
     },
     "SHOW_DATA_BTN": "Show data",
     "SHOW_PROGRESS_BTN": "Show progress",
@@ -130,7 +138,8 @@
       "FOLLOW": "Follow new log lines",
       "FOLLOW_SHORT": "Follow",
       "FULLSCREEN": "Toggle fullscreen",
-      "LINES": "{{shown}} of {{total}} lines"
+      "LINES_one": "{{shown}} of {{count}} line",
+      "LINES": "{{shown}} of {{count}} lines"
     },
     "ACTIONS": {
       "PROMOTE": "Promote",
@@ -168,9 +177,14 @@
     "ACTIONS": {
       "MODAL_TITLE": "",
       "RETRY_ALL": "Retry all",
+      "RETRY_ALL_FAILED_one": "Retry {{count}} failed job",
       "RETRY_ALL_FAILED": "Retry all {{count}} failed jobs",
+      "RETRY_FAILED_IN_ALL_QUEUES_one": "Retry {{count}} failed job in all queues",
       "RETRY_FAILED_IN_ALL_QUEUES": "Retry {{count}} failed jobs in all queues",
+      "RETRY_FAILED_IN_GROUP_one": "Retry {{count}} failed job in group",
       "RETRY_FAILED_IN_GROUP": "Retry {{count}} failed jobs in group",
+      "IN_QUEUES_one": "in {{count}} queue",
+      "IN_QUEUES": "in {{count}} queues",
       "PROMOTE_ALL": "Promote all",
       "CLEAN_ALL": "Clean all",
       "RESUME": "Resume",
@@ -184,26 +198,33 @@
       "SET_RATE_LIMIT": "Set rate limit",
       "CONFIRM": {
         "RETRY_ALL": "Are you sure that you want to retry all {{status}} jobs?",
-        "RETRY_FAILED_QUEUES": "Are you sure that you want to retry {{jobs}} failed jobs across {{count}} queues?",
+        "RETRY_FAILED_QUEUES_one": "Are you sure that you want to retry {{count}} failed job $t(QUEUE.ACTIONS.IN_QUEUES, {\"count\": {{queues}} })?",
+        "RETRY_FAILED_QUEUES": "Are you sure that you want to retry {{count}} failed jobs $t(QUEUE.ACTIONS.IN_QUEUES, {\"count\": {{queues}} })?",
         "CLEAN_ALL": "Are you sure that you want to clean all {{status}} jobs?",
         "PROMOTE_ALL": "Are you sure that you want to promote all delayed jobs?",
         "PAUSE_QUEUE": "Are you sure that you want to pause queue processing?",
         "EMPTY_QUEUE": "Are you sure that you want to empty the queue?",
         "OBLITERATE_QUEUE": "Are you sure you want to obliterate this queue?\n\nThis will completely remove the queue and all its Redis keys.\nThe queue must be paused first.",
         "OBLITERATE_FORCE": "Force obliterate",
-        "OBLITERATE_FORCE_DESCRIPTION": "{{jobs}} jobs are still being processed. Obliterate anyway — their workers keep running and may fail once the queue is gone.",
+        "OBLITERATE_FORCE_DESCRIPTION_one": "{{count}} job is still being processed. Obliterate anyway — its worker keeps running and may fail once the queue is gone.",
+        "OBLITERATE_FORCE_DESCRIPTION": "{{count}} jobs are still being processed. Obliterate anyway — their workers keep running and may fail once the queue is gone.",
         "RESUME_QUEUE": "Are you sure that you want to resume queue processing?",
         "PAUSE_ALL": "Are you sure that you want to pause all queues?",
         "RESUME_ALL": "Are you sure that you want to resume all queues?",
+        "PAUSE_GROUP_one": "Are you sure that you want to pause the {{count}} queue in this group?",
         "PAUSE_GROUP": "Are you sure that you want to pause all {{count}} queues in this group?",
+        "RESUME_GROUP_one": "Are you sure that you want to resume the {{count}} queue in this group?",
         "RESUME_GROUP": "Are you sure that you want to resume all {{count}} queues in this group?"
       },
       "TOAST": {
         "RETRY_PENDING": "Retrying all {{status}} jobs...",
         "RETRY_DONE": "All {{status}} jobs were sent back to the queue",
+        "RETRY_SKIPPED_one": "Skipped {{count}} id with no job data behind it. The job data is usually lost to a Redis eviction policy other than noeviction.",
         "RETRY_SKIPPED": "Skipped {{count}} ids with no job data behind them. The job data is usually lost to a Redis eviction policy other than noeviction.",
-        "RETRY_QUEUES_PENDING": "Retrying {{jobs}} failed jobs in {{count}} queues...",
-        "RETRY_QUEUES_DONE": "{{jobs}} failed jobs in {{count}} queues were sent back to their queues"
+        "RETRY_QUEUES_PENDING_one": "Retrying {{count}} failed job $t(QUEUE.ACTIONS.IN_QUEUES, {\"count\": {{queues}} })...",
+        "RETRY_QUEUES_PENDING": "Retrying {{count}} failed jobs $t(QUEUE.ACTIONS.IN_QUEUES, {\"count\": {{queues}} })...",
+        "RETRY_QUEUES_DONE_one": "{{count}} failed job $t(QUEUE.ACTIONS.IN_QUEUES, {\"count\": {{queues}} }) was sent back to its queue",
+        "RETRY_QUEUES_DONE": "{{count}} failed jobs $t(QUEUE.ACTIONS.IN_QUEUES, {\"count\": {{queues}} }) were sent back to their queues"
       },
       "PAUSE_GROUP": "Pause all queues in group",
       "RESUME_GROUP": "Resume all queues in group",
@@ -342,6 +363,7 @@
     "POLLING_INTERVAL": "Polling interval",
     "POLLING_OPTIONS": {
       "OFF": "Off",
+      "SECS_one": "{{count}} second",
       "SECS": "{{count}} seconds",
       "MINS": "{{count}} minutes",
       "MINS_one": "{{count}} minute"
@@ -607,11 +629,14 @@
       "UPCOMING": "Upcoming run",
       "LAST_RUN": "Last run",
       "OVERLAPS": "Overlaps",
-      "OVERLAP": "{{total}} schedulers start in the same minute",
+      "OVERLAP_one": "{{count}} scheduler starts in the same minute",
+      "OVERLAP": "{{count}} schedulers start in the same minute",
       "DENSE": "Runs every {{interval}}",
+      "RUNS_IN_VIEW_one": "{{total}} run in view",
       "RUNS_IN_VIEW": "{{total}} runs in view",
       "NO_RUNS": "No runs in this window",
       "NEXT_ONLY": "Only the next run is shown: this pattern uses syntax the timeline does not expand.",
+      "SHOW_ALL_one": "Show {{total}} scheduler",
       "SHOW_ALL": "Show all {{total}} schedulers",
       "ROW_LABEL": "{{id}} ({{schedule}}), next run {{next}}",
       "IN_VIEW": "In view"
@@ -767,7 +792,8 @@
     },
     "ACTIONS": {
       "QUEUE_ACTIONS": "Queue actions",
-      "AFFECTED": "{{affected}} of {{requested}} jobs changed.",
+      "AFFECTED_one": "{{affected}} of {{count}} job changed.",
+      "AFFECTED": "{{affected}} of {{count}} jobs changed.",
       "CANCEL_ACTIVE_WARNING": "The job is running. Cancelling it marks it cancelled, but does not stop the handler already working on it.",
       "RETRY": {
         "LABEL": "Retry",

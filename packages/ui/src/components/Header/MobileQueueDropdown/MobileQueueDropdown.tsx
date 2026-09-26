@@ -19,7 +19,7 @@ const activeItem =
 
 export const MobileQueueDropdown = () => {
   const { t } = useTranslation();
-  const { queues, showSchedules: showJobSchedulers } = useBoardNavigation();
+  const { queues, showSchedules: showJobSchedulers, schedulesLabel } = useBoardNavigation();
   const activeQueueName = useActiveQueueName();
   const { hasHistoryProvider = false } = useUIConfig();
   const history = useHistory();
@@ -37,7 +37,7 @@ export const MobileQueueDropdown = () => {
     },
     {
       path: links.jobSchedulers().pathname,
-      label: t('MENU.SCHEDULERS'),
+      label: schedulesLabel ?? t('MENU.SCHEDULERS'),
       show: !!showJobSchedulers,
     },
   ].filter((page) => page.show);

@@ -154,7 +154,7 @@ export const SchedulersTimeline = ({
       </span>
       {overlap && (
         <span className="text-status-waiting">
-          {t('SCHEDULERS.TIMELINE.OVERLAP', { total: overlap.length })}: {overlapNames(overlap)}
+          {t('SCHEDULERS.TIMELINE.OVERLAP', { count: overlap.length })}: {overlapNames(overlap)}
         </span>
       )}
     </>
@@ -213,6 +213,7 @@ export const SchedulersTimeline = ({
               </span>
               <span>
                 {t('SCHEDULERS.TIMELINE.RUNS_IN_VIEW', {
+                  count: row.runsInView,
                   total: formatNumber(row.runsInView, locale),
                 })}
               </span>
@@ -383,12 +384,12 @@ export const SchedulersTimeline = ({
                         date={hotspot.minute}
                         className={cn(HOTSPOT_MARK, 'transition-transform hover:scale-125')}
                         aria-label={`${t('SCHEDULERS.TIMELINE.OVERLAP', {
-                          total: hotspot.keys.length,
+                          count: hotspot.keys.length,
                         })}: ${formatInstant(hotspot.minute, locale)}`}
                       />,
                       <>
                         <span className="font-semibold">
-                          {t('SCHEDULERS.TIMELINE.OVERLAP', { total: hotspot.keys.length })}
+                          {t('SCHEDULERS.TIMELINE.OVERLAP', { count: hotspot.keys.length })}
                         </span>
                         <span>{formatInstant(hotspot.minute, locale)}</span>
                         <span className="opacity-80">{overlapNames(hotspot.keys)}</span>
@@ -411,7 +412,10 @@ export const SchedulersTimeline = ({
         {rows.length > visibleRows.length && (
           <div className="flex justify-center border-t px-4 py-3">
             <Button variant="outline" size="sm" onClick={() => setShowAll(true)}>
-              {t('SCHEDULERS.TIMELINE.SHOW_ALL', { total: formatNumber(rows.length, locale) })}
+              {t('SCHEDULERS.TIMELINE.SHOW_ALL', {
+                count: rows.length,
+                total: formatNumber(rows.length, locale),
+              })}
             </Button>
           </div>
         )}

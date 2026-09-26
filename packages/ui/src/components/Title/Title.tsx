@@ -43,7 +43,7 @@ function jobCrumb(jobId: string): Crumb {
 /** Where the page sits in the board: Overview › queue › job, or Overview › section page. */
 export const Title = () => {
   const { t } = useTranslation();
-  const { pathname } = useLocation();
+  const { pathname, search } = useLocation();
   const navigation = useBoardNavigation();
   const bullQueue = useActiveQueue();
   const activeQueueName = useActiveQueueName();
@@ -62,13 +62,16 @@ export const Title = () => {
 
   const crumbs: Crumb[] = [{ label: t('MENU.OVERVIEW'), to: '/' }];
   if (pathname.startsWith(links.jobSchedulers().pathname)) {
-    crumbs.push({ label: t('MENU.SCHEDULERS') });
+    crumbs.push({ label: navigation.schedulesLabel ?? t('MENU.SCHEDULERS') });
   } else if (pathname.startsWith(links.metricsHistory().pathname)) {
     crumbs.push({ label: t('MENU.METRICS_HISTORY') });
   } else if (queue) {
     crumbs.push({
       label: queue.displayName || queue.name,
-      to: jobId ? links.queuePage(queue.name, selectedStatuses) : undefined,
+      to: jobId
+        ? (navigation.queuePageLink?.(queue.name, search) ??
+          links.queuePage(queue.name, selectedStatuses))
+        : undefined,
     });
     if (jobId) crumbs.push(jobCrumb(jobId));
   }

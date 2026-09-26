@@ -17,6 +17,7 @@ import { Loader } from '../../components/Loader/Loader';
 import { StickyHeader } from '../../components/StickyHeader/StickyHeader';
 import { useActiveQueue } from '../../hooks/useActiveQueue';
 import { useJob } from '../../hooks/useJob';
+import { useMobileQuery } from '../../hooks/useMobileQuery';
 import { useModal } from '../../hooks/useModal';
 import { useQueues } from '../../hooks/useQueues';
 import { useSelectedStatuses } from '../../hooks/useSelectedStatuses';
@@ -53,6 +54,7 @@ export const JobPage = () => {
   const selectedStatuses = useSelectedStatuses();
   const modal = useModal<'updateJobData' | 'addJob' | 'rescheduleJob' | 'reprioritiseJob'>();
   const reduceMotion = useReducedMotion();
+  const isMobile = useMobileQuery();
 
   if (!queue) {
     return (
@@ -84,32 +86,36 @@ export const JobPage = () => {
 
   return (
     <section className="flex flex-col gap-4">
-      <StickyHeader
-        actions={
-          <Breadcrumb>
-            <BreadcrumbList>
-              <BreadcrumbItem>
-                <BreadcrumbLink asChild>
-                  <Link
-                    to={queueUrl}
-                    className="inline-flex items-center gap-1.5 rounded-md px-1.5 py-1 font-medium hover:bg-state-hover"
-                  >
-                    <ArrowLeft className="size-3.5" />
-                    {queue.displayName ?? queue.name}
-                  </Link>
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbPage className="font-mono text-xs">
-                  {idPrefix}
-                  {job.id}
-                </BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
-        }
-      />
+      {/* The header breadcrumb already reads Overview > queue > job and links back to the queue.
+          It is hidden below md, so only there does the page draw its own way back. */}
+      {isMobile && (
+        <StickyHeader
+          actions={
+            <Breadcrumb>
+              <BreadcrumbList>
+                <BreadcrumbItem>
+                  <BreadcrumbLink asChild>
+                    <Link
+                      to={queueUrl}
+                      className="inline-flex items-center gap-1.5 rounded-md px-1.5 py-1 font-medium hover:bg-state-hover"
+                    >
+                      <ArrowLeft className="size-3.5" />
+                      {queue.displayName ?? queue.name}
+                    </Link>
+                  </BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                  <BreadcrumbPage className="font-mono text-xs">
+                    {idPrefix}
+                    {job.id}
+                  </BreadcrumbPage>
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
+          }
+        />
+      )}
       {isTransitioning ? (
         <Loader />
       ) : (

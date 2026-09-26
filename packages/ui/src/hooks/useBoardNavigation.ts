@@ -23,6 +23,17 @@ export interface BoardNavigation {
   queues: NavQueue[] | null;
   /** Whether the schedules page earns a navigation entry. */
   showSchedules: boolean;
+  /**
+   * What the sidebar, command palette, mobile switcher and breadcrumb call the schedules page, in
+   * the engine's own term. BullMQ's "Job schedulers" (`MENU.SCHEDULERS`) when absent.
+   */
+  schedulesLabel?: string;
+  /**
+   * Where the breadcrumb's queue crumb leads from one of the queue's jobs, given the job page's
+   * query string, so the way back lands on the list the job was opened from. BullMQ's
+   * `links.queuePage` with the selected statuses when absent.
+   */
+  queuePageLink?(queueName: string, search: string): { pathname: string; search: string };
   /** The engine's own queue details panel, opened from the breadcrumb. BullMQ's by default. */
   QueueInfoModal?: ComponentType<{ queueName: string; open: boolean; onClose(): void }>;
   /** The engine's own datastore panel, opened from the header. BullMQ's Redis panel by default. */

@@ -68,10 +68,10 @@
       "TITLE": "ジョブフロー",
       "LOADING": "ジョブフローを読み込み中",
       "ERROR_TITLE": "ジョブフローを読み込めませんでした",
-      "PROCESSED": "完了 {{n}}",
-      "UNPROCESSED": "未完了 {{n}}",
-      "FAILED": "失敗 {{n}}",
-      "IGNORED": "無視 {{n}}",
+      "PROCESSED": "完了 {{count}}",
+      "UNPROCESSED": "未完了 {{count}}",
+      "FAILED": "失敗 {{count}}",
+      "IGNORED": "無視 {{count}}",
       "PROGRESS": "{{n}}%",
       "EXPAND": "さらに {{n}} 件読み込む",
       "CAPPED": "{{total}} 件中 {{shown}} 件を表示。残りはキューで確認できます",
@@ -108,14 +108,14 @@
       "PRIORITY": "優先度 {{priority}}",
       "GROUP": "グループ {{id}}",
       "DEDUPLICATED": "重複排除 {{id}}",
-      "STALLED": "停滞 {{times}} 回",
-      "ATTEMPTS_STARTED": "{{starts}} 回開始",
+      "STALLED": "停滞 {{count}} 回",
+      "ATTEMPTS_STARTED": "{{count}} 回開始",
       "WILL_FAIL": "失敗予定",
       "WILL_FAIL_WITH_REASON": "このジョブはワーカーが取得した時点で失敗するようマークされています: {{reason}}"
     },
     "DURATION": {
       "SECS": "{{duration}} 秒",
-      "MILLI_SECS": "{{duration}} ミリ秒"
+      "MILLI_SECS": "{{count}} ミリ秒"
     },
     "SHOW_DATA_BTN": "データを表示",
     "SHOW_PROGRESS_BTN": "進捗を表示",
@@ -130,7 +130,7 @@
       "FOLLOW": "新しいログ行を追跡",
       "FOLLOW_SHORT": "追跡",
       "FULLSCREEN": "全画面表示を切り替え",
-      "LINES": "{{total}} 行中 {{shown}} 行"
+      "LINES": "{{count}} 行中 {{shown}} 行"
     },
     "ACTIONS": {
       "PROMOTE": "昇格",
@@ -171,6 +171,7 @@
       "RETRY_ALL_FAILED": "失敗した{{count}}件のジョブをすべて再試行",
       "RETRY_FAILED_IN_ALL_QUEUES": "すべてのキューの失敗した{{count}}件のジョブを再試行",
       "RETRY_FAILED_IN_GROUP": "グループ内の失敗した{{count}}件のジョブを再試行",
+      "IN_QUEUES": "{{count}}個のキュー",
       "PROMOTE_ALL": "すべて昇格",
       "CLEAN_ALL": "すべて削除",
       "RESUME": "再開",
@@ -184,14 +185,14 @@
       "SET_RATE_LIMIT": "レート制限を設定",
       "CONFIRM": {
         "RETRY_ALL": "すべての{{status}}ジョブを再試行してもよろしいですか？",
-        "RETRY_FAILED_QUEUES": "{{count}}個のキューにまたがる{{jobs}}件の失敗したジョブを再試行してもよろしいですか？",
+        "RETRY_FAILED_QUEUES": "{{queues}}個のキューにまたがる{{count}}件の失敗したジョブを再試行してもよろしいですか？",
         "CLEAN_ALL": "すべての{{status}}ジョブを削除してもよろしいですか？",
         "PROMOTE_ALL": "すべての遅延ジョブを昇格させてもよろしいですか？",
         "PAUSE_QUEUE": "キューの処理を一時停止してもよろしいですか？",
         "EMPTY_QUEUE": "キューを空にしてもよろしいですか？",
         "OBLITERATE_QUEUE": "このキューを完全に削除してもよろしいですか？これによりキューとすべてのRedisキーが完全に削除されます。キューは最初に一時停止する必要があります。",
         "OBLITERATE_FORCE": "強制的に削除",
-        "OBLITERATE_FORCE_DESCRIPTION": "{{jobs}} 件のジョブがまだ処理中です。それでも削除します。ワーカーは実行を続け、キューの削除後に失敗する可能性があります。",
+        "OBLITERATE_FORCE_DESCRIPTION": "{{count}} 件のジョブがまだ処理中です。それでも削除します。ワーカーは実行を続け、キューの削除後に失敗する可能性があります。",
         "RESUME_QUEUE": "キューの処理を再開してもよろしいですか？",
         "PAUSE_ALL": "すべてのキューを一時停止してもよろしいですか？",
         "RESUME_ALL": "すべてのキューを再開してもよろしいですか？",
@@ -202,8 +203,8 @@
         "RETRY_PENDING": "すべての{{status}}ジョブを再試行しています...",
         "RETRY_DONE": "すべての{{status}}ジョブをキューに戻しました",
         "RETRY_SKIPPED": "ジョブデータが存在しない ID を {{count}} 件スキップしました。通常、noeviction 以外の Redis の破棄ポリシーによってジョブデータが失われます。",
-        "RETRY_QUEUES_PENDING": "{{count}}個のキューの{{jobs}}件の失敗したジョブを再試行しています...",
-        "RETRY_QUEUES_DONE": "{{count}}個のキューの{{jobs}}件の失敗したジョブをキューに戻しました"
+        "RETRY_QUEUES_PENDING": "{{queues}}個のキューの{{count}}件の失敗したジョブを再試行しています...",
+        "RETRY_QUEUES_DONE": "{{queues}}個のキューの{{count}}件の失敗したジョブをキューに戻しました"
       },
       "PAUSE_GROUP": "グループ内のすべてのキューを一時停止",
       "RESUME_GROUP": "グループ内のすべてのキューを再開",
@@ -606,7 +607,7 @@
       "UPCOMING": "今後の実行",
       "LAST_RUN": "前回実行",
       "OVERLAPS": "重複",
-      "OVERLAP": "{{total}}件のスケジューラーが同じ分に開始します",
+      "OVERLAP": "{{count}}件のスケジューラーが同じ分に開始します",
       "DENSE": "{{interval}}ごとに実行",
       "RUNS_IN_VIEW": "表示範囲内の実行: {{total}}回",
       "NO_RUNS": "この期間に実行はありません",
@@ -766,7 +767,7 @@
     },
     "ACTIONS": {
       "QUEUE_ACTIONS": "キューの操作",
-      "AFFECTED": "{{requested}} 件中 {{affected}} 件のジョブを変更しました。",
+      "AFFECTED": "{{count}} 件中 {{affected}} 件のジョブを変更しました。",
       "CANCEL_ACTIVE_WARNING": "このジョブは実行中です。キャンセルするとキャンセル済みになりますが、すでに処理しているハンドラーは止まりません。",
       "RETRY": {
         "LABEL": "再試行",

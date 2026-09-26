@@ -172,7 +172,7 @@ export const JobLogs = ({ actions, job }: JobLogsProps) => {
               />
             </InputGroup>
             <span className="text-[0.6875rem] text-muted-foreground tabular-nums">
-              {t('JOB.LOGS.LINES', { shown: logsToShow.length, total: logs.length })}
+              {t('JOB.LOGS.LINES', { shown: logsToShow.length, count: logs.length })}
             </span>
             <div className="ml-auto flex items-center gap-1">
               {followToggle}
