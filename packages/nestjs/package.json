@@ -51,6 +51,7 @@
     "bull": "^4.16.5",
     "bullmq": "^5.81.3",
     "bullmq-v6": "npm:bullmq@^6",
+    "fastify-static-v9": "npm:@fastify/static@^9",
     "jest": "^30.4.2",
     "jose": "^5.10.0",
     "nestjs-bull-shared-v11": "npm:@nestjs/bull-shared@^11",

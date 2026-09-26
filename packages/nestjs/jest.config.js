@@ -4,5 +4,5 @@ const nestModuleNameMapper = require('./jest.nest-matrix.js');
 module.exports = {
   ...base,
   displayName: 'nest@11',
-  moduleNameMapper: nestModuleNameMapper(11),
+  moduleNameMapper: { ...base.moduleNameMapper, ...nestModuleNameMapper(11) },
 };

@@ -25,7 +25,7 @@
 # Authentication
 
 [`@worker-manager/auth`](https://www.npmjs.com/package/@worker-manager/auth) protects the board
-with Basic auth or a Keycloak (OIDC) login. Wrap the board plugin so the hook is scoped to the
+with Basic auth, a Keycloak (OIDC) login, static tokens with a login form, or your own check. Wrap the board plugin so the hook is scoped to the
 board's routes only:
 
 ```ts
@@ -34,6 +34,8 @@ import { createAuthMiddleware, createFastifyAuthPlugin } from '@worker-manager/a
 const auth = createAuthMiddleware(
   { strategy: 'basic', users: [{ username: 'admin', password: process.env.BOARD_PASSWORD }] },
   // or { strategy: 'keycloak', url, realm, clientId, clientSecret, requiredRoles, cookie: { secret } }
+  // or { strategy: 'token', tokens: [process.env.BOARD_TOKEN], cookie: { secret } }
+  // or { strategy: 'custom', authenticate: (req) => user | null }
   { basePath: '/ui' }
 );
 
@@ -43,5 +45,14 @@ app.register(createFastifyAuthPlugin(serverAdapter.registerPlugin(), auth), { pr
 
 Every board route (page, API, assets) then needs credentials, and `GET /ui/auth/me` returns the
 signed-in user.
+
+# Testing with Jest
+
+`@fastify/static` 10.1.4 and later depend on `content-disposition@3`, which is ESM only, so a
+CommonJS Jest suite fails with `Must use import to load ES Module` when it loads this adapter. This
+package accepts `@fastify/static` `^9.0.0 || ^10.0.0`: an app that already depends on
+`@fastify/static@9` gets that one copy, which loads fine. Otherwise see the
+[troubleshooting recipe](https://naldomadeira.github.io/worker-manager/recipes/troubleshooting#jest-esm-content-disposition)
+for a two-line Jest transform.
 
 For more info visit the main [README](https://github.com/naldomadeira/worker-manager#readme)

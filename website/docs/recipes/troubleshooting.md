@@ -83,6 +83,54 @@ Redis is almost always the cause. BullMQ and Bull both require `maxmemory-policy
 
 The leftover ids are not removed for you, since deleting datastore entries is more than a dashboard should do behind your back. They age out of `completed` as new jobs push them past `removeOnComplete`, and **Clean** removes them from any set, along with the real jobs in it.
 
+## Jest: `Must use import to load ES Module` from `content-disposition` {#jest-esm-content-disposition}
+
+A Jest suite running as CommonJS (ts-jest without ESM mode, the NestJS default) fails as soon as
+it loads `@worker-manager/fastify`:
+
+```text
+Must use import to load ES Module: .../content-disposition@3.0.0/.../dist/index.js
+    at .../@fastify/static/index.js
+```
+
+`@fastify/static` 10.1.4 and later depend on `content-disposition@3`, which is published as an ES
+module only. Node 22 can `require()` it, Jest's CommonJS runtime cannot. The dashboard itself is
+fine; only the test runner is affected. Pick one of these:
+
+**Let the package manager reuse `@fastify/static` 9.** Since 2.2.0, `@worker-manager/fastify`
+accepts `@fastify/static` `^9.0.0 || ^10.0.0`. If your app already depends on
+`@fastify/static@9` (whose `content-disposition@1` is CommonJS), pnpm and npm install that one
+copy for both; with Yarn, run `yarn dedupe @fastify/static`. Check with
+`pnpm why @fastify/static` or `npm ls @fastify/static`. This works in every Jest mode, including
+`--experimental-vm-modules`. Note that 9.x predates the fix for
+[GHSA-r799-r9gc-m956](https://github.com/fastify/fastify-static/security/advisories/GHSA-r799-r9gc-m956),
+a route-guard bypass on case-insensitive filesystems; the dashboard serves only its own public
+assets behind a hook that covers the whole prefix, so it is not exposed, but your own
+`@fastify/static` routes might be.
+
+**Or compile that one package to CommonJS for Jest.** With ts-jest, in `jest.config.js`:
+
+```js
+module.exports = {
+  preset: 'ts-jest',
+  testEnvironment: 'node',
+  transform: {
+    '^.+\\.tsx?$': 'ts-jest',
+    // content-disposition@3 ships ESM only; compile it to CommonJS for Jest.
+    '^.+/node_modules/content-disposition/.+\\.js$': [
+      'ts-jest',
+      { tsconfig: { allowJs: true, module: 'commonjs' } },
+    ],
+  },
+  // Everything else in node_modules stays untransformed, as by default.
+  transformIgnorePatterns: ['^(?!.*/node_modules/content-disposition/).*/node_modules/'],
+};
+```
+
+It works with npm, Yarn and pnpm layouts and keeps the patched `@fastify/static` 10. It does not
+help when Jest runs with `--experimental-vm-modules`: in that mode Jest refuses to `require()` any
+file of a `"type": "module"` package, however it is transformed, so use the first option there.
+
 ## Still stuck
 
 Open an issue on [naldomadeira/worker-manager](https://github.com/naldomadeira/worker-manager/issues) with your adapter, versions, and the mount/base-path setup. Most reports resolve to one of the above once the exact paths are on the table.
