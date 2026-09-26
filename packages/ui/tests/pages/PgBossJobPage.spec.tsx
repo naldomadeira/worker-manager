@@ -1,9 +1,17 @@
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 import { createMemoryHistory } from 'history';
 import { Route } from 'react-router-dom';
+import { Title } from '../../src/components/Title/Title';
+import { usePgBossNavigation } from '../../src/engines/pgBoss/navigation';
 import { PgBossJobPage } from '../../src/engines/pgBoss/pages/PgBossJobPage';
+import { BoardNavigationContext } from '../../src/hooks/useBoardNavigation';
 import { useSettingsStore } from '../../src/hooks/useSettings';
-import { createPgBossWrapper, makePgBossJob, mockPgBossApi } from '../PgBossTestUtils';
+import {
+  createPgBossWrapper,
+  makePgBossJob,
+  makePgBossQueue,
+  mockPgBossApi,
+} from '../PgBossTestUtils';
 import { render } from '../testUtils';
 
 jest.mock('../../src/utils/highlight/highlight', () => ({
@@ -110,4 +118,63 @@ it('says the job is gone when it no longer exists', async () => {
   });
 
   await waitFor(() => expect(container.textContent).toContain('JOB.NOT_FOUND'));
+});
+
+describe('breadcrumb', () => {
+  const realMatchMedia = window.matchMedia;
+  afterEach(() => {
+    window.matchMedia = realMatchMedia;
+  });
+
+  const setMobile = (matches: boolean) => {
+    window.matchMedia = ((query: string) => ({
+      ...realMatchMedia(query),
+      matches,
+    })) as typeof window.matchMedia;
+  };
+
+  // The header and the page together, the way the shell lays them out.
+  const Shell = () => (
+    <BoardNavigationContext.Provider value={usePgBossNavigation()}>
+      <Title />
+      <Route path="/queue/:name/:jobId">
+        <PgBossJobPage />
+      </Route>
+    </BoardNavigationContext.Provider>
+  );
+
+  function renderShell() {
+    const job = makePgBossJob({ state: 'failed' });
+    const pgBossApi = mockPgBossApi({
+      getJob: jest.fn(async () => ({ job })),
+      getQueues: jest.fn(async () => ({ queues: [makePgBossQueue(job.queueName)] })),
+    });
+    const history = createMemoryHistory({
+      initialEntries: [`/queue/${job.queueName}/${job.id}?state=failed`],
+    });
+    const { Wrapper } = createPgBossWrapper({ pgBossApi, history });
+    render(<Shell />, { wrapper: Wrapper });
+    return { job };
+  }
+
+  it('shows one breadcrumb, the header one, whose queue crumb goes back to the same state', async () => {
+    setMobile(false);
+    const { job } = renderShell();
+
+    await screen.findByRole('tab', { name: 'PGBOSS.JOB.TABS.OUTPUT' });
+    const back = await screen.findByRole('link', { name: job.queueName });
+    expect(back.getAttribute('href')).toBe(`/queue/${job.queueName}?state=failed`);
+    expect(screen.getAllByRole('navigation', { name: /breadcrumb/i })).toHaveLength(1);
+    expect(screen.getAllByRole('link', { name: job.queueName })).toHaveLength(1);
+  });
+
+  it('draws its own way back to the queue on a phone, where the header has no breadcrumb', async () => {
+    setMobile(true);
+    const { job } = renderShell();
+
+    await screen.findByRole('tab', { name: 'PGBOSS.JOB.TABS.OUTPUT' });
+    expect(screen.getAllByRole('navigation', { name: /breadcrumb/i })).toHaveLength(1);
+    const back = screen.getByRole('link', { name: job.queueName });
+    expect(back.getAttribute('href')).toBe(`/queue/${job.queueName}?state=failed`);
+  });
 });

@@ -14,6 +14,7 @@ import {
 import { Loader } from '../../../components/Loader/Loader';
 import { LoadError } from '../../../components/LoadError/LoadError';
 import { StickyHeader } from '../../../components/StickyHeader/StickyHeader';
+import { useMobileQuery } from '../../../hooks/useMobileQuery';
 import { PgBossJobCard } from '../components/PgBossJobCard';
 import { PgBossWritesDisabledBanner } from '../components/PgBossWritesDisabledBanner';
 import { PgBossLoadError } from '../hooks/query';
@@ -36,6 +37,7 @@ export const PgBossJobPage = () => {
   const history = useHistory();
   const { search } = useLocation();
   const reduceMotion = useReducedMotion();
+  const isMobile = useMobileQuery();
   const params = useParams<{ name: string; jobId: string }>();
   const queueName = decodeURIComponent(params.name ?? '');
   const jobId = decodeURIComponent(params.jobId ?? '');
@@ -64,31 +66,35 @@ export const PgBossJobPage = () => {
   return (
     <section className="flex flex-col gap-4">
       <PgBossWritesDisabledBanner info={info} />
-      <StickyHeader
-        actions={
-          <Breadcrumb>
-            <BreadcrumbList>
-              <BreadcrumbItem>
-                <BreadcrumbLink asChild>
-                  <Link
-                    to={queueUrl}
-                    className="inline-flex items-center gap-1.5 rounded-md px-1.5 py-1 font-medium hover:bg-state-hover"
-                  >
-                    <ArrowLeft className="size-3.5" />
-                    {queueName}
-                  </Link>
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbPage className="font-mono text-xs" title={job.id}>
-                  {shortId(job.id)}
-                </BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
-        }
-      />
+      {/* The header breadcrumb already reads Overview > queue > job and links back to the queue.
+          It is hidden below md, so only there does the page draw its own way back. */}
+      {isMobile && (
+        <StickyHeader
+          actions={
+            <Breadcrumb>
+              <BreadcrumbList>
+                <BreadcrumbItem>
+                  <BreadcrumbLink asChild>
+                    <Link
+                      to={queueUrl}
+                      className="inline-flex items-center gap-1.5 rounded-md px-1.5 py-1 font-medium hover:bg-state-hover"
+                    >
+                      <ArrowLeft className="size-3.5" />
+                      {queueName}
+                    </Link>
+                  </BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                  <BreadcrumbPage className="font-mono text-xs" title={job.id}>
+                    {shortId(job.id)}
+                  </BreadcrumbPage>
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
+          }
+        />
+      )}
       <motion.div
         key={job.id}
         initial={reduceMotion ? false : { opacity: 0, y: 10 }}

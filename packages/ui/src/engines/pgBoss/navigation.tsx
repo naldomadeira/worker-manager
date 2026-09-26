@@ -5,6 +5,8 @@ import type { BoardNavigation, NavQueue } from '../../hooks/useBoardNavigation';
 import { ExperimentalBadge } from './components/ExperimentalBadge';
 import { permissionsOf, usePgBossInfo } from './hooks/usePgBossInfo';
 import { usePgBossQueues } from './hooks/usePgBossQueues';
+import { pgBossLinks } from './utils/links';
+import { parseState } from './utils/states';
 
 const PgBossQueueInfoModalLazy = React.lazy(() =>
   import('./components/PgBossQueueInfoModal').then(({ PgBossQueueInfoModal }) => ({
@@ -44,6 +46,11 @@ export function toNavQueue(queue: PgBossQueueSummary, delimiter: string): NavQue
   };
 }
 
+/** Back to the queue on the state tab the job was opened from, which pg-boss keeps in `state`. */
+function queuePageLink(queueName: string, search: string) {
+  return pgBossLinks.queuePage(queueName, parseState(new URLSearchParams(search).get('state')));
+}
+
 /** The shell navigation of a pg-boss board. */
 export function usePgBossNavigation(): BoardNavigation {
   const { t } = useTranslation();
@@ -54,6 +61,8 @@ export function usePgBossNavigation(): BoardNavigation {
   // that page is where one is created.
   const canWriteSchedules = permissionsOf(info).can('scheduleWrite');
   const datastoreTitle = t('PGBOSS.DATASTORE.TITLE');
+  // pg-boss calls them schedules, and so does the page itself.
+  const schedulesLabel = t('PGBOSS.SCHEDULES.TITLE');
 
   return useMemo(
     () => ({
@@ -62,8 +71,10 @@ export function usePgBossNavigation(): BoardNavigation {
       QueueInfoModal,
       DatastoreModal,
       datastoreTitle,
+      schedulesLabel,
+      queuePageLink,
       headerBadge: <ExperimentalBadge />,
     }),
-    [queues, delimiter, canWriteSchedules, datastoreTitle]
+    [queues, delimiter, canWriteSchedules, datastoreTitle, schedulesLabel]
   );
 }

@@ -54,18 +54,20 @@ export const FlowDetailsPanel = ({ node }: FlowDetailsPanelProps) => {
           <>
             <dt className="text-muted-foreground">{t('JOB.FLOW.PANEL_CHILDREN')}</dt>
             <dd className="m-0 flex flex-wrap gap-2">
-              {deps.processed > 0 && <span>{t('JOB.FLOW.PROCESSED', { n: deps.processed })}</span>}
+              {deps.processed > 0 && (
+                <span>{t('JOB.FLOW.PROCESSED', { count: deps.processed })}</span>
+              )}
               {deps.unprocessed > 0 && (
-                <span>{t('JOB.FLOW.UNPROCESSED', { n: deps.unprocessed })}</span>
+                <span>{t('JOB.FLOW.UNPROCESSED', { count: deps.unprocessed })}</span>
               )}
               {deps.failed > 0 && (
                 <span className="font-semibold text-status-failed">
-                  {t('JOB.FLOW.FAILED', { n: deps.failed })}
+                  {t('JOB.FLOW.FAILED', { count: deps.failed })}
                 </span>
               )}
               {deps.ignored > 0 && (
                 <span className="font-semibold text-status-waiting">
-                  {t('JOB.FLOW.IGNORED', { n: deps.ignored })}
+                  {t('JOB.FLOW.IGNORED', { count: deps.ignored })}
                 </span>
               )}
             </dd>

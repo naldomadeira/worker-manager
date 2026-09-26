@@ -1,6 +1,6 @@
 {
   "name": "@worker-manager/koa",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "A Koa.js server adapter for the Worker Manager dashboard.",
   "keywords": [
     "bull",
@@ -32,8 +32,8 @@
     "@koa/bodyparser": "^6.1.0",
     "@koa/router": "^15.7.0",
     "@ladjs/koa-views": "^9.0.0",
-    "@worker-manager/api": "2.1.1",
-    "@worker-manager/ui": "2.1.1",
+    "@worker-manager/api": "2.1.2",
+    "@worker-manager/ui": "2.1.2",
     "ejs": "^6.0.1",
     "koa": "^3.2.1",
     "koa-mount": "^4.2.0",
@@ -45,7 +45,7 @@
     "@types/koa-static": "^4.0.4",
     "@types/koa-views": "^7.0.0",
     "@types/supertest": "^7.2.1",
-    "@worker-manager/test-utils": "2.1.1",
+    "@worker-manager/test-utils": "2.1.2",
     "bullmq": "^5.81.3",
     "jest": "^30.4.2",
     "supertest": "^7.2.2",

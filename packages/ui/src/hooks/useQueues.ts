@@ -105,13 +105,13 @@ export function useQueues(): QueuesState & { actions: QueueActions } {
           () => Promise.all(queueNames.map((name) => api.retryAll(name, STATUSES.failed))),
           {
             pending: t('QUEUE.ACTIONS.TOAST.RETRY_QUEUES_PENDING', {
-              jobs: jobCount,
-              count: queueNames.length,
+              count: jobCount,
+              queues: queueNames.length,
             }),
             success: (results) => ({
               title: t('QUEUE.ACTIONS.TOAST.RETRY_QUEUES_DONE', {
-                jobs: jobCount,
-                count: queueNames.length,
+                count: jobCount,
+                queues: queueNames.length,
               }),
               description: skippedDescription(
                 results.reduce((total, result) => total + (result?.skipped ?? 0), 0)
@@ -121,8 +121,8 @@ export function useQueues(): QueuesState & { actions: QueueActions } {
         ),
       {
         description: t('QUEUE.ACTIONS.CONFIRM.RETRY_FAILED_QUEUES', {
-          jobs: jobCount,
-          count: queueNames.length,
+          count: jobCount,
+          queues: queueNames.length,
         }),
         shouldConfirm: confirmQueueActions,
       }
@@ -173,7 +173,7 @@ export function useQueues(): QueuesState & { actions: QueueActions } {
         ? {
             label: t('QUEUE.ACTIONS.CONFIRM.OBLITERATE_FORCE'),
             description: t('QUEUE.ACTIONS.CONFIRM.OBLITERATE_FORCE_DESCRIPTION', {
-              jobs: activeJobs,
+              count: activeJobs,
             }),
           }
         : undefined,

@@ -116,19 +116,21 @@ export const FlowJobNode = ({
       <div className="flex min-w-0 items-center justify-between gap-2 text-[0.6875rem]">
         {!!deps && (
           <span className="flex min-w-0 gap-2 overflow-hidden whitespace-nowrap text-muted-foreground">
-            {deps.processed > 0 && <span>{t('JOB.FLOW.PROCESSED', { n: deps.processed })}</span>}
+            {deps.processed > 0 && (
+              <span>{t('JOB.FLOW.PROCESSED', { count: deps.processed })}</span>
+            )}
             {deps.unprocessed > 0 && (
-              <span>{t('JOB.FLOW.UNPROCESSED', { n: deps.unprocessed })}</span>
+              <span>{t('JOB.FLOW.UNPROCESSED', { count: deps.unprocessed })}</span>
             )}
             {deps.failed > 0 && (
               <span className="font-semibold text-status-failed">
-                {t('JOB.FLOW.FAILED', { n: deps.failed })}
+                {t('JOB.FLOW.FAILED', { count: deps.failed })}
               </span>
             )}
             {deps.ignored > 0 && (
               <HintTooltip title={reasons.join('\n')}>
                 <span className="inline-flex cursor-help font-semibold text-status-waiting underline decoration-dotted underline-offset-2">
-                  {t('JOB.FLOW.IGNORED', { n: deps.ignored })}
+                  {t('JOB.FLOW.IGNORED', { count: deps.ignored })}
                 </span>
               </HintTooltip>
             )}

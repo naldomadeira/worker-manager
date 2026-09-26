@@ -38,7 +38,7 @@ export const CommandPalette = () => {
   const { t } = useTranslation();
   const history = useHistory();
   const { open, setOpen, toggle } = useCommandPalette();
-  const { queues, showSchedules: showJobSchedulers } = useBoardNavigation();
+  const { queues, showSchedules: showJobSchedulers, schedulesLabel } = useBoardNavigation();
   const { hasHistoryProvider = false } = useUIConfig();
   const theme = useSettingsStore((state) => state.theme);
   const setSettings = useSettingsStore((state) => state.setSettings);
@@ -49,7 +49,7 @@ export const CommandPalette = () => {
     { path: '/', label: t('MENU.OVERVIEW'), icon: LayoutDashboard, show: true },
     {
       path: links.jobSchedulers().pathname,
-      label: t('MENU.SCHEDULERS'),
+      label: schedulesLabel ?? t('MENU.SCHEDULERS'),
       icon: CalendarClock,
       show: !!showJobSchedulers,
     },

@@ -47,7 +47,10 @@ export function usePgBossActions() {
   const affected = (result: PgBossCommandResponse) =>
     isErrorBody(result)
       ? undefined
-      : t('PGBOSS.ACTIONS.AFFECTED', { affected: result.affected, requested: result.requested });
+      : t('PGBOSS.ACTIONS.AFFECTED', {
+          affected: result.affected,
+          count: result.requested,
+        });
 
   const jobCommand = (
     command: PgBossJobCommand,

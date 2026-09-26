@@ -1,3 +1,13 @@
+### [v2.1.2](https://github.com/naldomadeira/worker-manager/compare/v2.1.1...v2.1.2)
+
+> 2026-09-26
+
+### Bug Fixes
+- pluralize every counted label with i18next's `count`, with the `_few`/`_many` forms ru-RU, pt-BR, es-ES and fr-FR need: attempts started, stalled times, job durations in milliseconds, flow dependency counts, log lines, the polling interval in seconds, the retry-failed actions, confirmations and toasts (job and queue counts pluralized separately), the obliterate warning, group pause/resume confirmations, skipped ids, scheduler timeline labels and the pg-boss bulk-action result, so a count of 1 no longer reads "1 started" or "1 milliseconds" ("1 iniciadas", "1 milisegundos" in pt-BR)
+- spell "milissegundos" correctly in pt-BR
+- show one breadcrumb on the job page of both boards: the header one, whose queue crumb goes back to the list the job was opened from (the pg-boss `state` tab included); the page draws its own back link only below `md`, where the header has no breadcrumb
+- call the schedules page "Schedules" on the pg-boss board everywhere (sidebar, breadcrumb, command palette and mobile switcher), matching its heading in all 12 locales; the BullMQ board keeps "Schedulers"
+
 ### [v2.1.1](https://github.com/naldomadeira/worker-manager/compare/v2.1.0...v2.1.1)
 
 > 2026-09-26

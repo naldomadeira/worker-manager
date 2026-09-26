@@ -161,13 +161,13 @@ export const JobCard = ({
 
             {job.stalledCounter != null && (
               <Badge className={cn(pill, 'bg-status-failed/12 text-status-failed')}>
-                {t('JOB.DIAGNOSTICS.STALLED', { times: job.stalledCounter })}
+                {t('JOB.DIAGNOSTICS.STALLED', { count: job.stalledCounter })}
               </Badge>
             )}
 
             {job.attemptsStarted != null && (
               <Badge variant="secondary" className={pill}>
-                {t('JOB.DIAGNOSTICS.ATTEMPTS_STARTED', { starts: job.attemptsStarted })}
+                {t('JOB.DIAGNOSTICS.ATTEMPTS_STARTED', { count: job.attemptsStarted })}
               </Badge>
             )}
 

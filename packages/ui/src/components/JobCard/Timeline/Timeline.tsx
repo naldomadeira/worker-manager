@@ -23,7 +23,7 @@ const formatDuration = (
   if (durationInSeconds >= 1) {
     return t('JOB.DURATION.SECS', { duration: durationInSeconds.toFixed(2) });
   }
-  return t('JOB.DURATION.MILLI_SECS', { duration: durationInMs });
+  return t('JOB.DURATION.MILLI_SECS', { count: durationInMs });
 };
 
 interface StepProps {

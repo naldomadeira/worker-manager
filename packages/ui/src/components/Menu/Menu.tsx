@@ -57,7 +57,7 @@ const iconButton =
 export const Menu = () => {
   const { t } = useTranslation();
   const { pathname } = useLocation();
-  const { queues, showSchedules: showJobSchedulers } = useBoardNavigation();
+  const { queues, showSchedules: showJobSchedulers, schedulesLabel } = useBoardNavigation();
   const sortQueues = useSettingsStore((state) => state.sortQueues);
   const { searchTerm, setSearchTerm } = useQueueSearch();
   const { hasHistoryProvider = false } = useUIConfig();
@@ -85,7 +85,13 @@ export const Menu = () => {
   const nav: NavEntry[] = [
     { to: '/', label: t('MENU.OVERVIEW'), icon: LayoutDashboard, exact: true },
     ...(showJobSchedulers
-      ? [{ to: links.jobSchedulers().pathname, label: t('MENU.SCHEDULERS'), icon: CalendarClock }]
+      ? [
+          {
+            to: links.jobSchedulers().pathname,
+            label: schedulesLabel ?? t('MENU.SCHEDULERS'),
+            icon: CalendarClock,
+          },
+        ]
       : []),
     ...(hasHistoryProvider
       ? [{ to: links.metricsHistory().pathname, label: t('MENU.METRICS_HISTORY'), icon: LineChart }]
