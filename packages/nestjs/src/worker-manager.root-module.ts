@@ -12,6 +12,7 @@ import {
 import { ApplicationConfig, HttpAdapterHost, ModuleRef } from '@nestjs/core';
 import { createAuthMiddleware, createFastifyAuthPlugin } from '@worker-manager/auth';
 import { DEFAULT_WORKER_MANAGER_ROUTE, getWorkerManagerTokens } from './worker-manager.constants';
+import { DeferredServerAdapter, isDeferredAdapter } from './worker-manager.deferred-adapter';
 import {
   WorkerManagerBoard,
   WorkerManagerModuleAsyncOptions,
@@ -80,8 +81,14 @@ function createRootModule(name: string | undefined): WorkerManagerRootModuleClas
       if (this.board && isPgBossBoard(this.board)) await this.board.close();
     }
 
-    configure(consumer: MiddlewareConsumer): any {
+    async configure(consumer: MiddlewareConsumer): Promise<any> {
       if (!isEnabled(this.options) || !this.adapter) return;
+      // Nothing is awaited when the adapter was resolved up front, so the NestFactory path
+      // registers everything synchronously, as it always has.
+      const adapter = isDeferredAdapter(this.adapter)
+        ? (this.adapter.resolved ??
+          this.adapter.attach(await resolveServerAdapter(this.options, this.adapterHost)))
+        : this.adapter;
 
       const route = this.options.route ?? DEFAULT_WORKER_MANAGER_ROUTE;
       const addForwardSlash = (path: string) => {
@@ -102,20 +109,20 @@ function createRootModule(name: string | undefined): WorkerManagerRootModuleClas
         ? addForwardSlash(route)
         : addForwardSlash(this.applicationConfig.getGlobalPrefix() + route);
 
-      this.adapter.setBasePath(prefix);
+      adapter.setBasePath(prefix);
 
       const auth = this.options.auth
         ? createAuthMiddleware(scopeAuthToBoard(this.options.auth, name), { basePath: prefix })
         : undefined;
 
-      if (isExpressAdapter(this.adapter)) {
-        const chain = [auth, this.options.middleware, this.adapter.getRouter()].filter(Boolean);
+      if (isExpressAdapter(adapter)) {
+        const chain = [auth, this.options.middleware, adapter.getRouter()].filter(Boolean);
 
         return consumer.apply(...chain).forRoutes(route);
       }
 
-      if (isFastifyAdapter(this.adapter)) {
-        const plugin = this.adapter.registerPlugin();
+      if (isFastifyAdapter(adapter)) {
+        const plugin = adapter.registerPlugin();
         const instance = this.adapterHost.httpAdapter.getInstance();
 
         // With auth, the hook is scoped to the board's own routes: it sees every request under
@@ -186,8 +193,14 @@ function createRootModule(name: string | undefined): WorkerManagerRootModuleClas
     ): DynamicModule {
       const serverAdapterProvider: Provider = {
         provide: tokens.adapter,
-        useFactory: (options: WorkerManagerModuleOptions, adapterHost: HttpAdapterHost) =>
-          isEnabled(options) ? resolveServerAdapter(options, adapterHost) : null,
+        useFactory: (options: WorkerManagerModuleOptions, adapterHost: HttpAdapterHost) => {
+          if (!isEnabled(options)) return null;
+          // `Test.createTestingModule(...).compile()` builds providers before
+          // `createNestApplication()` gives the app its HTTP adapter, so the platform is not
+          // known yet. The board mounts on a stand-in that `configure()` attaches later.
+          if (!options.adapter && !adapterHost?.httpAdapter) return new DeferredServerAdapter();
+          return resolveServerAdapter(options, adapterHost);
+        },
         inject: [tokens.options, HttpAdapterHost],
       };
 
