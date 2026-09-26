@@ -1,3 +1,21 @@
+### [v2.2.0](https://github.com/naldomadeira/worker-manager/compare/v2.1.2...v2.2.0)
+
+> 2026-09-26
+
+### Features
+- auth: a `token` strategy. Static `tokens` (or `validate(token)`), compared in constant time, accepted as `Authorization: Bearer <token>` or in a `header` of your choice (e.g. `X-Board-Token`), with `user` as the identity on `req.user`. With `cookie: { secret }`, a page load without credentials goes to a self-contained login form at `<base>/auth/login` (one password field, no scripts, strict CSP) that trades the token for an AES-GCM sealed, `HttpOnly`, `SameSite=Strict` session cookie; the form post is only taken from the board's own origin (`Origin`/`Referer`, `Sec-Fetch-Site`), `<base>/auth/logout` clears the session, and the token inside it is re-checked on every request, so removing a token ends its sessions. API calls without credentials get `401` JSON, never a redirect; the token is never echoed
+- auth: a `custom` strategy: your `authenticate(req)` resolves the user or `null` (`401`), an optional `onUnauthenticated(req, res)` answers rejections itself, and `logoutUrl` feeds the dashboard's "Sign out" item; e.g. a verified Cloudflare Access JWT or an app's API-key check
+- nestjs: `auth` accepts both new strategies, and a named board's token session cookie is `wm_session_<name>`, as for Keycloak
+- cli: `--token <list>` and `--token-header <name>` (`WORKER_MANAGER_TOKENS`, `WORKER_MANAGER_TOKEN_HEADER`, `token` in a config file), with `--session-secret` for the session cookie
+- ui: the user menu names the token strategy, and leaves the "Signed in with" line out for a custom one
+
+### Bug Fixes
+- nestjs: `Test.createTestingModule(...).compile()` no longer throws `could not pick a server adapter for the "unknown" HTTP platform` when `adapter` is left out. The platform is only known once `createNestApplication()` runs, so the board now mounts on a stand-in adapter and the real one is picked in `app.init()`; queues added to the injected board in between are applied then. `NestFactory.create()` keeps resolving the adapter up front, as before
+- fastify: accept `@fastify/static` `^9.0.0 || ^10.0.0`. From 10.1.4 on it depends on the ESM-only `content-disposition@3`, which CommonJS Jest suites cannot load (`Must use import to load ES Module`); an app that already depends on `@fastify/static@9` now gets that single copy from npm and pnpm. Both majors run in CI. Fresh installs still get 10.x, which carries the fix for GHSA-r799-r9gc-m956; the dashboard only serves its own public assets behind a hook covering the whole prefix, so 9.x does not expose it to that bypass
+
+### Documentation
+- recipes for [token auth](https://naldomadeira.github.io/worker-manager/recipes/token-auth) and [custom auth](https://naldomadeira.github.io/worker-manager/recipes/custom-auth) (Cloudflare Access, API keys), a Jest recipe for the `content-disposition` ESM error in Troubleshooting, and a TestingModule section in the NestJS guide
+
 ### [v2.1.2](https://github.com/naldomadeira/worker-manager/compare/v2.1.1...v2.1.2)
 
 > 2026-09-26
