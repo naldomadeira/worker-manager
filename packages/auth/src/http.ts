@@ -136,9 +136,24 @@ export function appendSetCookie(res: ServerResponse, cookie: string): void {
   res.setHeader('Set-Cookie', [...list, cookie]);
 }
 
-/** A same-origin relative path, so a crafted `returnTo` cannot bounce the user elsewhere. */
+const RETURN_TO_BASE = 'http://return-to.invalid';
+
+/**
+ * A same-origin relative path, so a crafted `returnTo` cannot bounce the user elsewhere.
+ *
+ * Browsers strip tabs and newlines from a URL and read a backslash as `/`, so a tab or newline
+ * between two slashes, or a slash followed by a backslash, turns what looks like a path into a
+ * URL to another host. Control characters, spaces and backslashes are refused outright, and
+ * what is left must still resolve to the same origin, parsed the way a browser parses a
+ * `Location` header.
+ */
 export function safeReturnTo(value: string | null | undefined, fallback: string): string {
-  if (!value || !value.startsWith('/') || value.startsWith('//') || value.startsWith('/\\')) {
+  if (!value || !value.startsWith('/') || value.startsWith('//')) return fallback;
+  // oxlint-disable-next-line no-control-regex
+  if (/[\u0000-\u0020\u007f\\]/.test(value)) return fallback;
+  try {
+    if (new URL(value, RETURN_TO_BASE).origin !== RETURN_TO_BASE) return fallback;
+  } catch {
     return fallback;
   }
 

@@ -197,6 +197,25 @@ describe('token strategy', () => {
 
       expect(html).toContain('name="returnTo" value="/queues/"');
     });
+
+    // Browsers drop tabs and newlines from a Location header and read `\` as `/`, so each of
+    // these would leave the origin although it starts with a single slash.
+    it.each([
+      '/\t/evil.test',
+      '/\n/evil.test',
+      '/\r\n/evil.test',
+      '/\\evil.test',
+      '/\t\\evil.test',
+    ])('drops %j, which a browser resolves to another host', async (returnTo) => {
+      const html = await (
+        await fetch(`${board.url}/queues/auth/login?returnTo=${encodeURIComponent(returnTo)}`)
+      ).text();
+      expect(html).toContain('name="returnTo" value="/queues/"');
+
+      const response = await login(TOKEN, {}, returnTo);
+      expect(response.status).toBe(303);
+      expect(response.headers.get('location')).toBe('/queues/');
+    });
   });
 
   describe('browser session', () => {
