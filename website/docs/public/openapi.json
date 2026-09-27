@@ -2026,6 +2026,76 @@
         }
       }
     },
+    "/api/pg-boss/queues/{queueName}/depth": {
+      "get": {
+        "operationId": "getPgBossQueuesByQueueNameDepth",
+        "summary": "Chart one queue's depth over time from pg-boss's own `queue_stats` snapshots, bucketed.",
+        "tags": [
+          "pg-boss"
+        ],
+        "description": "Available only when: The board was created with engine 'pg-boss'. Answers 409 `ERRORS.PGBOSS_FEATURE_UNAVAILABLE` on a schema without `queue_stats`.",
+        "parameters": [
+          {
+            "name": "queueName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "range",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "1h",
+                "6h",
+                "24h",
+                "7d"
+              ],
+              "type": "string",
+              "default": "24h"
+            }
+          },
+          {
+            "name": "aggregate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "max",
+                "avg"
+              ],
+              "type": "string",
+              "default": "max"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPgBossQueueDepthResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "The call was rejected or failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/pg-boss/queues/{queueName}/jobs": {
       "get": {
         "operationId": "getPgBossQueuesByQueueNameJobs",
@@ -2256,6 +2326,110 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/GetPgBossDependenciesResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "The call was rejected or failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/pg-boss/jobs/{jobId}": {
+      "get": {
+        "operationId": "getPgBossJobsByJobId",
+        "summary": "Find a job by id in whichever visible queue holds it, probing each queue on its primary key.",
+        "tags": [
+          "pg-boss"
+        ],
+        "description": "Available only when: The board was created with engine 'pg-boss'.",
+        "parameters": [
+          {
+            "name": "jobId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FindPgBossJobResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "The call was rejected or failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/pg-boss/warnings": {
+      "get": {
+        "operationId": "getPgBossWarnings",
+        "summary": "List pg-boss's persisted warnings, newest first, one keyset page at a time. Warnings naming a hidden queue are left out.",
+        "tags": [
+          "pg-boss"
+        ],
+        "description": "Available only when: The board was created with engine 'pg-boss'. Answers 409 `ERRORS.PGBOSS_FEATURE_UNAVAILABLE` on a schema without the `warning` table.",
+        "parameters": [
+          {
+            "name": "type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64,
+              "description": "One warning type only."
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "25"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPgBossWarningsResponse"
                 }
               }
             }
@@ -3365,14 +3539,18 @@
                   "ERRORS.JOB_SCHEDULER_RUN_NOT_SUPPORTED",
                   "ERRORS.JOB_UNPROCESSED_CHILDREN_NOT_SUPPORTED",
                   "ERRORS.PGBOSS_BULK_LIMIT",
+                  "ERRORS.PGBOSS_FEATURE_UNAVAILABLE",
                   "ERRORS.PGBOSS_INVALID_CURSOR",
                   "ERRORS.PGBOSS_INVALID_SCHEDULE",
+                  "ERRORS.PGBOSS_JOB_NOT_FOUND",
                   "ERRORS.PGBOSS_JOB_STATE_CONFLICT",
                   "ERRORS.PGBOSS_NOT_INSTALLED",
                   "ERRORS.PGBOSS_PREVIEW_UNAVAILABLE",
                   "ERRORS.PGBOSS_QUERY_TIMEOUT",
+                  "ERRORS.PGBOSS_SCHEMA_INCOMPATIBLE",
                   "ERRORS.PGBOSS_SCHEMA_MISMATCH",
                   "ERRORS.PGBOSS_SCHEMA_UNSUPPORTED",
+                  "ERRORS.PGBOSS_SCHEMA_UNTESTED",
                   "ERRORS.PGBOSS_WRITER_UNAVAILABLE",
                   "ERRORS.PGBOSS_WRITES_DISABLED",
                   "ERRORS.QUEUE_HAS_ACTIVE_JOBS",
@@ -4268,14 +4446,18 @@
               "ERRORS.JOB_SCHEDULER_RUN_NOT_SUPPORTED",
               "ERRORS.JOB_UNPROCESSED_CHILDREN_NOT_SUPPORTED",
               "ERRORS.PGBOSS_BULK_LIMIT",
+              "ERRORS.PGBOSS_FEATURE_UNAVAILABLE",
               "ERRORS.PGBOSS_INVALID_CURSOR",
               "ERRORS.PGBOSS_INVALID_SCHEDULE",
+              "ERRORS.PGBOSS_JOB_NOT_FOUND",
               "ERRORS.PGBOSS_JOB_STATE_CONFLICT",
               "ERRORS.PGBOSS_NOT_INSTALLED",
               "ERRORS.PGBOSS_PREVIEW_UNAVAILABLE",
               "ERRORS.PGBOSS_QUERY_TIMEOUT",
+              "ERRORS.PGBOSS_SCHEMA_INCOMPATIBLE",
               "ERRORS.PGBOSS_SCHEMA_MISMATCH",
               "ERRORS.PGBOSS_SCHEMA_UNSUPPORTED",
+              "ERRORS.PGBOSS_SCHEMA_UNTESTED",
               "ERRORS.PGBOSS_WRITER_UNAVAILABLE",
               "ERRORS.PGBOSS_WRITES_DISABLED",
               "ERRORS.QUEUE_HAS_ACTIVE_JOBS",
@@ -5030,6 +5212,59 @@
           "bulk"
         ]
       },
+      "PgBossFeature": {
+        "enum": [
+          "queueCounters",
+          "readyHistory",
+          "schedules",
+          "scheduleKind",
+          "dependencies",
+          "deadLetterSource",
+          "queueDepth",
+          "warnings"
+        ],
+        "type": "string"
+      },
+      "PgBossFeatures": {
+        "type": "object",
+        "properties": {
+          "queueCounters": {
+            "type": "boolean"
+          },
+          "readyHistory": {
+            "type": "boolean"
+          },
+          "schedules": {
+            "type": "boolean"
+          },
+          "scheduleKind": {
+            "type": "boolean"
+          },
+          "dependencies": {
+            "type": "boolean"
+          },
+          "deadLetterSource": {
+            "type": "boolean"
+          },
+          "queueDepth": {
+            "type": "boolean"
+          },
+          "warnings": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "queueCounters",
+          "readyHistory",
+          "schedules",
+          "scheduleKind",
+          "dependencies",
+          "deadLetterSource",
+          "queueDepth",
+          "warnings"
+        ],
+        "description": "Which of the optional tables and columns the probed schema has."
+      },
       "PgBossInfo": {
         "type": "object",
         "properties": {
@@ -5100,8 +5335,26 @@
             ],
             "description": "Why the board cannot write, when `writable` is false."
           },
+          "untested": {
+            "type": "boolean",
+            "description": "The schema is newer than `supportedRange.max`. It is read by probing its columns, and written only when the board sets `allowUntestedSchema`."
+          },
+          "features": {
+            "$ref": "#/components/schemas/PgBossFeatures"
+          },
+          "disabledFeatures": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PgBossFeature"
+            },
+            "description": "Features a schema of this version should have but this one lacks, so the board leaves them off."
+          },
           "persistQueueStats": {
             "type": "boolean"
+          },
+          "persistWarnings": {
+            "type": "boolean",
+            "description": "The warning table holds at least one row, so some instance runs with `persistWarnings`."
           },
           "datastore": {
             "anyOf": [
@@ -5128,9 +5381,89 @@
           "readOnly",
           "unavailableReason",
           "writesDisabledReason",
+          "untested",
+          "features",
+          "disabledFeatures",
           "persistQueueStats",
+          "persistWarnings",
           "datastore",
           "capabilities"
+        ]
+      },
+      "PgBossQueueDepthPoint": {
+        "type": "object",
+        "properties": {
+          "ts": {
+            "type": "number",
+            "description": "Bucket start, epoch milliseconds."
+          },
+          "deferred": {
+            "type": "number"
+          },
+          "queued": {
+            "type": "number"
+          },
+          "ready": {
+            "type": "number"
+          },
+          "active": {
+            "type": "number"
+          },
+          "failed": {
+            "type": "number"
+          },
+          "total": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "ts",
+          "deferred",
+          "queued",
+          "ready",
+          "active",
+          "failed",
+          "total"
+        ]
+      },
+      "PgBossWarning": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "description": "pg-boss's warning type, such as `slow_query` or `queue_backlog`. Free text: a newer pg-boss may add types."
+          },
+          "message": {
+            "type": "string",
+            "description": "The text pg-boss stored with the warning: data from the database, not a translation key."
+          },
+          "data": {},
+          "queueName": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The queue the warning is about, when its data names one."
+          },
+          "createdOn": {
+            "type": "string",
+            "description": "ISO 8601."
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "message",
+          "data",
+          "queueName",
+          "createdOn"
         ]
       },
       "GetQueuesResponse": {
@@ -5649,8 +5982,26 @@
             ],
             "description": "Why the board cannot write, when `writable` is false."
           },
+          "untested": {
+            "type": "boolean",
+            "description": "The schema is newer than `supportedRange.max`. It is read by probing its columns, and written only when the board sets `allowUntestedSchema`."
+          },
+          "features": {
+            "$ref": "#/components/schemas/PgBossFeatures"
+          },
+          "disabledFeatures": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PgBossFeature"
+            },
+            "description": "Features a schema of this version should have but this one lacks, so the board leaves them off."
+          },
           "persistQueueStats": {
             "type": "boolean"
+          },
+          "persistWarnings": {
+            "type": "boolean",
+            "description": "The warning table holds at least one row, so some instance runs with `persistWarnings`."
           },
           "datastore": {
             "anyOf": [
@@ -5677,7 +6028,11 @@
           "readOnly",
           "unavailableReason",
           "writesDisabledReason",
+          "untested",
+          "features",
+          "disabledFeatures",
           "persistQueueStats",
+          "persistWarnings",
           "datastore",
           "capabilities"
         ]
@@ -5769,6 +6124,82 @@
         },
         "required": [
           "job"
+        ]
+      },
+      "FindPgBossJobResponse": {
+        "type": "object",
+        "properties": {
+          "job": {
+            "$ref": "#/components/schemas/PgBossJobSummary"
+          }
+        },
+        "required": [
+          "job"
+        ]
+      },
+      "GetPgBossQueueDepthResponse": {
+        "type": "object",
+        "properties": {
+          "points": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PgBossQueueDepthPoint"
+            },
+            "description": "pg-boss's own `queue_stats` snapshots, folded into buckets. Empty when no instance persists them for this queue."
+          },
+          "from": {
+            "type": "number"
+          },
+          "to": {
+            "type": "number"
+          },
+          "bucketSeconds": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "points",
+          "from",
+          "to",
+          "bucketSeconds"
+        ]
+      },
+      "GetPgBossWarningsResponse": {
+        "type": "object",
+        "properties": {
+          "warnings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PgBossWarning"
+            }
+          },
+          "nextCursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Null on the oldest page."
+          },
+          "prevCursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Null on the newest page."
+          }
+        },
+        "required": [
+          "warnings",
+          "nextCursor",
+          "prevCursor"
         ]
       },
       "GetPgBossDependenciesResponse": {
@@ -6175,6 +6606,49 @@
         "properties": {
           "queueName": {
             "type": "string"
+          }
+        },
+        "required": []
+      },
+      "GetPgBossQueueDepthQuery": {
+        "type": "object",
+        "properties": {
+          "range": {
+            "enum": [
+              "1h",
+              "6h",
+              "24h",
+              "7d"
+            ],
+            "type": "string",
+            "default": "24h"
+          },
+          "aggregate": {
+            "enum": [
+              "max",
+              "avg"
+            ],
+            "type": "string",
+            "default": "max"
+          }
+        },
+        "required": []
+      },
+      "GetPgBossWarningsQuery": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64,
+            "description": "One warning type only."
+          },
+          "cursor": {
+            "type": "string"
+          },
+          "limit": {
+            "type": "string",
+            "default": "25"
           }
         },
         "required": []

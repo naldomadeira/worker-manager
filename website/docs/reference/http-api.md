@@ -613,6 +613,20 @@ Count the jobs of one queue in each state, live and capped.
 
 Responds `200` with [`GetPgBossStateCountsResponse`](#getpgbossstatecountsresponse).
 
+### `GET /api/pg-boss/queues/{queueName}/depth`
+
+Chart one queue's depth over time from pg-boss's own `queue_stats` snapshots, bucketed.
+
+> Available only when: The board was created with engine 'pg-boss'. Answers 409 `ERRORS.PGBOSS_FEATURE_UNAVAILABLE` on a schema without `queue_stats`.
+
+| Parameter | In | Required | Type |
+| --- | --- | --- | --- |
+| `queueName` | path | yes | string |
+| `range` | query | no | `1h` \| `6h` \| `24h` \| `7d` |
+| `aggregate` | query | no | `max` \| `avg` |
+
+Responds `200` with [`GetPgBossQueueDepthResponse`](#getpgbossqueuedepthresponse).
+
 ### `GET /api/pg-boss/queues/{queueName}/jobs`
 
 List the jobs of one queue, newest first, one keyset page at a time.
@@ -670,6 +684,32 @@ List the jobs one job waits on and the jobs waiting on it.
 | `jobId` | path | yes | string |
 
 Responds `200` with [`GetPgBossDependenciesResponse`](#getpgbossdependenciesresponse).
+
+### `GET /api/pg-boss/jobs/{jobId}`
+
+Find a job by id in whichever visible queue holds it, probing each queue on its primary key.
+
+> Available only when: The board was created with engine 'pg-boss'.
+
+| Parameter | In | Required | Type |
+| --- | --- | --- | --- |
+| `jobId` | path | yes | string |
+
+Responds `200` with [`FindPgBossJobResponse`](#findpgbossjobresponse).
+
+### `GET /api/pg-boss/warnings`
+
+List pg-boss's persisted warnings, newest first, one keyset page at a time. Warnings naming a hidden queue are left out.
+
+> Available only when: The board was created with engine 'pg-boss'. Answers 409 `ERRORS.PGBOSS_FEATURE_UNAVAILABLE` on a schema without the `warning` table.
+
+| Parameter | In | Required | Type |
+| --- | --- | --- | --- |
+| `type` | query | no | string |
+| `cursor` | query | no | string |
+| `limit` | query | no | string |
+
+Responds `200` with [`GetPgBossWarningsResponse`](#getpgbosswarningsresponse).
 
 ### `GET /api/pg-boss/schedules`
 
@@ -1180,7 +1220,7 @@ Responds `200` with [`GetRedisStatsResponse`](#getredisstatsresponse).
 
 | Field | Type | Required |
 | --- | --- | --- |
-| `key` | `ERRORS.COMPLETED_RETRIES_DISABLED` \| `ERRORS.FORBIDDEN` \| `ERRORS.INTERNAL_SERVER_ERROR` \| `ERRORS.INVALID_BEFORE_DATE` \| `ERRORS.INVALID_CONCURRENCY` \| `ERRORS.INVALID_DATE_RANGE` \| `ERRORS.INVALID_GRANULARITY` \| `ERRORS.INVALID_METRIC` \| `ERRORS.INVALID_PRIORITY` \| `ERRORS.INVALID_QUEUE` \| `ERRORS.INVALID_QUERY_PARAM` \| `ERRORS.INVALID_RATE_LIMIT` \| `ERRORS.INVALID_REQUEST_BODY` \| `ERRORS.INVALID_RUN_AT` \| `ERRORS.INVALID_SCHEDULER_END_DATE` \| `ERRORS.INVALID_SCHEDULER_INTERVAL` \| `ERRORS.INVALID_SCHEDULER_LIMIT` \| `ERRORS.INVALID_SCHEDULER_PATTERN` \| `ERRORS.INVALID_SCHEDULER_SCHEDULE` \| `ERRORS.JOB_BELONGS_TO_JOB_SCHEDULER` \| `ERRORS.JOB_BELONGS_TO_JOB_SCHEDULER_DETAILS` \| `ERRORS.JOB_EDIT_NOT_SUPPORTED` \| `ERRORS.JOB_HAS_NO_UNPROCESSED_CHILDREN` \| `ERRORS.JOB_IS_ACTIVE` \| `ERRORS.JOB_IS_ACTIVE_DETAILS` \| `ERRORS.JOB_NOT_DELAYED` \| `ERRORS.JOB_NOT_FOUND` \| `ERRORS.JOB_NOT_RETRIABLE` \| `ERRORS.JOB_SCHEDULER_EDIT_NOT_SUPPORTED` \| `ERRORS.JOB_SCHEDULER_NOT_FOUND` \| `ERRORS.JOB_SCHEDULER_RUN_NOT_SUPPORTED` \| `ERRORS.JOB_UNPROCESSED_CHILDREN_NOT_SUPPORTED` \| `ERRORS.PGBOSS_BULK_LIMIT` \| `ERRORS.PGBOSS_INVALID_CURSOR` \| `ERRORS.PGBOSS_INVALID_SCHEDULE` \| `ERRORS.PGBOSS_JOB_STATE_CONFLICT` \| `ERRORS.PGBOSS_NOT_INSTALLED` \| `ERRORS.PGBOSS_PREVIEW_UNAVAILABLE` \| `ERRORS.PGBOSS_QUERY_TIMEOUT` \| `ERRORS.PGBOSS_SCHEMA_MISMATCH` \| `ERRORS.PGBOSS_SCHEMA_UNSUPPORTED` \| `ERRORS.PGBOSS_WRITER_UNAVAILABLE` \| `ERRORS.PGBOSS_WRITES_DISABLED` \| `ERRORS.QUEUE_HAS_ACTIVE_JOBS` \| `ERRORS.QUEUE_HAS_ACTIVE_JOBS_DETAILS` \| `ERRORS.QUEUE_NOT_FOUND` \| `ERRORS.QUEUE_NOT_PAUSED` \| `ERRORS.QUEUE_READ_ONLY` \| `ERRORS.RATE_LIMIT_NOT_SUPPORTED` \| `ERRORS.REDIS_STATS_UNAVAILABLE` \| `ERRORS.REDIS_UNAVAILABLE` \| `ERRORS.RETRIES_DISABLED` \| `ERRORS.STATUS_NOT_RETRIABLE` \| `ERRORS.UNAUTHORIZED` \| `ERRORS.WORKERS_DISABLED` | yes |
+| `key` | `ERRORS.COMPLETED_RETRIES_DISABLED` \| `ERRORS.FORBIDDEN` \| `ERRORS.INTERNAL_SERVER_ERROR` \| `ERRORS.INVALID_BEFORE_DATE` \| `ERRORS.INVALID_CONCURRENCY` \| `ERRORS.INVALID_DATE_RANGE` \| `ERRORS.INVALID_GRANULARITY` \| `ERRORS.INVALID_METRIC` \| `ERRORS.INVALID_PRIORITY` \| `ERRORS.INVALID_QUEUE` \| `ERRORS.INVALID_QUERY_PARAM` \| `ERRORS.INVALID_RATE_LIMIT` \| `ERRORS.INVALID_REQUEST_BODY` \| `ERRORS.INVALID_RUN_AT` \| `ERRORS.INVALID_SCHEDULER_END_DATE` \| `ERRORS.INVALID_SCHEDULER_INTERVAL` \| `ERRORS.INVALID_SCHEDULER_LIMIT` \| `ERRORS.INVALID_SCHEDULER_PATTERN` \| `ERRORS.INVALID_SCHEDULER_SCHEDULE` \| `ERRORS.JOB_BELONGS_TO_JOB_SCHEDULER` \| `ERRORS.JOB_BELONGS_TO_JOB_SCHEDULER_DETAILS` \| `ERRORS.JOB_EDIT_NOT_SUPPORTED` \| `ERRORS.JOB_HAS_NO_UNPROCESSED_CHILDREN` \| `ERRORS.JOB_IS_ACTIVE` \| `ERRORS.JOB_IS_ACTIVE_DETAILS` \| `ERRORS.JOB_NOT_DELAYED` \| `ERRORS.JOB_NOT_FOUND` \| `ERRORS.JOB_NOT_RETRIABLE` \| `ERRORS.JOB_SCHEDULER_EDIT_NOT_SUPPORTED` \| `ERRORS.JOB_SCHEDULER_NOT_FOUND` \| `ERRORS.JOB_SCHEDULER_RUN_NOT_SUPPORTED` \| `ERRORS.JOB_UNPROCESSED_CHILDREN_NOT_SUPPORTED` \| `ERRORS.PGBOSS_BULK_LIMIT` \| `ERRORS.PGBOSS_FEATURE_UNAVAILABLE` \| `ERRORS.PGBOSS_INVALID_CURSOR` \| `ERRORS.PGBOSS_INVALID_SCHEDULE` \| `ERRORS.PGBOSS_JOB_NOT_FOUND` \| `ERRORS.PGBOSS_JOB_STATE_CONFLICT` \| `ERRORS.PGBOSS_NOT_INSTALLED` \| `ERRORS.PGBOSS_PREVIEW_UNAVAILABLE` \| `ERRORS.PGBOSS_QUERY_TIMEOUT` \| `ERRORS.PGBOSS_SCHEMA_INCOMPATIBLE` \| `ERRORS.PGBOSS_SCHEMA_MISMATCH` \| `ERRORS.PGBOSS_SCHEMA_UNSUPPORTED` \| `ERRORS.PGBOSS_SCHEMA_UNTESTED` \| `ERRORS.PGBOSS_WRITER_UNAVAILABLE` \| `ERRORS.PGBOSS_WRITES_DISABLED` \| `ERRORS.QUEUE_HAS_ACTIVE_JOBS` \| `ERRORS.QUEUE_HAS_ACTIVE_JOBS_DETAILS` \| `ERRORS.QUEUE_NOT_FOUND` \| `ERRORS.QUEUE_NOT_PAUSED` \| `ERRORS.QUEUE_READ_ONLY` \| `ERRORS.RATE_LIMIT_NOT_SUPPORTED` \| `ERRORS.REDIS_STATS_UNAVAILABLE` \| `ERRORS.REDIS_UNAVAILABLE` \| `ERRORS.RETRIES_DISABLED` \| `ERRORS.STATUS_NOT_RETRIABLE` \| `ERRORS.UNAUTHORIZED` \| `ERRORS.WORKERS_DISABLED` | yes |
 | `options` | object | no |
 
 ### PgBossJobState
@@ -1348,6 +1388,23 @@ Responds `200` with [`GetRedisStatsResponse`](#getredisstatsresponse).
 | `schedulePreview` | boolean | yes |
 | `bulk` | boolean | yes |
 
+### PgBossFeature
+
+``queueCounters` \| `readyHistory` \| `schedules` \| `scheduleKind` \| `dependencies` \| `deadLetterSource` \| `queueDepth` \| `warnings``
+
+### PgBossFeatures
+
+| Field | Type | Required |
+| --- | --- | --- |
+| `queueCounters` | boolean | yes |
+| `readyHistory` | boolean | yes |
+| `schedules` | boolean | yes |
+| `scheduleKind` | boolean | yes |
+| `dependencies` | boolean | yes |
+| `deadLetterSource` | boolean | yes |
+| `queueDepth` | boolean | yes |
+| `warnings` | boolean | yes |
+
 ### PgBossInfo
 
 | Field | Type | Required |
@@ -1362,9 +1419,36 @@ Responds `200` with [`GetRedisStatsResponse`](#getredisstatsresponse).
 | `readOnly` | boolean | yes |
 | `unavailableReason` | TranslatableMessage \| null | yes |
 | `writesDisabledReason` | TranslatableMessage \| null | yes |
+| `untested` | boolean | yes |
+| `features` | PgBossFeatures | yes |
+| `disabledFeatures` | PgBossFeature[] | yes |
 | `persistQueueStats` | boolean | yes |
+| `persistWarnings` | boolean | yes |
 | `datastore` | RedisStats \| null | yes |
 | `capabilities` | PgBossCapabilities | yes |
+
+### PgBossQueueDepthPoint
+
+| Field | Type | Required |
+| --- | --- | --- |
+| `ts` | number | yes |
+| `deferred` | number | yes |
+| `queued` | number | yes |
+| `ready` | number | yes |
+| `active` | number | yes |
+| `failed` | number | yes |
+| `total` | number | yes |
+
+### PgBossWarning
+
+| Field | Type | Required |
+| --- | --- | --- |
+| `id` | string | yes |
+| `type` | string | yes |
+| `message` | string | yes |
+| `data` | any | yes |
+| `queueName` | string \| null | yes |
+| `createdOn` | string | yes |
 
 ### GetQueuesResponse
 
@@ -1522,7 +1606,11 @@ Responds `200` with [`GetRedisStatsResponse`](#getredisstatsresponse).
 | `readOnly` | boolean | yes |
 | `unavailableReason` | TranslatableMessage \| null | yes |
 | `writesDisabledReason` | TranslatableMessage \| null | yes |
+| `untested` | boolean | yes |
+| `features` | PgBossFeatures | yes |
+| `disabledFeatures` | PgBossFeature[] | yes |
 | `persistQueueStats` | boolean | yes |
+| `persistWarnings` | boolean | yes |
 | `datastore` | RedisStats \| null | yes |
 | `capabilities` | PgBossCapabilities | yes |
 
@@ -1558,6 +1646,29 @@ Responds `200` with [`GetRedisStatsResponse`](#getredisstatsresponse).
 | Field | Type | Required |
 | --- | --- | --- |
 | `job` | PgBossJob | yes |
+
+### FindPgBossJobResponse
+
+| Field | Type | Required |
+| --- | --- | --- |
+| `job` | PgBossJobSummary | yes |
+
+### GetPgBossQueueDepthResponse
+
+| Field | Type | Required |
+| --- | --- | --- |
+| `points` | PgBossQueueDepthPoint[] | yes |
+| `from` | number | yes |
+| `to` | number | yes |
+| `bucketSeconds` | number | yes |
+
+### GetPgBossWarningsResponse
+
+| Field | Type | Required |
+| --- | --- | --- |
+| `warnings` | PgBossWarning[] | yes |
+| `nextCursor` | string \| null | yes |
+| `prevCursor` | string \| null | yes |
 
 ### GetPgBossDependenciesResponse
 
@@ -1716,6 +1827,21 @@ Responds `200` with [`GetRedisStatsResponse`](#getredisstatsresponse).
 | Field | Type | Required |
 | --- | --- | --- |
 | `queueName` | string | no |
+
+### GetPgBossQueueDepthQuery
+
+| Field | Type | Required |
+| --- | --- | --- |
+| `range` | `1h` \| `6h` \| `24h` \| `7d` | no |
+| `aggregate` | `max` \| `avg` | no |
+
+### GetPgBossWarningsQuery
+
+| Field | Type | Required |
+| --- | --- | --- |
+| `type` | string | no |
+| `cursor` | string | no |
+| `limit` | string | no |
 
 ### PreviewPgBossScheduleBody
 

@@ -3,7 +3,9 @@ import { errorResponse } from '../../errors';
 import { pgBossJobIdSchema } from '../../schemas/pgBoss';
 import type {
   GetPgBossJobsQuery,
+  GetPgBossQueueDepthQuery,
   GetPgBossSchedulesQuery,
+  GetPgBossWarningsQuery,
   PgBossJobIdsBody,
   PreviewPgBossScheduleBody,
   RemovePgBossScheduleBody,
@@ -11,14 +13,17 @@ import type {
   UpsertPgBossScheduleBody,
 } from '../../schemas/requests';
 import type {
+  FindPgBossJobResponse,
   GetPgBossDependenciesResponse,
   GetPgBossInfoResponse,
   GetPgBossJobResponse,
   GetPgBossJobsResponse,
+  GetPgBossQueueDepthResponse,
   GetPgBossQueueResponse,
   GetPgBossQueuesResponse,
   GetPgBossSchedulesResponse,
   GetPgBossStateCountsResponse,
+  GetPgBossWarningsResponse,
   PgBossCommandResponse,
   PgBossScheduleResponse,
   PreviewPgBossScheduleResponse,
@@ -32,6 +37,7 @@ import type {
 } from '../../types';
 import { PgBossEngineError } from './errors';
 import type { PgBossEngine, PgBossJobAction } from './types';
+import { depthWindow } from './warnings';
 
 type Result<T> = Promise<ControllerHandlerReturnType<T>>;
 
@@ -136,6 +142,42 @@ export function createPgBossHandlers(engine: PgBossEngine) {
         return detail ? { body: { job: detail } } : errorResponse(404, 'ERRORS.JOB_NOT_FOUND');
       })
     );
+
+  /**
+   * A job by id alone. Only the queues this caller may see are searched, so a job on a hidden
+   * queue answers exactly like one that does not exist.
+   */
+  const findJob = (req: WorkerManagerRequest): Result<FindPgBossJobResponse> =>
+    readable(engine, async () => {
+      const id = parseJobId(req);
+      if (!id) return invalidJobId();
+      const names: string[] = [];
+      for (const queue of await engine.listQueues()) {
+        if (await engine.isVisible(req, queue.name)) names.push(queue.name);
+      }
+      const found = names.length > 0 ? await engine.findJob(id, names) : null;
+      return found ? { body: { job: found } } : errorResponse(404, 'ERRORS.PGBOSS_JOB_NOT_FOUND');
+    });
+
+  const depth = (
+    req: WorkerManagerRequest<GetPgBossQueueDepthQuery>
+  ): Result<GetPgBossQueueDepthResponse> =>
+    readable(engine, () =>
+      withQueue(engine, req, async (found) => {
+        const window = depthWindow(req.query.range, req.query.aggregate);
+        const points = await engine.queueDepth(found.name, window);
+        return {
+          body: { points, from: window.from, to: window.to, bucketSeconds: window.bucketSeconds },
+        };
+      })
+    );
+
+  const warnings = (
+    req: WorkerManagerRequest<GetPgBossWarningsQuery>
+  ): Result<GetPgBossWarningsResponse> =>
+    readable(engine, async () => ({
+      body: await engine.listWarnings(req.query, (name) => engine.isVisible(req, name)),
+    }));
 
   const dependencies = (req: WorkerManagerRequest): Result<GetPgBossDependenciesResponse> =>
     readable(engine, () =>
@@ -255,6 +297,9 @@ export function createPgBossHandlers(engine: PgBossEngine) {
     counts,
     jobs,
     job,
+    findJob,
+    depth,
+    warnings,
     dependencies,
     schedules,
     preview,

@@ -1,14 +1,21 @@
 import type {
   GetPgBossJobsQuery,
+  GetPgBossWarningsQuery,
   PreviewPgBossScheduleBody,
   SendPgBossJobBody,
   UpsertPgBossScheduleBody,
 } from '../../schemas/requests';
-import type { GetPgBossJobsResponse, PgBossCommandResponse } from '../../schemas/responses';
+import type {
+  GetPgBossJobsResponse,
+  GetPgBossWarningsResponse,
+  PgBossCommandResponse,
+} from '../../schemas/responses';
 import type {
   PgBossDependencyRef,
   PgBossInfo,
   PgBossJob,
+  PgBossJobSummary,
+  PgBossQueueDepthPoint,
   PgBossQueueSummary,
   PgBossSchedule,
   PgBossStateCounts,
@@ -18,6 +25,16 @@ import type {
 } from '../../types';
 
 export type PgBossJobAction = 'retry' | 'cancel' | 'resume' | 'delete';
+
+export interface PgBossQueueDepthWindow {
+  /** Inclusive bounds, epoch milliseconds. */
+  from: number;
+  to: number;
+  /** Bucket width. */
+  bucketSeconds: number;
+  /** How a bucket folds its snapshots: the worst backlog seen in it, or the mean. */
+  aggregate: 'max' | 'avg';
+}
 
 /**
  * The seam between the pg-boss routes and whatever answers them. The routes, schemas and error
@@ -38,6 +55,21 @@ export interface PgBossEngine {
   countStates(name: string): Promise<{ counts: PgBossStateCounts; cap: number }>;
   listJobs(name: string, query: GetPgBossJobsQuery): Promise<GetPgBossJobsResponse>;
   getJob(name: string, id: string): Promise<PgBossJob | null>;
+  /**
+   * The job with this id in any of `queueNames`, looked up queue by queue on the `(name, id)`
+   * key so it never scans the whole job table. The caller passes only the queues it may show.
+   */
+  findJob(id: string, queueNames: string[]): Promise<PgBossJobSummary | null>;
+  /** pg-boss's `queue_stats` snapshots of one queue, bucketed. */
+  queueDepth(name: string, window: PgBossQueueDepthWindow): Promise<PgBossQueueDepthPoint[]>;
+  /**
+   * One keyset page of pg-boss's persisted warnings, newest first. A warning that names a queue
+   * `isVisible` refuses, or one the engine's own allowlist hides, is left out of the page.
+   */
+  listWarnings(
+    query: GetPgBossWarningsQuery,
+    isVisible: (queueName: string) => Promisify<boolean>
+  ): Promise<GetPgBossWarningsResponse>;
   getDependencies(
     name: string,
     id: string

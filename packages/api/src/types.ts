@@ -272,6 +272,10 @@ export type PgBossDependencyRef = v.InferOutput<typeof schemas.pgBossDependencyR
 export type PgBossSchedule = v.InferOutput<typeof schemas.pgBossScheduleSchema>;
 export type PgBossCapabilities = v.InferOutput<typeof schemas.pgBossCapabilitiesSchema>;
 export type PgBossInfo = v.InferOutput<typeof schemas.pgBossInfoSchema>;
+export type PgBossFeature = v.InferOutput<typeof schemas.pgBossFeatureSchema>;
+export type PgBossFeatures = v.InferOutput<typeof schemas.pgBossFeaturesSchema>;
+export type PgBossQueueDepthPoint = v.InferOutput<typeof schemas.pgBossQueueDepthPointSchema>;
+export type PgBossWarning = v.InferOutput<typeof schemas.pgBossWarningSchema>;
 
 export type QueueLibrary = v.InferOutput<typeof schemas.queueLibrarySchema>;
 
