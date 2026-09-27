@@ -3,7 +3,6 @@ import { TriangleAlertIcon } from 'lucide-react';
 import React, { Suspense, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { BoardNavigation, NavQueue } from '../../hooks/useBoardNavigation';
-import { ExperimentalBadge } from './components/ExperimentalBadge';
 import { PgBossCommandExtras } from './components/PgBossCommandExtras';
 import { permissionsOf, usePgBossInfo } from './hooks/usePgBossInfo';
 import { usePgBossQueues } from './hooks/usePgBossQueues';
@@ -78,7 +77,6 @@ export function usePgBossNavigation(): BoardNavigation {
       datastoreTitle,
       schedulesLabel,
       queuePageLink,
-      headerBadge: <ExperimentalBadge />,
       pages: hasWarnings
         ? [{ path: pgBossLinks.warnings().pathname, label: warningsLabel, icon: TriangleAlertIcon }]
         : [],

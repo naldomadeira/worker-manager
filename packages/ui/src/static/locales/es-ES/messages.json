@@ -733,8 +733,6 @@
     "PAGE": "Página {{page}}"
   },
   "PGBOSS": {
-    "EXPERIMENTAL": "Experimental",
-    "EXPERIMENTAL_HINT": "El motor pg-boss es experimental: sus pantallas y su API HTTP aún pueden cambiar en una versión menor.",
     "STATE": {
       "ALL": "Todas",
       "CREATED": "Creada",

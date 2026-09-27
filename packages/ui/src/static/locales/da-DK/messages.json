@@ -706,8 +706,6 @@
     "PAGE": "Side {{page}}"
   },
   "PGBOSS": {
-    "EXPERIMENTAL": "Eksperimentel",
-    "EXPERIMENTAL_HINT": "pg-boss-motoren er eksperimentel: dens skærme og dens HTTP-API kan stadig ændre sig i en mindre udgivelse.",
     "STATE": {
       "ALL": "Alle",
       "CREATED": "Oprettet",

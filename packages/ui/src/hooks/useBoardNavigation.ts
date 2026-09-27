@@ -1,5 +1,5 @@
 import type { LucideIcon } from 'lucide-react';
-import React, { type ComponentType, type ReactNode, useContext } from 'react';
+import React, { type ComponentType, useContext } from 'react';
 import { useQueues } from './useQueues';
 
 /**
@@ -55,8 +55,6 @@ export interface BoardNavigation {
   DatastoreModal?: ComponentType<{ open: boolean; onClose(): void }>;
   /** Label of the header's datastore button, when it is not the Redis one. */
   datastoreTitle?: string;
-  /** Shown beside the breadcrumb, such as an "experimental" badge. */
-  headerBadge?: ReactNode;
   /** Pages only this engine has. */
   pages?: NavPage[];
   /** Command palette entries worked out from the search text, such as "open the job with this id". */

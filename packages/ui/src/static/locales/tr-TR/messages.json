@@ -706,8 +706,6 @@
     "PAGE": "Sayfa {{page}}"
   },
   "PGBOSS": {
-    "EXPERIMENTAL": "Deneysel",
-    "EXPERIMENTAL_HINT": "pg-boss motoru deneyseldir: ekranları ve HTTP API'si bir alt sürümde hâlâ değişebilir.",
     "STATE": {
       "ALL": "Tümü",
       "CREATED": "Oluşturuldu",
