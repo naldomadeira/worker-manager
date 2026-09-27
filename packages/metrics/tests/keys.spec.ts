@@ -36,6 +36,19 @@ describe('keys', () => {
     expect(scoped.lease('Q')).toBe('{tenant-a}:Q:latency:lease');
     expect(scoped.watermark('Q')).toBe('{tenant-a}:Q:latency:watermark');
     expect(scoped.scanPattern).toBe('{tenant-a}:*');
+    expect(scoped.meta).toBe('{tenant-a}:__meta__');
+  });
+
+  it('keeps the layout marker inside the namespace hash tag on a cluster', () => {
+    expect(metricsKeys(resolveNamespace('staging:metrics', true)).meta).toBe(
+      '{staging:metrics}:__meta__'
+    );
+    expect(metricsKeys(resolveNamespace('{app}:metrics', true)).meta).toBe(
+      '{app}:metrics:__meta__'
+    );
+    expect(metricsKeys(resolveNamespace(undefined, false)).meta).toBe(
+      'worker-manager:metrics:__meta__'
+    );
   });
 
   it('lists inclusive UTC day range', () => {

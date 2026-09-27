@@ -1,6 +1,6 @@
 {
   "name": "@worker-manager/metrics",
-  "version": "2.4.0",
+  "version": "2.5.0",
   "description": "Opt-in long-retention historical job metrics recorder and provider for Worker Manager.",
   "keywords": [
     "bull",
@@ -21,10 +21,24 @@
     "directory": "packages/metrics"
   },
   "files": [
-    "dist"
+    "dist",
+    "internal.js",
+    "internal.d.ts"
   ],
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./internal": {
+      "types": "./internal.d.ts",
+      "default": "./internal.js"
+    },
+    "./dist/*": "./dist/*",
+    "./package.json": "./package.json"
+  },
   "publishConfig": {
     "access": "public"
   },
@@ -34,7 +48,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@worker-manager/api": "2.4.0"
+    "@worker-manager/api": "2.5.0"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",

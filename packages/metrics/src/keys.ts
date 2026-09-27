@@ -2,6 +2,8 @@ export const DEFAULT_NAMESPACE = 'worker-manager:metrics';
 export const GLOBAL_QUEUE = '__global__';
 /** Marks the hourly rollup key so it can't be mistaken for a minute-level day hash. */
 export const HOUR_TIER = 'hour';
+/** The last segment of the namespace's metadata hash, `<namespace>:__meta__`. */
+export const META_KEY = '__meta__';
 
 export const DAY_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -86,6 +88,12 @@ export interface MetricsKeys {
   totals(queue: string, metric: string): string;
   lease(queue: string): string;
   watermark(queue: string): string;
+  /**
+   * The namespace's metadata hash, holding the storage layout version (see `layout.ts`). One
+   * segment after the namespace, so it can never parse as a history key, and inside the
+   * namespace's hash tag on a cluster.
+   */
+  meta: string;
   scanPattern: string;
 }
 
@@ -97,6 +105,7 @@ export function metricsKeys(namespace: string): MetricsKeys {
     totals: (queue, metric) => `${namespace}:${queue}:${metric}:totals`,
     lease: (queue) => `${namespace}:${queue}:latency:lease`,
     watermark: (queue) => `${namespace}:${queue}:latency:watermark`,
+    meta: `${namespace}:${META_KEY}`,
     scanPattern: `${namespace}:*`,
   };
 }

@@ -4,6 +4,7 @@ import { HistoryStore } from '../src/HistoryStore';
 import { GLOBAL_QUEUE, metricsKeys, minuteToDay, resolveNamespace } from '../src/keys';
 import { LatencyStore } from '../src/LatencyStore';
 import { RedisMetricsHistoryProvider } from '../src/RedisMetricsHistoryProvider';
+import { RedisMetricsStore } from '../src/RedisMetricsStore';
 import { clusterNodes } from './connection';
 
 const RETENTION = { minutes: 7, hours: 90, days: 90 };
@@ -110,6 +111,21 @@ if (!clusterNodes) {
       await expect(latency.recordQueueAge('alpha', hour, 4321)).resolves.toBeUndefined();
 
       expect(await latency.readQueueAge(GLOBAL_QUEUE, 'day', [day])).toEqual({ [day]: 4321 });
+    });
+
+    it('claims the layout marker in the namespace slot, next to the data it describes', async () => {
+      const store = new RedisMetricsStore({ connection: cluster, prefix });
+      await store
+        .counterStore(RETENTION)
+        .upsertMinutes('alpha', 'completed', [{ minute, value: 2 }]);
+
+      const keys = metricsKeys(namespace);
+      expect(keys.meta).toBe(`{${prefix}}:__meta__`);
+      expect(await cluster.hget(keys.meta, 'layout')).toBe('1');
+      const holders = await Promise.all(
+        cluster.nodes('master').map(async (node) => (await node.keys(`${namespace}:*`)).length)
+      );
+      expect(holders.filter((count) => count > 0)).toHaveLength(1);
     });
 
     it('puts the whole namespace in one slot, which is what keeps the EVALs legal', async () => {

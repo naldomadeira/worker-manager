@@ -111,6 +111,11 @@ interface RecorderBaseOptions {
    * Notified when a scheduled snapshot fails, say because the store is unreachable. The
    * timer keeps running and the next tick retries; without a listener the failure is
    * dropped rather than surfacing as an unhandled rejection.
+   *
+   * This is also where a storage refusal surfaces: when the Redis namespace carries a layout
+   * marker newer than `REDIS_METRICS_LAYOUT_VERSION` (or the PostgreSQL tables a newer schema
+   * version), every snapshot, the first one `start()` runs included, rejects before writing
+   * anything. Awaiting `snapshot()` directly throws the same error.
    */
   onSnapshotError?: (error: unknown) => void;
 }
@@ -134,6 +139,7 @@ export class MetricsRecorder {
   private readonly resolveQueues: (() => BaseAdapter[]) | null;
   private readonly resolveSources: (() => CounterSource[] | Promise<CounterSource[]>) | null;
   private readonly store: CounterStore;
+  private readonly prepareWrites: () => Promise<void>;
   /** Set only when the recorder built the store itself, from a `connection`. */
   private readonly ownedStore: MetricsStore | null;
   private readonly intervalMs: number;
@@ -156,6 +162,9 @@ export class MetricsRecorder {
     const store =
       opts.store ?? new RedisMetricsStore({ connection: opts.connection, prefix: opts.prefix });
     this.ownedStore = opts.store ? null : store;
+    this.prepareWrites = store.prepareWrites
+      ? store.prepareWrites.bind(store)
+      : () => Promise.resolve();
     const retention = resolveRetention(opts);
     this.store = store.counterStore(retention);
     this.onSnapshotError = opts.onSnapshotError;
@@ -216,6 +225,9 @@ export class MetricsRecorder {
     }
     this.running = true;
     try {
+      // Claims the Redis layout marker, or refuses the whole tick when a newer build owns the
+      // storage, before any source is read.
+      await this.prepareWrites();
       const sources = (this.resolveQueues?.() ?? []).map(adapterCounterSource);
       if (this.resolveSources) {
         sources.push(...(await this.resolveSources()));

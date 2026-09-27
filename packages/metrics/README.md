@@ -1,7 +1,5 @@
 # @worker-manager/metrics
 
-> Status: Beta. The API and the Redis and PostgreSQL storage layouts may still change in a minor release while the feature settles. It is safe to run (opt-in, and it only writes its own namespaced keys), but pin an exact version if you depend on the storage format.
-
 Opt-in long-retention historical job metrics for [Worker Manager](https://github.com/naldomadeira/worker-manager).
 
 Snapshots native BullMQ per-minute metrics into long-retention buckets, in Redis or in
@@ -214,6 +212,19 @@ Retention is enforced by Redis. Day-scoped keys expire on their own TTL; the dai
 On Redis both are `SCAN`-driven and confined to this package's namespace, so they never block Redis and never touch BullMQ's own keys. On a cluster they scan every master, since `SCAN` carries no key for the client to route by. Purging a single queue also subtracts it from the cross-queue rollup. Call `admin.disconnect()` when done.
 
 `RedisMetricsHistoryProvider` and `PostgresMetricsHistoryProvider` expose the same two operations to the board, which turns them into a storage panel on the Metrics history page with a confirmation before anything is deleted.
+
+## Stability
+
+Stable since 2.5.0. The main entry, `@worker-manager/metrics`, follows semver: the recorder, both stores, both providers, `migratePostgresMetrics`, `MetricsHistoryAdmin`, `namespacedHistoryProvider` and their option and result types change incompatibly only in a major release. So do both storage layouts, the Redis keys and the PostgreSQL tables, which means a minor or patch upgrade reads and writes the history an earlier 2.x release recorded.
+
+`@worker-manager/metrics/internal` is not covered. It carries the building blocks Worker Manager's own packages are made of (`LatencyStore`, `LatencySampler`, the histogram bounds, the `CounterSource` and `JobSource` interfaces pg-boss implements) and may change in any release. Import from it only if you accept that.
+
+Each storage layout is versioned, and a build refuses to write storage a newer build laid out:
+
+- **PostgreSQL**: `schema_version` in the `meta` table, which this build expects to be `POSTGRES_METRICS_SCHEMA_VERSION`. Migrations are append-only. See [Schema and migrations](#schema-and-migrations).
+- **Redis**: a `layout` field in the hash `<namespace>:__meta__` (inside the namespace's `{...}` hash tag on a cluster), which this build expects to be `REDIS_METRICS_LAYOUT_VERSION`, currently `1`. The recorder writes it on its first snapshot when it is missing. A namespace recorded before the marker existed has none and is layout 1, so it is adopted as is. When the marker is newer than the installed package, every snapshot rejects with an error naming both versions, reported through `onSnapshotError` (and thrown from `await recorder.snapshot()`), and nothing is written; `MetricsHistoryAdmin.purge()` refuses the same way. The providers and `stats()` keep reading.
+
+A layout changes only in a major release, which says in its changelog whether history carries over.
 
 ## Scope
 

@@ -100,6 +100,11 @@ export class PostgresMetricsStore implements MetricsStore {
     return this.readiness;
   }
 
+  /** @internal See `MetricsStore.prepareWrites`. */
+  prepareWrites(): Promise<void> {
+    return this.ready();
+  }
+
   counterStore(retention: Retention): CounterStore {
     return new PostgresCounterStore(this.ctx, retention);
   }

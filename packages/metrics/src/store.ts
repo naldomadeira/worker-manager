@@ -113,6 +113,14 @@ export interface MetricsStore {
    * sampler ask each adapter for its own client instead.
    */
   readonly jobClient: MetricsClient | null;
+  /**
+   * @internal
+   * Resolves once the store may be written: the Redis store claims or checks its layout
+   * marker, the PostgreSQL store checks or migrates its schema. Rejects, on every call, while
+   * the storage belongs to a newer build. The recorder awaits it at the start of each snapshot,
+   * so the marker lands even on a board with no traffic. Optional for third-party stores.
+   */
+  prepareWrites?(): Promise<void>;
   /** Releases what the store opened itself. A connection handed in is left to its owner. */
   close(): Promise<void>;
 }

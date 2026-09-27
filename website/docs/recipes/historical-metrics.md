@@ -2,8 +2,6 @@
 
 > Applies to: BullMQ and [pg-boss](#pg-boss-queues) boards.
 >
-> Beta: this feature ships in the opt-in `@worker-manager/metrics` package. It is safe to run, but the API and the Redis and PostgreSQL storage layouts may still change in a minor release while it settles, so pin an exact version if you depend on the storage format.
-
 Worker Manager is a viewer, not a monitor, and its built-in throughput chart reflects that: it reads BullMQ's native `queue.getMetrics()`, a per-minute ring buffer capped at `maxDataPoints`, scoped to a single queue, and only as deep as that buffer's window. Restart the buffer's window, or just wait long enough, and the older points are gone. There's no long history and no cross-queue total, because BullMQ was never asked to keep one.
 
 `@worker-manager/metrics` is an opt-in companion package that fills that gap. It doesn't replace the live chart, it adds a second, longer-retention path behind it: a recorder that snapshots the native metrics into Redis (or [PostgreSQL](#postgresql-storage)) before they roll off, and a history provider you register with `createWorkerManagerBoard` that lets the UI read them back.
@@ -489,6 +487,17 @@ Latency sampling reads BullMQ's own keys over the same connection, so your queue
 The board's own Redis stats panel is cluster-aware too: memory and client counts are summed across the masters and the uptime is the youngest node's, rather than reporting whichever node `INFO` happened to reach.
 
 The [CLI](/guide/cli#redis-cluster) and the Docker image reach a cluster with `--cluster`, and `--history` works there the same way.
+
+## Stability
+
+`@worker-manager/metrics` is stable since 2.5.0. Its main entry follows semver, and so do both storage layouts: a minor or patch upgrade reads and writes the history an earlier 2.x release recorded, in Redis and in PostgreSQL alike. The `@worker-manager/metrics/internal` entry is the exception. It holds the building blocks Worker Manager's own packages use, such as `LatencyStore` and the `CounterSource` interface, and may change in any release.
+
+Both layouts are versioned, and a build never writes storage that a newer build laid out:
+
+- The PostgreSQL tables record `schema_version` in their `meta` table, checked or migrated before the first query (see [Tables and migrations](#tables-and-migrations)).
+- A Redis namespace records its layout in the hash `<namespace>:__meta__`, field `layout`, currently `1` (`REDIS_METRICS_LAYOUT_VERSION`). On a cluster the key sits inside the namespace's hash tag, next to the data. The recorder writes the marker on its first snapshot. History recorded before 2.5.0 has no marker and is already layout 1, so it is adopted as it is.
+
+When the marker or the schema version is newer than the installed package, the recorder refuses every snapshot before writing anything, and the error names both versions. Pass `onSnapshotError` to see it; `await recorder.snapshot()` throws it. A purge from `MetricsHistoryAdmin` or the storage panel is refused the same way, while the charts keep reading.
 
 ## Scope
 

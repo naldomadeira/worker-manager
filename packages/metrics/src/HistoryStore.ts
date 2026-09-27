@@ -92,15 +92,26 @@ function ttl(days: number): string {
 export class HistoryStore implements CounterStore {
   private readonly redis: MetricsClient;
   private readonly keys: MetricsKeys;
+  private readonly ready: () => Promise<void>;
   readonly retention: Retention;
 
   /**
    * `keys` defaults to the default `worker-manager:metrics` namespace, which is what this public
    * constructor took before stores became namespace-aware in 1.1.0.
    */
-  constructor(opts: { redis: MetricsClient; keys?: MetricsKeys; retention: Retention }) {
+  constructor(opts: {
+    redis: MetricsClient;
+    keys?: MetricsKeys;
+    retention: Retention;
+    /**
+     * Awaited before every write. `RedisMetricsStore` passes its layout check here, so no
+     * write lands in a namespace a newer build owns. Absent on a store built directly.
+     */
+    ready?: () => Promise<void>;
+  }) {
     this.redis = opts.redis;
     this.keys = opts.keys ?? metricsKeys(DEFAULT_NAMESPACE);
+    this.ready = opts.ready ?? (() => Promise.resolve());
     this.retention = {
       minutes: Math.max(1, Math.floor(opts.retention.minutes)),
       hours: Math.max(1, Math.floor(opts.retention.hours)),
@@ -115,6 +126,7 @@ export class HistoryStore implements CounterStore {
     value: number,
     rollup: string = GLOBAL_QUEUE
   ): Promise<void> {
+    await this.ready();
     const day = minuteToDay(minute);
     await this.redis.eval(
       UPSERT_MINUTE,

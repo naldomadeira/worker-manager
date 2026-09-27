@@ -174,15 +174,26 @@ const RELEASE_LEASE = `if redis.call('GET', KEYS[1]) == ARGV[1] then return redi
 export class LatencyStore implements LatencyStorage {
   private readonly redis: MetricsClient;
   private readonly keys: MetricsKeys;
+  private readonly ready: () => Promise<void>;
   readonly retention: Retention;
 
   /**
    * `keys` defaults to the default `worker-manager:metrics` namespace, which is what this public
    * constructor took before stores became namespace-aware in 1.1.0.
    */
-  constructor(opts: { redis: MetricsClient; keys?: MetricsKeys; retention: Retention }) {
+  constructor(opts: {
+    redis: MetricsClient;
+    keys?: MetricsKeys;
+    retention: Retention;
+    /**
+     * Awaited before every write. `RedisMetricsStore` passes its layout check here, so no
+     * write lands in a namespace a newer build owns. Absent on a store built directly.
+     */
+    ready?: () => Promise<void>;
+  }) {
     this.redis = opts.redis;
     this.keys = opts.keys ?? metricsKeys(DEFAULT_NAMESPACE);
+    this.ready = opts.ready ?? (() => Promise.resolve());
     this.retention = opts.retention;
   }
 
@@ -193,6 +204,7 @@ export class LatencyStore implements LatencyStorage {
     vector: number[],
     rollup: string = GLOBAL_QUEUE
   ): Promise<void> {
+    await this.ready();
     const day = minuteToDay(hour * 60);
     await this.redis.eval(
       MERGE_VECTOR,
@@ -217,6 +229,7 @@ export class LatencyStore implements LatencyStorage {
     ms: number,
     rollup: string = GLOBAL_QUEUE
   ): Promise<void> {
+    await this.ready();
     const day = minuteToDay(hour * 60);
     await this.redis.eval(
       MAX_GAUGE,
@@ -292,6 +305,7 @@ export class LatencyStore implements LatencyStorage {
   }
 
   async acquireLease(queue: string, holder: string, ttlMs: number): Promise<boolean> {
+    await this.ready();
     const held = await this.redis.set(this.keys.lease(queue), holder, 'PX', ttlMs, 'NX');
     return held === 'OK';
   }
@@ -306,6 +320,7 @@ export class LatencyStore implements LatencyStorage {
   }
 
   async writeWatermark(queue: string, ms: number, ttlSeconds: number): Promise<void> {
+    await this.ready();
     await this.redis.set(this.keys.watermark(queue), String(ms), 'EX', ttlSeconds);
   }
 
