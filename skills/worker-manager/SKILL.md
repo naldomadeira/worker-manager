@@ -3,14 +3,14 @@ name: worker-manager
 description: Adds, configures and troubleshoots Worker Manager (@worker-manager/*), a web dashboard for job queues, in a Node.js app. Use when a user wants a queue dashboard, queue UI or job monitoring for BullMQ or Bull on Redis, BullMQ v6 on PostgreSQL, or pg-boss; when mounting it in NestJS, Express, Fastify, Koa, Hapi, Hono, H3, Elysia, Bun or Next.js; when protecting it with auth (Basic, Keycloak/OIDC, token, custom); for read-only boards, historical metrics, the worker-manager CLI or Docker image; or when migrating from bull-board (@bull-board/*).
 license: MIT
 metadata:
-  version: 2.3.0
+  version: 2.4.0
   docs: https://naldomadeira.github.io/worker-manager/
 ---
 
 # Worker Manager
 
 Worker Manager mounts a dashboard for job queues inside an existing server, or runs it standalone
-(CLI, Docker). This skill is a map, written against v2.3.0. The docs are the source of truth for
+(CLI, Docker). This skill is a map, written against v2.4.0. The docs are the source of truth for
 exact option names: when a detail is not here, fetch
 <https://naldomadeira.github.io/worker-manager/llms-full.txt> (whole docs in one file) or
 <https://naldomadeira.github.io/worker-manager/llms.txt> (index) before writing code.
@@ -38,7 +38,7 @@ exact option names: when a detail is not here, fetch
 | Bull (v4) on Redis | BullMQ | `new BullAdapter(queue)` from `@worker-manager/api/bullAdapter` |
 | BullMQ Pro | BullMQ | `BullMQProAdapter` from `@worker-manager/api/bullMQProAdapter` |
 | BullMQ v6 in PostgreSQL (`createPostgresBackend`) | BullMQ | `BullMQAdapter`, same as Redis. See [references/postgres.md](references/postgres.md) |
-| pg-boss (PostgreSQL) | pg-boss, **experimental** | `createPgBossBoard` / NestJS `engine: 'pg-boss'`. See [references/pg-boss.md](references/pg-boss.md) |
+| pg-boss (PostgreSQL) | pg-boss (stable since 2.4.0) | `createPgBossBoard` / NestJS `engine: 'pg-boss'`. See [references/pg-boss.md](references/pg-boss.md) |
 | BullMQ **and** pg-boss | both | Two boards on sibling paths (`/queues`, `/pg-boss`) |
 
 **Server adapter**: NestJS uses `@worker-manager/nestjs` (it picks Express or Fastify itself);
@@ -76,8 +76,8 @@ always-on process plus a `historyProvider` on the board, stored in Redis or Post
 - **BullMQ ≥ 6.3 on PostgreSQL needs its schema**: pass the object connection
   `{ connectionString, migrate: true }` (or run BullMQ's migrations as a deploy step), or it throws
   `SchemaMigrationRequiredError`.
-- **pg-boss needs Node.js ≥ 22.12 and pg-boss ≥ 12.24**, plus `@worker-manager/pg-boss`. Describe
-  the engine as experimental: its screens and `/api/pg-boss` contract may change in a minor.
+- **pg-boss needs Node.js ≥ 22.12 and pg-boss ≥ 12.24**, plus `@worker-manager/pg-boss`. The
+  engine is stable (since 2.4.0) and follows semver like the BullMQ engine.
 - **One engine per board.** BullMQ and pg-boss never share a board; mount two, side by side
   (`/queues` and `/pg-boss`), never one nested inside the other.
 - **The board never migrates the user's pg-boss schema.** It never calls `start()`, `supervise()`
@@ -129,7 +129,7 @@ import { WorkerManagerModule } from '@worker-manager/nestjs';
 export class AppModule {}
 ```
 
-## NestJS + pg-boss (experimental)
+## NestJS + pg-boss
 
 The app starts its own pg-boss and exposes it as a provider; the board reuses it. Add this next to
 an existing BullMQ board as a **named** board, or drop `name` if pg-boss is the only engine.
@@ -183,7 +183,7 @@ createWorkerManagerBoard({ queues: [new BullMQAdapter(emailQueue)], serverAdapte
 await app.register(createFastifyAuthPlugin(serverAdapter.registerPlugin(), auth), { prefix: basePath });
 ```
 
-## Express / Fastify + pg-boss (experimental)
+## Express / Fastify + pg-boss
 
 ```ts
 import { createPgBossBoard } from '@worker-manager/pg-boss';

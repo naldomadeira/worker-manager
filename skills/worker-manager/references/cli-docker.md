@@ -13,7 +13,7 @@ user's own app, mount a server adapter instead.
 ```sh
 npx @worker-manager/cli -r redis://localhost:6379                        # discovers Bull/BullMQ queues under prefix "bull"
 npx @worker-manager/cli --postgres postgres://u:p@localhost:5432/bullmq    # BullMQ v6 queues in PostgreSQL
-npx @worker-manager/cli --pg-boss postgres://u:p@localhost:5432/app        # pg-boss board (experimental, Node 22.12+)
+npx @worker-manager/cli --pg-boss postgres://u:p@localhost:5432/app        # pg-boss board (Node 22.12+)
 npx @worker-manager/cli -r redis://localhost:6379 --pg-boss postgres://...  # BullMQ at /, pg-boss at /pg-boss/
 ```
 

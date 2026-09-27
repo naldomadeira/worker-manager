@@ -76,7 +76,7 @@ export class FeatureModule {}
 | Option | Default | |
 |---|---|---|
 | `name` | none | Registers a [named board](#several-boards) with its own DI tokens, so one app can mount several. |
-| `engine` | `'bullmq'` | `'pg-boss'` mounts a [pg-boss board](#pg-boss-board-experimental) instead of a BullMQ one. |
+| `engine` | `'bullmq'` | `'pg-boss'` mounts a [pg-boss board](#pg-boss-board) instead of a BullMQ one. |
 | `pgBoss` | | Where a pg-boss board reads and writes. Only read with `engine: 'pg-boss'`. |
 | `route` | `'/queues'` | Base path where the dashboard is mounted, relative to the Nest global prefix. |
 | `adapter` | auto-detected | Server adapter class (`ExpressAdapter` or `FastifyAdapter`). When left out, the module asks `HttpAdapterHost` which platform the app runs on and loads `@worker-manager/express` or `@worker-manager/fastify`, failing with an install hint if the package is missing. |
@@ -379,7 +379,7 @@ Each board applies its own `auth` on its own prefix. With Keycloak:
   board's path, unless `auth.cookie.name` is set. Boards never share a session: log in once per
   board. The cookie secret can be the same.
 
-## pg-boss board (experimental)
+## pg-boss board
 
 `engine: 'pg-boss'` mounts a board over a [pg-boss](https://github.com/timgit/pg-boss) schema, with
 the same shell, auth and routing as a BullMQ board. It needs pg-boss 12.24 or later, Node 22.12 or

@@ -50,7 +50,7 @@ export interface FileConfig {
    */
   postgres?: string | PostgresFileConfig;
   /**
-   * PostgreSQL database holding a pg-boss schema (experimental): a connection string, or a
+   * PostgreSQL database holding a pg-boss schema: a connection string, or a
    * node-postgres pool config with the pg-boss options below. Needs Node.js 22.12 or later.
    */
   pgBoss?: string | PgBossFileConfig;

@@ -9,7 +9,7 @@ It brings up:
 - **Redis** for six classic BullMQ queues (`notifications.*`, `payments.*`, `reports.generate`,
   `orders.pipeline`), with flows and two job schedulers.
 - **PostgreSQL** for two BullMQ v6 queues stored in Postgres (`pg.invoices`, `pg.data-exports`).
-- **A second board over pg-boss** at `/pg-boss` (experimental), on a `pgboss` schema in the same
+- **A second board over pg-boss** at `/pg-boss`, on a `pgboss` schema in the same
   PostgreSQL. See [the pg-boss board](#the-pg-boss-board).
 - **Keycloak 26** with a pre-imported realm, a confidential client, and two users.
 - **Synthetic traffic**: workers with random latency, progress, logs and failures, so every view
@@ -122,7 +122,7 @@ WorkerManagerModule.forRoot({
 ```
 
 Each board has a `miscLinks` entry pointing at the other. See
-[the NestJS pg-boss board](../server-adapters/nestjs.md#pg-boss-board-experimental) for every
+[the NestJS pg-boss board](../server-adapters/nestjs.md#pg-boss-board) for every
 option.
 
 See `playground/src/app.module.ts` for the switch between the three modes and

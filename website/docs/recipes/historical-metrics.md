@@ -1,6 +1,6 @@
 # Historical metrics
 
-> Applies to: BullMQ, and [pg-boss](#pg-boss-queues) boards (experimental).
+> Applies to: BullMQ and [pg-boss](#pg-boss-queues) boards.
 >
 > Beta: this feature ships in the opt-in `@worker-manager/metrics` package. It is safe to run, but the API and the Redis and PostgreSQL storage layouts may still change in a minor release while it settles, so pin an exact version if you depend on the storage format.
 
@@ -386,8 +386,6 @@ Each row in that table carries a bar scaled against the busiest queue and split 
 Leave `historyProvider` unset and none of this appears; the board behaves exactly as it did before.
 
 ## pg-boss queues
-
-> Experimental, like the [pg-boss engine](/queue-adapters/pg-boss) itself.
 
 pg-boss keeps no per-minute metrics buffer, so there is nothing for the recorder to snapshot. What it does keep is every finished job, with the time it finished, for as long as the queue's `deleteAfterSeconds` allows. `@worker-manager/pg-boss` turns that into the same history a BullMQ board gets: `pgBossMetricsSources` hands the recorder one source per queue, and each source counts the queue's jobs by the minute of `completed_on`.
 

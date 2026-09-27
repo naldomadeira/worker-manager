@@ -1,13 +1,13 @@
 # Queue engines
 
-A board runs one **engine**. The BullMQ engine is the default and has been there all along: it drives Bull, BullMQ and BullMQ Pro queues through queue adapters, on Redis or on PostgreSQL. The pg-boss engine is new and experimental: it mounts a board over a pg-boss schema, with pages of its own. The shell around them (sidebar, command palette, themes, auth, server adapters, NestJS module, CLI) is the same.
+A board runs one **engine**. The BullMQ engine is the default and has been there all along: it drives Bull, BullMQ and BullMQ Pro queues through queue adapters, on Redis or on PostgreSQL. The pg-boss engine, stable since 2.4.0, mounts a board over a pg-boss schema, with pages of its own. The shell around them (sidebar, command palette, themes, auth, server adapters, NestJS module, CLI) is the same.
 
 | Queue system | Engine | Entry point | Docs |
 |-------------|--------|-------------|------|
 | Bull | BullMQ | `BullAdapter` | [Bull →](/queue-adapters/bull) |
 | BullMQ (Redis, or PostgreSQL on v6) | BullMQ | `BullMQAdapter` | [BullMQ →](/queue-adapters/bullmq) |
 | BullMQ Pro | BullMQ | `BullMQProAdapter` | [BullMQ Pro →](/queue-adapters/bullmq-pro) |
-| pg-boss (experimental) | pg-boss | `createPgBossBoard` | [pg-boss →](/queue-adapters/pg-boss) |
+| pg-boss | pg-boss | `createPgBossBoard` | [pg-boss →](/queue-adapters/pg-boss) |
 
 The rest of this page is about the BullMQ engine's queue adapters, which `@worker-manager/api` ships with; third-party queue systems can add their own. The pg-boss engine takes no queue adapters: it lists the queues of its schema itself. See [its page](/queue-adapters/pg-boss).
 

@@ -1,6 +1,6 @@
 {
   "name": "@worker-manager/auth",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "description": "Framework-agnostic authentication middleware (Basic, Keycloak/OIDC, static token and custom) for the Worker Manager dashboard.",
   "keywords": [
     "api-key",

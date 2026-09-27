@@ -9,7 +9,7 @@ const PGBOSS_ENTRY = 'pg-boss/index';
 // The same header menu on both boards, so a visitor can hop between the two engines.
 const miscLinks = [
   { text: 'BullMQ board', url: DEMO_BASE },
-  { text: 'pg-boss board (experimental)', url: PGBOSS_BASE },
+  { text: 'pg-boss board', url: PGBOSS_BASE },
 ];
 
 const sharedUiConfig = {

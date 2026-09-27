@@ -28,8 +28,8 @@ export interface CreatePgBossBoardOptions {
 }
 
 /**
- * Mounts a board over a pg-boss schema on any Worker Manager server adapter. Experimental: the
- * `/api/pg-boss` contract may still change in a minor release.
+ * Mounts a board over a pg-boss schema on any Worker Manager server adapter. Stable since 2.4.0:
+ * the `/api/pg-boss` contract follows semver, so a breaking change only ships in a major.
  *
  * Nothing here migrates, supervises or creates anything in the database. With only a
  * `connection`, writes go through a pg-boss instance that is never started, and only while the

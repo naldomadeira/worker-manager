@@ -1,8 +1,4 @@
-# pg-boss (experimental)
-
-::: warning Experimental
-The pg-boss engine is experimental. Its screens and its `/api/pg-boss` HTTP contract may still change in a minor release, until it is declared stable.
-:::
+# pg-boss
 
 [pg-boss](https://github.com/timgit/pg-boss) is a job queue that lives entirely in PostgreSQL. `@worker-manager/pg-boss` mounts a whole board over one pg-boss schema: the same shell, sidebar, command palette, themes and auth as a BullMQ board, with pages built around what pg-boss actually stores. It lists queues with their policy and cached counters, shows jobs in all six pg-boss states, and lets you retry, cancel, resume, delete and send jobs and edit schedules.
 
@@ -27,6 +23,10 @@ If your queues are BullMQ v6 queues stored in PostgreSQL, you don't need this: t
 | pg-boss schema version | 35 to 42 tested (35 is pg-boss 12.24.0, 42 is 12.33.0 and 12.34.0). Newer schemas are read, see [newer pg-boss schemas](#newer-pg-boss-schemas). |
 | Node.js | 22.12 or later, pg-boss's own floor. The rest of Worker Manager stays on Node.js 20. |
 | PostgreSQL | Whatever your pg-boss supports. CockroachDB, YugabyteDB and PGlite are not tested. |
+
+### Stability
+
+The pg-boss engine is stable since Worker Manager 2.4.0 and follows semver like the BullMQ engine: a breaking change to its screens' behaviour or to the `/api/pg-boss` HTTP contract only ships in a major release. That promise covers the supported range above, `pg-boss ^12.24.0` on schemas 35 to 42. A newer schema is not a breaking change either: the board probes it, keeps reading, and switches off and names only what it lacks (see [newer pg-boss schemas](#newer-pg-boss-schemas)).
 
 pg-boss 11 and older use a different schema and are not supported. Schedule previews (the next runs column, and the preview in the schedule editor) and RRULE schedules need pg-boss 12.31 or later. On 12.24 to 12.30 the schedules page still lists and edits cron schedules, with no next runs.
 
@@ -75,7 +75,7 @@ await board.close();
 
 The same thing, elsewhere:
 
-- **NestJS**: `WorkerManagerModule.forRoot({ name: 'pgboss', engine: 'pg-boss', pgBoss: { ... } })`. See [the NestJS pg-boss board](/server-adapters/nestjs#pg-boss-board-experimental).
+- **NestJS**: `WorkerManagerModule.forRoot({ name: 'pgboss', engine: 'pg-boss', pgBoss: { ... } })`. See [the NestJS pg-boss board](/server-adapters/nestjs#pg-boss-board).
 - **CLI**: `npx @worker-manager/cli --pg-boss postgres://app:secret@localhost:5432/app`, on its own or next to a BullMQ board. See [the CLI's pg-boss section](/guide/cli#pg-boss).
 - **Docker**: `WORKER_MANAGER_PGBOSS_URL`. See [Run with Docker](/guide/docker).
 - **Any other framework**: swap `ExpressAdapter` for the [server adapter](/server-adapters/) you use. Nothing else changes.
@@ -280,4 +280,4 @@ Pass no `instance` here: with `readOnly: true` nothing writes, and the board's m
 
 ## HTTP API
 
-A pg-boss board serves its own routes under `/api/pg-boss/*` (plus `/api/metrics/*` with a history provider), and none of the BullMQ `/api/queues` routes. They are listed under the `pg-boss` tag in the [HTTP API reference](/api/). Errors are translation keys, like everywhere else in the API. The contract may change in a minor release while the engine is experimental.
+A pg-boss board serves its own routes under `/api/pg-boss/*` (plus `/api/metrics/*` with a history provider), and none of the BullMQ `/api/queues` routes. They are listed under the `pg-boss` tag in the [HTTP API reference](/api/). Errors are translation keys, like everywhere else in the API. The contract follows semver: a breaking change only ships in a major release (see [stability](#stability)).

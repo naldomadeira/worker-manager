@@ -120,14 +120,7 @@ export const Title = () => {
 
   return (
     <div className="flex min-w-0 flex-1 flex-col justify-center">
-      {navigation.headerBadge ? (
-        <div className="flex min-w-0 items-center gap-2">
-          {breadcrumb}
-          {navigation.headerBadge}
-        </div>
-      ) : (
-        breadcrumb
-      )}
+      {breadcrumb}
       {!!queue?.description && !jobId && (
         <p className="truncate text-xs text-muted-foreground" title={queue.description}>
           {queue.description}

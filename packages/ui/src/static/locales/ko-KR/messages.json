@@ -652,8 +652,6 @@
     "PAGE": "{{page}}페이지"
   },
   "PGBOSS": {
-    "EXPERIMENTAL": "실험적",
-    "EXPERIMENTAL_HINT": "pg-boss 엔진은 실험적 기능입니다. 화면과 HTTP API는 마이너 릴리스에서 바뀔 수 있습니다.",
     "STATE": {
       "ALL": "전체",
       "CREATED": "생성됨",

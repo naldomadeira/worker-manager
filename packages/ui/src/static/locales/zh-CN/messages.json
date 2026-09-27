@@ -652,8 +652,6 @@
     "PAGE": "第 {{page}} 页"
   },
   "PGBOSS": {
-    "EXPERIMENTAL": "实验性",
-    "EXPERIMENTAL_HINT": "pg-boss 引擎是实验性的：它的界面和 HTTP API 可能会在次要版本中变化。",
     "STATE": {
       "ALL": "全部",
       "CREATED": "已创建",

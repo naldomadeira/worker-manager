@@ -74,7 +74,8 @@ describe('a pg-boss board', () => {
 
     await waitFor(() => expect(container.textContent).toContain('PGBOSS.KPI.READY'));
     expect(screen.getAllByRole('link', { name: /boss-queue/ }).length).toBeGreaterThan(0);
-    expect(container.textContent).toContain('PGBOSS.EXPERIMENTAL');
+    // The engine is stable: no Experimental badge beside the breadcrumb any more.
+    expect(container.textContent).not.toContain('PGBOSS.EXPERIMENTAL');
     expect(pgBossApi.getQueues).toHaveBeenCalled();
     expect(getQueues).not.toHaveBeenCalled();
   });

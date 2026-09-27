@@ -54,7 +54,7 @@ Options:
                           (postgres://user:pass@host:5432/db)
       --postgres-schema <name>
                           Schema the BullMQ tables live in       [bullmq]
-      --pg-boss <url>     Serve a pg-boss board (experimental, Node >= 22.12)
+      --pg-boss <url>     Serve a pg-boss board (Node >= 22.12)
                           (postgres://user:pass@host:5432/db)
       --pg-boss-schema <name>
                           Schema pg-boss was installed in        [pgboss]
@@ -109,7 +109,7 @@ PostgreSQL only and never connects to Redis; otherwise it serves both.
 --history records into Redis when there is one; on a PostgreSQL-only board
 it records into PostgreSQL instead, in the --postgres-schema schema.
 
---pg-boss serves an experimental board over a pg-boss schema. With no Redis
+--pg-boss serves a board over a pg-boss schema. With no Redis
 or --postgres source it is the only board and takes the root; otherwise the
 BullMQ board keeps the root, the pg-boss board is served under --pg-boss-path,
 and each links to the other from the header. --read-only and the auth flags

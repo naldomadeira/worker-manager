@@ -30,7 +30,7 @@ export default defineConfig({
   title: 'Worker Manager',
   logoText: 'Worker Manager',
   logo: '/logo.svg',
-  description: 'Dashboard for BullMQ and Bull job queues, plus an experimental pg-boss engine.',
+  description: 'Dashboard for BullMQ and Bull job queues, plus a pg-boss engine.',
   base: '/worker-manager/',
   icon: '/favicon.ico',
   outDir: 'doc_build',
@@ -74,7 +74,7 @@ export default defineConfig({
             { text: 'Bull', link: '/queue-adapters/bull' },
             { text: 'BullMQ', link: '/queue-adapters/bullmq' },
             { text: 'BullMQ Pro', link: '/queue-adapters/bullmq-pro' },
-            { text: 'pg-boss (experimental)', link: '/queue-adapters/pg-boss' },
+            { text: 'pg-boss', link: '/queue-adapters/pg-boss' },
           ],
         },
         {

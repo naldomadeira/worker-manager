@@ -1,6 +1,6 @@
 # <img alt="Worker Manager" src="https://raw.githubusercontent.com/naldomadeira/worker-manager/main/packages/ui/src/static/images/logo.svg" width="35px" /> Worker Manager
 
-A modern dashboard for [BullMQ](https://github.com/taskforcesh/bullmq) and [Bull](https://github.com/OptimalBits/bull) job queues, on **Redis or PostgreSQL**, plus an experimental [pg-boss](https://github.com/timgit/pg-boss) engine, with **authentication built in**. Mount it in your NestJS, Express, Fastify or Next.js app, or run it standalone from the CLI or Docker.
+A modern dashboard for [BullMQ](https://github.com/taskforcesh/bullmq) and [Bull](https://github.com/OptimalBits/bull) job queues, on **Redis or PostgreSQL**, plus a [pg-boss](https://github.com/timgit/pg-boss) engine, with **authentication built in**. Mount it in your NestJS, Express, Fastify or Next.js app, or run it standalone from the CLI or Docker.
 
 > Worker Manager is a fork of the open-source bull-board project (MIT), rebuilt with a shadcn/ui + Tailwind CSS interface, first-class authentication and a richer NestJS module. Migrating means a scope rename, `@bull-board/*` → `@worker-manager/*`, plus the v2.0 product rename (`createBullBoard` → `createWorkerManagerBoard`, `BullBoardModule` → `WorkerManagerModule`, the `worker-manager` CLI binary and `WORKER_MANAGER_*` env vars); see the [v2.0.0 changelog](./CHANGELOG.md) for the full list.
 
@@ -45,7 +45,7 @@ A modern dashboard for [BullMQ](https://github.com/taskforcesh/bullmq) and [Bull
 
 <sub>Light and dark ship together, and this picks whichever you are reading in.</sub>
 
-[What it does](#what-it-does) · [Try it](#try-it) · [Quick start](#quick-start) · [AI agents](#use-it-with-an-ai-agent) · [Authentication](#authentication) · [PostgreSQL](#postgresql) · [pg-boss](#pg-boss-experimental) · [Packages](#packages) · [Contributing](#contributing)
+[What it does](#what-it-does) · [Try it](#try-it) · [Quick start](#quick-start) · [AI agents](#use-it-with-an-ai-agent) · [Authentication](#authentication) · [PostgreSQL](#postgresql) · [pg-boss](#pg-boss) · [Packages](#packages) · [Contributing](#contributing)
 
 ## What it does
 
@@ -58,7 +58,7 @@ Worker Manager shows your queues, jobs, schedulers and history in the browser, a
 | BullMQ `>= 5.56` and v6 | Redis (standalone, Sentinel, Cluster) | Stable |
 | BullMQ v6 | PostgreSQL (`createPostgresBackend`) | Stable |
 | Bull (and BullMQ Pro) | Redis | Stable |
-| pg-boss `>= 12.24` (Node.js `>= 22.12`) | PostgreSQL | **Experimental**: screens and `/api/pg-boss` may change in a minor |
+| pg-boss `>= 12.24` (Node.js `>= 22.12`) | PostgreSQL | Stable since 2.4.0 |
 
 **Authentication.** `@worker-manager/auth` protects the page, the API and the assets on every adapter, the NestJS module and the CLI:
 
@@ -77,7 +77,7 @@ Worker Manager shows your queues, jobs, schedulers and history in the browser, a
 - **Read-only mode**, per-request **visibility guard**, and access-control hooks per API call.
 - **Whitelabel** theme tokens (shadcn contract), title, logo and environment badge; **12 languages**; light, dark and system themes; a phone layout.
 
-**The pg-boss board (experimental).** Jobs in all six pg-boss states, cron and RRULE schedules, dead-letter origins, pg-boss's persisted warnings, a queue depth chart, bulk retry/cancel/resume/delete, job lookup by id from the command palette, and schema tolerance: a newer pg-boss schema is probed, not refused, and whatever it lacks is switched off and named. It never migrates, supervises or creates anything in your database.
+**The pg-boss board.** Jobs in all six pg-boss states, cron and RRULE schedules, dead-letter origins, pg-boss's persisted warnings, a queue depth chart, bulk retry/cancel/resume/delete, job lookup by id from the command palette, and schema tolerance: a newer pg-boss schema is probed, not refused, and whatever it lacks is switched off and named. It never migrates, supervises or creates anything in your database.
 
 **Integrations.** Nine server adapters (Express, Fastify, Koa, Hapi, NestJS, Hono, H3, Elysia, Bun), a NestJS module with platform auto-detection, async config and named boards, a Next.js recipe, the `worker-manager` CLI and the `ghcr.io/naldomadeira/worker-manager` Docker image.
 
@@ -131,7 +131,7 @@ export class AppModule {}
 
 Open `http://localhost:3000/queues`. `forRootAsync` (with `useFactory`, `useClass` or `useExisting`), `readOnly`, `enabled`, `title`/`logo`/`theme`, Keycloak and token auth, named boards and PostgreSQL queues are in the [NestJS guide](https://naldomadeira.github.io/worker-manager/server-adapters/nestjs).
 
-### NestJS + pg-boss (experimental)
+### NestJS + pg-boss
 
 Needs Node.js 22.12+ and pg-boss 12.24+. Your app keeps starting pg-boss; the board reuses that instance.
 
@@ -166,7 +166,7 @@ await app.listen(3000); // http://localhost:3000/pg-boss
 export class AppModule {}
 ```
 
-Already have a BullMQ board? Keep it and give this one a `name: 'pgboss'`: two boards, two routes, one app. `pgBoss.useExisting` takes a provider token instead of `instance`. See the [NestJS pg-boss board](https://naldomadeira.github.io/worker-manager/server-adapters/nestjs#pg-boss-board-experimental) and the runnable [`examples/nestjs/pg-boss`](./examples/nestjs/pg-boss).
+Already have a BullMQ board? Keep it and give this one a `name: 'pgboss'`: two boards, two routes, one app. `pgBoss.useExisting` takes a provider token instead of `instance`. See the [NestJS pg-boss board](https://naldomadeira.github.io/worker-manager/server-adapters/nestjs#pg-boss-board) and the runnable [`examples/nestjs/pg-boss`](./examples/nestjs/pg-boss).
 
 ### Next.js (App Router)
 
@@ -251,7 +251,7 @@ Then ask for it in plain words ("add a queue dashboard behind Keycloak to this N
 |---|---|
 | [<img alt="Schedulers" src="https://raw.githubusercontent.com/naldomadeira/worker-manager/main/website/docs/public/screenshots/schedulers-page.png" width="420" />](https://naldomadeira.github.io/worker-manager/guide/exploring-the-dashboard)<br/>Every repeatable job across every queue, with its pattern or interval, when it next fires and when it last ran. Edit or remove one in place. | [<img alt="Historical metrics" src="https://raw.githubusercontent.com/naldomadeira/worker-manager/main/website/docs/public/screenshots/historical-metrics-page.png" width="420" />](https://naldomadeira.github.io/worker-manager/recipes/historical-metrics)<br/>Opt-in throughput and latency history over 90 days, per queue and board-wide. The storage panel tells you what keeping it costs. |
 | [<img alt="Job flows" src="https://raw.githubusercontent.com/naldomadeira/worker-manager/main/website/docs/public/screenshots/flow-tree.png" width="420" />](https://naldomadeira.github.io/worker-manager/recipes/job-logs-and-flows)<br/>Parent and child jobs as one pannable graph, even when the children live in other queues, each with its own state and progress. Click a node to inspect it without leaving the page. Per-job logs alongside. | [<img alt="Whitelabel theming" src="https://raw.githubusercontent.com/naldomadeira/worker-manager/main/website/docs/public/screenshots/whitelabel-violet-dark.png" width="420" />](https://naldomadeira.github.io/worker-manager/recipes/whitelabel-theming)<br/>Design tokens named after the shadcn contract. Set `primary` and the focus ring, the sidebar and the selection states all follow it. |
-| [<img alt="pg-boss overview" src="https://raw.githubusercontent.com/naldomadeira/worker-manager/main/website/docs/public/screenshots/pgboss-overview.png" width="420" />](https://naldomadeira.github.io/worker-manager/queue-adapters/pg-boss)<br/>The experimental pg-boss board: pg-boss's cached counters as KPI tiles and one card per queue with its policy. | [<img alt="Daily activity" src="https://raw.githubusercontent.com/naldomadeira/worker-manager/main/website/docs/public/screenshots/metrics-activity.png" width="420" />](https://naldomadeira.github.io/worker-manager/guide/exploring-the-dashboard#metrics-history)<br/>Daily activity: completed jobs, failures or the failure rate as a calendar, with the peak day and the average per weekday. |
+| [<img alt="pg-boss overview" src="https://raw.githubusercontent.com/naldomadeira/worker-manager/main/website/docs/public/screenshots/pgboss-overview.png" width="420" />](https://naldomadeira.github.io/worker-manager/queue-adapters/pg-boss)<br/>The pg-boss board: pg-boss's cached counters as KPI tiles and one card per queue with its policy. | [<img alt="Daily activity" src="https://raw.githubusercontent.com/naldomadeira/worker-manager/main/website/docs/public/screenshots/metrics-activity.png" width="420" />](https://naldomadeira.github.io/worker-manager/guide/exploring-the-dashboard#metrics-history)<br/>Daily activity: completed jobs, failures or the failure rate as a calendar, with the peak day and the average per weekday. |
 
 ## Authentication
 
@@ -306,9 +306,9 @@ createWorkerManagerBoard({ queues: [new BullMQAdapter(invoices)], serverAdapter 
 
 The CLI discovers them for you: `npx @worker-manager/cli --postgres postgres://user:pass@host/db`. See the [PostgreSQL recipe](https://naldomadeira.github.io/worker-manager/recipes/postgres-backend).
 
-## pg-boss (experimental)
+## pg-boss
 
-A board runs one engine. Besides BullMQ and Bull, there is now a [pg-boss](https://github.com/timgit/pg-boss) engine, for pg-boss 12.24 and later on Node.js 22.12 and later. It reads the pg-boss tables with plain SQL and writes through the pg-boss API, and never migrates, supervises or creates anything in your database. It is experimental: its screens and its `/api/pg-boss` HTTP contract may still change in a minor release.
+A board runs one engine. Besides BullMQ and Bull, there is a [pg-boss](https://github.com/timgit/pg-boss) engine, for pg-boss 12.24 and later on Node.js 22.12 and later. It reads the pg-boss tables with plain SQL and writes through the pg-boss API, and never migrates, supervises or creates anything in your database. It is stable since 2.4.0 and follows semver like the BullMQ engine: a breaking change to its screens' behaviour or to the `/api/pg-boss` HTTP contract only ships in a major.
 
 ```sh
 npm install @worker-manager/pg-boss

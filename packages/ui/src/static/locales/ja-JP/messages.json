@@ -654,8 +654,6 @@
     "PAGE": "{{page}} ページ"
   },
   "PGBOSS": {
-    "EXPERIMENTAL": "実験的",
-    "EXPERIMENTAL_HINT": "pg-boss エンジンは実験的です。画面と HTTP API はマイナーリリースで変わる可能性があります。",
     "STATE": {
       "ALL": "すべて",
       "CREATED": "作成済み",

@@ -131,7 +131,7 @@ const mockAdapters = state.queues.map((q) => {
 // carries the same list in its uiConfig (rsbuild.config.ts), which is the copy the UI reads.
 const miscLinks = [
   { text: 'BullMQ board', url: '/worker-manager/demo/' },
-  { text: 'pg-boss board (experimental)', url: '/worker-manager/demo/pg-boss/' },
+  { text: 'pg-boss board', url: '/worker-manager/demo/pg-boss/' },
 ];
 
 const serverAdapter = new MSWServerAdapter();

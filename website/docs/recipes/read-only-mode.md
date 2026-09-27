@@ -1,6 +1,6 @@
 # Read-only mode
 
-> Applies to: all adapters, and [pg-boss boards](#pg-boss-boards) (experimental).
+> Applies to: all adapters, and [pg-boss boards](#pg-boss-boards).
 
 Read-only mode disables every destructive action on a queue. No retries, no removals, no queue operations (pause, resume, empty, clean, obliterate), no adding jobs. Use it to share the dashboard with stakeholders, support, or shared dev environments without risking anything.
 
