@@ -148,6 +148,16 @@ caps the worker count to the number of databases available, and `jest.config.js`
 because Jest reads global options from the root config only, ignoring them inside a `projects`
 entry.
 
+`@worker-manager/metrics` is stable (since 2.5.0), so its main entry (`src/index.ts`) is a semver
+promise, pinned by `tests/entryPoints.spec.ts`. Low-level pieces that other workspaces need
+(`LatencyStore`, `CounterSource`, `JobSource`, the histogram bounds) go on `src/internal.ts`,
+published as `@worker-manager/metrics/internal` through the root `internal.js`/`internal.d.ts` shims,
+with no semver guarantee. Internal consumers (pg-boss, the CLI, `example.ts`) import from there.
+Both storage layouts are versioned: the PostgreSQL `schema_version`, and the Redis `layout` field
+of `<namespace>:__meta__` (`src/layout.ts`), which the recorder claims on its first snapshot and
+refuses to write past when a newer build set it. Changing a Redis key shape or value encoding means
+bumping `REDIS_LAYOUT_VERSION`, which is a major release.
+
 Types are gated separately, because a peer major breaks types before it breaks runtime:
 
 ```bash

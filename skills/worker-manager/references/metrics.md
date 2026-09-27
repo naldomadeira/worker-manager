@@ -1,9 +1,10 @@
-# Historical metrics reference (beta)
+# Historical metrics reference
 
 Source of truth: <https://naldomadeira.github.io/worker-manager/recipes/historical-metrics>.
 
-`@worker-manager/metrics` is opt-in and **beta** (API and storage layout may change in a minor; pin
-an exact version if you depend on the format). Without it the board is stateless and the
+`@worker-manager/metrics` is opt-in and stable since 2.5.0: the main entry and both storage layouts
+follow semver. Never import from `@worker-manager/metrics/internal` in app code; it is for Worker
+Manager's own packages and has no semver guarantee. Without it the board is stateless and the
 throughput chart only reaches back as far as BullMQ's per-minute ring buffer.
 
 Two pieces in two places:
@@ -107,3 +108,7 @@ pg-boss board share one store; one recorder can take `{ store, queues, sources }
 `purge({ queue })`, `purge({ before: 'YYYY-MM-DD' })`. The CLI and Docker image bundle the package:
 `--history` (and `--history-retention-days`) registers the provider and records in-process;
 `--read-only` keeps the provider and drops the recorder.
+
+Storage is versioned: PostgreSQL by `schema_version`, Redis by the `layout` field of
+`<namespace>:__meta__`. A recorder facing a newer layout than it knows refuses every snapshot and
+reports it through `onSnapshotError`; upgrade the package rather than deleting the marker.

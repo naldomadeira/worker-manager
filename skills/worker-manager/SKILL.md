@@ -59,7 +59,7 @@ No app to embed in, or the workers are not Node: the CLI or Docker image
 **Read-only**: BullMQ queues take `readOnlyMode: true` per queue adapter (NestJS: `readOnly: true`
 for all); a pg-boss board takes `options.readOnly: true` for the whole board.
 
-**History**: long-retention charts need `@worker-manager/metrics` (beta): a `MetricsRecorder` in an
+**History**: long-retention charts need `@worker-manager/metrics`: a `MetricsRecorder` in an
 always-on process plus a `historyProvider` on the board, stored in Redis or PostgreSQL
 ([references/metrics.md](references/metrics.md)).
 

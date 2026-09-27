@@ -339,7 +339,7 @@ Switch `WM_AUTH` between `none`, `basic` and `keycloak` in `playground/.env`. Se
 
 ## Historical metrics
 
-BullMQ keeps only a short ring buffer of per-minute metrics, so the throughput chart can't look back further than an hour or so. The optional `@worker-manager/metrics` package (beta) snapshots those metrics into long-retention buckets in Redis or PostgreSQL and feeds them back to the board, which adds a Metrics history page (throughput, daily activity, latency, storage) and 7/30/90 day ranges on every queue chart. It is entirely opt-in: without it the core stays stateless and writes nothing.
+BullMQ keeps only a short ring buffer of per-minute metrics, so the throughput chart can't look back further than an hour or so. The optional `@worker-manager/metrics` package snapshots those metrics into long-retention buckets in Redis or PostgreSQL and feeds them back to the board, which adds a Metrics history page (throughput, daily activity, latency, storage) and 7/30/90 day ranges on every queue chart. It is entirely opt-in: without it the core stays stateless and writes nothing.
 
 ```sh
 npm install @worker-manager/metrics
