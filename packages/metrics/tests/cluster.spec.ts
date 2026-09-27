@@ -10,6 +10,17 @@ const RETENTION = { minutes: 7, hours: 90, days: 90 };
 const MS_PER_MINUTE = 60000;
 const QUEUES = ['alpha', 'beta', 'gamma'];
 const PER_QUEUE_MINUTES = 20;
+const MS_PER_DAY = 86_400_000;
+
+/**
+ * Midday UTC yesterday, as a minute. The specs seed the `PER_QUEUE_MINUTES` minutes up to it and
+ * read them back as one day: anchored to the clock instead, the seeded minutes straddle two days
+ * between 00:00 and 00:20 UTC and the day bucket comes back short. Yesterday is complete and
+ * well inside every retention tier the specs configure.
+ */
+function anchorMinute(now = Date.now()): number {
+  return (Math.floor(now / MS_PER_DAY) * MS_PER_DAY - MS_PER_DAY / 2) / MS_PER_MINUTE;
+}
 
 if (!clusterNodes) {
   describe.skip('Redis Cluster (skipped: REDIS_CLUSTER_NODES is not set)', () => {
@@ -35,7 +46,7 @@ if (!clusterNodes) {
     beforeEach(async () => {
       prefix = `worker-manager:metrics:test:${Math.random().toString(36).slice(2, 10)}`;
       namespace = resolveNamespace(prefix, true);
-      minute = Math.floor(Date.now() / MS_PER_MINUTE);
+      minute = anchorMinute();
       day = minuteToDay(minute);
     });
 
@@ -163,27 +174,30 @@ if (!clusterNodes) {
         retention: RETENTION,
       });
       const perQueue = PER_QUEUE_MINUTES * ((PER_QUEUE_MINUTES + 1) / 2);
+      const window = {
+        from: (minute - PER_QUEUE_MINUTES) * MS_PER_MINUTE,
+        to: (minute + 1) * MS_PER_MINUTE,
+      };
+      // Every seeded minute is in one day, whatever time the suite runs at.
+      expect(minuteToDay(minute - PER_QUEUE_MINUTES + 1)).toBe(day);
 
       const queue = await provider.getHistory({
         queue: 'alpha',
         metric: 'completed',
         granularity: 'day',
-        from: Date.now() - MS_PER_MINUTE * PER_QUEUE_MINUTES,
-        to: Date.now(),
+        ...window,
       });
       const global = await provider.getHistory({
         metric: 'completed',
         granularity: 'day',
-        from: Date.now() - MS_PER_MINUTE * PER_QUEUE_MINUTES,
-        to: Date.now(),
+        ...window,
       });
       const latency = await provider.getLatency({
         queue: 'alpha',
         metric: 'runtime',
         granularity: 'day',
         percentiles: [95],
-        from: Date.now() - MS_PER_MINUTE * PER_QUEUE_MINUTES,
-        to: Date.now(),
+        ...window,
       });
 
       expect(queue.at(-1)?.value).toBe(perQueue);
