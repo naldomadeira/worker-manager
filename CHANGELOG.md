@@ -1,3 +1,13 @@
+### [v2.4.0](https://github.com/naldomadeira/worker-manager/compare/v2.3.0...v2.4.0)
+
+> 2026-09-27
+
+### Features
+- pg-boss engine is now stable (semver applies to its screens and the /api/pg-boss contract); the Experimental badge is gone. A breaking change to either now only ships in a major release, as for the BullMQ engine, for `pg-boss ^12.24.0` on schemas 35 to 42, with newer schemas still probed and read
+
+### Documentation
+- the pg-boss page gains a Stability section, and the README, docs site, CLI help, package READMEs, examples and agent skill no longer call the engine experimental; the NestJS "pg-boss board" section keeps its content under the new `#pg-boss-board` anchor, and every link to it was updated
+
 ### [v2.3.0](https://github.com/naldomadeira/worker-manager/compare/v2.2.0...v2.3.0)
 
 > 2026-09-26
