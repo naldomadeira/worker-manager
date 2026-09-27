@@ -32,7 +32,7 @@ features:
     details: Basic, Keycloak / OpenID Connect with PKCE, static tokens with a login form, or your own authenticate(req), on every adapter.
   - icon: "🐘"
     title: Redis or PostgreSQL
-    details: BullMQ on Redis (standalone, Sentinel, Cluster) or on PostgreSQL, plus an experimental pg-boss engine. History storage in Redis or PostgreSQL too.
+    details: BullMQ on Redis (standalone, Sentinel, Cluster) or on PostgreSQL, plus a pg-boss engine. History storage in Redis or PostgreSQL too.
   - icon: "⚡"
     title: Nothing to wire up
     details: "npx @worker-manager/cli -r redis://localhost:6379, or the official Docker image. No install, no code."

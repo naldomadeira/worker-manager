@@ -64,7 +64,7 @@ Requirements:
   - BullMQ or Bull on Redis: wrap each existing queue in BullMQAdapter or BullAdapter.
   - BullMQ v6 on PostgreSQL (createPostgresBackend): the same BullMQAdapter; on BullMQ >= 6.3 the
     connection needs { connectionString, migrate: true } or a migration step.
-  - pg-boss: use @worker-manager/pg-boss (experimental; Node >= 22.12, pg-boss >= 12.24), with
+  - pg-boss: use @worker-manager/pg-boss (Node >= 22.12, pg-boss >= 12.24), with
     createPgBossBoard or engine: 'pg-boss' in NestJS. Reuse my started PgBoss instance; the board
     must never start or migrate pg-boss. BullMQ and pg-boss need two boards on sibling paths.
 - Reuse my existing queue instances and connections, don't create new ones.

@@ -420,7 +420,7 @@ const shots = [
     uiTheme: VIOLET_THEME,
     theme: 'dark',
   },
-  // ---- the pg-boss board (experimental) ----
+  // ---- the pg-boss board ----
   {
     name: 'pgboss-overview',
     path: pgBoss(),

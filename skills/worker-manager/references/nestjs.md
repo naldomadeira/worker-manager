@@ -19,7 +19,7 @@ All optional.
 | Option | Default | Notes |
 |---|---|---|
 | `name` | none | Named board with its own DI tokens (several boards per app). Letters, digits, `.`, `_`, `-`. |
-| `engine` | `'bullmq'` | `'pg-boss'` mounts a pg-boss board (experimental). |
+| `engine` | `'bullmq'` | `'pg-boss'` mounts a pg-boss board. |
 | `pgBoss` | | pg-boss board config; only valid with `engine: 'pg-boss'`. |
 | `route` | `'/queues'` | Relative to the Nest global prefix. |
 | `adapter` | auto | `ExpressAdapter` or `FastifyAdapter` class. |
@@ -106,7 +106,7 @@ WorkerManagerModule.forFeature('billing', { name: 'invoices', adapter: BullMQAda
 - Each board has its own `auth`. Keycloak: register `https://<host>/<route>/auth/callback` per board.
   A named board's session cookie is `wm_session_<name>`; sessions are per board.
 
-## pg-boss board (experimental)
+## pg-boss board
 
 Needs `@worker-manager/pg-boss`, pg-boss ≥ 12.24, Node ≥ 22.12. The app owns and starts pg-boss.
 

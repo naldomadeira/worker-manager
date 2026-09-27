@@ -84,7 +84,7 @@ Options:
                           (postgres://user:pass@host:5432/db)
       --postgres-schema <name>
                           Schema the BullMQ tables live in       [bullmq]
-      --pg-boss <url>     Serve a pg-boss board (experimental, Node >= 22.12)
+      --pg-boss <url>     Serve a pg-boss board (Node >= 22.12)
                           (postgres://user:pass@host:5432/db)
       --pg-boss-schema <name>
                           Schema pg-boss was installed in        [pgboss]
@@ -348,10 +348,6 @@ module.exports = {
 ```
 
 ## pg-boss
-
-::: warning Experimental
-The pg-boss board is experimental: its `/api/pg-boss` HTTP contract may still change in a minor release.
-:::
 
 `--pg-boss` serves a board over a [pg-boss](https://github.com/timgit/pg-boss) schema: its queues, jobs in every state, and schedules.
 See [the pg-boss engine](/queue-adapters/pg-boss) for what the board shows, the recommended indexes and a read-only database role.

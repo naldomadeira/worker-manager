@@ -1,8 +1,8 @@
-# pg-boss reference (experimental)
+# pg-boss reference
 
 Source of truth: <https://naldomadeira.github.io/worker-manager/queue-adapters/pg-boss>.
-The engine is **experimental**: its screens and the `/api/pg-boss` HTTP contract may change in a
-minor release. Say so when you add it.
+The engine is **stable** since 2.4.0 and follows semver like the BullMQ engine: a breaking change to
+its screens or the `/api/pg-boss` HTTP contract only ships in a major. Do not call it experimental.
 
 ## Requirements
 

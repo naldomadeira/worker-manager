@@ -8,7 +8,7 @@ and schedules a `notifications` job every minute. Invoices over 900 fail, and ar
 `WorkerManagerModule.forRoot({ engine: 'pg-boss', pgBoss: { instance } })` mounts the board
 behind basic auth.
 
-Requires Node.js 22.12 or later and pg-boss 12.24 or later. The board is experimental: see
+Requires Node.js 22.12 or later and pg-boss 12.24 or later. See
 [the pg-boss engine](https://naldomadeira.github.io/worker-manager/queue-adapters/pg-boss).
 
 ```sh

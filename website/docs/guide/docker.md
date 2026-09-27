@@ -108,7 +108,7 @@ The container is a normal recorder, so it keeps writing for as long as it runs a
 
 Leave `WORKER_MANAGER_REDIS_URL` unset there. Setting both is an error, so an old URL left behind in a compose file or an env file stops the container rather than quietly winning.
 
-A [pg-boss](/guide/cli#pg-boss) board (experimental) takes a PostgreSQL URL. The image runs Node.js 22, which is what pg-boss needs, and bundles its own pg-boss 12. With nothing else set it is the only board:
+A [pg-boss](/guide/cli#pg-boss) board takes a PostgreSQL URL. The image runs Node.js 22, which is what pg-boss needs, and bundles its own pg-boss 12. With nothing else set it is the only board:
 
 ```sh
 docker run --rm -p 127.0.0.1:3000:3000 \

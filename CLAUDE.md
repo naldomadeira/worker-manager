@@ -23,7 +23,7 @@ Yarn 4 workspaces under `packages/*`, plus `playground` (see "Playground"). Key 
 | `express`, `fastify`, `hono`, `koa`, `h3`, `hapi`, `nestjs`, `elysia`, `bun` | Server adapters |
 | `cli` | Standalone `worker-manager` executable, also what the Docker image installs |
 | `metrics` | Opt-in Redis-backed recorder behind the core's `historyProvider` seam |
-| `pg-boss` | Experimental pg-boss engine: a separate board (`createPgBossBoard`) over a pg-boss schema, mounted through the `@worker-manager/api/engine` seam; needs Node >= 22.12 |
+| `pg-boss` | pg-boss engine (stable since 2.4.0): a separate board (`createPgBossBoard`) over a pg-boss schema, mounted through the `@worker-manager/api/engine` seam; needs Node >= 22.12 |
 | `test-utils` | Private (unpublished) in-repo test kit for adapter contract tests |
 
 ## UI conventions
@@ -247,7 +247,7 @@ Request validation is wrapped in `wrapHandler` (`src/hooks.ts`), which runs it a
 `handlerHooks.before` so a visibility guard answers before a 400 can reveal that a hidden route
 exists. Response validation is the same schema, off by default behind `options.validateResponses`.
 
-## pg-boss engine (experimental)
+## pg-boss engine
 
 `@worker-manager/pg-boss` is a second, separate board over a pg-boss schema, not a `BaseAdapter`:
 pg-boss has no pause, logs, progress, workers or rate limit, and has states BullMQ lacks
@@ -284,9 +284,10 @@ queues in one board is out of scope; an app mounts two boards side by side.
   through the `CounterSource` seam and records under `pgboss:<schema>:<queue>`;
   `namespacedHistoryProvider` lets one store serve both boards. Playground mounts both boards
   (`WM_PGBOSS`), and the POC at `../../pocs/bull-board/bullboard-poc` has mode `m8`.
-- **Contract stability.** `/api/pg-boss/*` may change in a minor until it is called stable; the
-  queue-depth history endpoint described in the plan is not implemented yet (the read helper
-  `readPgBossQueueDepth` exists, the route and schema do not).
+- **Contract stability.** The engine is stable since 2.4.0 and follows semver like the BullMQ
+  engine: a breaking change to its screens' behaviour or to `/api/pg-boss/*` only ships in a
+  major, so a response field or route may be added in a minor but never removed or renamed. The
+  queue-depth history is served at `GET /api/pg-boss/queues/:queueName/depth` (since 2.3.0).
 
 ## Adapter contract tests
 
