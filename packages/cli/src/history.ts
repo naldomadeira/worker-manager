@@ -5,9 +5,9 @@ import {
   PostgresMetricsHistoryProvider,
   PostgresMetricsStore,
   RedisMetricsHistoryProvider,
-  type CounterSources,
   type MetricsStore,
 } from '@worker-manager/metrics';
+import type { CounterSources } from '@worker-manager/metrics/internal';
 import type { HistoryConfig, PostgresConfig } from './config/types';
 import { describeError } from './describeError';
 import type { RedisClient } from './redisClient';

@@ -7,7 +7,7 @@ import type {
   FinishedJobs,
   JobSource,
   MinutePoint,
-} from '@worker-manager/metrics';
+} from '@worker-manager/metrics/internal';
 import type { Reader } from './connection';
 import { createPgBossEngine } from './engine';
 import { internalsOf } from './internals';

@@ -3,12 +3,8 @@ import { createWorkerManagerBoard } from '@worker-manager/api';
 import { BullAdapter } from '@worker-manager/api/bullAdapter';
 import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
 import { ExpressAdapter } from '@worker-manager/express';
-import {
-  BUCKET_COUNT,
-  LatencyStore,
-  MetricsRecorder,
-  RedisMetricsHistoryProvider,
-} from '@worker-manager/metrics';
+import { MetricsRecorder, RedisMetricsHistoryProvider } from '@worker-manager/metrics';
+import { BUCKET_COUNT, LatencyStore } from '@worker-manager/metrics/internal';
 import * as Bull from 'bull';
 import Queue3 from 'bull';
 import { FlowProducer, JobsOptions, MetricsTime, Queue as QueueMQ, Worker } from 'bullmq';
@@ -306,8 +302,8 @@ const groupedQueueDefs: Array<[string, JobsOptions?]> = [
 // fabricates 30 days of plausible-looking history directly in Redis on startup so the charts
 // have something to show immediately.
 //
-// It writes straight into the storage @worker-manager/metrics defines, using its public
-// `LatencyStore` export for latency histograms and the queue-age gauge. There is no public
+// It writes straight into the storage @worker-manager/metrics defines, using the `LatencyStore`
+// from its `/internal` entry for latency histograms and the queue-age gauge. There is no
 // writer for arbitrary backdated counter (completed/failed) totals -- `HistoryStore`, which
 // owns that, is intentionally not exported (see packages/metrics/src/index.ts), and the only
 // public path to counter history (`MetricsRecorder`) always derives it live from BullMQ's own

@@ -21,10 +21,24 @@
     "directory": "packages/metrics"
   },
   "files": [
-    "dist"
+    "dist",
+    "internal.js",
+    "internal.d.ts"
   ],
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./internal": {
+      "types": "./internal.d.ts",
+      "default": "./internal.js"
+    },
+    "./dist/*": "./dist/*",
+    "./package.json": "./package.json"
+  },
   "publishConfig": {
     "access": "public"
   },
