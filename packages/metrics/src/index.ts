@@ -16,6 +16,7 @@ export { namespacedHistoryProvider } from './namespacedHistoryProvider';
 export type { MetricsStore, Retention } from './store';
 export { RedisMetricsStore } from './RedisMetricsStore';
 export type { RedisMetricsStoreOptions } from './RedisMetricsStore';
+export { REDIS_LAYOUT_VERSION as REDIS_METRICS_LAYOUT_VERSION } from './layout';
 export { RedisMetricsHistoryProvider } from './RedisMetricsHistoryProvider';
 export type { RedisMetricsHistoryProviderOptions } from './RedisMetricsHistoryProvider';
 export { PostgresMetricsStore, migratePostgresMetrics } from './postgres/PostgresMetricsStore';

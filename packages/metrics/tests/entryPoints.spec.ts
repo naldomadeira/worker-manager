@@ -11,6 +11,7 @@ describe('entry points', () => {
       'POSTGRES_METRICS_SCHEMA_VERSION',
       'PostgresMetricsHistoryProvider',
       'PostgresMetricsStore',
+      'REDIS_METRICS_LAYOUT_VERSION',
       'RedisMetricsHistoryProvider',
       'RedisMetricsStore',
       'migratePostgresMetrics',

@@ -751,6 +751,8 @@ describe('MetricsRecorder', () => {
       recorder = new MetricsRecorder({ queues: [adapter], connection: redis, latency: false });
 
       const firstPass = recorder.snapshot();
+      // The first pass claims the layout marker before it reaches the adapter.
+      await waitFor(() => getMetrics.mock.calls.length > 0);
       await recorder.snapshot();
 
       expect(getMetrics).toHaveBeenCalledTimes(1);

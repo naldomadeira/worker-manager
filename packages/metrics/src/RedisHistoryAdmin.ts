@@ -99,9 +99,17 @@ export class RedisHistoryAdmin implements HistoryAdministration {
   private readonly redis: MetricsClient;
   private readonly keys: MetricsKeys;
 
-  constructor(opts: { redis: MetricsClient; keys: MetricsKeys }) {
+  private readonly beforePurge: () => Promise<void>;
+
+  /** `beforePurge` refuses a purge of a namespace laid out by a newer build. */
+  constructor(opts: {
+    redis: MetricsClient;
+    keys: MetricsKeys;
+    beforePurge?: () => Promise<void>;
+  }) {
     this.redis = opts.redis;
     this.keys = opts.keys;
+    this.beforePurge = opts.beforePurge ?? (() => Promise.resolve());
   }
 
   /**
@@ -211,6 +219,7 @@ export class RedisHistoryAdmin implements HistoryAdministration {
    * per-queue keys are still deleted either way. See SUMMABLE_METRICS.
    */
   async purge(opts: PurgeOptions = {}): Promise<PurgeResult> {
+    await this.beforePurge();
     const before = opts.before === undefined ? null : toDay(opts.before);
     const result: PurgeResult = { keysDeleted: 0, fieldsDeleted: 0 };
     const dayKeys: { key: string; parsed: ParsedKey }[] = [];
