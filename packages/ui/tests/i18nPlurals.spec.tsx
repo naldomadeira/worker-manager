@@ -55,6 +55,15 @@ const counted: Array<[string, (count: number) => Record<string, unknown>]> = [
   ['SCHEDULERS.TIMELINE.RUNS_IN_VIEW', (count) => ({ count, total: count })],
   ['SCHEDULERS.TIMELINE.SHOW_ALL', (count) => ({ count, total: count })],
   ['PGBOSS.ACTIONS.AFFECTED', (count) => ({ affected: count, count })],
+  ['PGBOSS.BULK.SELECTED', (count) => ({ count })],
+  ...(['RETRY', 'CANCEL', 'RESUME', 'DELETE'] as const).flatMap((action) =>
+    (['CONFIRM', 'PENDING', 'DONE'] as const).map(
+      (part): [string, (count: number) => Record<string, unknown>] => [
+        `PGBOSS.BULK.${action}.${part}`,
+        (count) => ({ count }),
+      ]
+    )
+  ),
 ];
 
 // Adjectives that do not inflect in English, but do in pt-BR, es-ES, fr-FR and da-DK.
@@ -106,6 +115,16 @@ describe('i18n plurals', () => {
     );
     expect(ru.t('QUEUE.ACTIONS.CONFIRM.RETRY_FAILED_QUEUES', { count: 3, queues: 5 })).toBe(
       'Вы уверены, что хотите повторить 3 неудачные задачи в 5 очередях?'
+    );
+  });
+
+  it('counts selected pg-boss jobs with every Russian form', () => {
+    const ru = instanceFor('ru-RU');
+    expect(ru.t('PGBOSS.BULK.SELECTED', { count: 1 })).toBe('Выбрана 1 задача');
+    expect(ru.t('PGBOSS.BULK.SELECTED', { count: 3 })).toBe('Выбрано 3 задачи');
+    expect(ru.t('PGBOSS.BULK.DELETE.DONE', { count: 5 })).toBe('5 задач удалено');
+    expect(instanceFor('pt-BR').t('PGBOSS.BULK.RETRY.CONFIRM', { count: 1 })).toBe(
+      'Tentar de novo 1 tarefa?'
     );
   });
 

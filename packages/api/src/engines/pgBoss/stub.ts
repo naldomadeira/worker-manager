@@ -1,19 +1,24 @@
 import { randomUUID } from 'crypto';
-import { PGBOSS_JOB_STATES, pgBossJobSummarySchema } from '../../schemas/pgBoss';
+import { PGBOSS_FEATURES, PGBOSS_JOB_STATES, pgBossJobSummarySchema } from '../../schemas/pgBoss';
 import type {
   PgBossCapabilities,
+  PgBossFeature,
+  PgBossFeatures,
   PgBossInfo,
   PgBossJob,
   PgBossJobState,
   PgBossJobSummary,
+  PgBossQueueDepthPoint,
   PgBossQueueSummary,
   PgBossSchedule,
   PgBossStateCounts,
+  PgBossWarning,
   TranslatableMessage,
 } from '../../types';
 import { decodePgBossCursor, encodePgBossCursor } from './cursor';
 import { PgBossEngineError } from './errors';
 import type { PgBossEngine } from './types';
+import { mentionsQueue, pageWarnings, warningQueueName } from './warnings';
 
 export interface PgBossStubOptions {
   queues?: string[];
@@ -24,6 +29,12 @@ export interface PgBossStubOptions {
   /** Makes every write answer with this reason, the way the schema guard does. */
   unwritable?: TranslatableMessage;
   hidden?: string[];
+  /** Persisted warnings, newest first or in any order. */
+  warnings?: Partial<PgBossWarning>[];
+  /** What `queueDepth` answers for every queue. */
+  depth?: PgBossQueueDepthPoint[];
+  /** Features the schema lacks, the way the column probe reports them. */
+  missingFeatures?: PgBossFeature[];
 }
 
 const EPOCH = Date.parse('2026-01-01T00:00:00.000Z');
@@ -136,6 +147,21 @@ export function createPgBossStubEngine(options: PgBossStubOptions = {}): PgBossE
     ...partial,
   }));
   const hidden = new Set(options.hidden ?? []);
+  const missing = new Set(options.missingFeatures ?? []);
+  const features = Object.fromEntries(
+    PGBOSS_FEATURES.map((feature) => [feature, !missing.has(feature)])
+  ) as PgBossFeatures;
+  const warnings: PgBossWarning[] = (options.warnings ?? []).map((partial, index) => ({
+    id: `00000000-0000-4000-9000-${String(index).padStart(12, '0')}`,
+    type: 'queue_backlog',
+    message: 'Warning: large queue backlog',
+    data: null,
+    queueName: null,
+    createdOn: new Date(EPOCH + index * 60_000).toISOString(),
+    ...partial,
+  }));
+  const unavailable = (feature: PgBossFeature) =>
+    new PgBossEngineError(409, 'ERRORS.PGBOSS_FEATURE_UNAVAILABLE', { feature });
 
   const capabilities: PgBossCapabilities = {
     send: !options.unwritable,
@@ -163,7 +189,11 @@ export function createPgBossStubEngine(options: PgBossStubOptions = {}): PgBossE
         readOnly: false,
         unavailableReason: options.unreadable ?? null,
         writesDisabledReason: options.unwritable ?? null,
-        persistQueueStats: false,
+        untested: false,
+        features,
+        disabledFeatures: [...missing],
+        persistQueueStats: !!options.depth?.length,
+        persistWarnings: warnings.length > 0,
         datastore: null,
         capabilities,
       };
@@ -234,6 +264,42 @@ export function createPgBossStubEngine(options: PgBossStubOptions = {}): PgBossE
     },
     async getJob(name, id) {
       return jobsOf(name).find((job) => job.id === id) ?? null;
+    },
+    async findJob(id, queueNames) {
+      const job = jobs.find(
+        (candidate) => candidate.id === id && queueNames.includes(candidate.queueName)
+      );
+      return job ? toSummary(job) : null;
+    },
+    async queueDepth(_name, { from, to }) {
+      if (missing.has('queueDepth')) throw unavailable('queueDepth');
+      return (options.depth ?? []).filter((point) => point.ts >= from && point.ts <= to);
+    },
+    async listWarnings(query, isVisible) {
+      if (missing.has('warnings')) throw unavailable('warnings');
+      const names = [...queues.keys()];
+      const shown = new Set<string>();
+      for (const name of names) if (!hidden.has(name) && (await isVisible(name))) shown.add(name);
+      const concealed = names.filter((name) => !shown.has(name));
+      const ordered = warnings
+        .filter((warning) => !query.type || warning.type === query.type)
+        .map((warning) => ({ ...warning, queueName: warningQueueName(warning.data, shown) }));
+      const compare = (
+        a: { createdOn: string; id: string },
+        b: { createdOn: string; id: string }
+      ) => a.createdOn.localeCompare(b.createdOn) || a.id.localeCompare(b.id);
+      return pageWarnings(
+        async (after, descending, limit) =>
+          ordered
+            .filter(
+              (warning) =>
+                !after || (descending ? compare(warning, after) < 0 : compare(warning, after) > 0)
+            )
+            .sort((a, b) => (descending ? -compare(a, b) : compare(a, b)))
+            .slice(0, limit),
+        query,
+        async (warning) => !concealed.some((name) => mentionsQueue(warning, name))
+      );
     },
     async getDependencies() {
       return { dependencies: [], dependents: [] };

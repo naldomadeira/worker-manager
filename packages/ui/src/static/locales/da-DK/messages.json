@@ -515,7 +515,11 @@
     "PGBOSS_SCHEMA_MISMATCH": "Databasen er på pg-boss-skema {{found}}, men den pg-boss, der er tilgængelig her, skriver skema {{expected}}.",
     "PGBOSS_SCHEMA_UNSUPPORTED": "pg-boss-skema {{found}} understøttes ikke. De understøttede versioner er {{min}} til {{max}}.",
     "PGBOSS_WRITER_UNAVAILABLE": "Der er ingen pg-boss-instans at skrive med. Giv appens instans med, eller installer pg-boss ved siden af boardet.",
-    "PGBOSS_WRITES_DISABLED": "Ændringer er slået fra på dette pg-boss-board."
+    "PGBOSS_WRITES_DISABLED": "Ændringer er slået fra på dette pg-boss-board.",
+    "PGBOSS_FEATURE_UNAVAILABLE": "Det pg-boss-skema, der bruges, har ikke dette ({{feature}}).",
+    "PGBOSS_JOB_NOT_FOUND": "Ingen synlig kø har et job med dette id.",
+    "PGBOSS_SCHEMA_INCOMPATIBLE": "pg-boss-skema {{found}} mangler kolonner, som boardet ikke kan læse uden: {{missing}}.",
+    "PGBOSS_SCHEMA_UNTESTED": "pg-boss-skema {{found}} er nyere end det, boardet er testet med ({{max}}). Ændringer forbliver slået fra, medmindre boardet sætter allowUntestedSchema."
   },
   "METRICS_HISTORY": {
     "TITLE": "Metrikhistorik",
@@ -972,7 +976,11 @@
       "UNREADABLE": "Denne pg-boss-database kan ikke læses",
       "SCHEMA_UNSUPPORTED": "pg-boss-skemaet her ligger uden for det understøttede interval fra {{min}} til {{max}}.",
       "NOT_INSTALLED": "Installér pg-boss i applikationen først. Boardet opretter eller migrerer aldrig sit skema.",
-      "SLOW_QUERY": "Det er langsomt at vise denne tilstand på en stor kø. Filtrér efter job-id eller singleton-nøgle, eller tilføj det indeks, dokumentationen anbefaler."
+      "SLOW_QUERY": "Det er langsomt at vise denne tilstand på en stor kø. Filtrér efter job-id eller singleton-nøgle, eller tilføj det indeks, dokumentationen anbefaler.",
+      "UNTESTED_SCHEMA": "pg-boss-skema v{{found}} er nyere end testet (maks. v{{max}})",
+      "UNTESTED_HINT": "Boardet læser det ved at tjekke, hvilke tabeller og kolonner der findes, og viser fortsat alt, hvad det stadig finder.",
+      "MISSING_FEATURES": "Dele af dette pg-boss-skema mangler",
+      "FEATURES_DISABLED": "Nogle funktioner er slået fra: {{features}}."
     },
     "DATASTORE": {
       "TITLE": "pg-boss-datalager",
@@ -985,6 +993,120 @@
       "INSTALLED": "Installeret",
       "ENABLED": "Til",
       "DISABLED": "Fra"
+    },
+    "FEATURE": {
+      "QUEUE_COUNTERS": "cachede køtællere",
+      "READY_HISTORY": "klar-historik",
+      "SCHEDULES": "planlægninger",
+      "SCHEDULE_KIND": "planlægningstyper og seneste jobs",
+      "DEPENDENCIES": "jobafhængigheder",
+      "DEAD_LETTER_SOURCE": "dead letter-kilder",
+      "QUEUE_DEPTH": "grafen over kødybde",
+      "WARNINGS": "advarsler"
+    },
+    "FIND": {
+      "GROUP": "Jobs",
+      "OPEN_JOB": "Åbn job {{id}}",
+      "LABEL": "Åbn et job ud fra id",
+      "PLACEHOLDER": "Indsæt et job-id for at åbne det",
+      "SUBMIT": "Åbn"
+    },
+    "DEPTH": {
+      "TITLE": "Kødybde",
+      "DESCRIPTION": "Den største kø i hvert interval, fra de øjebliksbilleder pg-boss gemmer i queue_stats.",
+      "RANGE_LABEL": "Tidsrum",
+      "RANGE_1H": "1 t",
+      "RANGE_6H": "6 t",
+      "RANGE_24H": "24 t",
+      "RANGE_7D": "7 d",
+      "DISABLED": "Dette pg-boss-skema har ingen queue_stats-tabel, så der er ingen dybdehistorik.",
+      "NEVER": "Ingen øjebliksbilleder af dybden endnu",
+      "NEVER_HINT": "pg-boss skriver dem, når en kø kører med persistQueueStats, og en instans overvåger den.",
+      "EMPTY": "Ingen øjebliksbilleder i dette tidsrum",
+      "LOAD_ERROR": "Dybdehistorikken kunne ikke indlæses."
+    },
+    "BULK": {
+      "TOOLBAR": "Massehandlinger",
+      "SELECT_ALL": "Vælg alle jobs på denne side",
+      "SELECT_JOB": "Vælg job {{id}}",
+      "SELECTED_one": "{{count}} job valgt",
+      "SELECTED_other": "{{count}} jobs valgt",
+      "SELECTED": "{{count}} jobs valgt",
+      "CLEAR": "Ryd markeringen",
+      "NO_COMMON": "Ingen handling gælder for alle de valgte jobs.",
+      "RETRY": {
+        "CONFIRM_one": "Prøv {{count}} job igen?",
+        "CONFIRM_other": "Prøv {{count}} jobs igen?",
+        "CONFIRM": "Prøv {{count}} jobs igen?",
+        "PENDING_one": "Prøver {{count}} job igen…",
+        "PENDING_other": "Prøver {{count}} jobs igen…",
+        "PENDING": "Prøver {{count}} jobs igen…",
+        "DONE_one": "{{count}} job prøvet igen",
+        "DONE_other": "{{count}} jobs prøvet igen",
+        "DONE": "{{count}} jobs prøvet igen"
+      },
+      "CANCEL": {
+        "CONFIRM_one": "Annullér {{count}} job?",
+        "CONFIRM_other": "Annullér {{count}} jobs?",
+        "CONFIRM": "Annullér {{count}} jobs?",
+        "PENDING_one": "Annullerer {{count}} job…",
+        "PENDING_other": "Annullerer {{count}} jobs…",
+        "PENDING": "Annullerer {{count}} jobs…",
+        "DONE_one": "{{count}} job annulleret",
+        "DONE_other": "{{count}} jobs annulleret",
+        "DONE": "{{count}} jobs annulleret"
+      },
+      "RESUME": {
+        "CONFIRM_one": "Genoptag {{count}} job?",
+        "CONFIRM_other": "Genoptag {{count}} jobs?",
+        "CONFIRM": "Genoptag {{count}} jobs?",
+        "PENDING_one": "Genoptager {{count}} job…",
+        "PENDING_other": "Genoptager {{count}} jobs…",
+        "PENDING": "Genoptager {{count}} jobs…",
+        "DONE_one": "{{count}} job genoptaget",
+        "DONE_other": "{{count}} jobs genoptaget",
+        "DONE": "{{count}} jobs genoptaget"
+      },
+      "DELETE": {
+        "CONFIRM_one": "Slet {{count}} job? Det kan ikke fortrydes.",
+        "CONFIRM_other": "Slet {{count}} jobs? Det kan ikke fortrydes.",
+        "CONFIRM": "Slet {{count}} jobs? Det kan ikke fortrydes.",
+        "PENDING_one": "Sletter {{count}} job…",
+        "PENDING_other": "Sletter {{count}} jobs…",
+        "PENDING": "Sletter {{count}} jobs…",
+        "DONE_one": "{{count}} job slettet",
+        "DONE_other": "{{count}} jobs slettet",
+        "DONE": "{{count}} jobs slettet"
+      }
+    },
+    "WARNINGS": {
+      "TITLE": "Advarsler",
+      "DESCRIPTION": "Hvad pg-boss har rapporteret om sin egen tilstand: langsomme forespørgsler, køer der hober sig op, en fastlåst transaktionshorisont.",
+      "RECENT": "Seneste advarsler",
+      "VIEW_ALL": "Se alle",
+      "TYPE_FILTER": "Advarselstype",
+      "ALL_TYPES": "Alle typer",
+      "TIME": "Hvornår",
+      "TYPE_COLUMN": "Type",
+      "QUEUE": "Kø",
+      "MESSAGE": "Besked",
+      "DETAILS": "Vis detaljerne",
+      "EMPTY": "Ingen advarsler",
+      "EMPTY_HINT": "pg-boss gemmer kun advarsler, når en instans kører med persistWarnings: true.",
+      "EMPTY_FILTERED": "Ingen advarsler af denne type",
+      "DISABLED": "Dette pg-boss-skema har ingen warning-tabel.",
+      "LOAD_ERROR": "Advarslerne kunne ikke indlæses.",
+      "PAGES": "Advarselssider",
+      "TYPE": {
+        "SLOW_QUERY": "Langsom forespørgsel",
+        "QUEUE_BACKLOG": "Kø hober sig op",
+        "INDEX_BLOAT": "Oppustet indeks",
+        "XMIN_HORIZON": "Transaktionshorisont",
+        "AUTOVACUUM_DISABLED": "Autovacuum slået fra",
+        "MONITOR_BACKOFF": "Overvågning udskudt",
+        "CLOCK_SKEW": "Urforskydning",
+        "INVALID_SCHEDULE": "Ugyldig planlægning"
+      }
     }
   }
 }

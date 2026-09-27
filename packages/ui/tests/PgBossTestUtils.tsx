@@ -2,6 +2,7 @@
 import type {
   PgBossInfo,
   PgBossJob,
+  PgBossWarning,
   PgBossQueueSummary,
   PgBossSchedule,
   PgBossStateCounts,
@@ -105,7 +106,20 @@ export function makePgBossInfo(overrides: Partial<PgBossInfo> = {}): PgBossInfo 
     readOnly: false,
     unavailableReason: null,
     writesDisabledReason: null,
+    untested: false,
+    features: {
+      queueCounters: true,
+      readyHistory: true,
+      schedules: true,
+      scheduleKind: true,
+      dependencies: true,
+      deadLetterSource: true,
+      queueDepth: true,
+      warnings: true,
+    },
+    disabledFeatures: [],
     persistQueueStats: false,
+    persistWarnings: false,
     datastore: null,
     capabilities: {
       send: writable,
@@ -138,6 +152,18 @@ export function makePgBossSchedule(overrides: Partial<PgBossSchedule> = {}): PgB
   };
 }
 
+export function makePgBossWarning(overrides: Partial<PgBossWarning> = {}): PgBossWarning {
+  return {
+    id: jobId(),
+    type: 'queue_backlog',
+    message: 'Warning: large queue backlog: queue "emails" has 12 jobs',
+    data: { name: 'emails', queuedCount: 12 },
+    queueName: 'emails',
+    createdOn: new Date(Date.now() - 60_000).toISOString(),
+    ...overrides,
+  };
+}
+
 export function makeCounts(
   counts: Partial<Record<keyof PgBossStateCounts, number | null>> = {},
   capped: (keyof PgBossStateCounts)[] = []
@@ -164,6 +190,16 @@ export function mockPgBossApi(overrides: Partial<MockPgBossApi> = {}): MockPgBos
     getJobs: jest.fn(async () => ({ jobs: [], nextCursor: null, prevCursor: null })),
     getJob: jest.fn(async () => ({ job: makePgBossJob() })),
     getDependencies: jest.fn(async () => ({ dependencies: [], dependents: [] })),
+    findJob: jest.fn(async () => ({
+      error: { key: 'ERRORS.PGBOSS_JOB_NOT_FOUND' },
+    })),
+    getQueueDepth: jest.fn(async () => ({
+      points: [],
+      from: Date.now() - 86_400_000,
+      to: Date.now(),
+      bucketSeconds: 900,
+    })),
+    getWarnings: jest.fn(async () => ({ warnings: [], nextCursor: null, prevCursor: null })),
     getSchedules: jest.fn(async () => ({ schedules: [] })),
     previewSchedule: jest.fn(async () => ({ runs: [] })),
     sendJob: jest.fn(async () => ({ id: jobId() })),

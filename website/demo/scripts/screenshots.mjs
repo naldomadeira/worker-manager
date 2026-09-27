@@ -467,6 +467,65 @@ const shots = [
       await page.getByText('FREQ=WEEKLY', { exact: false }).first().waitFor({ timeout: TIMEOUT });
     },
   },
+  // The demo's `?demo-schema=43` knob: a schema newer than the tested one, still read.
+  ...['light', 'dark'].map((theme) => ({
+    name: `pgboss-untested-schema${theme === 'dark' ? '-dark' : ''}`,
+    path: pgBoss('?demo-schema=43'),
+    theme,
+    async run(page) {
+      await page.getByText(/newer than tested/).waitFor({ timeout: TIMEOUT });
+      await page.getByText('emails.transactional').first().waitFor({ timeout: TIMEOUT });
+      return { clip: { x: 0, y: 0, width: DESKTOP.width, height: 560 } };
+    },
+  })),
+  ...['light', 'dark'].map((theme) => ({
+    name: `pgboss-queue-depth${theme === 'dark' ? '-dark' : ''}`,
+    path: pgBoss(q('emails.transactional')),
+    theme,
+    async run(page) {
+      const card = page.getByTestId('pgboss-depth-card');
+      await card.locator('.recharts-line').first().waitFor({ timeout: TIMEOUT });
+      await card.getByRole('button', { name: '7d' }).click();
+      await settle(page);
+      return card;
+    },
+  })),
+  ...['light', 'dark'].map((theme) => ({
+    name: `pgboss-bulk-actions${theme === 'dark' ? '-dark' : ''}`,
+    path: pgBoss(`${q('emails.transactional')}?state=failed`),
+    theme,
+    async run(page) {
+      await page.locator('[data-job-state=failed]').first().waitFor({ timeout: TIMEOUT });
+      await page.getByRole('checkbox', { name: 'Select every job on this page' }).click();
+      await page.getByRole('toolbar', { name: 'Bulk actions' }).waitFor({ timeout: TIMEOUT });
+      await page.getByRole('toolbar', { name: 'Bulk actions' }).scrollIntoViewIfNeeded();
+    },
+  })),
+  ...['light', 'dark'].map((theme) => ({
+    name: `pgboss-warnings${theme === 'dark' ? '-dark' : ''}`,
+    path: pgBoss('warnings'),
+    theme,
+    async run(page) {
+      await page.locator('[data-warning-type=queue_backlog]').first().waitFor({ timeout: TIMEOUT });
+      await page.getByRole('button', { name: 'Show the details' }).first().click();
+    },
+  })),
+  {
+    name: 'pgboss-find-job',
+    path: pgBoss(),
+    async run(page) {
+      await page.getByText('emails.transactional').first().waitFor({ timeout: TIMEOUT });
+      const id = await page.evaluate(async () => {
+        const base = document.querySelector('base')?.getAttribute('href') ?? '/';
+        const response = await fetch(`${base}api/pg-boss/queues/emails.transactional/jobs?state=failed&limit=1`);
+        return (await response.json()).jobs[0].id;
+      });
+      await page.keyboard.press('Control+k');
+      const palette = dialog(page);
+      await palette.getByRole('combobox').fill(id);
+      await palette.getByRole('option', { name: /Open job/ }).waitFor({ timeout: TIMEOUT });
+    },
+  },
 ];
 
 // ---- runner ---------------------------------------------------------------------------------

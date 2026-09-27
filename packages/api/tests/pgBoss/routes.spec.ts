@@ -274,4 +274,131 @@ describe('pg-boss routes', () => {
       .get('/api/pg-boss/queues/default/jobs/bad')
       .expect(404);
   });
+
+  describe('finding a job by id alone', () => {
+    it('finds it in whichever visible queue holds it', async () => {
+      const res = await board().get(`/api/pg-boss/jobs/${ACTIVE}`).expect(200);
+
+      expect(res.body.job).toMatchObject({ id: ACTIVE, queueName: 'emails', state: 'active' });
+      expect(res.body.job.data).toBeUndefined();
+    });
+
+    it('answers a job on a hidden queue exactly like an unknown id', async () => {
+      const SECRET = '00000000-0000-4000-8000-000000000009';
+      const agent = board({
+        jobs: [{ id: SECRET, queueName: 'secret', state: 'failed' }],
+      });
+
+      const hidden = await agent.get(`/api/pg-boss/jobs/${SECRET}`).expect(404);
+      const missing = await agent.get(`/api/pg-boss/jobs/${MISSING}`).expect(404);
+
+      expect(hidden.body).toEqual(missing.body);
+      expect(missing.body.error).toEqual({ key: 'ERRORS.PGBOSS_JOB_NOT_FOUND' });
+    });
+
+    it('refuses an id that is not a uuid, naming the field', async () => {
+      const res = await board().get('/api/pg-boss/jobs/123').expect(400);
+
+      expect(res.body.error).toEqual({
+        key: 'ERRORS.INVALID_QUERY_PARAM',
+        options: { field: 'jobId' },
+      });
+    });
+  });
+
+  describe('queue depth', () => {
+    const now = Date.now();
+    const depth = [
+      { ts: now - 30 * 60_000, deferred: 0, queued: 4, ready: 3, active: 1, failed: 0, total: 8 },
+      { ts: now - 3 * 3_600_000, deferred: 0, queued: 9, ready: 9, active: 0, failed: 1, total: 9 },
+    ];
+
+    it('reads the range asked for, 24 hours by default', async () => {
+      const agent = board({ depth });
+
+      const hour = await agent.get('/api/pg-boss/queues/emails/depth?range=1h').expect(200);
+      const day = await agent.get('/api/pg-boss/queues/emails/depth').expect(200);
+
+      expect(hour.body.points).toEqual([depth[0]]);
+      expect(hour.body.bucketSeconds).toBe(60);
+      expect(day.body.points).toHaveLength(2);
+      expect(day.body.to - day.body.from).toBe(24 * 3_600_000);
+      expect(day.body.bucketSeconds).toBe(900);
+    });
+
+    it('404s a hidden queue and names a bad parameter', async () => {
+      await board().get('/api/pg-boss/queues/secret/depth').expect(404);
+      const bad = await board().get('/api/pg-boss/queues/emails/depth?aggregate=sum').expect(400);
+
+      expect(bad.body.error).toEqual({
+        key: 'ERRORS.INVALID_QUERY_PARAM',
+        options: { field: 'aggregate' },
+      });
+    });
+
+    it('says the feature is off on a schema without queue_stats', async () => {
+      const res = await board({ missingFeatures: ['queueDepth'] })
+        .get('/api/pg-boss/queues/emails/depth')
+        .expect(409);
+
+      expect(res.body.error).toEqual({
+        key: 'ERRORS.PGBOSS_FEATURE_UNAVAILABLE',
+        options: { feature: 'queueDepth' },
+      });
+    });
+  });
+
+  describe('warnings', () => {
+    const warnings = [
+      { type: 'queue_backlog', message: 'queue "emails" is backlogged', data: { name: 'emails' } },
+      { type: 'queue_backlog', message: 'queue "secret" is backlogged', data: { name: 'secret' } },
+      { type: 'slow_query', message: 'Warning: slow query', data: { values: ['secret'] } },
+      { type: 'clock_skew', message: 'Warning: clock skew', data: { seconds: 3 } },
+    ];
+
+    it('lists them newest first, without the ones that name a hidden queue', async () => {
+      const res = await board({ warnings }).get('/api/pg-boss/warnings').expect(200);
+
+      expect(
+        res.body.warnings.map((warning: { type: string; queueName: string | null }) => [
+          warning.type,
+          warning.queueName,
+        ])
+      ).toEqual([
+        ['clock_skew', null],
+        ['queue_backlog', 'emails'],
+      ]);
+      expect(JSON.stringify(res.body)).not.toContain('secret');
+    });
+
+    it('pages through them with a cursor and filters by type', async () => {
+      const agent = board({ warnings });
+
+      const first = await agent.get('/api/pg-boss/warnings?limit=1').expect(200);
+      const second = await agent
+        .get(`/api/pg-boss/warnings?limit=1&cursor=${first.body.nextCursor}`)
+        .expect(200);
+      const typed = await agent.get('/api/pg-boss/warnings?type=clock_skew').expect(200);
+
+      expect(first.body.warnings[0].type).toBe('clock_skew');
+      expect(second.body.warnings[0].type).toBe('queue_backlog');
+      expect(second.body.nextCursor).toBeNull();
+      expect(typed.body.warnings).toHaveLength(1);
+      await agent.get('/api/pg-boss/warnings?cursor=bm9wZQ').expect(400);
+    });
+
+    it('says the feature is off on a schema without the warning table', async () => {
+      const agent = board({ missingFeatures: ['warnings'] });
+
+      const res = await agent.get('/api/pg-boss/warnings').expect(409);
+      const info = await agent.get('/api/pg-boss/info').expect(200);
+
+      expect(res.body.error).toEqual({
+        key: 'ERRORS.PGBOSS_FEATURE_UNAVAILABLE',
+        options: { feature: 'warnings' },
+      });
+      expect(info.body.features.warnings).toBe(false);
+      expect(info.body.disabledFeatures).toEqual(['warnings']);
+    });
+  });
 });

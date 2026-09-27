@@ -1,3 +1,21 @@
+### [v2.3.0](https://github.com/naldomadeira/worker-manager/compare/v2.2.0...v2.3.0)
+
+> 2026-09-26
+
+### Features
+- pg-boss: a schema newer than the newest this release is tested with (42) no longer takes the board down. Like `@pg-boss/dashboard`, the engine probes `information_schema` once per board (and again only when the schema version changes), builds every read from the columns that exist, and switches off only the features whose tables or columns are gone: cached counters, ready history, schedules, schedule kinds, dependencies, dead letter sources, queue depth, warnings. A banner on every page says "pg-boss schema v43 is newer than tested (max v42); some features are disabled: …", and `GET /api/pg-boss/info` reports `untested`, `features` and `disabledFeatures`. Writes stay off on an untested schema (`ERRORS.PGBOSS_SCHEMA_UNTESTED`) unless the board sets the new `pgBoss.allowUntestedSchema: true`; schemas older than 35 are refused as before, and one missing a column no read can do without answers `ERRORS.PGBOSS_SCHEMA_INCOMPATIBLE`
+- pg-boss: find a job by id alone. `GET /api/pg-boss/jobs/:jobId` searches only the queues the caller may see (allowlist, `includeInternalQueues`, `visibilityGuard`), with both columns of pg-boss's `(name, id)` key in the index condition and under the query timeout; a job on a hidden queue answers `ERRORS.PGBOSS_JOB_NOT_FOUND` like an unknown id. The command palette offers "Open job <id>" for a pasted UUID, and the overview has a search box
+- pg-boss: a queue depth chart on each queue page (ready, deferred, active, failed over 1h, 6h, 24h or 7d) from pg-boss's own `queue_stats` snapshots, served at `GET /api/pg-boss/queues/:queueName/depth`, with empty states for queues without `persistQueueStats` and schemas without the table
+- pg-boss: multi-select in the job list, with select-all on the page and a sticky bar of the bulk commands the state tab accepts (retry, cancel, resume, delete), a confirmation with the count and a toast of how many jobs changed. Not offered on a read-only board or while the schema guard has writes off; the selection clears on tab, page and filter changes
+- pg-boss: a read-only warnings page and a recent warnings card on the overview, from pg-boss's `warning` table (`persistWarnings: true`), paged by date on its own `warning_i1` index and filtered by type. A warning that names a queue the viewer cannot see is never listed. `GET /api/pg-boss/warnings`; in the sidebar, the breadcrumb, the mobile switcher and the command palette
+- ui: engines can add pages to the shell navigation and entries to the command palette
+
+### Bug Fixes
+- metrics: the cluster and native counter specs no longer fail between 00:00 and 00:20 UTC, when their seeded minutes straddled two day buckets
+
+### Documentation
+- the pg-boss page covers newer schemas and `allowUntestedSchema`, the depth chart, bulk actions, finding a job by id and warnings, with new screenshots; the demo seeds warnings and depth history and shows a newer schema with `?demo-schema=43`
+
 ### [v2.2.0](https://github.com/naldomadeira/worker-manager/compare/v2.1.2...v2.2.0)
 
 > 2026-09-26

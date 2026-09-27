@@ -10,6 +10,8 @@ interface CursorPaginationProps {
   nextCursor: string | null;
   /** Moves to the page behind this cursor, or back to the first page with `undefined`. */
   onNavigate(cursor: string | undefined): void;
+  /** Names the navigation for assistive tech. The job pages' label when absent. */
+  label?: string;
   className?: string;
 }
 
@@ -22,6 +24,7 @@ export const CursorPagination = ({
   prevCursor,
   nextCursor,
   onNavigate,
+  label,
   className,
 }: CursorPaginationProps) => {
   const { t } = useTranslation();
@@ -32,7 +35,7 @@ export const CursorPagination = ({
 
   return (
     <nav
-      aria-label={t('PGBOSS.PAGINATION.LABEL')}
+      aria-label={label ?? t('PGBOSS.PAGINATION.LABEL')}
       className={cn('flex items-center gap-0.5', className)}
     >
       <Button

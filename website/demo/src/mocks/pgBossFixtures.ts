@@ -6,6 +6,7 @@ import type {
   PgBossJob,
   PgBossJobState,
   PgBossSchedule,
+  PgBossWarning,
 } from '@worker-manager/api/typings/app';
 import { hashStr, mulberry32 } from './prng';
 
@@ -40,6 +41,8 @@ export interface DemoPgBossState {
   queues: DemoPgBossQueue[];
   jobs: DemoPgBossJob[];
   schedules: DemoPgBossSchedule[];
+  /** What pg-boss's `warning` table would hold on a board running with `persistWarnings`. */
+  warnings: PgBossWarning[];
   /** Deterministic randomness for everything created after seeding (sent jobs, new ids). */
   random: () => number;
 }
@@ -540,7 +543,7 @@ function seedSchedules(state: DemoPgBossState, now: number) {
 
 export function seedPgBossFixtures(now = Date.now()): DemoPgBossState {
   const random = mulberry32(hashStr('worker-manager pg-boss demo'));
-  const state: DemoPgBossState = { queues: [], jobs: [], schedules: [], random };
+  const state: DemoPgBossState = { queues: [], jobs: [], schedules: [], warnings: [], random };
 
   for (const spec of QUEUE_SPECS) {
     const queue = baseQueue(spec, now);
@@ -564,5 +567,77 @@ export function seedPgBossFixtures(now = Date.now()): DemoPgBossState {
   );
   seedDeadLetters(state, random);
   seedSchedules(state, now);
+  seedWarnings(state, now);
   return state;
+}
+
+/**
+ * The warnings a busy pg-boss install collects over a day, in pg-boss's own wording: backlogs
+ * on the queue with a warning size, a slow query, a pinned transaction horizon.
+ */
+function seedWarnings(state: DemoPgBossState, now: number) {
+  const random = mulberry32(hashStr('worker-manager pg-boss warnings'));
+  const at = (minutesAgo: number) => new Date(now - minutesAgo * MINUTE).toISOString();
+  const backlog = (queuedCount: number, minutesAgo: number): PgBossWarning => ({
+    id: uuidFrom(random),
+    type: 'queue_backlog',
+    message:
+      `Warning: large queue backlog: queue "emails.transactional" has ${queuedCount} jobs in the ` +
+      'created or retry state, over its warning threshold of 15. Your queue should be reviewed',
+    data: { name: 'emails.transactional', queuedCount, warningQueueSize: 15 },
+    queueName: 'emails.transactional',
+    createdOn: at(minutesAgo),
+  });
+  state.warnings.push(
+    backlog(23, 4),
+    {
+      id: uuidFrom(random),
+      type: 'slow_query',
+      message: 'Warning: slow query. Your queues and/or database server should be reviewed',
+      data: {
+        elapsed: 31.4,
+        sql: 'SELECT id FROM pgboss.job WHERE name = $1 AND state < $2 ORDER BY priority DESC LIMIT $3',
+        values: ['media.thumbnails', 'active', 50],
+      },
+      queueName: null,
+      createdOn: at(38),
+    },
+    backlog(19, 95),
+    {
+      id: uuidFrom(random),
+      type: 'xmin_horizon',
+      message:
+        'Warning: the database transaction horizon is pinned, so completed jobs cannot be cleaned ' +
+        'up: a backend holding an open transaction, holding it 48213 transactions back. ' +
+        'pgboss.job_common has 182344 dead rows that a vacuum 312s ago could not reclaim ' +
+        '(Postgres vacuums this table at 36540).',
+      data: {
+        source: 'backends',
+        holder: 'a backend holding an open transaction',
+        age: 48213,
+        table: 'pgboss.job_common',
+        deadTuples: 182344,
+      },
+      queueName: null,
+      createdOn: at(180),
+    },
+    {
+      id: uuidFrom(random),
+      type: 'clock_skew',
+      message: 'Warning: clock skew between this instance and the database server',
+      data: { seconds: 12.6, direction: 'slower' },
+      queueName: null,
+      createdOn: at(420),
+    },
+    {
+      id: uuidFrom(random),
+      type: 'index_bloat',
+      message:
+        'Warning: index "job_common_i5" is bloated (412 MB across 52736 pages for ~180000 live ' +
+        'entries) and was not rebuilt: a rebuild is already running. See getReindexCommands()',
+      data: { name: 'job_common_i5', bytes: 432013312, pages: 52736, entries: 180000 },
+      queueName: null,
+      createdOn: at(900),
+    }
+  );
 }

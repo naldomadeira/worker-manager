@@ -15,6 +15,24 @@ export const PGBOSS_BULK_MAX = 100;
 
 export const PGBOSS_JOBS_PAGE_MAX = 100;
 
+/**
+ * The parts of a pg-boss schema the board reads that are not there on every schema it can
+ * meet. Each is probed in `information_schema`, never assumed from the version number.
+ */
+export const PGBOSS_FEATURES = [
+  'queueCounters',
+  'readyHistory',
+  'schedules',
+  'scheduleKind',
+  'dependencies',
+  'deadLetterSource',
+  'queueDepth',
+  'warnings',
+] as const;
+
+/** The windows the queue depth chart offers. */
+export const PGBOSS_DEPTH_RANGES = ['1h', '6h', '24h', '7d'] as const;
+
 const timestamp = () => v.pipe(v.string(), v.description('ISO 8601.'));
 
 export const pgBossJobIdSchema = v.pipe(v.string(), v.uuid());
@@ -163,6 +181,13 @@ export const pgBossCapabilitiesSchema = v.object({
   bulk: v.boolean(),
 });
 
+export const pgBossFeatureSchema = v.picklist(PGBOSS_FEATURES);
+
+export const pgBossFeaturesSchema = v.pipe(
+  totalRecord(PGBOSS_FEATURES, v.boolean()),
+  v.description('Which of the optional tables and columns the probed schema has.')
+);
+
 export const pgBossInfoSchema = v.object({
   schema: v.string(),
   delimiter: v.pipe(
@@ -183,7 +208,26 @@ export const pgBossInfoSchema = v.object({
     v.nullable(translatableMessageSchema),
     v.description('Why the board cannot write, when `writable` is false.')
   ),
+  untested: v.pipe(
+    v.boolean(),
+    v.description(
+      'The schema is newer than `supportedRange.max`. It is read by probing its columns, and written only when the board sets `allowUntestedSchema`.'
+    )
+  ),
+  features: pgBossFeaturesSchema,
+  disabledFeatures: v.pipe(
+    v.array(pgBossFeatureSchema),
+    v.description(
+      'Features a schema of this version should have but this one lacks, so the board leaves them off.'
+    )
+  ),
   persistQueueStats: v.boolean(),
+  persistWarnings: v.pipe(
+    v.boolean(),
+    v.description(
+      'The warning table holds at least one row, so some instance runs with `persistWarnings`.'
+    )
+  ),
   datastore: v.nullable(redisStatsSchema),
   capabilities: pgBossCapabilitiesSchema,
 });
@@ -203,6 +247,19 @@ export const getPgBossJobsQuerySchema = v.object({
   order: v.optional(v.picklist(['desc', 'asc'] as const), 'desc'),
   id: v.optional(pgBossJobIdSchema),
   singletonKey: v.optional(v.string()),
+});
+
+export const getPgBossQueueDepthQuerySchema = v.object({
+  range: v.optional(v.picklist(PGBOSS_DEPTH_RANGES), '24h'),
+  aggregate: v.optional(v.picklist(['max', 'avg'] as const), 'max'),
+});
+
+export const getPgBossWarningsQuerySchema = v.object({
+  type: v.optional(
+    v.pipe(v.string(), v.minLength(1), v.maxLength(64), v.description('One warning type only.'))
+  ),
+  cursor: v.optional(v.string()),
+  limit: v.optional(queryLimit, '25'),
 });
 
 export const getPgBossSchedulesQuerySchema = v.partial(v.object({ queueName: v.string() }));
@@ -297,6 +354,58 @@ export const getPgBossJobsResponseSchema = v.object({
 
 export const getPgBossJobResponseSchema = v.object({ job: pgBossJobSchema });
 
+export const findPgBossJobResponseSchema = v.object({ job: pgBossJobSummarySchema });
+
+export const pgBossQueueDepthPointSchema = v.object({
+  ts: v.pipe(v.number(), v.description('Bucket start, epoch milliseconds.')),
+  deferred: v.number(),
+  queued: v.number(),
+  ready: v.number(),
+  active: v.number(),
+  failed: v.number(),
+  total: v.number(),
+});
+
+export const getPgBossQueueDepthResponseSchema = v.object({
+  points: v.pipe(
+    v.array(pgBossQueueDepthPointSchema),
+    v.description(
+      "pg-boss's own `queue_stats` snapshots, folded into buckets. Empty when no instance persists them for this queue."
+    )
+  ),
+  from: v.number(),
+  to: v.number(),
+  bucketSeconds: v.number(),
+});
+
+export const pgBossWarningSchema = v.object({
+  id: v.string(),
+  type: v.pipe(
+    v.string(),
+    v.description(
+      "pg-boss's warning type, such as `slow_query` or `queue_backlog`. Free text: a newer pg-boss may add types."
+    )
+  ),
+  message: v.pipe(
+    v.string(),
+    v.description(
+      'The text pg-boss stored with the warning: data from the database, not a translation key.'
+    )
+  ),
+  data: v.any(),
+  queueName: v.pipe(
+    v.nullable(v.string()),
+    v.description('The queue the warning is about, when its data names one.')
+  ),
+  createdOn: timestamp(),
+});
+
+export const getPgBossWarningsResponseSchema = v.object({
+  warnings: v.array(pgBossWarningSchema),
+  nextCursor: v.pipe(v.nullable(v.string()), v.description('Null on the oldest page.')),
+  prevCursor: v.pipe(v.nullable(v.string()), v.description('Null on the newest page.')),
+});
+
 export const getPgBossDependenciesResponseSchema = v.object({
   dependencies: v.array(pgBossDependencyRefSchema),
   dependents: v.array(pgBossDependencyRefSchema),
@@ -335,12 +444,18 @@ export const pgBossDomainSchemas = {
   PgBossScheduleKind: pgBossScheduleKindSchema,
   PgBossSchedule: pgBossScheduleSchema,
   PgBossCapabilities: pgBossCapabilitiesSchema,
+  PgBossFeature: pgBossFeatureSchema,
+  PgBossFeatures: pgBossFeaturesSchema,
   PgBossInfo: pgBossInfoSchema,
+  PgBossQueueDepthPoint: pgBossQueueDepthPointSchema,
+  PgBossWarning: pgBossWarningSchema,
 };
 
 export const pgBossRequestSchemas = {
   GetPgBossJobsQuery: getPgBossJobsQuerySchema,
   GetPgBossSchedulesQuery: getPgBossSchedulesQuerySchema,
+  GetPgBossQueueDepthQuery: getPgBossQueueDepthQuerySchema,
+  GetPgBossWarningsQuery: getPgBossWarningsQuerySchema,
   PreviewPgBossScheduleBody: previewPgBossScheduleBodySchema,
   SendPgBossJobBody: sendPgBossJobBodySchema,
   PgBossJobIdsBody: pgBossJobIdsBodySchema,
@@ -355,6 +470,9 @@ export const pgBossResponseSchemas = {
   GetPgBossStateCountsResponse: getPgBossStateCountsResponseSchema,
   GetPgBossJobsResponse: getPgBossJobsResponseSchema,
   GetPgBossJobResponse: getPgBossJobResponseSchema,
+  FindPgBossJobResponse: findPgBossJobResponseSchema,
+  GetPgBossQueueDepthResponse: getPgBossQueueDepthResponseSchema,
+  GetPgBossWarningsResponse: getPgBossWarningsResponseSchema,
   GetPgBossDependenciesResponse: getPgBossDependenciesResponseSchema,
   GetPgBossSchedulesResponse: getPgBossSchedulesResponseSchema,
   PreviewPgBossScheduleResponse: previewPgBossScheduleResponseSchema,

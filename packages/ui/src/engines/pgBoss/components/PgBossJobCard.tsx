@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
 import { cn } from '@/lib/utils';
 import { CopyButton } from '../../../components/CopyButton/CopyButton';
 import { HintTooltip } from '../../../components/HintTooltip/HintTooltip';
@@ -25,6 +26,8 @@ interface PgBossJobCardProps {
   jobUrl?: { pathname: string; search: string };
   permissions: PgBossPermissions;
   actions: PgBossJobActionHandlers;
+  /** Present when the list offers bulk actions: the job's checkbox. */
+  selection?: { checked: boolean; onCheckedChange(checked: boolean): void };
 }
 
 const pill = 'h-5 max-w-56 justify-start rounded-md px-1.5 font-mono text-[0.6875rem] font-normal';
@@ -36,6 +39,7 @@ export const PgBossJobCard = ({
   jobUrl,
   permissions,
   actions,
+  selection,
 }: PgBossJobCardProps) => {
   const { t, i18n } = useTranslation();
   const isMobile = useMobileQuery();
@@ -58,7 +62,11 @@ export const PgBossJobCard = ({
   return (
     <Card
       data-job-state={job.state}
-      className="group/job relative gap-0 overflow-visible py-0 shadow-xs transition-shadow duration-200 hover:shadow-md"
+      data-selected={selection?.checked || undefined}
+      className={cn(
+        'group/job relative gap-0 overflow-visible py-0 shadow-xs transition-shadow duration-200 hover:shadow-md',
+        selection?.checked && 'ring-2 ring-primary/40'
+      )}
     >
       <span
         aria-hidden
@@ -66,6 +74,14 @@ export const PgBossJobCard = ({
       />
       <div className="flex w-full items-center justify-between gap-3 py-3 pr-3 pl-5">
         <div className="flex min-w-0 flex-wrap items-center gap-x-2.5 gap-y-1.5">
+          {selection && (
+            <Checkbox
+              checked={selection.checked}
+              onCheckedChange={(checked) => selection.onCheckedChange(checked === true)}
+              aria-label={t('PGBOSS.BULK.SELECT_JOB', { id: job.id })}
+              className="-ml-1"
+            />
+          )}
           <span
             aria-hidden
             className={cn(

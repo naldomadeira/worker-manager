@@ -71,9 +71,11 @@ describe('Redis-backed queues', () => {
     recorder.stop();
 
     const store = new HistoryStore({ redis, keys: testKeys, retention: RETENTION });
+    // The finalized minute is two minutes back, so shortly after midnight UTC it is yesterday's.
     const today = minuteToDay(Date.now() / 60000);
-    const [stored] = await store.readDailyTotalsRaw(name, 'completed', [today]);
-    expect(Number(stored)).toBeGreaterThanOrEqual(3);
+    const yesterday = minuteToDay(Date.now() / 60000 - 1440);
+    const stored = await store.readDailyTotalsRaw(name, 'completed', [yesterday, today]);
+    expect(stored.reduce((sum, value) => sum + Number(value ?? 0), 0)).toBeGreaterThanOrEqual(3);
   });
 
   it('samples job durations into the latency store', async () => {

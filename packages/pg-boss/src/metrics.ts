@@ -422,37 +422,21 @@ export interface PgBossQueueDepthQuery {
  * pg-boss's `getQueueStatsHistoryBucketed`, on epoch-aligned buckets. Empty for a queue with no
  * snapshots, or one the engine's allowlist hides. Nothing here creates snapshots.
  *
- * Not served by any route yet: see the historical metrics recipe.
+ * The board serves the same series at `GET /api/pg-boss/queues/:queueName/depth`.
  */
 export async function readPgBossQueueDepth(
   engine: PgBossEngine,
   queue: string,
   { from, to, bucketSeconds = 300, aggregate = 'max' }: PgBossQueueDepthQuery
 ): Promise<PgBossQueueDepthPoint[]> {
-  const internals = internalsOf(engine);
-  if (!internals) {
+  if (!internalsOf(engine)) {
     throw new Error('readPgBossQueueDepth needs an engine made by createPgBossEngine.');
   }
   if (!(await engine.getQueue(queue))) return [];
-  const fold = aggregate === 'avg' ? 'avg' : 'max';
-  const width = Math.max(1, Math.floor(bucketSeconds));
-  const columns = ['deferred', 'queued', 'ready', 'active', 'failed', 'total'] as const;
-  const rows = await internals.reader.query(
-    `SELECT (floor(extract(epoch FROM captured_on) / $4) * $4 * 1000)::float8 AS ts,
-            ${columns.map((c) => `round(${fold}(${c}_count))::int AS ${c}`).join(', ')}
-       FROM ${quoteSchema(internals.schema)}.queue_stats
-      WHERE name = $1 AND captured_on >= ${at('$2')} AND captured_on <= ${at('$3')}
-      GROUP BY 1
-      ORDER BY 1`,
-    [queue, Math.floor(from), Math.floor(to), width]
-  );
-  return rows.map((row) => ({
-    ts: Number(row.ts),
-    deferred: Number(row.deferred),
-    queued: Number(row.queued),
-    ready: Number(row.ready),
-    active: Number(row.active),
-    failed: Number(row.failed),
-    total: Number(row.total),
-  }));
+  return engine.queueDepth(queue, {
+    from,
+    to,
+    bucketSeconds,
+    aggregate: aggregate === 'avg' ? 'avg' : 'max',
+  });
 }

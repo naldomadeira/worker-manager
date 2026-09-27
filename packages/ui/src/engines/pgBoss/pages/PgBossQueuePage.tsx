@@ -1,11 +1,12 @@
 import type { PgBossJob, PgBossJobState } from '@worker-manager/api/typings/app';
 import { Inbox, Plus, SearchIcon, XIcon } from 'lucide-react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
-import React, { type FormEvent, Suspense, useState } from 'react';
+import React, { type FormEvent, Suspense, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useHistory, useLocation, useParams } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Empty, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
@@ -17,9 +18,11 @@ import { StatusTabs, type StatusTabItem } from '../../../components/StatusTabs/S
 import { StickyHeader } from '../../../components/StickyHeader/StickyHeader';
 import { useSettingsStore } from '../../../hooks/useSettings';
 import { CursorPagination } from '../components/CursorPagination';
+import { PgBossBulkBar } from '../components/PgBossBulkBar';
 import { PgBossJobCard } from '../components/PgBossJobCard';
 import { PgBossQueueActions } from '../components/PgBossQueueActions';
 import { PgBossQueueBadges } from '../components/PgBossQueueBadges';
+import { PgBossQueueDepthCard } from '../components/PgBossQueueDepthCard';
 import { PgBossWritesDisabledBanner } from '../components/PgBossWritesDisabledBanner';
 import { isErrorBody, PgBossLoadError } from '../hooks/query';
 import { usePgBossActions } from '../hooks/usePgBossActions';
@@ -27,10 +30,35 @@ import { usePgBossApi } from '../hooks/usePgBossApi';
 import { permissionsOf, usePgBossInfo } from '../hooks/usePgBossInfo';
 import { usePgBossJobs } from '../hooks/usePgBossJobs';
 import { usePgBossQueue, usePgBossStateCounts } from '../hooks/usePgBossQueue';
+import type { PgBossJobCommand } from '../services/PgBossApi';
 import { PGBOSS_JOBS_PAGE_MAX } from '../utils/constants';
 import { isJobId } from '../utils/jobs';
 import { pgBossLinks } from '../utils/links';
-import { countLabel, parseState, PGBOSS_STATES, stateLabel, stateToneKey } from '../utils/states';
+import {
+  commandsFor,
+  countLabel,
+  parseState,
+  PGBOSS_STATES,
+  stateLabel,
+  stateToneKey,
+} from '../utils/states';
+
+const BULK_COMMANDS: PgBossJobCommand[] = ['retry', 'resume', 'cancel', 'delete'];
+
+/**
+ * The commands the selection can take: on a state tab, what that state accepts; on the tab of
+ * every state, only what each selected job accepts, so no job is silently skipped.
+ */
+function bulkCommandsFor(
+  state: PgBossJobState | undefined,
+  selected: { state: PgBossJobState }[]
+): PgBossJobCommand[] {
+  if (state) return commandsFor(state);
+  if (selected.length === 0) return [];
+  return BULK_COMMANDS.filter((command) =>
+    selected.every((job) => commandsFor(job.state).includes(command))
+  );
+}
 
 const PgBossSendJobModalLazy = React.lazy(() =>
   import('../components/PgBossSendJobModal').then(({ PgBossSendJobModal }) => ({
@@ -93,6 +121,13 @@ export const PgBossQueuePage = () => {
   const [idFilter, setIdFilter] = useState(params.id ?? '');
   const [keyFilter, setKeyFilter] = useState(params.singletonKey ?? '');
   const [invalidId, setInvalidId] = useState(false);
+  const [selected, setSelected] = useState<ReadonlySet<string>>(() => new Set());
+  const [bulkBusy, setBulkBusy] = useState(false);
+
+  // A selection belongs to the page it was made on: another tab, page or filter starts afresh.
+  useEffect(() => {
+    setSelected(new Set());
+  }, [name, search]);
 
   const navigate = (next: ListParams) => history.push({ pathname, search: toSearch(next) });
 
@@ -169,59 +204,100 @@ export const PgBossQueuePage = () => {
   };
 
   const hasFilters = !!params.id || !!params.singletonKey;
+  const pageJobs = page?.jobs ?? [];
+  // Bulk actions need the bulk capability and at least one command the tab's state accepts.
+  const canBulk =
+    permissions.can('bulk') &&
+    (params.state ? commandsFor(params.state) : BULK_COMMANDS).some((command) =>
+      permissions.can(command)
+    );
+  const selectedJobs = pageJobs.filter((job) => selected.has(job.id));
+  const bulkCommands = bulkCommandsFor(params.state, selectedJobs).filter((command) =>
+    permissions.can(command)
+  );
+  const allSelected = pageJobs.length > 0 && selectedJobs.length === pageJobs.length;
+  const toggle = (id: string, checked: boolean) =>
+    setSelected((current) => {
+      const next = new Set(current);
+      if (checked) next.add(id);
+      else next.delete(id);
+      return next;
+    });
+  const runBulk = async (command: PgBossJobCommand) => {
+    setBulkBusy(true);
+    try {
+      const ok = await actions.bulkCommand(command, queue.name, selectedJobs)();
+      if (ok) setSelected(new Set());
+    } finally {
+      setBulkBusy(false);
+    }
+  };
   const timedOut =
     jobsError instanceof PgBossLoadError &&
     jobsError.body.error.key === 'ERRORS.PGBOSS_QUERY_TIMEOUT';
-  const jobs = page?.jobs ?? [];
+  const jobs = pageJobs;
 
   const toolbar = (
     <div
       data-slot="queue-toolbar"
       className="flex w-full flex-wrap items-center justify-between gap-2 rounded-xl border bg-card/80 px-2 py-1.5 shadow-xs backdrop-blur-sm"
     >
-      <form
-        onSubmit={applyFilters}
-        className="flex min-w-0 flex-wrap items-center gap-1.5"
-        role="search"
-      >
-        <div className="relative">
-          <SearchIcon
-            aria-hidden="true"
-            className="pointer-events-none absolute top-1/2 left-2.5 size-3.5 -translate-y-1/2 text-muted-foreground"
+      <div className="flex min-w-0 flex-wrap items-center gap-2">
+        {canBulk && pageJobs.length > 0 && (
+          <Checkbox
+            checked={allSelected ? true : selectedJobs.length > 0 ? 'indeterminate' : false}
+            onCheckedChange={(checked) =>
+              setSelected(checked === true ? new Set(pageJobs.map((job) => job.id)) : new Set())
+            }
+            aria-label={t('PGBOSS.BULK.SELECT_ALL')}
+            title={t('PGBOSS.BULK.SELECT_ALL')}
+            className="ml-1.5"
           />
+        )}
+        <form
+          onSubmit={applyFilters}
+          className="flex min-w-0 flex-wrap items-center gap-1.5"
+          role="search"
+        >
+          <div className="relative">
+            <SearchIcon
+              aria-hidden="true"
+              className="pointer-events-none absolute top-1/2 left-2.5 size-3.5 -translate-y-1/2 text-muted-foreground"
+            />
+            <Input
+              aria-label={t('PGBOSS.FILTER.ID')}
+              aria-invalid={invalidId || undefined}
+              title={t('PGBOSS.FILTER.ID_PLACEHOLDER')}
+              placeholder={t('PGBOSS.FILTER.ID_PLACEHOLDER')}
+              value={idFilter}
+              onChange={(evt) => setIdFilter(evt.target.value)}
+              className="h-8 w-56 pl-8 font-mono text-xs placeholder:font-sans"
+            />
+          </div>
           <Input
-            aria-label={t('PGBOSS.FILTER.ID')}
-            aria-invalid={invalidId || undefined}
-            title={t('PGBOSS.FILTER.ID_PLACEHOLDER')}
-            placeholder={t('PGBOSS.FILTER.ID_PLACEHOLDER')}
-            value={idFilter}
-            onChange={(evt) => setIdFilter(evt.target.value)}
-            className="h-8 w-56 pl-8 font-mono text-xs placeholder:font-sans"
+            aria-label={t('PGBOSS.FILTER.SINGLETON_KEY_PLACEHOLDER')}
+            title={t('PGBOSS.FILTER.SINGLETON_KEY_PLACEHOLDER')}
+            placeholder={t('PGBOSS.FILTER.SINGLETON_KEY')}
+            value={keyFilter}
+            onChange={(evt) => setKeyFilter(evt.target.value)}
+            className="h-8 w-48 font-mono text-xs placeholder:font-sans"
           />
-        </div>
-        <Input
-          aria-label={t('PGBOSS.FILTER.SINGLETON_KEY_PLACEHOLDER')}
-          title={t('PGBOSS.FILTER.SINGLETON_KEY_PLACEHOLDER')}
-          placeholder={t('PGBOSS.FILTER.SINGLETON_KEY')}
-          value={keyFilter}
-          onChange={(evt) => setKeyFilter(evt.target.value)}
-          className="h-8 w-48 font-mono text-xs placeholder:font-sans"
-        />
-        <Button type="submit" size="sm" variant="outline">
-          {t('PGBOSS.FILTER.APPLY')}
-        </Button>
-        {hasFilters && (
-          <Button type="button" size="sm" variant="ghost" onClick={clearFilters}>
-            <XIcon data-icon="inline-start" />
-            {t('PGBOSS.FILTER.CLEAR')}
+          <Button type="submit" size="sm" variant="outline">
+            {t('PGBOSS.FILTER.APPLY')}
           </Button>
-        )}
-        {invalidId && (
-          <span role="alert" className="px-1 text-xs text-destructive">
-            {t('PGBOSS.FILTER.INVALID_ID')}
-          </span>
-        )}
-      </form>
+          {hasFilters && (
+            <Button type="button" size="sm" variant="ghost" onClick={clearFilters}>
+              <XIcon data-icon="inline-start" />
+              {t('PGBOSS.FILTER.CLEAR')}
+            </Button>
+          )}
+          {invalidId && (
+            <span role="alert" className="px-1 text-xs text-destructive">
+              {t('PGBOSS.FILTER.INVALID_ID')}
+            </span>
+          )}
+        </form>
+      </div>
       <CursorPagination
         isFirstPage={!params.cursor}
         prevCursor={page?.prevCursor ?? null}
@@ -260,6 +336,10 @@ export const PgBossQueuePage = () => {
           </div>
         )}
       </header>
+
+      <PgBossQueueDepthCard queueName={queue.name} info={info} />
+
+      <div className="h-4" aria-hidden="true" />
 
       <StickyHeader actions={toolbar}>
         <StatusTabs items={tabs}>
@@ -325,6 +405,14 @@ export const PgBossQueuePage = () => {
                   job={job}
                   jobUrl={pgBossLinks.jobPage(queue.name, job.id, params.state)}
                   permissions={permissions}
+                  selection={
+                    canBulk
+                      ? {
+                          checked: selected.has(job.id),
+                          onCheckedChange: (checked) => toggle(job.id, checked),
+                        }
+                      : undefined
+                  }
                   actions={{
                     command: (command) => actions.jobCommand(command, queue.name, job),
                     // The list only carries summaries; a copy needs the job's data.
@@ -351,6 +439,16 @@ export const PgBossQueuePage = () => {
         </Empty>
       ) : (
         <Loader />
+      )}
+
+      {canBulk && (
+        <PgBossBulkBar
+          count={selectedJobs.length}
+          commands={bulkCommands}
+          busy={bulkBusy}
+          onCommand={runBulk}
+          onClear={() => setSelected(new Set())}
+        />
       )}
 
       <Suspense fallback={null}>

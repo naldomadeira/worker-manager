@@ -213,6 +213,11 @@ describe('pg-boss board links', () => {
     expect(describeReason({ key: 'ERRORS.PGBOSS_NOT_INSTALLED' })).toBe(
       'pg-boss is not installed in this schema'
     );
+    expect(
+      describeReason({ key: 'ERRORS.PGBOSS_SCHEMA_UNTESTED', options: { found: 43, max: 42 } })
+    ).toBe(
+      'pg-boss schema version 43 is newer than this release is tested with (42); it is read, but not written'
+    );
     expect(describeReason({ key: 'ERRORS.PGBOSS_BULK_LIMIT', options: { max: 100 } })).toBe(
       'ERRORS.PGBOSS_BULK_LIMIT {"max":100}'
     );

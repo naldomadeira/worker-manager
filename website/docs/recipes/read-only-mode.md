@@ -83,7 +83,7 @@ createPgBossBoard({
 
 It is stricter than a BullMQ queue's `readOnlyMode`: the mutation routes (send, retry, cancel, resume, delete, the bulk and per-queue commands, and schedule edits) are never registered, so a forged request gets **404**, not 405, and cannot tell that the route exists. The UI hides every control that changes something. Reading, including the schedule preview, keeps working.
 
-Separately from `readOnly`, a pg-boss board turns writes off by itself when it cannot write safely, for instance when it only has a `connection` and the database is on a different pg-boss schema version from the pg-boss installed next to it. The routes are there then, but answer **409** `ERRORS.PGBOSS_WRITES_DISABLED` with the reason, and the UI shows it in a banner.
+Separately from `readOnly`, a pg-boss board turns writes off by itself when it cannot write safely, for instance when it only has a `connection` and the database is on a different pg-boss schema version from the pg-boss installed next to it, or when the schema is newer than the board is tested with and `allowUntestedSchema` is not set. The routes are there then, but answer **409** `ERRORS.PGBOSS_WRITES_DISABLED` with the reason, and the UI shows it in a banner.
 
 ### A read-only PostgreSQL role
 

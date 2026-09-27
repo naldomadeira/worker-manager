@@ -75,6 +75,48 @@ export function usePgBossActions() {
     );
   };
 
+  /**
+   * One command over the selected jobs of a page. Always confirmed, with the count, since it
+   * reaches jobs that are not on screen once the list moves on. Jobs that moved to a state the
+   * command does not apply to are skipped by pg-boss, and the toast says how many changed.
+   */
+  const bulkCommand = (
+    command: PgBossJobCommand,
+    queueName: string,
+    jobs: { id: string; state: PgBossJobState }[]
+  ) => {
+    const key = COMMAND_KEYS[command];
+    const count = jobs.length;
+    const runningCancel = command === 'cancel' && jobs.some((job) => job.state === 'active');
+    return withConfirm(
+      () =>
+        runWithToast(
+          () =>
+            api.bulkCommand(
+              command,
+              queueName,
+              jobs.map((job) => job.id)
+            ),
+          {
+            pending: t(`PGBOSS.BULK.${key}.PENDING`, { count }),
+            success: (result) =>
+              isErrorBody(result)
+                ? ''
+                : {
+                    title: t(`PGBOSS.BULK.${key}.DONE`, { count: result.affected }),
+                    description: result.affected < result.requested ? affected(result) : undefined,
+                  },
+          }
+        ),
+      {
+        description: runningCancel
+          ? `${t(`PGBOSS.BULK.${key}.CONFIRM`, { count })} ${t('PGBOSS.ACTIONS.CANCEL_ACTIVE_WARNING')}`
+          : t(`PGBOSS.BULK.${key}.CONFIRM`, { count }),
+        shouldConfirm: true,
+      }
+    );
+  };
+
   const retryFailed = (queueName: string) =>
     withConfirm(
       () =>
@@ -177,6 +219,7 @@ export function usePgBossActions() {
   return {
     refresh,
     jobCommand,
+    bulkCommand,
     retryFailed,
     deleteQueued,
     deleteStored,

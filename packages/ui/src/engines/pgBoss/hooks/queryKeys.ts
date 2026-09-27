@@ -1,4 +1,8 @@
-import type { PgBossJobsParams } from '../services/PgBossApi';
+import type {
+  PgBossDepthRange,
+  PgBossJobsParams,
+  PgBossWarningsParams,
+} from '../services/PgBossApi';
 
 /** Every pg-boss query sits under one root, so a write can refresh the board in one call. */
 export const pgBossKeys = {
@@ -11,4 +15,6 @@ export const pgBossKeys = {
   job: (name: string, id: string) => ['pgBoss', 'job', name, id] as const,
   dependencies: (name: string, id: string) => ['pgBoss', 'dependencies', name, id] as const,
   schedules: (queueName: string | undefined) => ['pgBoss', 'schedules', queueName ?? null] as const,
+  depth: (name: string, range: PgBossDepthRange) => ['pgBoss', 'depth', name, range] as const,
+  warnings: (params: PgBossWarningsParams) => ['pgBoss', 'warnings', params] as const,
 };

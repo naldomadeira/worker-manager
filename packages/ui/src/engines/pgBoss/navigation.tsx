@@ -1,8 +1,10 @@
 import type { PgBossQueueSummary } from '@worker-manager/api/typings/app';
+import { TriangleAlertIcon } from 'lucide-react';
 import React, { Suspense, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { BoardNavigation, NavQueue } from '../../hooks/useBoardNavigation';
 import { ExperimentalBadge } from './components/ExperimentalBadge';
+import { PgBossCommandExtras } from './components/PgBossCommandExtras';
 import { permissionsOf, usePgBossInfo } from './hooks/usePgBossInfo';
 import { usePgBossQueues } from './hooks/usePgBossQueues';
 import { pgBossLinks } from './utils/links';
@@ -63,6 +65,9 @@ export function usePgBossNavigation(): BoardNavigation {
   const datastoreTitle = t('PGBOSS.DATASTORE.TITLE');
   // pg-boss calls them schedules, and so does the page itself.
   const schedulesLabel = t('PGBOSS.SCHEDULES.TITLE');
+  const warningsLabel = t('PGBOSS.WARNINGS.TITLE');
+  // A schema without the warning table has no page to offer.
+  const hasWarnings = !!info?.readable && !!info.features?.warnings;
 
   return useMemo(
     () => ({
@@ -74,7 +79,19 @@ export function usePgBossNavigation(): BoardNavigation {
       schedulesLabel,
       queuePageLink,
       headerBadge: <ExperimentalBadge />,
+      pages: hasWarnings
+        ? [{ path: pgBossLinks.warnings().pathname, label: warningsLabel, icon: TriangleAlertIcon }]
+        : [],
+      CommandPaletteExtras: PgBossCommandExtras,
     }),
-    [queues, delimiter, canWriteSchedules, datastoreTitle, schedulesLabel]
+    [
+      queues,
+      delimiter,
+      canWriteSchedules,
+      datastoreTitle,
+      schedulesLabel,
+      warningsLabel,
+      hasWarnings,
+    ]
   );
 }

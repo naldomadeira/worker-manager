@@ -1,10 +1,16 @@
-import { PgBossEngineError, type PgBossEngine } from '@worker-manager/api/engine';
+import {
+  pageWarnings,
+  PgBossEngineError,
+  type PgBossEngine,
+  type PgBossQueueDepthWindow,
+} from '@worker-manager/api/engine';
 import type {
   PgBossCapabilities,
   PgBossInfo,
   PgBossJob,
   PgBossJobState,
   PgBossJobSummary,
+  PgBossQueueDepthPoint,
   PgBossQueueSummary,
   PgBossSchedule,
   PgBossStateCounts,
@@ -89,6 +95,9 @@ function toJob({ dependsOn: _edges, ...job }: DemoPgBossJob): PgBossJob {
   return job;
 }
 
+const int = (random: () => number, min: number, max: number) =>
+  min + Math.floor(random() * (max - min + 1));
+
 function invalidSchedule(error: unknown): never {
   throw new PgBossEngineError(
     400,
@@ -118,7 +127,7 @@ export class MockPgBossEngine implements PgBossEngine {
     return this.state.jobs.filter((job) => job.queueName === name);
   }
 
-  private findJob(name: string, id: string): DemoPgBossJob | undefined {
+  private jobIn(name: string, id: string): DemoPgBossJob | undefined {
     return this.state.jobs.find((job) => job.queueName === name && job.id === id);
   }
 
@@ -127,7 +136,7 @@ export class MockPgBossEngine implements PgBossEngine {
     job.deferred = job.state === 'created' && Date.parse(job.startAfter) > this.now;
     if (job.dependsOn.length > 0) {
       job.pendingDependencies = job.dependsOn.filter(
-        (ref) => this.findJob(ref.queueName, ref.id)?.state !== 'completed'
+        (ref) => this.jobIn(ref.queueName, ref.id)?.state !== 'completed'
       ).length;
       job.blocked = job.state === 'created' && job.pendingDependencies > 0;
     }
@@ -197,29 +206,56 @@ export class MockPgBossEngine implements PgBossEngine {
     return { ...schedule, nextRuns: runs };
   }
 
+  /**
+   * `?demo-schema=43` on the page shows the board on a pg-boss schema newer than the one it is
+   * tested with: still readable, writes off, and one feature (job dependencies) gone. It is how
+   * the documentation screenshot of that banner is taken, and a way to try it.
+   */
+  private get untestedSchema(): boolean {
+    return (
+      typeof location !== 'undefined' &&
+      new URLSearchParams(location.search).get('demo-schema') === '43'
+    );
+  }
+
   async info(): Promise<PgBossInfo> {
+    const untested = this.untestedSchema;
+    const writable = !untested;
     const capabilities: PgBossCapabilities = {
-      send: true,
-      retry: true,
-      cancel: true,
-      resume: true,
-      delete: true,
-      scheduleWrite: true,
+      send: writable,
+      retry: writable,
+      cancel: writable,
+      resume: writable,
+      delete: writable,
+      scheduleWrite: writable,
       schedulePreview: true,
-      bulk: true,
+      bulk: writable,
     };
     return {
       schema: 'pgboss',
       delimiter: '.',
       installed: true,
-      schemaVersion: 42,
+      schemaVersion: untested ? 43 : 42,
       supportedRange: { min: 35, max: 42 },
       readable: true,
-      writable: true,
+      writable,
       readOnly: false,
       unavailableReason: null,
-      writesDisabledReason: null,
+      writesDisabledReason: await this.writeGate(),
+      untested,
+      features: {
+        queueCounters: true,
+        readyHistory: true,
+        schedules: true,
+        scheduleKind: true,
+        dependencies: !untested,
+        deadLetterSource: true,
+        queueDepth: true,
+        warnings: true,
+      },
+      disabledFeatures: untested ? ['dependencies'] : [],
       persistQueueStats: true,
+      persistWarnings: this.state.warnings.length > 0,
       datastore: {
         backend: 'postgres',
         version: '17.6',
@@ -237,7 +273,12 @@ export class MockPgBossEngine implements PgBossEngine {
   }
 
   async writeGate() {
-    return null;
+    return this.untestedSchema
+      ? {
+          key: 'ERRORS.PGBOSS_SCHEMA_UNTESTED' as const,
+          options: { found: 43, max: 42 },
+        }
+      : null;
   }
 
   async listQueues() {
@@ -305,14 +346,83 @@ export class MockPgBossEngine implements PgBossEngine {
   }
 
   async getJob(name: string, id: string) {
-    const job = this.findJob(name, id);
+    const job = this.jobIn(name, id);
     if (!job) return null;
     this.refresh(job);
     return toJob(job);
   }
 
+  async findJob(id: string, queueNames: string[]) {
+    const job = this.state.jobs.find(
+      (candidate) => candidate.id === id && queueNames.includes(candidate.queueName)
+    );
+    if (!job) return null;
+    this.refresh(job);
+    return toSummary(job);
+  }
+
+  /**
+   * What the monitor's snapshots would show: a daily rhythm with a busy afternoon, a burst of
+   * failures now and then, and the current counts at the end. Drawn per bucket from the queue
+   * name, so a range change or a reload shows the same history.
+   */
+  async queueDepth(name: string, { from, to, bucketSeconds }: PgBossQueueDepthWindow) {
+    const queue = this.queue(name);
+    if (!queue) return [];
+    const current = this.summary(queue).counts;
+    const width = bucketSeconds * 1000;
+    const points: PgBossQueueDepthPoint[] = [];
+    const base = Math.max(current.ready, 6);
+    for (let ts = Math.ceil(from / width) * width; ts <= to; ts += width) {
+      const random = mulberry32(hashStr(`${name}:depth:${ts}`));
+      const hour = new Date(ts).getUTCHours() + new Date(ts).getUTCMinutes() / 60;
+      const wave = 0.55 + 0.45 * Math.sin(((hour - 9) / 24) * Math.PI * 2);
+      const ready = Math.round(base * (0.6 + wave) + random() * base * 0.4);
+      const deferred = Math.round(current.deferred * (0.5 + random()));
+      const active = Math.max(0, Math.round(Math.min(ready, 4) * (0.5 + random() * 0.8)));
+      const failed =
+        random() > 0.93 ? int(random, 2, 7) : Math.round(current.failed * random() * 0.5);
+      points.push({
+        ts,
+        ready,
+        deferred,
+        active,
+        failed,
+        queued: ready + deferred,
+        total: ready + deferred + active + failed,
+      });
+    }
+    return points;
+  }
+
+  async listWarnings(
+    query: Parameters<PgBossEngine['listWarnings']>[0],
+    _isVisible: Parameters<PgBossEngine['listWarnings']>[1]
+  ) {
+    const compare = (a: { createdOn: string; id: string }, b: { createdOn: string; id: string }) =>
+      a.createdOn.localeCompare(b.createdOn) || a.id.localeCompare(b.id);
+    const matching = this.state.warnings.filter(
+      (warning) => !query.type || warning.type === query.type
+    );
+    return pageWarnings(
+      async (after, descending, limit) =>
+        matching
+          .filter(
+            (warning) =>
+              !after || (descending ? compare(warning, after) < 0 : compare(warning, after) > 0)
+          )
+          .sort((a, b) => (descending ? -compare(a, b) : compare(a, b)))
+          .slice(0, limit),
+      query,
+      // Every demo queue is visible, so nothing is taken out.
+      async () => true,
+      { encode: encodeCursor, decode: decodeCursor }
+    );
+  }
+
   async getDependencies(name: string, id: string) {
-    const job = this.findJob(name, id);
+    if (this.untestedSchema) return { dependencies: [], dependents: [] };
+    const job = this.jobIn(name, id);
     return {
       dependencies: job?.dependsOn ?? [],
       dependents: this.state.jobs

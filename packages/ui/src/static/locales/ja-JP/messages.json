@@ -469,7 +469,11 @@
     "PGBOSS_SCHEMA_MISMATCH": "データベースは pg-boss スキーマ {{found}} ですが、ここで利用できる pg-boss はスキーマ {{expected}} を書き込みます。",
     "PGBOSS_SCHEMA_UNSUPPORTED": "pg-boss スキーマ {{found}} はサポートされていません。サポート対象は {{min}}〜{{max}} です。",
     "PGBOSS_WRITER_UNAVAILABLE": "書き込みに使える pg-boss インスタンスがありません。アプリのインスタンスを渡すか、ボードと同じ場所に pg-boss をインストールしてください。",
-    "PGBOSS_WRITES_DISABLED": "この pg-boss ボードでは変更が無効になっています。"
+    "PGBOSS_WRITES_DISABLED": "この pg-boss ボードでは変更が無効になっています。",
+    "PGBOSS_FEATURE_UNAVAILABLE": "使用中の pg-boss スキーマにはこれがありません（{{feature}}）。",
+    "PGBOSS_JOB_NOT_FOUND": "この ID のジョブを持つ表示可能なキューはありません。",
+    "PGBOSS_SCHEMA_INCOMPATIBLE": "pg-boss スキーマ {{found}} には、ボードが読み取りに必要な列がありません: {{missing}}。",
+    "PGBOSS_SCHEMA_UNTESTED": "pg-boss スキーマ {{found}} は、このボードのテスト対象（{{max}}）より新しいバージョンです。ボードで allowUntestedSchema を設定しない限り、変更は無効のままです。"
   },
   "METRICS_HISTORY": {
     "TITLE": "メトリクス履歴",
@@ -918,7 +922,11 @@
       "UNREADABLE": "この pg-boss データベースを読み取れません",
       "SCHEMA_UNSUPPORTED": "この pg-boss スキーマはサポート範囲（{{min}}〜{{max}}）外です。",
       "NOT_INSTALLED": "先にアプリケーションで pg-boss をインストールしてください。ボードがスキーマを作成・移行することはありません。",
-      "SLOW_QUERY": "大きなキューではこの状態の一覧表示に時間がかかります。ジョブ ID かシングルトンキーで絞り込むか、ドキュメントで推奨されているインデックスを追加してください。"
+      "SLOW_QUERY": "大きなキューではこの状態の一覧表示に時間がかかります。ジョブ ID かシングルトンキーで絞り込むか、ドキュメントで推奨されているインデックスを追加してください。",
+      "UNTESTED_SCHEMA": "pg-boss スキーマ v{{found}} はテスト済みより新しいバージョンです（最大 v{{max}}）",
+      "UNTESTED_HINT": "ボードは存在するテーブルと列を確認しながら読み取り、見つかるものはすべて表示し続けます。",
+      "MISSING_FEATURES": "この pg-boss スキーマには欠けている部分があります",
+      "FEATURES_DISABLED": "一部の機能は無効です: {{features}}。"
     },
     "DATASTORE": {
       "TITLE": "pg-boss データストア",
@@ -931,6 +939,94 @@
       "INSTALLED": "インストール済み",
       "ENABLED": "オン",
       "DISABLED": "オフ"
+    },
+    "FEATURE": {
+      "QUEUE_COUNTERS": "キャッシュされたキューのカウンター",
+      "READY_HISTORY": "実行可能数の履歴",
+      "SCHEDULES": "スケジュール",
+      "SCHEDULE_KIND": "スケジュールの種類と最後のジョブ",
+      "DEPENDENCIES": "ジョブの依存関係",
+      "DEAD_LETTER_SOURCE": "デッドレターの送信元",
+      "QUEUE_DEPTH": "キューの深さのグラフ",
+      "WARNINGS": "警告"
+    },
+    "FIND": {
+      "GROUP": "ジョブ",
+      "OPEN_JOB": "ジョブ {{id}} を開く",
+      "LABEL": "ID でジョブを開く",
+      "PLACEHOLDER": "ジョブ ID を貼り付けて開く",
+      "SUBMIT": "開く"
+    },
+    "DEPTH": {
+      "TITLE": "キューの深さ",
+      "DESCRIPTION": "pg-boss が queue_stats に保存しているスナップショットから求めた、各区間の最大滞留数です。",
+      "RANGE_LABEL": "期間",
+      "RANGE_1H": "1時間",
+      "RANGE_6H": "6時間",
+      "RANGE_24H": "24時間",
+      "RANGE_7D": "7日",
+      "DISABLED": "この pg-boss スキーマには queue_stats テーブルがないため、深さの履歴はありません。",
+      "NEVER": "まだ深さのスナップショットはありません",
+      "NEVER_HINT": "キューが persistQueueStats 付きで動作し、いずれかのインスタンスが監視しているときに pg-boss が書き込みます。",
+      "EMPTY": "この期間のスナップショットはありません",
+      "LOAD_ERROR": "深さの履歴を読み込めませんでした。"
+    },
+    "BULK": {
+      "TOOLBAR": "一括操作",
+      "SELECT_ALL": "このページのジョブをすべて選択",
+      "SELECT_JOB": "ジョブ {{id}} を選択",
+      "SELECTED": "{{count}} 件のジョブを選択中",
+      "CLEAR": "選択を解除",
+      "NO_COMMON": "選択したすべてのジョブに使える操作はありません。",
+      "RETRY": {
+        "CONFIRM": "{{count}} 件のジョブを再試行しますか？",
+        "PENDING": "{{count}} 件のジョブを再試行しています…",
+        "DONE": "{{count}} 件のジョブを再試行キューに入れました"
+      },
+      "CANCEL": {
+        "CONFIRM": "{{count}} 件のジョブをキャンセルしますか？",
+        "PENDING": "{{count}} 件のジョブをキャンセルしています…",
+        "DONE": "{{count}} 件のジョブをキャンセルしました"
+      },
+      "RESUME": {
+        "CONFIRM": "{{count}} 件のジョブを再開しますか？",
+        "PENDING": "{{count}} 件のジョブを再開しています…",
+        "DONE": "{{count}} 件のジョブを再開しました"
+      },
+      "DELETE": {
+        "CONFIRM": "{{count}} 件のジョブを削除しますか？元に戻せません。",
+        "PENDING": "{{count}} 件のジョブを削除しています…",
+        "DONE": "{{count}} 件のジョブを削除しました"
+      }
+    },
+    "WARNINGS": {
+      "TITLE": "警告",
+      "DESCRIPTION": "pg-boss が自身の状態について報告した内容: 遅いクエリ、滞留、進まないトランザクションホライズン。",
+      "RECENT": "最近の警告",
+      "VIEW_ALL": "すべて表示",
+      "TYPE_FILTER": "警告の種類",
+      "ALL_TYPES": "すべての種類",
+      "TIME": "日時",
+      "TYPE_COLUMN": "種類",
+      "QUEUE": "キュー",
+      "MESSAGE": "メッセージ",
+      "DETAILS": "詳細を表示",
+      "EMPTY": "警告はありません",
+      "EMPTY_HINT": "pg-boss が警告を保存するのは、いずれかのインスタンスが persistWarnings: true で動作しているときだけです。",
+      "EMPTY_FILTERED": "この種類の警告はありません",
+      "DISABLED": "この pg-boss スキーマには warning テーブルがありません。",
+      "LOAD_ERROR": "警告を読み込めませんでした。",
+      "PAGES": "警告のページ",
+      "TYPE": {
+        "SLOW_QUERY": "遅いクエリ",
+        "QUEUE_BACKLOG": "キューの滞留",
+        "INDEX_BLOAT": "インデックスの肥大化",
+        "XMIN_HORIZON": "トランザクションホライズン",
+        "AUTOVACUUM_DISABLED": "Autovacuum 無効",
+        "MONITOR_BACKOFF": "監視の延期",
+        "CLOCK_SKEW": "時刻のずれ",
+        "INVALID_SCHEDULE": "無効なスケジュール"
+      }
     }
   }
 }

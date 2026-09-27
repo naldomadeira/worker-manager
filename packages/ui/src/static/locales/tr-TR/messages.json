@@ -515,7 +515,11 @@
     "PGBOSS_SCHEMA_MISMATCH": "Veritabanı pg-boss şeması {{found}} üzerinde, ancak burada kullanılabilen pg-boss {{expected}} şemasını yazıyor.",
     "PGBOSS_SCHEMA_UNSUPPORTED": "pg-boss şeması {{found}} desteklenmiyor. Desteklenen sürümler {{min}} ile {{max}} arası.",
     "PGBOSS_WRITER_UNAVAILABLE": "Yazmak için kullanılabilecek bir pg-boss örneği yok. Uygulamanın örneğini verin veya pg-boss'u panonun yanına kurun.",
-    "PGBOSS_WRITES_DISABLED": "Bu pg-boss panosunda değişiklikler kapalı."
+    "PGBOSS_WRITES_DISABLED": "Bu pg-boss panosunda değişiklikler kapalı.",
+    "PGBOSS_FEATURE_UNAVAILABLE": "Kullanılan pg-boss şemasında bu yok ({{feature}}).",
+    "PGBOSS_JOB_NOT_FOUND": "Görünür hiçbir kuyrukta bu kimliğe sahip bir iş yok.",
+    "PGBOSS_SCHEMA_INCOMPATIBLE": "pg-boss şeması {{found}}, panonun onsuz okuyamadığı sütunlardan yoksun: {{missing}}.",
+    "PGBOSS_SCHEMA_UNTESTED": "pg-boss şeması {{found}}, bu panonun test edildiği sürümden ({{max}}) daha yeni. Pano allowUntestedSchema ayarlamadıkça değişiklikler kapalı kalır."
   },
   "METRICS_HISTORY": {
     "TITLE": "Metrik geçmişi",
@@ -972,7 +976,11 @@
       "UNREADABLE": "Bu pg-boss veritabanı okunamıyor",
       "SCHEMA_UNSUPPORTED": "Buradaki pg-boss şeması desteklenen {{min}} ile {{max}} aralığının dışında.",
       "NOT_INSTALLED": "Önce uygulamaya pg-boss'u kurun. Pano şemasını asla oluşturmaz veya taşımaz.",
-      "SLOW_QUERY": "Büyük bir kuyrukta bu durumu listelemek yavaş. İş kimliğine veya singleton anahtarına göre filtreleyin ya da belgelerin önerdiği dizini ekleyin."
+      "SLOW_QUERY": "Büyük bir kuyrukta bu durumu listelemek yavaş. İş kimliğine veya singleton anahtarına göre filtreleyin ya da belgelerin önerdiği dizini ekleyin.",
+      "UNTESTED_SCHEMA": "pg-boss şeması v{{found}} test edilenden daha yeni (en fazla v{{max}})",
+      "UNTESTED_HINT": "Pano, hangi tabloların ve sütunların bulunduğunu denetleyerek onu okur ve hâlâ bulduğu her şeyi göstermeyi sürdürür.",
+      "MISSING_FEATURES": "Bu pg-boss şemasının bazı bölümleri eksik",
+      "FEATURES_DISABLED": "Bazı özellikler kapalı: {{features}}."
     },
     "DATASTORE": {
       "TITLE": "pg-boss veri deposu",
@@ -985,6 +993,120 @@
       "INSTALLED": "Kurulu",
       "ENABLED": "Açık",
       "DISABLED": "Kapalı"
+    },
+    "FEATURE": {
+      "QUEUE_COUNTERS": "önbellekteki kuyruk sayaçları",
+      "READY_HISTORY": "hazır geçmişi",
+      "SCHEDULES": "zamanlamalar",
+      "SCHEDULE_KIND": "zamanlama türleri ve son işler",
+      "DEPENDENCIES": "iş bağımlılıkları",
+      "DEAD_LETTER_SOURCE": "dead letter kaynakları",
+      "QUEUE_DEPTH": "kuyruk derinliği grafiği",
+      "WARNINGS": "uyarılar"
+    },
+    "FIND": {
+      "GROUP": "İşler",
+      "OPEN_JOB": "{{id}} işini aç",
+      "LABEL": "Kimliğiyle bir iş aç",
+      "PLACEHOLDER": "Açmak için bir iş kimliği yapıştırın",
+      "SUBMIT": "Aç"
+    },
+    "DEPTH": {
+      "TITLE": "Kuyruk derinliği",
+      "DESCRIPTION": "pg-boss'un queue_stats içinde tuttuğu anlık görüntülerden, her aralıktaki en yüksek birikim.",
+      "RANGE_LABEL": "Zaman aralığı",
+      "RANGE_1H": "1 sa",
+      "RANGE_6H": "6 sa",
+      "RANGE_24H": "24 sa",
+      "RANGE_7D": "7 g",
+      "DISABLED": "Bu pg-boss şemasında queue_stats tablosu yok, bu yüzden derinlik geçmişi de yok.",
+      "NEVER": "Henüz derinlik görüntüsü yok",
+      "NEVER_HINT": "pg-boss bunları, bir kuyruk persistQueueStats ile çalıştığında ve bir örnek onu izlediğinde yazar.",
+      "EMPTY": "Bu zaman aralığında görüntü yok",
+      "LOAD_ERROR": "Derinlik geçmişi yüklenemedi."
+    },
+    "BULK": {
+      "TOOLBAR": "Toplu işlemler",
+      "SELECT_ALL": "Bu sayfadaki tüm işleri seç",
+      "SELECT_JOB": "{{id}} işini seç",
+      "SELECTED_one": "{{count}} iş seçildi",
+      "SELECTED_other": "{{count}} iş seçildi",
+      "SELECTED": "{{count}} iş seçildi",
+      "CLEAR": "Seçimi temizle",
+      "NO_COMMON": "Seçili işlerin tümüne uygulanabilen bir işlem yok.",
+      "RETRY": {
+        "CONFIRM_one": "{{count}} iş yeniden denensin mi?",
+        "CONFIRM_other": "{{count}} iş yeniden denensin mi?",
+        "CONFIRM": "{{count}} iş yeniden denensin mi?",
+        "PENDING_one": "{{count}} iş yeniden deneniyor…",
+        "PENDING_other": "{{count}} iş yeniden deneniyor…",
+        "PENDING": "{{count}} iş yeniden deneniyor…",
+        "DONE_one": "{{count}} iş yeniden deneme için kuyruğa alındı",
+        "DONE_other": "{{count}} iş yeniden deneme için kuyruğa alındı",
+        "DONE": "{{count}} iş yeniden deneme için kuyruğa alındı"
+      },
+      "CANCEL": {
+        "CONFIRM_one": "{{count}} iş iptal edilsin mi?",
+        "CONFIRM_other": "{{count}} iş iptal edilsin mi?",
+        "CONFIRM": "{{count}} iş iptal edilsin mi?",
+        "PENDING_one": "{{count}} iş iptal ediliyor…",
+        "PENDING_other": "{{count}} iş iptal ediliyor…",
+        "PENDING": "{{count}} iş iptal ediliyor…",
+        "DONE_one": "{{count}} iş iptal edildi",
+        "DONE_other": "{{count}} iş iptal edildi",
+        "DONE": "{{count}} iş iptal edildi"
+      },
+      "RESUME": {
+        "CONFIRM_one": "{{count}} iş sürdürülsün mü?",
+        "CONFIRM_other": "{{count}} iş sürdürülsün mü?",
+        "CONFIRM": "{{count}} iş sürdürülsün mü?",
+        "PENDING_one": "{{count}} iş sürdürülüyor…",
+        "PENDING_other": "{{count}} iş sürdürülüyor…",
+        "PENDING": "{{count}} iş sürdürülüyor…",
+        "DONE_one": "{{count}} iş sürdürüldü",
+        "DONE_other": "{{count}} iş sürdürüldü",
+        "DONE": "{{count}} iş sürdürüldü"
+      },
+      "DELETE": {
+        "CONFIRM_one": "{{count}} iş silinsin mi? Bu geri alınamaz.",
+        "CONFIRM_other": "{{count}} iş silinsin mi? Bu geri alınamaz.",
+        "CONFIRM": "{{count}} iş silinsin mi? Bu geri alınamaz.",
+        "PENDING_one": "{{count}} iş siliniyor…",
+        "PENDING_other": "{{count}} iş siliniyor…",
+        "PENDING": "{{count}} iş siliniyor…",
+        "DONE_one": "{{count}} iş silindi",
+        "DONE_other": "{{count}} iş silindi",
+        "DONE": "{{count}} iş silindi"
+      }
+    },
+    "WARNINGS": {
+      "TITLE": "Uyarılar",
+      "DESCRIPTION": "pg-boss'un kendi durumu hakkında bildirdikleri: yavaş sorgular, birikmeler, takılı kalmış bir işlem ufku.",
+      "RECENT": "Son uyarılar",
+      "VIEW_ALL": "Tümünü gör",
+      "TYPE_FILTER": "Uyarı türü",
+      "ALL_TYPES": "Tüm türler",
+      "TIME": "Ne zaman",
+      "TYPE_COLUMN": "Tür",
+      "QUEUE": "Kuyruk",
+      "MESSAGE": "Mesaj",
+      "DETAILS": "Ayrıntıları göster",
+      "EMPTY": "Uyarı yok",
+      "EMPTY_HINT": "pg-boss uyarıları yalnızca bir örnek persistWarnings: true ile çalıştığında saklar.",
+      "EMPTY_FILTERED": "Bu türde uyarı yok",
+      "DISABLED": "Bu pg-boss şemasında warning tablosu yok.",
+      "LOAD_ERROR": "Uyarılar yüklenemedi.",
+      "PAGES": "Uyarı sayfaları",
+      "TYPE": {
+        "SLOW_QUERY": "Yavaş sorgu",
+        "QUEUE_BACKLOG": "Kuyruk birikmesi",
+        "INDEX_BLOAT": "Şişmiş dizin",
+        "XMIN_HORIZON": "İşlem ufku",
+        "AUTOVACUUM_DISABLED": "Autovacuum kapalı",
+        "MONITOR_BACKOFF": "İzleme ertelendi",
+        "CLOCK_SKEW": "Saat kayması",
+        "INVALID_SCHEDULE": "Geçersiz zamanlama"
+      }
     }
   }
 }

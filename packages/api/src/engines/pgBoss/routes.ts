@@ -82,6 +82,18 @@ export function buildPgBossRoutes(
     }),
     defineRoute({
       method: 'get',
+      route: '/api/pg-boss/queues/:queueName/depth',
+      spec: {
+        summary:
+          "Chart one queue's depth over time from pg-boss's own `queue_stats` snapshots, bucketed.",
+        response: 'GetPgBossQueueDepthResponse',
+        query: 'GetPgBossQueueDepthQuery',
+        availableWhen: `${AVAILABILITY} Answers 409 \`ERRORS.PGBOSS_FEATURE_UNAVAILABLE\` on a schema without \`queue_stats\`.`,
+      },
+      handler: handlers.depth,
+    }),
+    defineRoute({
+      method: 'get',
       route: '/api/pg-boss/queues/:queueName/jobs',
       spec: {
         summary: 'List the jobs of one queue, newest first, one keyset page at a time.',
@@ -110,6 +122,29 @@ export function buildPgBossRoutes(
         availableWhen: AVAILABILITY,
       },
       handler: handlers.dependencies,
+    }),
+    defineRoute({
+      method: 'get',
+      route: '/api/pg-boss/jobs/:jobId',
+      spec: {
+        summary:
+          'Find a job by id in whichever visible queue holds it, probing each queue on its primary key.',
+        response: 'FindPgBossJobResponse',
+        availableWhen: AVAILABILITY,
+      },
+      handler: handlers.findJob,
+    }),
+    defineRoute({
+      method: 'get',
+      route: '/api/pg-boss/warnings',
+      spec: {
+        summary:
+          "List pg-boss's persisted warnings, newest first, one keyset page at a time. Warnings naming a hidden queue are left out.",
+        response: 'GetPgBossWarningsResponse',
+        query: 'GetPgBossWarningsQuery',
+        availableWhen: `${AVAILABILITY} Answers 409 \`ERRORS.PGBOSS_FEATURE_UNAVAILABLE\` on a schema without the \`warning\` table.`,
+      },
+      handler: handlers.warnings,
     }),
     defineRoute({
       method: 'get',

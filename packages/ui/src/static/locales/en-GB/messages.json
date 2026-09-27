@@ -515,7 +515,11 @@
     "PGBOSS_SCHEMA_MISMATCH": "The database is on pg-boss schema {{found}}, but the pg-boss available here writes schema {{expected}}.",
     "PGBOSS_SCHEMA_UNSUPPORTED": "pg-boss schema {{found}} is not supported. Supported versions are {{min}} to {{max}}.",
     "PGBOSS_WRITER_UNAVAILABLE": "No pg-boss instance is available to write with. Pass the app's instance, or install pg-boss alongside the board.",
-    "PGBOSS_WRITES_DISABLED": "Changes are switched off on this pg-boss board."
+    "PGBOSS_WRITES_DISABLED": "Changes are switched off on this pg-boss board.",
+    "PGBOSS_FEATURE_UNAVAILABLE": "The pg-boss schema in use does not have this ({{feature}}).",
+    "PGBOSS_JOB_NOT_FOUND": "No visible queue has a job with this id.",
+    "PGBOSS_SCHEMA_INCOMPATIBLE": "pg-boss schema {{found}} lacks columns the board cannot read without: {{missing}}.",
+    "PGBOSS_SCHEMA_UNTESTED": "pg-boss schema {{found}} is newer than this board is tested with ({{max}}). Changes stay switched off unless the board sets allowUntestedSchema."
   },
   "METRICS_HISTORY": {
     "TITLE": "Metrics history",
@@ -972,7 +976,11 @@
       "UNREADABLE": "This pg-boss database cannot be read",
       "SCHEMA_UNSUPPORTED": "The pg-boss schema here is outside the supported range {{min}} to {{max}}.",
       "NOT_INSTALLED": "Install pg-boss in the application first. The board never creates or migrates its schema.",
-      "SLOW_QUERY": "Listing this state is slow on a large queue. Filter by job id or singleton key, or add the index the documentation recommends."
+      "SLOW_QUERY": "Listing this state is slow on a large queue. Filter by job id or singleton key, or add the index the documentation recommends.",
+      "UNTESTED_SCHEMA": "pg-boss schema v{{found}} is newer than tested (max v{{max}})",
+      "UNTESTED_HINT": "The board reads it by checking which tables and columns exist, and keeps showing everything it still finds.",
+      "MISSING_FEATURES": "Parts of this pg-boss schema are missing",
+      "FEATURES_DISABLED": "Some features are switched off: {{features}}."
     },
     "DATASTORE": {
       "TITLE": "pg-boss datastore",
@@ -985,6 +993,120 @@
       "INSTALLED": "Installed",
       "ENABLED": "On",
       "DISABLED": "Off"
+    },
+    "FEATURE": {
+      "QUEUE_COUNTERS": "cached queue counters",
+      "READY_HISTORY": "ready history",
+      "SCHEDULES": "schedules",
+      "SCHEDULE_KIND": "schedule kinds and last jobs",
+      "DEPENDENCIES": "job dependencies",
+      "DEAD_LETTER_SOURCE": "dead letter sources",
+      "QUEUE_DEPTH": "the queue depth chart",
+      "WARNINGS": "warnings"
+    },
+    "FIND": {
+      "GROUP": "Jobs",
+      "OPEN_JOB": "Open job {{id}}",
+      "LABEL": "Open a job by id",
+      "PLACEHOLDER": "Paste a job id to open it",
+      "SUBMIT": "Open"
+    },
+    "DEPTH": {
+      "TITLE": "Queue depth",
+      "DESCRIPTION": "The highest backlog in each interval, from the snapshots pg-boss keeps in queue_stats.",
+      "RANGE_LABEL": "Time range",
+      "RANGE_1H": "1h",
+      "RANGE_6H": "6h",
+      "RANGE_24H": "24h",
+      "RANGE_7D": "7d",
+      "DISABLED": "This pg-boss schema has no queue_stats table, so there is no depth history.",
+      "NEVER": "No depth snapshots yet",
+      "NEVER_HINT": "pg-boss writes them when a queue runs with persistQueueStats and an instance supervises it.",
+      "EMPTY": "No snapshots in this time range",
+      "LOAD_ERROR": "The depth history could not be loaded."
+    },
+    "BULK": {
+      "TOOLBAR": "Bulk actions",
+      "SELECT_ALL": "Select every job on this page",
+      "SELECT_JOB": "Select job {{id}}",
+      "SELECTED_one": "{{count}} job selected",
+      "SELECTED_other": "{{count}} jobs selected",
+      "SELECTED": "{{count}} jobs selected",
+      "CLEAR": "Clear the selection",
+      "NO_COMMON": "No action applies to every selected job.",
+      "RETRY": {
+        "CONFIRM_one": "Retry {{count}} job?",
+        "CONFIRM_other": "Retry {{count}} jobs?",
+        "CONFIRM": "Retry {{count}} jobs?",
+        "PENDING_one": "Retrying {{count}} job…",
+        "PENDING_other": "Retrying {{count}} jobs…",
+        "PENDING": "Retrying {{count}} jobs…",
+        "DONE_one": "{{count}} job retried",
+        "DONE_other": "{{count}} jobs retried",
+        "DONE": "{{count}} jobs retried"
+      },
+      "CANCEL": {
+        "CONFIRM_one": "Cancel {{count}} job?",
+        "CONFIRM_other": "Cancel {{count}} jobs?",
+        "CONFIRM": "Cancel {{count}} jobs?",
+        "PENDING_one": "Cancelling {{count}} job…",
+        "PENDING_other": "Cancelling {{count}} jobs…",
+        "PENDING": "Cancelling {{count}} jobs…",
+        "DONE_one": "{{count}} job cancelled",
+        "DONE_other": "{{count}} jobs cancelled",
+        "DONE": "{{count}} jobs cancelled"
+      },
+      "RESUME": {
+        "CONFIRM_one": "Resume {{count}} job?",
+        "CONFIRM_other": "Resume {{count}} jobs?",
+        "CONFIRM": "Resume {{count}} jobs?",
+        "PENDING_one": "Resuming {{count}} job…",
+        "PENDING_other": "Resuming {{count}} jobs…",
+        "PENDING": "Resuming {{count}} jobs…",
+        "DONE_one": "{{count}} job resumed",
+        "DONE_other": "{{count}} jobs resumed",
+        "DONE": "{{count}} jobs resumed"
+      },
+      "DELETE": {
+        "CONFIRM_one": "Delete {{count}} job? This cannot be undone.",
+        "CONFIRM_other": "Delete {{count}} jobs? This cannot be undone.",
+        "CONFIRM": "Delete {{count}} jobs? This cannot be undone.",
+        "PENDING_one": "Deleting {{count}} job…",
+        "PENDING_other": "Deleting {{count}} jobs…",
+        "PENDING": "Deleting {{count}} jobs…",
+        "DONE_one": "{{count}} job deleted",
+        "DONE_other": "{{count}} jobs deleted",
+        "DONE": "{{count}} jobs deleted"
+      }
+    },
+    "WARNINGS": {
+      "TITLE": "Warnings",
+      "DESCRIPTION": "What pg-boss reported about its own health: slow queries, backlogs, a pinned transaction horizon.",
+      "RECENT": "Recent warnings",
+      "VIEW_ALL": "View all",
+      "TYPE_FILTER": "Warning type",
+      "ALL_TYPES": "All types",
+      "TIME": "When",
+      "TYPE_COLUMN": "Type",
+      "QUEUE": "Queue",
+      "MESSAGE": "Message",
+      "DETAILS": "Show the details",
+      "EMPTY": "No warnings",
+      "EMPTY_HINT": "pg-boss stores warnings only when an instance runs with persistWarnings: true.",
+      "EMPTY_FILTERED": "No warnings of this type",
+      "DISABLED": "This pg-boss schema has no warning table.",
+      "LOAD_ERROR": "The warnings could not be loaded.",
+      "PAGES": "Warning pages",
+      "TYPE": {
+        "SLOW_QUERY": "Slow query",
+        "QUEUE_BACKLOG": "Queue backlog",
+        "INDEX_BLOAT": "Index bloat",
+        "XMIN_HORIZON": "Transaction horizon",
+        "AUTOVACUUM_DISABLED": "Autovacuum off",
+        "MONITOR_BACKOFF": "Monitor backoff",
+        "CLOCK_SKEW": "Clock skew",
+        "INVALID_SCHEDULE": "Invalid schedule"
+      }
     }
   }
 }
