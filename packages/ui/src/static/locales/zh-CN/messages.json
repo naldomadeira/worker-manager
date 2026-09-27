@@ -467,7 +467,11 @@
     "PGBOSS_SCHEMA_MISMATCH": "数据库处于 pg-boss schema {{found}}，但此处可用的 pg-boss 写入的是 schema {{expected}}。",
     "PGBOSS_SCHEMA_UNSUPPORTED": "不支持 pg-boss schema {{found}}。支持的版本为 {{min}} 到 {{max}}。",
     "PGBOSS_WRITER_UNAVAILABLE": "没有可用于写入的 pg-boss 实例。请传入应用的实例，或在面板旁安装 pg-boss。",
-    "PGBOSS_WRITES_DISABLED": "此 pg-boss 面板已关闭更改。"
+    "PGBOSS_WRITES_DISABLED": "此 pg-boss 面板已关闭更改。",
+    "PGBOSS_FEATURE_UNAVAILABLE": "当前使用的 pg-boss schema 没有此项（{{feature}}）。",
+    "PGBOSS_JOB_NOT_FOUND": "没有任何可见队列包含此 ID 的作业。",
+    "PGBOSS_SCHEMA_INCOMPATIBLE": "pg-boss schema {{found}} 缺少看板读取所必需的列：{{missing}}。",
+    "PGBOSS_SCHEMA_UNTESTED": "pg-boss schema {{found}} 比此看板测试过的版本（{{max}}）更新。除非看板设置了 allowUntestedSchema，否则更改保持关闭。"
   },
   "METRICS_HISTORY": {
     "TITLE": "指标历史",
@@ -916,7 +920,11 @@
       "UNREADABLE": "无法读取此 pg-boss 数据库",
       "SCHEMA_UNSUPPORTED": "此处的 pg-boss 模式超出支持范围（{{min}} 至 {{max}}）。",
       "NOT_INSTALLED": "请先在应用中安装 pg-boss。面板从不创建或迁移它的模式。",
-      "SLOW_QUERY": "在大队列上列出此状态很慢。请按作业 ID 或单例键筛选，或添加文档推荐的索引。"
+      "SLOW_QUERY": "在大队列上列出此状态很慢。请按作业 ID 或单例键筛选，或添加文档推荐的索引。",
+      "UNTESTED_SCHEMA": "pg-boss schema v{{found}} 比已测试的版本更新（最高 v{{max}}）",
+      "UNTESTED_HINT": "看板会检查存在哪些表和列来读取它，并继续显示仍能找到的所有内容。",
+      "MISSING_FEATURES": "此 pg-boss schema 缺少部分内容",
+      "FEATURES_DISABLED": "部分功能已关闭：{{features}}。"
     },
     "DATASTORE": {
       "TITLE": "pg-boss 数据存储",
@@ -929,6 +937,94 @@
       "INSTALLED": "已安装",
       "ENABLED": "开",
       "DISABLED": "关"
+    },
+    "FEATURE": {
+      "QUEUE_COUNTERS": "缓存的队列计数",
+      "READY_HISTORY": "就绪历史",
+      "SCHEDULES": "计划",
+      "SCHEDULE_KIND": "计划类型与最近作业",
+      "DEPENDENCIES": "作业依赖",
+      "DEAD_LETTER_SOURCE": "死信来源",
+      "QUEUE_DEPTH": "队列深度图表",
+      "WARNINGS": "警告"
+    },
+    "FIND": {
+      "GROUP": "作业",
+      "OPEN_JOB": "打开作业 {{id}}",
+      "LABEL": "按 ID 打开作业",
+      "PLACEHOLDER": "粘贴作业 ID 以打开",
+      "SUBMIT": "打开"
+    },
+    "DEPTH": {
+      "TITLE": "队列深度",
+      "DESCRIPTION": "根据 pg-boss 在 queue_stats 中保存的快照，显示每个区间内的最大积压。",
+      "RANGE_LABEL": "时间范围",
+      "RANGE_1H": "1 小时",
+      "RANGE_6H": "6 小时",
+      "RANGE_24H": "24 小时",
+      "RANGE_7D": "7 天",
+      "DISABLED": "此 pg-boss schema 没有 queue_stats 表，因此没有深度历史。",
+      "NEVER": "暂无深度快照",
+      "NEVER_HINT": "当队列启用 persistQueueStats 并有实例对其进行监督时，pg-boss 会写入快照。",
+      "EMPTY": "此时间范围内没有快照",
+      "LOAD_ERROR": "无法加载深度历史。"
+    },
+    "BULK": {
+      "TOOLBAR": "批量操作",
+      "SELECT_ALL": "选择本页所有作业",
+      "SELECT_JOB": "选择作业 {{id}}",
+      "SELECTED": "已选择 {{count}} 个作业",
+      "CLEAR": "清除选择",
+      "NO_COMMON": "没有适用于所有已选作业的操作。",
+      "RETRY": {
+        "CONFIRM": "重试 {{count}} 个作业？",
+        "PENDING": "正在重试 {{count}} 个作业…",
+        "DONE": "已将 {{count}} 个作业排队等待重试"
+      },
+      "CANCEL": {
+        "CONFIRM": "取消 {{count}} 个作业？",
+        "PENDING": "正在取消 {{count}} 个作业…",
+        "DONE": "已取消 {{count}} 个作业"
+      },
+      "RESUME": {
+        "CONFIRM": "恢复 {{count}} 个作业？",
+        "PENDING": "正在恢复 {{count}} 个作业…",
+        "DONE": "已恢复 {{count}} 个作业"
+      },
+      "DELETE": {
+        "CONFIRM": "删除 {{count}} 个作业？此操作无法撤销。",
+        "PENDING": "正在删除 {{count}} 个作业…",
+        "DONE": "已删除 {{count}} 个作业"
+      }
+    },
+    "WARNINGS": {
+      "TITLE": "警告",
+      "DESCRIPTION": "pg-boss 报告的自身健康状况：慢查询、积压、被卡住的事务视界。",
+      "RECENT": "最近的警告",
+      "VIEW_ALL": "查看全部",
+      "TYPE_FILTER": "警告类型",
+      "ALL_TYPES": "所有类型",
+      "TIME": "时间",
+      "TYPE_COLUMN": "类型",
+      "QUEUE": "队列",
+      "MESSAGE": "消息",
+      "DETAILS": "显示详情",
+      "EMPTY": "没有警告",
+      "EMPTY_HINT": "只有当某个实例以 persistWarnings: true 运行时，pg-boss 才会保存警告。",
+      "EMPTY_FILTERED": "没有此类型的警告",
+      "DISABLED": "此 pg-boss schema 没有 warning 表。",
+      "LOAD_ERROR": "无法加载警告。",
+      "PAGES": "警告分页",
+      "TYPE": {
+        "SLOW_QUERY": "慢查询",
+        "QUEUE_BACKLOG": "队列积压",
+        "INDEX_BLOAT": "索引膨胀",
+        "XMIN_HORIZON": "事务视界",
+        "AUTOVACUUM_DISABLED": "Autovacuum 已关闭",
+        "MONITOR_BACKOFF": "监控已推迟",
+        "CLOCK_SKEW": "时钟偏差",
+        "INVALID_SCHEDULE": "无效计划"
+      }
     }
   }
 }

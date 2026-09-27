@@ -61,7 +61,10 @@ export const Title = () => {
   if (isMobile) return <div className="min-w-0 flex-1" />;
 
   const crumbs: Crumb[] = [{ label: t('MENU.OVERVIEW'), to: '/' }];
-  if (pathname.startsWith(links.jobSchedulers().pathname)) {
+  const enginePage = navigation.pages?.find((page) => pathname.startsWith(page.path));
+  if (enginePage) {
+    crumbs.push({ label: enginePage.label });
+  } else if (pathname.startsWith(links.jobSchedulers().pathname)) {
     crumbs.push({ label: navigation.schedulesLabel ?? t('MENU.SCHEDULERS') });
   } else if (pathname.startsWith(links.metricsHistory().pathname)) {
     crumbs.push({ label: t('MENU.METRICS_HISTORY') });

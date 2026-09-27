@@ -539,7 +539,11 @@
     "PGBOSS_SCHEMA_MISMATCH": "La base de données est au schéma pg-boss {{found}}, mais le pg-boss disponible ici écrit le schéma {{expected}}.",
     "PGBOSS_SCHEMA_UNSUPPORTED": "Le schéma pg-boss {{found}} n’est pas pris en charge. Les versions prises en charge vont de {{min}} à {{max}}.",
     "PGBOSS_WRITER_UNAVAILABLE": "Aucune instance pg-boss n’est disponible pour écrire. Passez l’instance de l’application, ou installez pg-boss à côté du tableau de bord.",
-    "PGBOSS_WRITES_DISABLED": "Les modifications sont désactivées sur ce tableau de bord pg-boss."
+    "PGBOSS_WRITES_DISABLED": "Les modifications sont désactivées sur ce tableau de bord pg-boss.",
+    "PGBOSS_FEATURE_UNAVAILABLE": "Le schéma pg-boss utilisé ne dispose pas de cela ({{feature}}).",
+    "PGBOSS_JOB_NOT_FOUND": "Aucune file visible ne contient de tâche avec cet id.",
+    "PGBOSS_SCHEMA_INCOMPATIBLE": "Il manque au schéma pg-boss {{found}} des colonnes sans lesquelles le tableau de bord ne peut rien lire : {{missing}}.",
+    "PGBOSS_SCHEMA_UNTESTED": "Le schéma pg-boss {{found}} est plus récent que celui avec lequel ce tableau de bord est testé ({{max}}). Les modifications restent désactivées tant que le tableau de bord ne définit pas allowUntestedSchema."
   },
   "METRICS_HISTORY": {
     "TITLE": "Historique des métriques",
@@ -1000,7 +1004,11 @@
       "UNREADABLE": "Impossible de lire cette base pg-boss",
       "SCHEMA_UNSUPPORTED": "Le schéma pg-boss ici est hors de la plage prise en charge, de {{min}} à {{max}}.",
       "NOT_INSTALLED": "Installez d'abord pg-boss dans l'application. Le tableau de bord ne crée ni ne migre jamais son schéma.",
-      "SLOW_QUERY": "Lister cet état est lent sur une grande file. Filtrez par id de tâche ou par clé singleton, ou ajoutez l'index recommandé par la documentation."
+      "SLOW_QUERY": "Lister cet état est lent sur une grande file. Filtrez par id de tâche ou par clé singleton, ou ajoutez l'index recommandé par la documentation.",
+      "UNTESTED_SCHEMA": "Le schéma pg-boss v{{found}} est plus récent que la version testée (max. v{{max}})",
+      "UNTESTED_HINT": "Le tableau de bord le lit en vérifiant quelles tables et colonnes existent, et continue d’afficher tout ce qu’il y trouve encore.",
+      "MISSING_FEATURES": "Des parties de ce schéma pg-boss manquent",
+      "FEATURES_DISABLED": "Certaines fonctionnalités sont désactivées : {{features}}."
     },
     "DATASTORE": {
       "TITLE": "Stockage pg-boss",
@@ -1013,6 +1021,133 @@
       "INSTALLED": "Installé",
       "ENABLED": "Activé",
       "DISABLED": "Désactivé"
+    },
+    "FEATURE": {
+      "QUEUE_COUNTERS": "les compteurs de file en cache",
+      "READY_HISTORY": "l’historique des tâches prêtes",
+      "SCHEDULES": "les planifications",
+      "SCHEDULE_KIND": "les types de planification et les dernières tâches",
+      "DEPENDENCIES": "les dépendances entre tâches",
+      "DEAD_LETTER_SOURCE": "les origines dead letter",
+      "QUEUE_DEPTH": "le graphique de profondeur de file",
+      "WARNINGS": "les avertissements"
+    },
+    "FIND": {
+      "GROUP": "Tâches",
+      "OPEN_JOB": "Ouvrir la tâche {{id}}",
+      "LABEL": "Ouvrir une tâche par son id",
+      "PLACEHOLDER": "Collez l’id d’une tâche pour l’ouvrir",
+      "SUBMIT": "Ouvrir"
+    },
+    "DEPTH": {
+      "TITLE": "Profondeur de la file",
+      "DESCRIPTION": "Le plus fort arriéré de chaque intervalle, d’après les instantanés que pg-boss conserve dans queue_stats.",
+      "RANGE_LABEL": "Période",
+      "RANGE_1H": "1 h",
+      "RANGE_6H": "6 h",
+      "RANGE_24H": "24 h",
+      "RANGE_7D": "7 j",
+      "DISABLED": "Ce schéma pg-boss n’a pas de table queue_stats, il n’y a donc pas d’historique de profondeur.",
+      "NEVER": "Aucun instantané de profondeur pour l’instant",
+      "NEVER_HINT": "pg-boss les écrit quand une file tourne avec persistQueueStats et qu’une instance la supervise.",
+      "EMPTY": "Aucun instantané sur cette période",
+      "LOAD_ERROR": "Impossible de charger l’historique de profondeur."
+    },
+    "BULK": {
+      "TOOLBAR": "Actions groupées",
+      "SELECT_ALL": "Sélectionner toutes les tâches de cette page",
+      "SELECT_JOB": "Sélectionner la tâche {{id}}",
+      "SELECTED_one": "{{count}} tâche sélectionnée",
+      "SELECTED_many": "{{count}} tâches sélectionnées",
+      "SELECTED_other": "{{count}} tâches sélectionnées",
+      "SELECTED": "{{count}} tâches sélectionnées",
+      "CLEAR": "Effacer la sélection",
+      "NO_COMMON": "Aucune action ne s’applique à toutes les tâches sélectionnées.",
+      "RETRY": {
+        "CONFIRM_one": "Réessayer {{count}} tâche ?",
+        "CONFIRM_many": "Réessayer {{count}} tâches ?",
+        "CONFIRM_other": "Réessayer {{count}} tâches ?",
+        "CONFIRM": "Réessayer {{count}} tâches ?",
+        "PENDING_one": "Nouvel essai de {{count}} tâche…",
+        "PENDING_many": "Nouvel essai de {{count}} tâches…",
+        "PENDING_other": "Nouvel essai de {{count}} tâches…",
+        "PENDING": "Nouvel essai de {{count}} tâches…",
+        "DONE_one": "{{count}} tâche relancée",
+        "DONE_many": "{{count}} tâches relancées",
+        "DONE_other": "{{count}} tâches relancées",
+        "DONE": "{{count}} tâches relancées"
+      },
+      "CANCEL": {
+        "CONFIRM_one": "Annuler {{count}} tâche ?",
+        "CONFIRM_many": "Annuler {{count}} tâches ?",
+        "CONFIRM_other": "Annuler {{count}} tâches ?",
+        "CONFIRM": "Annuler {{count}} tâches ?",
+        "PENDING_one": "Annulation de {{count}} tâche…",
+        "PENDING_many": "Annulation de {{count}} tâches…",
+        "PENDING_other": "Annulation de {{count}} tâches…",
+        "PENDING": "Annulation de {{count}} tâches…",
+        "DONE_one": "{{count}} tâche annulée",
+        "DONE_many": "{{count}} tâches annulées",
+        "DONE_other": "{{count}} tâches annulées",
+        "DONE": "{{count}} tâches annulées"
+      },
+      "RESUME": {
+        "CONFIRM_one": "Reprendre {{count}} tâche ?",
+        "CONFIRM_many": "Reprendre {{count}} tâches ?",
+        "CONFIRM_other": "Reprendre {{count}} tâches ?",
+        "CONFIRM": "Reprendre {{count}} tâches ?",
+        "PENDING_one": "Reprise de {{count}} tâche…",
+        "PENDING_many": "Reprise de {{count}} tâches…",
+        "PENDING_other": "Reprise de {{count}} tâches…",
+        "PENDING": "Reprise de {{count}} tâches…",
+        "DONE_one": "{{count}} tâche reprise",
+        "DONE_many": "{{count}} tâches reprises",
+        "DONE_other": "{{count}} tâches reprises",
+        "DONE": "{{count}} tâches reprises"
+      },
+      "DELETE": {
+        "CONFIRM_one": "Supprimer {{count}} tâche ? Cette action est irréversible.",
+        "CONFIRM_many": "Supprimer {{count}} tâches ? Cette action est irréversible.",
+        "CONFIRM_other": "Supprimer {{count}} tâches ? Cette action est irréversible.",
+        "CONFIRM": "Supprimer {{count}} tâches ? Cette action est irréversible.",
+        "PENDING_one": "Suppression de {{count}} tâche…",
+        "PENDING_many": "Suppression de {{count}} tâches…",
+        "PENDING_other": "Suppression de {{count}} tâches…",
+        "PENDING": "Suppression de {{count}} tâches…",
+        "DONE_one": "{{count}} tâche supprimée",
+        "DONE_many": "{{count}} tâches supprimées",
+        "DONE_other": "{{count}} tâches supprimées",
+        "DONE": "{{count}} tâches supprimées"
+      }
+    },
+    "WARNINGS": {
+      "TITLE": "Avertissements",
+      "DESCRIPTION": "Ce que pg-boss a signalé sur son propre état : requêtes lentes, arriérés, horizon de transactions bloqué.",
+      "RECENT": "Avertissements récents",
+      "VIEW_ALL": "Tout voir",
+      "TYPE_FILTER": "Type d’avertissement",
+      "ALL_TYPES": "Tous les types",
+      "TIME": "Quand",
+      "TYPE_COLUMN": "Type",
+      "QUEUE": "File",
+      "MESSAGE": "Message",
+      "DETAILS": "Afficher les détails",
+      "EMPTY": "Aucun avertissement",
+      "EMPTY_HINT": "pg-boss n’enregistre les avertissements que si une instance tourne avec persistWarnings: true.",
+      "EMPTY_FILTERED": "Aucun avertissement de ce type",
+      "DISABLED": "Ce schéma pg-boss n’a pas de table warning.",
+      "LOAD_ERROR": "Impossible de charger les avertissements.",
+      "PAGES": "Pages d’avertissements",
+      "TYPE": {
+        "SLOW_QUERY": "Requête lente",
+        "QUEUE_BACKLOG": "Arriéré de file",
+        "INDEX_BLOAT": "Index gonflé",
+        "XMIN_HORIZON": "Horizon de transactions",
+        "AUTOVACUUM_DISABLED": "Autovacuum désactivé",
+        "MONITOR_BACKOFF": "Supervision différée",
+        "CLOCK_SKEW": "Décalage d’horloge",
+        "INVALID_SCHEDULE": "Planification invalide"
+      }
     }
   }
 }

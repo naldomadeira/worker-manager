@@ -5,14 +5,17 @@ import type {
   UpsertPgBossScheduleBody,
 } from '@worker-manager/api/typings/requests';
 import type {
+  FindPgBossJobResponse,
   GetPgBossDependenciesResponse,
   GetPgBossInfoResponse,
   GetPgBossJobResponse,
   GetPgBossJobsResponse,
+  GetPgBossQueueDepthResponse,
   GetPgBossQueueResponse,
   GetPgBossQueuesResponse,
   GetPgBossSchedulesResponse,
   GetPgBossStateCountsResponse,
+  GetPgBossWarningsResponse,
   PgBossCommandResponse,
   PgBossScheduleResponse,
   PreviewPgBossScheduleResponse,
@@ -37,6 +40,14 @@ export interface PgBossJobsParams {
   limit?: number;
   id?: string;
   singletonKey?: string;
+}
+
+export type PgBossDepthRange = '1h' | '6h' | '24h' | '7d';
+
+export interface PgBossWarningsParams {
+  type?: string;
+  cursor?: string;
+  limit?: number;
 }
 
 const queuePath = (name: string) => `/queues/${encodeURIComponent(name)}`;
@@ -77,6 +88,22 @@ export class PgBossApi {
 
   public getJob(name: string, id: string): Promise<GetPgBossJobResponse> {
     return this.axios.get(jobPath(name, id));
+  }
+
+  /** A job by id alone, in whichever visible queue holds it. */
+  public findJob(id: string): Promise<FindPgBossJobResponse> {
+    return this.axios.get(`/jobs/${encodeURIComponent(id)}`);
+  }
+
+  public getQueueDepth(
+    name: string,
+    range: PgBossDepthRange
+  ): Promise<GetPgBossQueueDepthResponse> {
+    return this.axios.get(`${queuePath(name)}/depth`, { params: { range } });
+  }
+
+  public getWarnings(params: PgBossWarningsParams): Promise<GetPgBossWarningsResponse> {
+    return this.axios.get('/warnings', { params });
   }
 
   public getDependencies(name: string, id: string): Promise<GetPgBossDependenciesResponse> {

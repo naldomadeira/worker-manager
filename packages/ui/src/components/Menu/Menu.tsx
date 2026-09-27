@@ -57,7 +57,12 @@ const iconButton =
 export const Menu = () => {
   const { t } = useTranslation();
   const { pathname } = useLocation();
-  const { queues, showSchedules: showJobSchedulers, schedulesLabel } = useBoardNavigation();
+  const {
+    queues,
+    showSchedules: showJobSchedulers,
+    schedulesLabel,
+    pages: enginePages = [],
+  } = useBoardNavigation();
   const sortQueues = useSettingsStore((state) => state.sortQueues);
   const { searchTerm, setSearchTerm } = useQueueSearch();
   const { hasHistoryProvider = false } = useUIConfig();
@@ -96,6 +101,7 @@ export const Menu = () => {
     ...(hasHistoryProvider
       ? [{ to: links.metricsHistory().pathname, label: t('MENU.METRICS_HISTORY'), icon: LineChart }]
       : []),
+    ...enginePages.map(({ path, label, icon }) => ({ to: path, label, icon })),
   ];
 
   /* The mobile drawer should get out of the way once a destination is picked. */

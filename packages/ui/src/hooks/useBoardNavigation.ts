@@ -1,3 +1,4 @@
+import type { LucideIcon } from 'lucide-react';
 import React, { type ComponentType, type ReactNode, useContext } from 'react';
 import { useQueues } from './useQueues';
 
@@ -17,6 +18,20 @@ export interface NavQueue {
   counts: { active?: number; failed?: number };
   /** The job total shown in the palette and the mobile switcher; summed from `counts` if absent. */
   total?: number;
+}
+
+/** A page of the engine's own, listed in the sidebar and the command palette after the shared ones. */
+export interface NavPage {
+  path: string;
+  label: string;
+  icon: LucideIcon;
+}
+
+/** What the command palette renders from the engine, given what the user has typed. */
+export interface CommandPaletteExtrasProps {
+  search: string;
+  /** Closes the palette, then runs the action. */
+  run(action: () => void): void;
 }
 
 export interface BoardNavigation {
@@ -42,6 +57,10 @@ export interface BoardNavigation {
   datastoreTitle?: string;
   /** Shown beside the breadcrumb, such as an "experimental" badge. */
   headerBadge?: ReactNode;
+  /** Pages only this engine has. */
+  pages?: NavPage[];
+  /** Command palette entries worked out from the search text, such as "open the job with this id". */
+  CommandPaletteExtras?: ComponentType<CommandPaletteExtrasProps>;
 }
 
 /** Set by an engine other than BullMQ, around the shell. Null means the BullMQ board. */

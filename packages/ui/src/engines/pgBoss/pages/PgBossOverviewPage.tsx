@@ -18,7 +18,9 @@ import { StickyHeader } from '../../../components/StickyHeader/StickyHeader';
 import { useQueueSearch } from '../../../hooks/useQueueSearch';
 import { useSettingsStore } from '../../../hooks/useSettings';
 import { OverviewKpisSkeleton } from '../../../pages/OverviewPage/OverviewKpis';
+import { PgBossFindJobForm } from '../components/PgBossFindJobForm';
 import { PgBossQueueCard } from '../components/PgBossQueueCard';
+import { PgBossRecentWarnings } from '../components/PgBossRecentWarnings';
 import { PgBossStatsFreshness } from '../components/PgBossStatsFreshness';
 import { PgBossWritesDisabledBanner } from '../components/PgBossWritesDisabledBanner';
 import { permissionsOf, usePgBossInfo } from '../hooks/usePgBossInfo';
@@ -148,8 +150,17 @@ export const PgBossOverviewPage = () => {
         <PgBossOverviewKpis queues={queues ?? []} filter={filter} filterLink={filterLink} />
       )}
 
+      <PgBossRecentWarnings info={info} />
+
       <div className="flex flex-col gap-4">
-        <StickyHeader actions={<PgBossStatsFreshness queues={queues ?? []} />} />
+        <StickyHeader
+          actions={
+            <>
+              <PgBossFindJobForm />
+              <PgBossStatsFreshness queues={queues ?? []} />
+            </>
+          }
+        />
         {renderContent()}
       </div>
 

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Route, Switch, useLocation } from 'react-router-dom';
 import { Loader } from '../../components/Loader/Loader';
+import { PgBossSchemaBanner } from './components/PgBossSchemaBanner';
 import { PgBossUnavailable } from './components/PgBossUnavailable';
 import { usePgBossInfo } from './hooks/usePgBossInfo';
 
@@ -23,6 +24,12 @@ const PgBossJobPageLazy = React.lazy(() =>
 const PgBossSchedulesPageLazy = React.lazy(() =>
   import('./pages/PgBossSchedulesPage').then(({ PgBossSchedulesPage }) => ({
     default: PgBossSchedulesPage,
+  }))
+);
+
+const PgBossWarningsPageLazy = React.lazy(() =>
+  import('./pages/PgBossWarningsPage').then(({ PgBossWarningsPage }) => ({
+    default: PgBossWarningsPage,
   }))
 );
 
@@ -53,12 +60,16 @@ export const PgBossRoutes = ({ location }: PgBossRoutesProps) => {
   }
 
   return (
-    <Switch location={location}>
-      <Route path="/queue/:name/:jobId" render={() => <PgBossJobPageLazy />} />
-      <Route path="/queue/:name" render={() => <PgBossQueuePageLazy />} />
-      <Route path="/metrics-history" exact render={() => <MetricsHistoryPageLazy />} />
-      <Route path="/job-schedulers" exact render={() => <PgBossSchedulesPageLazy />} />
-      <Route path="/" exact render={() => <PgBossOverviewPageLazy />} />
-    </Switch>
+    <>
+      <PgBossSchemaBanner info={info} className="mb-4" />
+      <Switch location={location}>
+        <Route path="/queue/:name/:jobId" render={() => <PgBossJobPageLazy />} />
+        <Route path="/queue/:name" render={() => <PgBossQueuePageLazy />} />
+        <Route path="/metrics-history" exact render={() => <MetricsHistoryPageLazy />} />
+        <Route path="/job-schedulers" exact render={() => <PgBossSchedulesPageLazy />} />
+        <Route path="/warnings" exact render={() => <PgBossWarningsPageLazy />} />
+        <Route path="/" exact render={() => <PgBossOverviewPageLazy />} />
+      </Switch>
+    </>
   );
 };

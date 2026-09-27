@@ -515,7 +515,11 @@
     "PGBOSS_SCHEMA_MISMATCH": "Die Datenbank ist auf pg-boss-Schema {{found}}, aber das hier verfügbare pg-boss schreibt Schema {{expected}}.",
     "PGBOSS_SCHEMA_UNSUPPORTED": "pg-boss-Schema {{found}} wird nicht unterstützt. Unterstützt werden die Versionen {{min}} bis {{max}}.",
     "PGBOSS_WRITER_UNAVAILABLE": "Es ist keine pg-boss-Instanz zum Schreiben verfügbar. Übergib die Instanz der Anwendung oder installiere pg-boss neben dem Board.",
-    "PGBOSS_WRITES_DISABLED": "Änderungen sind auf diesem pg-boss-Board deaktiviert."
+    "PGBOSS_WRITES_DISABLED": "Änderungen sind auf diesem pg-boss-Board deaktiviert.",
+    "PGBOSS_FEATURE_UNAVAILABLE": "Das verwendete pg-boss-Schema hat das nicht ({{feature}}).",
+    "PGBOSS_JOB_NOT_FOUND": "Keine sichtbare Warteschlange hat einen Job mit dieser ID.",
+    "PGBOSS_SCHEMA_INCOMPATIBLE": "Dem pg-boss-Schema {{found}} fehlen Spalten, ohne die das Board nicht lesen kann: {{missing}}.",
+    "PGBOSS_SCHEMA_UNTESTED": "pg-boss-Schema {{found}} ist neuer als das, womit dieses Board getestet ist ({{max}}). Änderungen bleiben deaktiviert, solange das Board allowUntestedSchema nicht setzt."
   },
   "METRICS_HISTORY": {
     "TITLE": "Metrikverlauf",
@@ -972,7 +976,11 @@
       "UNREADABLE": "Diese pg-boss-Datenbank kann nicht gelesen werden",
       "SCHEMA_UNSUPPORTED": "Das pg-boss-Schema hier liegt außerhalb des unterstützten Bereichs von {{min}} bis {{max}}.",
       "NOT_INSTALLED": "Installiere zuerst pg-boss in der Anwendung. Das Board legt sein Schema nie an und migriert es nie.",
-      "SLOW_QUERY": "Diesen Zustand aufzulisten ist bei einer großen Warteschlange langsam. Filtere nach Job-ID oder Singleton-Schlüssel oder lege den Index an, den die Dokumentation empfiehlt."
+      "SLOW_QUERY": "Diesen Zustand aufzulisten ist bei einer großen Warteschlange langsam. Filtere nach Job-ID oder Singleton-Schlüssel oder lege den Index an, den die Dokumentation empfiehlt.",
+      "UNTESTED_SCHEMA": "pg-boss-Schema v{{found}} ist neuer als getestet (höchstens v{{max}})",
+      "UNTESTED_HINT": "Das Board liest es, indem es prüft, welche Tabellen und Spalten es gibt, und zeigt weiter alles an, was es noch findet.",
+      "MISSING_FEATURES": "Teile dieses pg-boss-Schemas fehlen",
+      "FEATURES_DISABLED": "Einige Funktionen sind deaktiviert: {{features}}."
     },
     "DATASTORE": {
       "TITLE": "pg-boss-Datenspeicher",
@@ -985,6 +993,120 @@
       "INSTALLED": "Installiert",
       "ENABLED": "An",
       "DISABLED": "Aus"
+    },
+    "FEATURE": {
+      "QUEUE_COUNTERS": "zwischengespeicherte Warteschlangenzähler",
+      "READY_HISTORY": "Bereit-Verlauf",
+      "SCHEDULES": "Zeitpläne",
+      "SCHEDULE_KIND": "Zeitplanarten und letzte Jobs",
+      "DEPENDENCIES": "Job-Abhängigkeiten",
+      "DEAD_LETTER_SOURCE": "Dead-Letter-Quellen",
+      "QUEUE_DEPTH": "das Diagramm der Warteschlangentiefe",
+      "WARNINGS": "Warnungen"
+    },
+    "FIND": {
+      "GROUP": "Jobs",
+      "OPEN_JOB": "Job {{id}} öffnen",
+      "LABEL": "Einen Job über seine ID öffnen",
+      "PLACEHOLDER": "Job-ID einfügen, um den Job zu öffnen",
+      "SUBMIT": "Öffnen"
+    },
+    "DEPTH": {
+      "TITLE": "Warteschlangentiefe",
+      "DESCRIPTION": "Der höchste Rückstau je Intervall, aus den Momentaufnahmen, die pg-boss in queue_stats speichert.",
+      "RANGE_LABEL": "Zeitraum",
+      "RANGE_1H": "1 Std.",
+      "RANGE_6H": "6 Std.",
+      "RANGE_24H": "24 Std.",
+      "RANGE_7D": "7 T.",
+      "DISABLED": "Dieses pg-boss-Schema hat keine Tabelle queue_stats, daher gibt es keinen Tiefenverlauf.",
+      "NEVER": "Noch keine Momentaufnahmen der Tiefe",
+      "NEVER_HINT": "pg-boss schreibt sie, wenn eine Warteschlange mit persistQueueStats läuft und eine Instanz sie überwacht.",
+      "EMPTY": "Keine Momentaufnahmen in diesem Zeitraum",
+      "LOAD_ERROR": "Der Tiefenverlauf konnte nicht geladen werden."
+    },
+    "BULK": {
+      "TOOLBAR": "Sammelaktionen",
+      "SELECT_ALL": "Alle Jobs auf dieser Seite auswählen",
+      "SELECT_JOB": "Job {{id}} auswählen",
+      "SELECTED_one": "{{count}} Job ausgewählt",
+      "SELECTED_other": "{{count}} Jobs ausgewählt",
+      "SELECTED": "{{count}} Jobs ausgewählt",
+      "CLEAR": "Auswahl aufheben",
+      "NO_COMMON": "Keine Aktion gilt für alle ausgewählten Jobs.",
+      "RETRY": {
+        "CONFIRM_one": "{{count}} Job wiederholen?",
+        "CONFIRM_other": "{{count}} Jobs wiederholen?",
+        "CONFIRM": "{{count}} Jobs wiederholen?",
+        "PENDING_one": "{{count}} Job wird wiederholt…",
+        "PENDING_other": "{{count}} Jobs werden wiederholt…",
+        "PENDING": "{{count}} Jobs werden wiederholt…",
+        "DONE_one": "{{count}} Job wiederholt",
+        "DONE_other": "{{count}} Jobs wiederholt",
+        "DONE": "{{count}} Jobs wiederholt"
+      },
+      "CANCEL": {
+        "CONFIRM_one": "{{count}} Job abbrechen?",
+        "CONFIRM_other": "{{count}} Jobs abbrechen?",
+        "CONFIRM": "{{count}} Jobs abbrechen?",
+        "PENDING_one": "{{count}} Job wird abgebrochen…",
+        "PENDING_other": "{{count}} Jobs werden abgebrochen…",
+        "PENDING": "{{count}} Jobs werden abgebrochen…",
+        "DONE_one": "{{count}} Job abgebrochen",
+        "DONE_other": "{{count}} Jobs abgebrochen",
+        "DONE": "{{count}} Jobs abgebrochen"
+      },
+      "RESUME": {
+        "CONFIRM_one": "{{count}} Job fortsetzen?",
+        "CONFIRM_other": "{{count}} Jobs fortsetzen?",
+        "CONFIRM": "{{count}} Jobs fortsetzen?",
+        "PENDING_one": "{{count}} Job wird fortgesetzt…",
+        "PENDING_other": "{{count}} Jobs werden fortgesetzt…",
+        "PENDING": "{{count}} Jobs werden fortgesetzt…",
+        "DONE_one": "{{count}} Job fortgesetzt",
+        "DONE_other": "{{count}} Jobs fortgesetzt",
+        "DONE": "{{count}} Jobs fortgesetzt"
+      },
+      "DELETE": {
+        "CONFIRM_one": "{{count}} Job löschen? Das lässt sich nicht rückgängig machen.",
+        "CONFIRM_other": "{{count}} Jobs löschen? Das lässt sich nicht rückgängig machen.",
+        "CONFIRM": "{{count}} Jobs löschen? Das lässt sich nicht rückgängig machen.",
+        "PENDING_one": "{{count}} Job wird gelöscht…",
+        "PENDING_other": "{{count}} Jobs werden gelöscht…",
+        "PENDING": "{{count}} Jobs werden gelöscht…",
+        "DONE_one": "{{count}} Job gelöscht",
+        "DONE_other": "{{count}} Jobs gelöscht",
+        "DONE": "{{count}} Jobs gelöscht"
+      }
+    },
+    "WARNINGS": {
+      "TITLE": "Warnungen",
+      "DESCRIPTION": "Was pg-boss über seinen eigenen Zustand gemeldet hat: langsame Abfragen, Rückstaus, ein festgehaltener Transaktionshorizont.",
+      "RECENT": "Neueste Warnungen",
+      "VIEW_ALL": "Alle anzeigen",
+      "TYPE_FILTER": "Warnungstyp",
+      "ALL_TYPES": "Alle Typen",
+      "TIME": "Wann",
+      "TYPE_COLUMN": "Typ",
+      "QUEUE": "Warteschlange",
+      "MESSAGE": "Meldung",
+      "DETAILS": "Details anzeigen",
+      "EMPTY": "Keine Warnungen",
+      "EMPTY_HINT": "pg-boss speichert Warnungen nur, wenn eine Instanz mit persistWarnings: true läuft.",
+      "EMPTY_FILTERED": "Keine Warnungen dieses Typs",
+      "DISABLED": "Dieses pg-boss-Schema hat keine Tabelle warning.",
+      "LOAD_ERROR": "Die Warnungen konnten nicht geladen werden.",
+      "PAGES": "Warnungsseiten",
+      "TYPE": {
+        "SLOW_QUERY": "Langsame Abfrage",
+        "QUEUE_BACKLOG": "Rückstau in der Warteschlange",
+        "INDEX_BLOAT": "Aufgeblähter Index",
+        "XMIN_HORIZON": "Transaktionshorizont",
+        "AUTOVACUUM_DISABLED": "Autovacuum aus",
+        "MONITOR_BACKOFF": "Überwachung ausgesetzt",
+        "CLOCK_SKEW": "Uhrenabweichung",
+        "INVALID_SCHEDULE": "Ungültiger Zeitplan"
+      }
     }
   }
 }

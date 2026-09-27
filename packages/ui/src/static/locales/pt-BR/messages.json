@@ -539,7 +539,11 @@
     "PGBOSS_SCHEMA_MISMATCH": "O banco está no schema {{found}} do pg-boss, mas o pg-boss disponível aqui grava o schema {{expected}}.",
     "PGBOSS_SCHEMA_UNSUPPORTED": "O schema {{found}} do pg-boss não é suportado. As versões suportadas vão de {{min}} a {{max}}.",
     "PGBOSS_WRITER_UNAVAILABLE": "Não há instância do pg-boss para gravar. Passe a instância do app ou instale o pg-boss junto do board.",
-    "PGBOSS_WRITES_DISABLED": "As alterações estão desligadas neste board pg-boss."
+    "PGBOSS_WRITES_DISABLED": "As alterações estão desligadas neste board pg-boss.",
+    "PGBOSS_FEATURE_UNAVAILABLE": "O schema do pg-boss em uso não tem isto ({{feature}}).",
+    "PGBOSS_JOB_NOT_FOUND": "Nenhuma fila visível tem uma tarefa com este id.",
+    "PGBOSS_SCHEMA_INCOMPATIBLE": "Faltam no schema {{found}} do pg-boss colunas sem as quais o painel não consegue ler: {{missing}}.",
+    "PGBOSS_SCHEMA_UNTESTED": "O schema {{found}} do pg-boss é mais novo que o testado com este painel ({{max}}). As alterações continuam desligadas, a não ser que o painel defina allowUntestedSchema."
   },
   "METRICS_HISTORY": {
     "TITLE": "Histórico de métricas",
@@ -1000,7 +1004,11 @@
       "UNREADABLE": "Não é possível ler este banco do pg-boss",
       "SCHEMA_UNSUPPORTED": "O schema do pg-boss aqui está fora da faixa suportada, de {{min}} a {{max}}.",
       "NOT_INSTALLED": "Instale o pg-boss na aplicação primeiro. O board nunca cria nem migra o schema.",
-      "SLOW_QUERY": "Listar este estado é lento em uma fila grande. Filtre pelo id da tarefa ou pela chave singleton, ou crie o índice que a documentação recomenda."
+      "SLOW_QUERY": "Listar este estado é lento em uma fila grande. Filtre pelo id da tarefa ou pela chave singleton, ou crie o índice que a documentação recomenda.",
+      "UNTESTED_SCHEMA": "O schema v{{found}} do pg-boss é mais novo que o testado (máx. v{{max}})",
+      "UNTESTED_HINT": "O painel o lê verificando quais tabelas e colunas existem, e continua mostrando tudo o que ainda encontra.",
+      "MISSING_FEATURES": "Faltam partes deste schema do pg-boss",
+      "FEATURES_DISABLED": "Alguns recursos estão desligados: {{features}}."
     },
     "DATASTORE": {
       "TITLE": "Datastore do pg-boss",
@@ -1013,6 +1021,133 @@
       "INSTALLED": "Instalado",
       "ENABLED": "Ligado",
       "DISABLED": "Desligado"
+    },
+    "FEATURE": {
+      "QUEUE_COUNTERS": "os contadores de fila em cache",
+      "READY_HISTORY": "o histórico de prontas",
+      "SCHEDULES": "os agendamentos",
+      "SCHEDULE_KIND": "os tipos de agendamento e as últimas tarefas",
+      "DEPENDENCIES": "as dependências entre tarefas",
+      "DEAD_LETTER_SOURCE": "as origens de dead letter",
+      "QUEUE_DEPTH": "o gráfico de profundidade da fila",
+      "WARNINGS": "os avisos"
+    },
+    "FIND": {
+      "GROUP": "Tarefas",
+      "OPEN_JOB": "Abrir a tarefa {{id}}",
+      "LABEL": "Abrir uma tarefa pelo id",
+      "PLACEHOLDER": "Cole o id de uma tarefa para abri-la",
+      "SUBMIT": "Abrir"
+    },
+    "DEPTH": {
+      "TITLE": "Profundidade da fila",
+      "DESCRIPTION": "O maior acúmulo em cada intervalo, a partir dos snapshots que o pg-boss guarda em queue_stats.",
+      "RANGE_LABEL": "Período",
+      "RANGE_1H": "1 h",
+      "RANGE_6H": "6 h",
+      "RANGE_24H": "24 h",
+      "RANGE_7D": "7 d",
+      "DISABLED": "Este schema do pg-boss não tem a tabela queue_stats, então não há histórico de profundidade.",
+      "NEVER": "Ainda não há snapshots de profundidade",
+      "NEVER_HINT": "O pg-boss os grava quando uma fila roda com persistQueueStats e alguma instância a supervisiona.",
+      "EMPTY": "Nenhum snapshot neste período",
+      "LOAD_ERROR": "Não foi possível carregar o histórico de profundidade."
+    },
+    "BULK": {
+      "TOOLBAR": "Ações em lote",
+      "SELECT_ALL": "Selecionar todas as tarefas desta página",
+      "SELECT_JOB": "Selecionar a tarefa {{id}}",
+      "SELECTED_one": "{{count}} tarefa selecionada",
+      "SELECTED_many": "{{count}} tarefas selecionadas",
+      "SELECTED_other": "{{count}} tarefas selecionadas",
+      "SELECTED": "{{count}} tarefas selecionadas",
+      "CLEAR": "Limpar a seleção",
+      "NO_COMMON": "Nenhuma ação vale para todas as tarefas selecionadas.",
+      "RETRY": {
+        "CONFIRM_one": "Tentar de novo {{count}} tarefa?",
+        "CONFIRM_many": "Tentar de novo {{count}} tarefas?",
+        "CONFIRM_other": "Tentar de novo {{count}} tarefas?",
+        "CONFIRM": "Tentar de novo {{count}} tarefas?",
+        "PENDING_one": "Tentando de novo {{count}} tarefa…",
+        "PENDING_many": "Tentando de novo {{count}} tarefas…",
+        "PENDING_other": "Tentando de novo {{count}} tarefas…",
+        "PENDING": "Tentando de novo {{count}} tarefas…",
+        "DONE_one": "{{count}} tarefa colocada para nova tentativa",
+        "DONE_many": "{{count}} tarefas colocadas para nova tentativa",
+        "DONE_other": "{{count}} tarefas colocadas para nova tentativa",
+        "DONE": "{{count}} tarefas colocadas para nova tentativa"
+      },
+      "CANCEL": {
+        "CONFIRM_one": "Cancelar {{count}} tarefa?",
+        "CONFIRM_many": "Cancelar {{count}} tarefas?",
+        "CONFIRM_other": "Cancelar {{count}} tarefas?",
+        "CONFIRM": "Cancelar {{count}} tarefas?",
+        "PENDING_one": "Cancelando {{count}} tarefa…",
+        "PENDING_many": "Cancelando {{count}} tarefas…",
+        "PENDING_other": "Cancelando {{count}} tarefas…",
+        "PENDING": "Cancelando {{count}} tarefas…",
+        "DONE_one": "{{count}} tarefa cancelada",
+        "DONE_many": "{{count}} tarefas canceladas",
+        "DONE_other": "{{count}} tarefas canceladas",
+        "DONE": "{{count}} tarefas canceladas"
+      },
+      "RESUME": {
+        "CONFIRM_one": "Retomar {{count}} tarefa?",
+        "CONFIRM_many": "Retomar {{count}} tarefas?",
+        "CONFIRM_other": "Retomar {{count}} tarefas?",
+        "CONFIRM": "Retomar {{count}} tarefas?",
+        "PENDING_one": "Retomando {{count}} tarefa…",
+        "PENDING_many": "Retomando {{count}} tarefas…",
+        "PENDING_other": "Retomando {{count}} tarefas…",
+        "PENDING": "Retomando {{count}} tarefas…",
+        "DONE_one": "{{count}} tarefa retomada",
+        "DONE_many": "{{count}} tarefas retomadas",
+        "DONE_other": "{{count}} tarefas retomadas",
+        "DONE": "{{count}} tarefas retomadas"
+      },
+      "DELETE": {
+        "CONFIRM_one": "Apagar {{count}} tarefa? Isto não pode ser desfeito.",
+        "CONFIRM_many": "Apagar {{count}} tarefas? Isto não pode ser desfeito.",
+        "CONFIRM_other": "Apagar {{count}} tarefas? Isto não pode ser desfeito.",
+        "CONFIRM": "Apagar {{count}} tarefas? Isto não pode ser desfeito.",
+        "PENDING_one": "Apagando {{count}} tarefa…",
+        "PENDING_many": "Apagando {{count}} tarefas…",
+        "PENDING_other": "Apagando {{count}} tarefas…",
+        "PENDING": "Apagando {{count}} tarefas…",
+        "DONE_one": "{{count}} tarefa apagada",
+        "DONE_many": "{{count}} tarefas apagadas",
+        "DONE_other": "{{count}} tarefas apagadas",
+        "DONE": "{{count}} tarefas apagadas"
+      }
+    },
+    "WARNINGS": {
+      "TITLE": "Avisos",
+      "DESCRIPTION": "O que o pg-boss relatou sobre a própria saúde: consultas lentas, acúmulos, um horizonte de transações travado.",
+      "RECENT": "Avisos recentes",
+      "VIEW_ALL": "Ver todos",
+      "TYPE_FILTER": "Tipo de aviso",
+      "ALL_TYPES": "Todos os tipos",
+      "TIME": "Quando",
+      "TYPE_COLUMN": "Tipo",
+      "QUEUE": "Fila",
+      "MESSAGE": "Mensagem",
+      "DETAILS": "Mostrar os detalhes",
+      "EMPTY": "Nenhum aviso",
+      "EMPTY_HINT": "O pg-boss só guarda avisos quando alguma instância roda com persistWarnings: true.",
+      "EMPTY_FILTERED": "Nenhum aviso deste tipo",
+      "DISABLED": "Este schema do pg-boss não tem a tabela warning.",
+      "LOAD_ERROR": "Não foi possível carregar os avisos.",
+      "PAGES": "Páginas de avisos",
+      "TYPE": {
+        "SLOW_QUERY": "Consulta lenta",
+        "QUEUE_BACKLOG": "Acúmulo na fila",
+        "INDEX_BLOAT": "Índice inchado",
+        "XMIN_HORIZON": "Horizonte de transações",
+        "AUTOVACUUM_DISABLED": "Autovacuum desligado",
+        "MONITOR_BACKOFF": "Monitoramento adiado",
+        "CLOCK_SKEW": "Relógio defasado",
+        "INVALID_SCHEDULE": "Agendamento inválido"
+      }
     }
   }
 }

@@ -21,6 +21,12 @@ export const pgBossLinks = {
       search: state ? new URLSearchParams({ state }).toString() : '',
     };
   },
+  warnings(type?: string): { pathname: string; search: string } {
+    return {
+      pathname: '/warnings',
+      search: type ? new URLSearchParams({ type }).toString() : '',
+    };
+  },
   schedules(queueName?: string): { pathname: string; search: string } {
     return {
       pathname: '/job-schedulers',

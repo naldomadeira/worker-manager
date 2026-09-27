@@ -467,7 +467,11 @@
     "PGBOSS_SCHEMA_MISMATCH": "데이터베이스는 pg-boss 스키마 {{found}}인데, 여기서 사용할 수 있는 pg-boss는 스키마 {{expected}}를 씁니다.",
     "PGBOSS_SCHEMA_UNSUPPORTED": "pg-boss 스키마 {{found}}는 지원되지 않습니다. 지원 버전은 {{min}}부터 {{max}}까지입니다.",
     "PGBOSS_WRITER_UNAVAILABLE": "쓰기에 사용할 pg-boss 인스턴스가 없습니다. 앱의 인스턴스를 전달하거나 보드와 함께 pg-boss를 설치하세요.",
-    "PGBOSS_WRITES_DISABLED": "이 pg-boss 보드에서는 변경이 꺼져 있습니다."
+    "PGBOSS_WRITES_DISABLED": "이 pg-boss 보드에서는 변경이 꺼져 있습니다.",
+    "PGBOSS_FEATURE_UNAVAILABLE": "사용 중인 pg-boss 스키마에는 이 기능이 없습니다({{feature}}).",
+    "PGBOSS_JOB_NOT_FOUND": "이 ID의 작업이 있는 표시 가능한 큐가 없습니다.",
+    "PGBOSS_SCHEMA_INCOMPATIBLE": "pg-boss 스키마 {{found}}에 보드가 읽는 데 꼭 필요한 열이 없습니다: {{missing}}.",
+    "PGBOSS_SCHEMA_UNTESTED": "pg-boss 스키마 {{found}}는 이 보드가 테스트된 버전({{max}})보다 새롭습니다. 보드에 allowUntestedSchema를 설정하지 않으면 변경은 계속 꺼져 있습니다."
   },
   "METRICS_HISTORY": {
     "TITLE": "메트릭 기록",
@@ -916,7 +920,11 @@
       "UNREADABLE": "이 pg-boss 데이터베이스를 읽을 수 없습니다",
       "SCHEMA_UNSUPPORTED": "여기의 pg-boss 스키마가 지원 범위({{min}}~{{max}})를 벗어났습니다.",
       "NOT_INSTALLED": "먼저 애플리케이션에 pg-boss를 설치하세요. 보드는 스키마를 만들거나 마이그레이션하지 않습니다.",
-      "SLOW_QUERY": "큰 큐에서는 이 상태의 목록을 불러오는 데 오래 걸립니다. 작업 ID나 싱글턴 키로 필터링하거나 문서에서 권장하는 인덱스를 추가하세요."
+      "SLOW_QUERY": "큰 큐에서는 이 상태의 목록을 불러오는 데 오래 걸립니다. 작업 ID나 싱글턴 키로 필터링하거나 문서에서 권장하는 인덱스를 추가하세요.",
+      "UNTESTED_SCHEMA": "pg-boss 스키마 v{{found}}는 테스트된 버전보다 새롭습니다(최대 v{{max}})",
+      "UNTESTED_HINT": "보드는 어떤 테이블과 열이 있는지 확인하며 읽고, 여전히 찾을 수 있는 것은 모두 계속 표시합니다.",
+      "MISSING_FEATURES": "이 pg-boss 스키마의 일부가 없습니다",
+      "FEATURES_DISABLED": "일부 기능이 꺼져 있습니다: {{features}}."
     },
     "DATASTORE": {
       "TITLE": "pg-boss 데이터 저장소",
@@ -929,6 +937,94 @@
       "INSTALLED": "설치됨",
       "ENABLED": "켜짐",
       "DISABLED": "꺼짐"
+    },
+    "FEATURE": {
+      "QUEUE_COUNTERS": "캐시된 큐 카운터",
+      "READY_HISTORY": "준비됨 기록",
+      "SCHEDULES": "스케줄",
+      "SCHEDULE_KIND": "스케줄 종류와 마지막 작업",
+      "DEPENDENCIES": "작업 의존성",
+      "DEAD_LETTER_SOURCE": "데드 레터 출처",
+      "QUEUE_DEPTH": "큐 깊이 차트",
+      "WARNINGS": "경고"
+    },
+    "FIND": {
+      "GROUP": "작업",
+      "OPEN_JOB": "작업 {{id}} 열기",
+      "LABEL": "ID로 작업 열기",
+      "PLACEHOLDER": "작업 ID를 붙여 넣어 열기",
+      "SUBMIT": "열기"
+    },
+    "DEPTH": {
+      "TITLE": "큐 깊이",
+      "DESCRIPTION": "pg-boss가 queue_stats에 보관하는 스냅샷으로 구한, 구간별 최대 적체량입니다.",
+      "RANGE_LABEL": "기간",
+      "RANGE_1H": "1시간",
+      "RANGE_6H": "6시간",
+      "RANGE_24H": "24시간",
+      "RANGE_7D": "7일",
+      "DISABLED": "이 pg-boss 스키마에는 queue_stats 테이블이 없어 깊이 기록이 없습니다.",
+      "NEVER": "아직 깊이 스냅샷이 없습니다",
+      "NEVER_HINT": "큐가 persistQueueStats로 실행되고 인스턴스가 이를 감독할 때 pg-boss가 기록합니다.",
+      "EMPTY": "이 기간에는 스냅샷이 없습니다",
+      "LOAD_ERROR": "깊이 기록을 불러오지 못했습니다."
+    },
+    "BULK": {
+      "TOOLBAR": "일괄 작업",
+      "SELECT_ALL": "이 페이지의 모든 작업 선택",
+      "SELECT_JOB": "작업 {{id}} 선택",
+      "SELECTED": "작업 {{count}}개 선택됨",
+      "CLEAR": "선택 해제",
+      "NO_COMMON": "선택한 모든 작업에 적용되는 동작이 없습니다.",
+      "RETRY": {
+        "CONFIRM": "작업 {{count}}개를 재시도할까요?",
+        "PENDING": "작업 {{count}}개를 재시도하는 중…",
+        "DONE": "작업 {{count}}개를 재시도 대기열에 넣었습니다"
+      },
+      "CANCEL": {
+        "CONFIRM": "작업 {{count}}개를 취소할까요?",
+        "PENDING": "작업 {{count}}개를 취소하는 중…",
+        "DONE": "작업 {{count}}개를 취소했습니다"
+      },
+      "RESUME": {
+        "CONFIRM": "작업 {{count}}개를 재개할까요?",
+        "PENDING": "작업 {{count}}개를 재개하는 중…",
+        "DONE": "작업 {{count}}개를 재개했습니다"
+      },
+      "DELETE": {
+        "CONFIRM": "작업 {{count}}개를 삭제할까요? 되돌릴 수 없습니다.",
+        "PENDING": "작업 {{count}}개를 삭제하는 중…",
+        "DONE": "작업 {{count}}개를 삭제했습니다"
+      }
+    },
+    "WARNINGS": {
+      "TITLE": "경고",
+      "DESCRIPTION": "pg-boss가 자신의 상태에 대해 보고한 내용: 느린 쿼리, 적체, 멈춘 트랜잭션 호라이즌.",
+      "RECENT": "최근 경고",
+      "VIEW_ALL": "모두 보기",
+      "TYPE_FILTER": "경고 종류",
+      "ALL_TYPES": "모든 종류",
+      "TIME": "시각",
+      "TYPE_COLUMN": "종류",
+      "QUEUE": "큐",
+      "MESSAGE": "메시지",
+      "DETAILS": "세부 정보 표시",
+      "EMPTY": "경고가 없습니다",
+      "EMPTY_HINT": "pg-boss는 인스턴스가 persistWarnings: true로 실행될 때만 경고를 저장합니다.",
+      "EMPTY_FILTERED": "이 종류의 경고가 없습니다",
+      "DISABLED": "이 pg-boss 스키마에는 warning 테이블이 없습니다.",
+      "LOAD_ERROR": "경고를 불러오지 못했습니다.",
+      "PAGES": "경고 페이지",
+      "TYPE": {
+        "SLOW_QUERY": "느린 쿼리",
+        "QUEUE_BACKLOG": "큐 적체",
+        "INDEX_BLOAT": "인덱스 비대화",
+        "XMIN_HORIZON": "트랜잭션 호라이즌",
+        "AUTOVACUUM_DISABLED": "Autovacuum 꺼짐",
+        "MONITOR_BACKOFF": "모니터링 연기",
+        "CLOCK_SKEW": "시계 오차",
+        "INVALID_SCHEDULE": "잘못된 스케줄"
+      }
     }
   }
 }

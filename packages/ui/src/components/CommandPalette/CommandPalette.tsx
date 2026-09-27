@@ -1,4 +1,5 @@
 import { CalendarClock, CornerDownLeft, Layers, LayoutDashboard, LineChart } from 'lucide-react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
 import { create } from 'zustand';
@@ -38,7 +39,14 @@ export const CommandPalette = () => {
   const { t } = useTranslation();
   const history = useHistory();
   const { open, setOpen, toggle } = useCommandPalette();
-  const { queues, showSchedules: showJobSchedulers, schedulesLabel } = useBoardNavigation();
+  const {
+    queues,
+    showSchedules: showJobSchedulers,
+    schedulesLabel,
+    pages: enginePages = [],
+    CommandPaletteExtras,
+  } = useBoardNavigation();
+  const [search, setSearch] = useState('');
   const { hasHistoryProvider = false } = useUIConfig();
   const theme = useSettingsStore((state) => state.theme);
   const setSettings = useSettingsStore((state) => state.setSettings);
@@ -59,15 +67,23 @@ export const CommandPalette = () => {
       icon: LineChart,
       show: hasHistoryProvider,
     },
+    ...enginePages.map((page) => ({ ...page, show: true })),
   ].filter((page) => page.show);
 
   const run = (action: () => void) => {
     setOpen(false);
+    setSearch('');
     action();
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog
+      open={open}
+      onOpenChange={(next) => {
+        setOpen(next);
+        if (!next) setSearch('');
+      }}
+    >
       <DialogContent
         showCloseButton={false}
         className="top-[18%] translate-y-0 gap-0 overflow-hidden rounded-xl! p-0 shadow-2xl ring-1 ring-foreground/10 sm:max-w-lg"
@@ -78,11 +94,18 @@ export const CommandPalette = () => {
           loop
           className="rounded-none! bg-popover **:data-[slot=command-input-wrapper]:p-2 **:data-[slot=command-input-wrapper]:pb-1"
         >
-          <CommandInput placeholder={t('COMMAND.PLACEHOLDER')} autoFocus />
+          <CommandInput
+            placeholder={t('COMMAND.PLACEHOLDER')}
+            autoFocus
+            value={search}
+            onValueChange={setSearch}
+          />
           <CommandList className="max-h-[min(24rem,60vh)] p-1">
             <CommandEmpty className="py-10 text-muted-foreground">
               {t('COMMAND.EMPTY')}
             </CommandEmpty>
+
+            {CommandPaletteExtras && <CommandPaletteExtras search={search} run={run} />}
 
             <CommandGroup heading={t('COMMAND.PAGES')}>
               {pages.map(({ path, label, icon: Icon }) => (
