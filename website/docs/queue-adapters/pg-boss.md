@@ -24,7 +24,7 @@ If your queues are BullMQ v6 queues stored in PostgreSQL, you don't need this: t
 | | Supported |
 |---|---|
 | pg-boss | `^12.24.0` |
-| pg-boss schema version | 35 to 42 (35 is pg-boss 12.24.0, 42 is 12.33.0 and 12.34.0) |
+| pg-boss schema version | 35 to 42 tested (35 is pg-boss 12.24.0, 42 is 12.33.0 and 12.34.0). Newer schemas are read, see [newer pg-boss schemas](#newer-pg-boss-schemas). |
 | Node.js | 22.12 or later, pg-boss's own floor. The rest of Worker Manager stays on Node.js 20. |
 | PostgreSQL | Whatever your pg-boss supports. CockroachDB, YugabyteDB and PGlite are not tested. |
 
@@ -97,6 +97,7 @@ The same thing, elsewhere:
 | `queryTimeoutMs` | `5000` | `statement_timeout` of every read. See [query timeout](#query-timeout). |
 | `countCap` | `10000` | The live per-state counts stop here and show `10k+`. |
 | `visibilityGuard` | | `(request, queueName) => boolean \| Promise<boolean>`, asked per request. A hidden queue answers 404, like a missing one. |
+| `allowUntestedSchema` | `false` | Write to a pg-boss schema newer than the newest this release is tested with. Such a schema is always read; without this option it is never written. See [newer pg-boss schemas](#newer-pg-boss-schemas). |
 
 `options` takes the usual [board options](/configuration/ui-config) (`uiConfig`, `historyProvider`, `handlerHooks`, `validateResponses`, `uiBasePath`) plus `readOnly`.
 
@@ -119,7 +120,27 @@ pg-boss's `start()` migrates the schema by default, and with `migrate: false` it
 - It never calls `start()`, `stop()`, `supervise()` or a migration, and never creates a schema, table or index. The one pg-boss instance it can build itself is never started, so no timer runs and nothing is monitored or scheduled from the board's process.
 - Reads are plain `SELECT`s against the pg-boss tables. It does not call `getQueueStats()`, which can `UPDATE` the queue table when its cache is stale.
 - Writes go through pg-boss's public API (`send`, `retry`, `cancel`, `resume`, `deleteJob`, `deleteQueuedJobs`, `deleteStoredJobs`, `schedule`, `unschedule`), so pg-boss's own rules for singletons, dead letters and flows hold. There is no SQL `UPDATE` of its tables.
-- At startup a version guard reads the schema version. Outside 35 to 42, or with no pg-boss installed in that schema, the board reads nothing and says so on every page. The indexes below are recommendations for you to create; the board never creates them.
+- A version guard reads the schema version, and a probe of `information_schema` reads which tables and columns the schema has. Below 35, or with no pg-boss installed in that schema, the board reads nothing and says so on every page. Above 42 it keeps reading; see [newer pg-boss schemas](#newer-pg-boss-schemas). The indexes below are recommendations for you to create; the board never creates them.
+
+## Newer pg-boss schemas
+
+Upgrading pg-boss in your app past the newest schema this release was tested with does not take the board down. The board treats the schema the way pg-boss's own dashboard does:
+
+- **It probes instead of assuming.** When the board starts, and again only if the schema version changes, one `information_schema.columns` query lists the columns of `queue`, `job`, `schedule`, `job_dependency`, `queue_stats` and `warning`. Every read is built from that list: a column that is gone reads as empty rather than failing the query, and a table that is gone turns its feature off.
+- **It keeps reading everything that is still there.** Queues, jobs, counts, job pages and schedules work as before.
+- **It turns off only what is missing**, and a banner on every page names it: "pg-boss schema v43 is newer than tested (max v42); some features are disabled: warnings." The same list is in `GET /api/pg-boss/info` as `untested`, `features` and `disabledFeatures`, and a route whose feature is off answers 409 `ERRORS.PGBOSS_FEATURE_UNAVAILABLE`.
+- **Writes stay off** on an untested schema, with `ERRORS.PGBOSS_SCHEMA_UNTESTED` as the reason, unless the board sets `allowUntestedSchema: true`. Writes go through pg-boss's own API, so what they touch is pg-boss's business, but a schema no release of the board was tested against is opt-in. With `connection` only, the board's own pg-boss must also be on that exact schema version, as always.
+
+```ts
+createPgBossBoard({
+  serverAdapter,
+  pgBoss: { instance: boss, connection: process.env.DATABASE_URL, allowUntestedSchema: true },
+});
+```
+
+The same probe covers a schema inside the tested range that lacks something, for example a `warning` table dropped by hand: that feature is off and the banner says so. A schema missing a column no read can do without (`job.state`, `queue.name` and a few others) is not read at all, with `ERRORS.PGBOSS_SCHEMA_INCOMPATIBLE` naming the columns. Schemas older than 35 are refused as before, since pg-boss 12.24 is the floor the queries are written for.
+
+![The banner of a board reading a pg-boss schema newer than it is tested with](/screenshots/pgboss-untested-schema.png)
 
 ## What the board shows
 
@@ -128,6 +149,18 @@ The queue page has one tab per pg-boss state, in pg-boss's own order: `created`,
 ![A pg-boss queue page: one tab per state with live counts, and a keyset page of jobs](/screenshots/pgboss-queue.png)
 
 The job list pages by keyset, newest first, with Previous and Next rather than numbered pages. Search by exact job id, or filter by singleton key.
+
+Above the tabs, the **queue depth** chart shows the ready, deferred, active and failed jobs of the queue over the last hour, 6 hours, 24 hours or 7 days, from the snapshots pg-boss's monitor writes to `queue_stats`. Each point is the highest value seen in its interval, so a short spike is never averaged away. The snapshots only exist for queues that run with `persistQueueStats` while some instance supervises them; until then the chart says how to turn them on. Only the one-hour window follows the polling interval.
+
+![The queue depth chart on a pg-boss queue page](/screenshots/pgboss-queue-depth.png)
+
+Tick the jobs on a page, or all of them with the box in the toolbar, to act on them at once. A bar at the bottom of the page counts the selection and offers the commands the state tab accepts: retry on `failed`, resume on `cancelled`, cancel on `created`, `retry` and `active`, delete everywhere but `active`. On the tab of every state it offers only what every selected job accepts. Each bulk command asks for confirmation with the count, and the toast says how many jobs actually changed, since a job that moved on in the meantime is skipped. The selection clears when the tab, the page or the filter changes. A read-only board, or one whose writes are off, shows no checkboxes.
+
+![Bulk actions on a page of failed pg-boss jobs](/screenshots/pgboss-bulk-actions.png)
+
+![Opening a pg-boss job by id from the command palette](/screenshots/pgboss-find-job.png)
+
+To open a job whose queue you do not know, paste its id into the command palette (<kbd>Ctrl</kbd>/<kbd>⌘</kbd> <kbd>K</kbd>), which offers "Open job …", or into the search box on the overview. `GET /api/pg-boss/jobs/:jobId` looks it up with the queues named, so both columns of pg-boss's `(name, id)` primary key are in the index condition and nothing scans the job table. Only the queues the caller may see are searched: a job on a queue hidden by `queues`, `includeInternalQueues` or `visibilityGuard` answers 404, exactly like an id that does not exist.
 
 A job page has its data, its output (the result on a completed job, the error on a failed one), its options, a timeline, its dependencies (what it waits on and what waits on it, as two lists of links) and, for a job pg-boss moved to a dead letter queue, the job it came from.
 
@@ -152,6 +185,10 @@ The schedules page lists every cron and RRULE schedule with its time zone, its n
 
 The header's datastore panel shows the PostgreSQL server, the pg-boss schema and its version, the supported range, and whether the board can write.
 
+The **warnings** page lists what pg-boss reported about its own health, newest first: slow queries, queue backlogs, a pinned transaction horizon, disabled autovacuum, bloated indexes, clock skew and invalid schedules, with a filter by type and each warning's details. It reads pg-boss's `warning` table, which is only written when an instance runs with `persistWarnings: true`; with none, the page says so. It pages by date on pg-boss's own `warning_i1 (created_on DESC)` index. A warning that names a queue the viewer cannot see, as its queue, quoted in its message or among a slow query's parameters, is never listed. The overview has a card with the five most recent. The page is read-only: pg-boss prunes the table itself after `warningRetentionDays`, and the board never deletes anything.
+
+![The pg-boss warnings page](/screenshots/pgboss-warnings.png)
+
 ## What does not exist here
 
 These are BullMQ ideas pg-boss does not have, so the board does not pretend to offer them:
@@ -163,7 +200,7 @@ These are BullMQ ideas pg-boss does not have, so the board does not pretend to o
 - **Promote, and editing a job's data, delay or priority.** pg-boss has no promote; its `update()` is not wired into the board yet.
 - **Flows as a graph.** pg-boss flows are a DAG, shown as lists of dependencies and dependents.
 - **Creating, updating or deleting queues**, and redriving a dead letter queue. A queue's life cycle belongs to your app's code.
-- **Searching job data.** Search is by id and by singleton key.
+- **Searching job data.** Search is by id and by singleton key, and by id across every visible queue from the command palette.
 
 The board-wide capabilities are listed per library in the [overview table](/queue-adapters/#capabilities).
 

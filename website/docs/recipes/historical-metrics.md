@@ -466,7 +466,7 @@ The series can only reach back as far as pg-boss keeps finished jobs: `deleteAft
 
 ### Queue depth
 
-With `persistQueueStats: true` on a queue, and some instance running `supervise`, pg-boss keeps its own queue-size snapshots in `queue_stats`. `readPgBossQueueDepth(engine, queue, { from, to, bucketSeconds, aggregate })` folds them into buckets, the same way pg-boss's `getQueueStatsHistoryBucketed` does. It is a library call for now: no route serves it yet, so the board shows no depth card.
+With `persistQueueStats: true` on a queue, and some instance running `supervise`, pg-boss keeps its own queue-size snapshots in `queue_stats`. `readPgBossQueueDepth(engine, queue, { from, to, bucketSeconds, aggregate })` folds them into buckets, the same way pg-boss's `getQueueStatsHistoryBucketed` does. The board serves the same series at `GET /api/pg-boss/queues/:queueName/depth?range=1h|6h|24h|7d` and draws it as the queue depth chart on each queue page; see [the pg-boss page](/queue-adapters/pg-boss#what-the-board-shows).
 
 ## Redis Cluster
 
