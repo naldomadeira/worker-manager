@@ -3,14 +3,14 @@ name: worker-manager
 description: Adds, configures and troubleshoots Worker Manager (@worker-manager/*), a web dashboard for job queues, in a Node.js app. Use when a user wants a queue dashboard, queue UI or job monitoring for BullMQ or Bull on Redis, BullMQ v6 on PostgreSQL, or pg-boss; when mounting it in NestJS, Express, Fastify, Koa, Hapi, Hono, H3, Elysia, Bun or Next.js; when protecting it with auth (Basic, Keycloak/OIDC, token, custom); for read-only boards, historical metrics, the worker-manager CLI or Docker image; or when migrating from bull-board (@bull-board/*).
 license: MIT
 metadata:
-  version: 2.4.0
+  version: 2.5.0
   docs: https://naldomadeira.github.io/worker-manager/
 ---
 
 # Worker Manager
 
 Worker Manager mounts a dashboard for job queues inside an existing server, or runs it standalone
-(CLI, Docker). This skill is a map, written against v2.4.0. The docs are the source of truth for
+(CLI, Docker). This skill is a map, written against v2.5.0. The docs are the source of truth for
 exact option names: when a detail is not here, fetch
 <https://naldomadeira.github.io/worker-manager/llms-full.txt> (whole docs in one file) or
 <https://naldomadeira.github.io/worker-manager/llms.txt> (index) before writing code.

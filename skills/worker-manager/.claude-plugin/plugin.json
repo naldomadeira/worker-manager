@@ -2,7 +2,7 @@
   "name": "worker-manager",
   "displayName": "Worker Manager",
   "description": "Agent skill for adding the Worker Manager queue dashboard (BullMQ, Bull, pg-boss; Redis or PostgreSQL) to Node.js apps, with NestJS, Express, Fastify and built-in auth.",
-  "version": "2.4.0",
+  "version": "2.5.0",
   "author": {
     "name": "Naldo Madeira",
     "url": "https://github.com/naldomadeira"

@@ -1,3 +1,14 @@
+### [v2.5.0](https://github.com/naldomadeira/worker-manager/compare/v2.4.0...v2.5.0)
+
+> 2026-09-27
+
+### Features
+- @worker-manager/metrics is now stable: semver applies to its main entry and to both storage layouts, the Redis keys and the PostgreSQL tables, so a minor or patch upgrade reads and writes the history an earlier 2.x release recorded. The package README and the historical metrics recipe gain a Stability section, and the beta notices are gone from the README, the docs site and the agent skill
+- metrics: a Redis layout marker. Each namespace records its storage layout in `<namespace>:__meta__` (field `layout`, currently 1, exported as `REDIS_METRICS_LAYOUT_VERSION`), inside the namespace's `{...}` hash tag on a cluster, mirroring the PostgreSQL `schema_version`. The recorder writes it on its first snapshot, idle boards included; history recorded before 2.5.0 has no marker, is layout 1 and is adopted as is. When a newer build has claimed the namespace, every snapshot rejects before writing anything (reported through `onSnapshotError`, thrown from `await recorder.snapshot()`), and `MetricsHistoryAdmin.purge()` refuses as well; the charts and `stats()` keep reading
+
+### Breaking change in a formerly beta package
+- metrics: the low-level exports moved from `@worker-manager/metrics` to the new `@worker-manager/metrics/internal` entry, which carries no semver guarantee and is meant for Worker Manager's own packages. Allowed in a minor because the package was beta until this release. Moved: `LatencyStore`, `LatencySampler`, `LatencySamplerOptions`, `LatencyMetric`, `QUEUE_AGE_METRIC`, `BUCKET_BOUNDS`, `BUCKET_COUNT`, `quantile`, `adapterCounterSource`, `CounterMetric`, `CounterSource`, `CounterSources`, `FinishedJob`, `FinishedJobs`, `JobSource`, `MinutePoint` and `namespacedRollup`. Everything the docs use (`MetricsRecorder`, both stores and providers, `migratePostgresMetrics`, `MetricsHistoryAdmin`, `namespacedHistoryProvider` and their types) stays on the main entry. pg-boss, the CLI and the dev example now import from `/internal`
+
 ### [v2.4.0](https://github.com/naldomadeira/worker-manager/compare/v2.3.0...v2.4.0)
 
 > 2026-09-27
