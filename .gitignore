@@ -27,6 +27,7 @@ example.local.ts
 
 website/doc_build
 website/docs/public/scalar/
+website/docs/public/worker-manager-skill.zip
 
 packages/*/package-lock.json
 packages/*/pnpm-lock.yaml
