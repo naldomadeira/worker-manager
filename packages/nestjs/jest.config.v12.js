@@ -22,6 +22,7 @@ module.exports = {
   },
   moduleNameMapper: {
     '^@worker-manager/test-utils$': '<rootDir>/tests/support/esm-test-utils.ts',
+    ...base.moduleNameMapper,
     ...nestModuleNameMapper(12),
   },
 };

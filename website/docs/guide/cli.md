@@ -70,11 +70,16 @@ Options:
                           Comma separated realm/client roles, any grants access
       --keycloak-bearer-only
                           Accept only Authorization: Bearer tokens, no login page
+      --token <list>      Comma separated access tokens instead: sent as
+                          Authorization: Bearer, or typed once into a login form
+      --token-header <name>
+                          Also accept the token in this header, e.g. X-Board-Token
       --public-url <url>  External URL of the board, base path included, used
-                          for the OIDC redirect URI     [derived from the request]
+                          for the OIDC redirect URI and the login form's origin
+                          check                         [derived from the request]
       --session-secret <s>
                           Key the session cookie is encrypted with
-                                                        [--keycloak-client-secret]
+                          [--keycloak-client-secret, or random per process]
       --postgres <url>    Also serve BullMQ v6 queues stored in PostgreSQL
                           (postgres://user:pass@host:5432/db)
       --postgres-schema <name>
@@ -129,6 +134,8 @@ Every flag has an environment variable equivalent, so you can configure the CLI 
 | `--keycloak-client-secret` | `WORKER_MANAGER_KEYCLOAK_CLIENT_SECRET` |
 | `--keycloak-roles` | `WORKER_MANAGER_KEYCLOAK_ROLES` |
 | `--keycloak-bearer-only` | `WORKER_MANAGER_KEYCLOAK_BEARER_ONLY` |
+| `--token` | `WORKER_MANAGER_TOKENS` |
+| `--token-header` | `WORKER_MANAGER_TOKEN_HEADER` |
 | `--public-url` | `WORKER_MANAGER_PUBLIC_URL` |
 | `--session-secret` | `WORKER_MANAGER_SESSION_SECRET` |
 | `--postgres` | `WORKER_MANAGER_POSTGRES_URL` |
@@ -292,6 +299,29 @@ module.exports = {
     clientId: 'worker-manager',
     clientSecret: process.env.KEYCLOAK_SECRET,
     requiredRoles: ['wm-admin'],
+    cookie: { secret: process.env.SESSION_SECRET },
+  },
+};
+```
+
+## Token auth
+
+For a board without an identity provider, `--token` protects it with one or more static tokens, through [`@worker-manager/auth`](/recipes/token-auth):
+
+```sh
+npx @worker-manager/cli -r redis://localhost:6379 --host 0.0.0.0 \
+  --token "$BOARD_TOKEN" --token-header X-Board-Token --session-secret "$SESSION_SECRET"
+```
+
+Scripts send `Authorization: Bearer <token>` (or the `--token-header` header); API calls without it get a `401`. A browser is sent to a small login form at `<base path>/auth/login`, which trades the token for an encrypted, `HttpOnly`, `SameSite=Strict` session cookie. Without `--session-secret` sessions are encrypted with a random per-process key and end when the process restarts. `--token` cannot be combined with `--user`/`--password` or Keycloak.
+
+In a config file, the settings live under `token`:
+
+```js
+module.exports = {
+  token: {
+    tokens: [process.env.BOARD_TOKEN],
+    header: 'X-Board-Token',
     cookie: { secret: process.env.SESSION_SECRET },
   },
 };

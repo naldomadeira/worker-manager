@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const NEST_PACKAGES = ['bull-shared', 'bullmq', 'common', 'core', 'platform-express', 'platform-fastify'];
+const NEST_PACKAGES = ['bull-shared', 'bullmq', 'common', 'core', 'platform-express', 'platform-fastify', 'testing'];
 
 const resolvedMajor = (alias) => {
   let dir = path.dirname(require.resolve(alias));

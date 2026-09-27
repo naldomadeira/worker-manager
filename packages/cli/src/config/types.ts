@@ -1,5 +1,5 @@
 import type { QueueAdapterOptions, UIConfig } from '@worker-manager/api/typings/app';
-import type { KeycloakAuthOptions } from '@worker-manager/auth';
+import type { KeycloakAuthOptions, TokenAuthOptions } from '@worker-manager/auth';
 import type { Retention } from '@worker-manager/metrics';
 import type { RedisOptions } from 'ioredis';
 import type { ConnectionConfig } from './connection';
@@ -42,6 +42,8 @@ export interface FileConfig {
   password?: string;
   /** Keycloak (OIDC) login instead of Basic auth. */
   keycloak?: Omit<KeycloakAuthOptions, 'strategy'>;
+  /** Static token auth instead of Basic auth: `tokens` accepts a list or a comma separated string. */
+  token?: Omit<TokenAuthOptions, 'strategy' | 'tokens'> & { tokens?: string | string[] };
   /**
    * PostgreSQL connection for BullMQ v6 queues backed by PostgreSQL: a connection string, or
    * a node-postgres pool config with an optional `schema` (default `bullmq`).
@@ -107,6 +109,7 @@ export interface CliConfig {
   readOnly: boolean;
   auth: { user: string; password: string } | null;
   keycloak: KeycloakAuthOptions | null;
+  token: TokenAuthOptions | null;
   postgres: PostgresConfig | null;
   pgBoss: PgBossConfig | null;
   open: boolean;

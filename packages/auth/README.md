@@ -1,7 +1,7 @@
 # <img alt="Worker Manager" src="https://raw.githubusercontent.com/naldomadeira/worker-manager/main/packages/ui/src/static/images/logo.svg" width="35px" /> @worker-manager/auth
 
-Authentication for the Worker Manager dashboard: HTTP Basic or Keycloak (OpenID Connect), as
-one framework-agnostic middleware.
+Authentication for the Worker Manager dashboard: HTTP Basic, Keycloak (OpenID Connect), static
+tokens with a browser login form, or your own check, as one framework-agnostic middleware.
 
 It works on Node's `IncomingMessage` / `ServerResponse`, so the same middleware runs in front of
 Express, Koa (through `koa-connect`), NestJS, plain `http`, and Fastify (through a hook helper).
@@ -109,16 +109,66 @@ cookie, the ID token and then the refresh token are dropped.
 In Keycloak, register `${publicUrl}/auth/callback` as a valid redirect URI and `${publicUrl}/` as a
 valid post logout redirect URI, and enable PKCE (S256) on the client.
 
+### Token
+
+```ts
+createAuthMiddleware(
+  {
+    strategy: 'token',
+    tokens: [process.env.BOARD_TOKEN!], // compared in constant time, every entry every request
+    validate: async (token) => lookupToken(token), // optional: AuthUser | boolean
+    header: 'X-Board-Token', // optional; Authorization: Bearer <token> is always read
+    user: { username: 'ops-board', roles: ['ops'] }, // identity for static tokens
+    cookie: { secret: process.env.SESSION_SECRET! }, // enables the browser login form
+  },
+  { basePath: '/queues' }
+);
+```
+
+- A request carrying a valid token in `Authorization: Bearer` or `header` gets in; a wrong one
+  gets `401` with `WWW-Authenticate: Bearer realm="worker-manager", error="invalid_token"`.
+- With `cookie`, a page load without credentials is redirected to `${basePath}/auth/login`, a
+  self-contained form (no scripts, strict CSP). Posting the token sets a `SameSite=Strict`,
+  `HttpOnly`, AES-256-GCM sealed session cookie and redirects back. The post is only accepted from
+  the board's own origin (`Origin`/`Referer`, and `Sec-Fetch-Site` when sent); set `publicUrl` when
+  a proxy rewrites `Host`.
+- The token inside the session is checked again on every request, so removing it from `tokens`
+  (or rejecting it in `validate`) ends its sessions immediately.
+- API calls, XHR and assets without credentials always get `401` JSON, never a redirect.
+
+`cookie` takes `secret` (required), `name` (`wm_session`), `secure` (true on https) and
+`maxAgeSeconds` (8 hours). Tokens and secrets never appear in a response or a log line.
+
+### Custom
+
+```ts
+createAuthMiddleware(
+  {
+    strategy: 'custom',
+    // Resolve the user, or null for 401. A thrown error fails the request.
+    authenticate: async (req) => verifyCloudflareAccess(req.headers['cf-access-jwt-assertion']),
+    // Optional: answer a rejected request yourself (redirect, challenge, page).
+    onUnauthenticated: (req, res) => {
+      res.statusCode = 401;
+      res.end();
+    },
+    logoutUrl: '/cdn-cgi/access/logout', // optional, shown as "Sign out"
+  },
+  { basePath: '/queues' }
+);
+```
+
 ## Endpoints
 
-Served under `basePath` by both strategies:
+Served under `basePath`, by the strategies that have them:
 
 | Endpoint | |
 |---|---|
-| `GET /auth/me` | `200 { strategy, user: { username, name?, email?, roles }, logoutUrl }`, or `401`. `logoutUrl` is `null` for Basic and bearer tokens. |
-| `GET /auth/login` | Keycloak: starts the login flow. `?returnTo=/queues/...` (same origin only). |
+| `GET /auth/me` | Every strategy: `200 { strategy, user: { username, name?, email?, roles }, logoutUrl }`, or `401`. `logoutUrl` is `null` for Basic, bearer tokens and header tokens. |
+| `GET /auth/login` | Keycloak: starts the login flow. Token (with `cookie`): renders the login form. `?returnTo=/queues/...` (same origin only). |
+| `POST /auth/login` | Token (with `cookie`): checks the posted token, sets the session cookie, `303` to `returnTo`. |
 | `GET /auth/callback` | Keycloak: the OIDC redirect URI. |
-| `GET /auth/logout` | Keycloak: clears the session and redirects to the end-session endpoint with `post_logout_redirect_uri` and `id_token_hint`. Basic: answers a fresh `401` challenge so the browser forgets the credentials. |
+| `GET /auth/logout` | Keycloak: clears the session and redirects to the end-session endpoint with `post_logout_redirect_uri` and `id_token_hint`. Token: clears the session and returns to the form. Basic: answers a fresh `401` challenge so the browser forgets the credentials. |
 
 ## Hooks
 
@@ -150,7 +200,8 @@ const auth = createAuthMiddleware(options, { basePath: '/queues' });
 app.register(createFastifyAuthPlugin(serverAdapter.registerPlugin(), auth), { prefix: '/queues' });
 ```
 
-The hook is encapsulated with the board's routes, so the rest of the app is untouched.
+The hook is encapsulated with the board's routes, so the rest of the app is untouched. For the
+token strategy the plugin also registers the `POST /auth/login` route the form posts to.
 `createFastifyAuthHook(auth)` gives you the bare `onRequest` hook if you would rather wire it
 yourself.
 

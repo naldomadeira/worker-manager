@@ -411,12 +411,12 @@ export async function run(
 }
 
 function warnIfExposed(config: CliConfig, log: Pick<Console, 'warn'>): void {
-  if (isLoopbackHost(config.host) || config.auth || config.keycloak) return;
+  if (isLoopbackHost(config.host) || config.auth || config.keycloak || config.token) return;
 
   log.warn(
     `Warning: Worker Manager is listening on ${config.host}, which accepts connections from ` +
       'outside this machine, with no --user/--password set. Anyone who can reach it can ' +
-      'view and modify every queue. Set --user and --password (or Keycloak), or bind to 127.0.0.1.'
+      'view and modify every queue. Set --user and --password (or Keycloak, or --token), or bind to 127.0.0.1.'
   );
 }
 

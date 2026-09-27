@@ -1,12 +1,5 @@
-const pkg = require("./package.json");
-const { defaults: tsJest } = require("ts-jest/presets");
+// `@fastify/static` is declared as `^9.0.0 || ^10.0.0`, so both majors run: the plain dependency
+// (latest 10.x) and the `fastify-static-v9` alias.
 module.exports = {
-  displayName: pkg.name,
-  preset: "ts-jest",
-  testEnvironment: "node",
-  transform: {
-    ...tsJest.transform,
-  },
-  testMatch: ["<rootDir>/tests/**/*.spec.ts"],
-  testTimeout: 30000,
+  projects: ['<rootDir>/jest.config.static-v10.js', '<rootDir>/jest.config.static-v9.js'],
 };

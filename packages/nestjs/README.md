@@ -154,6 +154,40 @@ Browsers are sent through the OIDC authorization code flow (PKCE), API clients m
 redirect URI on the Keycloak client. The board serves `GET /queues/auth/me` (the signed-in user)
 and `GET /queues/auth/logout`.
 
+### Token
+
+```typescript
+WorkerManagerModule.forRoot({
+  route: '/admin/queues',
+  auth: {
+    strategy: 'token',
+    tokens: [process.env.BOARD_TOKEN],
+    header: 'X-Board-Token', // Authorization: Bearer <token> works too
+    cookie: { secret: process.env.BOARD_SESSION_SECRET }, // enables the browser login form
+  },
+}),
+```
+
+API calls without the token get `401` JSON. A browser is sent to `/admin/queues/auth/login`, types
+the token once and gets an encrypted `SameSite=Strict` session cookie.
+
+### Custom
+
+```typescript
+WorkerManagerModule.forRoot({
+  auth: {
+    strategy: 'custom',
+    authenticate: async (req) => verifyMyApiKey(req.headers['x-api-key']), // AuthUser or null
+  },
+}),
+```
+
+### Testing
+
+`Test.createTestingModule({ imports: [AppModule] }).compile()` works without an explicit
+`adapter`: the platform is detected when `createNestApplication()` provides it, during
+`app.init()`.
+
 ### Custom middleware
 
 `middleware` still takes any Nest middleware, e.g. `express-basic-auth`. On Express it runs after

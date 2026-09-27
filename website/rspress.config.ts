@@ -99,6 +99,8 @@ export default defineConfig({
             { text: 'Overview', link: '/recipes/' },
             { text: 'Add basic auth', link: '/recipes/basic-auth' },
             { text: 'Keycloak auth', link: '/recipes/keycloak-auth' },
+            { text: 'Token auth', link: '/recipes/token-auth' },
+            { text: 'Custom auth', link: '/recipes/custom-auth' },
             { text: 'CSRF protection', link: '/recipes/csrf-protection' },
             { text: 'Read-only mode', link: '/recipes/read-only-mode' },
             { text: 'Visibility guard', link: '/recipes/visibility-guard' },

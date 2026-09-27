@@ -10,6 +10,8 @@ Most recipes link into the <a href="/worker-manager/demo/" target="_blank" rel="
 |------|--------|----------------|
 | Protect the dashboard with basic auth | [Add basic auth](/recipes/basic-auth) | Express, Fastify, Hapi, NestJS |
 | Sign in through Keycloak (OIDC), or accept bearer tokens | [Keycloak auth](/recipes/keycloak-auth) | Express, Fastify, NestJS, CLI |
+| Protect the board with a static token and a login form | [Token auth](/recipes/token-auth) | Express, Fastify, NestJS, CLI |
+| Plug in your own check (Cloudflare Access, API keys) | [Custom auth](/recipes/custom-auth) | All |
 | Defend against CSRF on destructive actions | [CSRF protection](/recipes/csrf-protection) | Express |
 | Run several dashboards in one app | [Multiple dashboards](/recipes/multiple-dashboards) | Express |
 | Add or remove queues after startup | [Manage queues at runtime](/recipes/manage-queues-at-runtime) | All |

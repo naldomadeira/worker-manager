@@ -80,7 +80,7 @@ export class FeatureModule {}
 | `pgBoss` | | Where a pg-boss board reads and writes. Only read with `engine: 'pg-boss'`. |
 | `route` | `'/queues'` | Base path where the dashboard is mounted, relative to the Nest global prefix. |
 | `adapter` | auto-detected | Server adapter class (`ExpressAdapter` or `FastifyAdapter`). When left out, the module asks `HttpAdapterHost` which platform the app runs on and loads `@worker-manager/express` or `@worker-manager/fastify`, failing with an install hint if the package is missing. |
-| `auth` | none | Built-in authentication (Basic or Keycloak). See [Authentication](#authentication). |
+| `auth` | none | Built-in authentication (Basic, Keycloak, token or custom). See [Authentication](#authentication). |
 | `enabled` | `true` | `false` registers nothing: no routes, no middleware, `forFeature()` becomes a no-op and `@InjectWorkerManager()` resolves `null`. Handy to switch the board off per environment. |
 | `readOnly` | `false` | Read-only mode for every queue registered through `queues` or `forFeature()`, unless the queue sets `options.readOnlyMode` itself. On a pg-boss board, the whole board is read-only. |
 | `queues` | `[]` | Queues to register at the root without a separate `forFeature()` import. Same shape as `forFeature()` entries. |
@@ -169,7 +169,7 @@ export class AppModule {}
 
 ## Authentication
 
-`auth` puts [`@worker-manager/auth`](/recipes/keycloak-auth) in front of every board route: the
+`auth` puts `@worker-manager/auth` in front of every board route: the
 page, the API and the static assets. It works the same on Express and Fastify, and the mount path
 includes the Nest global prefix.
 
@@ -214,6 +214,62 @@ cookie; API clients may send `Authorization: Bearer <access token>` instead. A u
 `requiredRoles` gets `403` with `ERRORS.FORBIDDEN`. The module also serves `GET /queues/auth/me`
 and `GET /queues/auth/logout`. See [Keycloak auth](/recipes/keycloak-auth) for the Keycloak client
 settings.
+
+### Token, with a login form for browsers
+
+```ts
+WorkerManagerModule.forRootAsync({
+  imports: [ConfigModule],
+  inject: [ConfigService],
+  useFactory: (config: ConfigService) => ({
+    route: '/admin/queues',
+    auth: {
+      strategy: 'token',
+      tokens: [config.getOrThrow('BOARD_TOKEN')],
+      header: 'X-Board-Token', // optional; Authorization: Bearer <token> always works
+      cookie: { secret: config.getOrThrow('BOARD_SESSION_SECRET') },
+    },
+  }),
+});
+```
+
+Scripts send the token in `X-Board-Token` or as a Bearer token; API calls without it get `401`
+JSON. A browser opening `/admin/queues` is sent to a login form at `/admin/queues/auth/login`,
+which trades the token for an encrypted `SameSite=Strict` session cookie. See
+[Token auth](/recipes/token-auth).
+
+### Custom
+
+```ts
+auth: {
+  strategy: 'custom',
+  authenticate: async (req) => (await apiKeys.verify(req.headers['x-api-key'])) ?? null,
+},
+```
+
+`authenticate(req)` resolves the user or `null` (`401`); `onUnauthenticated(req, res)` can answer
+instead. See [Custom auth](/recipes/custom-auth), including a Cloudflare Access example.
+
+## Testing with `Test.createTestingModule`
+
+The module works in a Nest `TestingModule` without an explicit `adapter`, on Express and Fastify
+alike:
+
+```ts
+const moduleRef = await Test.createTestingModule({ imports: [AppModule] }).compile();
+const app = moduleRef.createNestApplication(new FastifyAdapter());
+await app.init();
+await app.getHttpAdapter().getInstance().ready(); // Fastify only
+```
+
+`compile()` builds providers before `createNestApplication()` tells the app which HTTP platform it
+runs on, so the board mounts on a stand-in and the real adapter is picked in `app.init()`. The
+board injected with `@InjectWorkerManager()` is usable during `compile()`; queues added to it then
+are applied once the adapter exists. Before 2.2.0 this threw `could not pick a server adapter for
+the "unknown" HTTP platform`, and passing `adapter` explicitly was the workaround.
+
+If the suite fails loading `@worker-manager/fastify` with `Must use import to load ES Module`, see
+[Troubleshooting](/recipes/troubleshooting#jest-esm-content-disposition).
 
 ## PostgreSQL-backed queues
 
