@@ -4,6 +4,17 @@ Worker Manager is a dashboard for [BullMQ](https://docs.bullmq.io/) and [Bull](h
 
 Want to see it before installing? <a href="/worker-manager/demo/" target="_blank" rel="noopener">Open the live demo</a>.
 
+::: tip Using a coding agent? Install the agent skill
+Claude Code: `/plugin marketplace add naldomadeira/worker-manager`, then `/plugin install worker-manager@worker-manager`.
+Any agent with a skills folder:
+
+```sh
+curl -fsSL https://naldomadeira.github.io/worker-manager/worker-manager-skill.zip -o /tmp/wm-skill.zip && unzip -o /tmp/wm-skill.zip -d ~/.claude/skills/
+```
+
+Then ask for the dashboard in plain words. See [AI agent skill & setup](/guide/ai-agent-setup#install-the-agent-skill).
+:::
+
 ## Two ways to run it
 
 Mount it into your existing HTTP server with one of the adapters. That is what you want for a dashboard the team keeps around: it sits behind whatever auth the app already has, and you configure it in code.

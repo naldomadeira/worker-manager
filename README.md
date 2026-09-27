@@ -14,6 +14,20 @@ A modern dashboard for [BullMQ](https://github.com/taskforcesh/bullmq) and [Bull
   <img alt="open issues" src="https://img.shields.io/github/issues/naldomadeira/worker-manager"/>
 </p>
 
+> [!TIP]
+> **Using a coding agent?** Install the Worker Manager **agent skill** and ask for the dashboard in plain words ("add a queue dashboard behind Keycloak to this NestJS app"). It knows the engines (BullMQ on Redis or PostgreSQL, pg-boss), the nine server adapters, every auth strategy and the setup rules people get wrong by hand.
+>
+> **Claude Code**
+> ```text
+> /plugin marketplace add naldomadeira/worker-manager
+> /plugin install worker-manager@worker-manager
+> ```
+> **Any agent with a skills folder** (one line)
+> ```sh
+> curl -fsSL https://naldomadeira.github.io/worker-manager/worker-manager-skill.zip -o /tmp/wm-skill.zip && unzip -o /tmp/wm-skill.zip -d ~/.claude/skills/
+> ```
+> Or [download the zip](https://naldomadeira.github.io/worker-manager/worker-manager-skill.zip). More in [Use it with an AI agent](#use-it-with-an-ai-agent).
+
 <picture>
   <source
     media="(prefers-color-scheme: dark)"

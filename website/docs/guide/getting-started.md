@@ -2,6 +2,17 @@
 
 Install the core `@worker-manager/api` plus one adapter for your framework.
 
+::: tip Using a coding agent? Install the agent skill
+Claude Code: `/plugin marketplace add naldomadeira/worker-manager`, then `/plugin install worker-manager@worker-manager`.
+Any agent with a skills folder:
+
+```sh
+curl -fsSL https://naldomadeira.github.io/worker-manager/worker-manager-skill.zip -o /tmp/wm-skill.zip && unzip -o /tmp/wm-skill.zip -d ~/.claude/skills/
+```
+
+Then ask for the dashboard in plain words. See [AI agent skill & setup](/guide/ai-agent-setup#install-the-agent-skill).
+:::
+
 ## Prerequisites
 
 - Node.js 20+ or Bun 1.x. CI covers Node 20, 22 and 24.
