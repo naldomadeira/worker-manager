@@ -1,0 +1,16 @@
+{
+  "name": "worker-manager",
+  "description": "Worker Manager, a dashboard for BullMQ, Bull and pg-boss job queues: the agent skill that wires it into your app.",
+  "owner": {
+    "name": "Naldo Madeira",
+    "url": "https://github.com/naldomadeira"
+  },
+  "plugins": [
+    {
+      "name": "worker-manager",
+      "source": "./skills/worker-manager",
+      "description": "Adds the Worker Manager queue dashboard to a Node.js app: engine, server adapter and auth choices, NestJS module, pg-boss, PostgreSQL, metrics, CLI and Docker.",
+      "category": "development"
+    }
+  ]
+}

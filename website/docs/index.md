@@ -16,6 +16,9 @@ hero:
       text: Try the demo
       link: /demo/
     - theme: alt
+      text: Agent skill
+      link: /guide/ai-agent-setup
+    - theme: alt
       text: View on GitHub
       link: https://github.com/naldomadeira/worker-manager
 

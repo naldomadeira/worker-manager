@@ -9,6 +9,7 @@ on:
       - 'packages/api/**'
       - 'packages/*/README.md'
       - 'README.md'
+      - 'skills/**'
       - '.github/workflows/docs.yml'
   workflow_dispatch:
 

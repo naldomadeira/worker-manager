@@ -249,7 +249,12 @@ container, so hand the instance over directly:
 ```typescript
 import { Queue, createPostgresBackend } from 'bullmq'; // bullmq@6, plus `pg`
 
-const invoices = new Queue('invoices', { connection: process.env.POSTGRES_URL }, createPostgresBackend);
+const invoices = new Queue(
+  'invoices',
+  // BullMQ 6.3+: `migrate: true` creates its schema on first connect.
+  { connection: { connectionString: process.env.POSTGRES_URL, migrate: true } },
+  createPostgresBackend
+);
 
 WorkerManagerModule.forRoot({
   queues: [{ queue: invoices, adapter: BullMQAdapter }],
@@ -303,5 +308,14 @@ export class FeatureController {
 3. [Keycloak auth from `ConfigService`](https://github.com/naldomadeira/worker-manager/tree/main/examples/nestjs/keycloak)
 4. [Fastify platform with a custom auth hook](https://github.com/naldomadeira/worker-manager/tree/main/examples/nestjs/fastify-custom-auth)
 5. [The pg-boss board over the app's own pg-boss instance](https://github.com/naldomadeira/worker-manager/tree/main/examples/nestjs/pg-boss)
+
+# Set it up with an AI agent
+
+The [Worker Manager agent skill](https://naldomadeira.github.io/worker-manager/guide/ai-agent-setup)
+teaches a coding agent this module (`forRoot`/`forRootAsync`/`forFeature`, named boards,
+`engine: 'pg-boss'`, `auth`). In Claude Code: `/plugin marketplace add naldomadeira/worker-manager`,
+then `/plugin install worker-manager@worker-manager`; other agents can unzip
+[`worker-manager-skill.zip`](https://naldomadeira.github.io/worker-manager/worker-manager-skill.zip)
+into their skills folder.
 
 For more info visit the main [README](https://github.com/naldomadeira/worker-manager#readme)

@@ -1,6 +1,6 @@
 # <img alt="Worker Manager" src="https://raw.githubusercontent.com/naldomadeira/worker-manager/main/packages/ui/src/static/images/logo.svg" width="35px" /> Worker Manager
 
-A modern dashboard for [BullMQ](https://github.com/taskforcesh/bullmq) and [Bull](https://github.com/OptimalBits/bull) job queues, on **Redis or PostgreSQL**, plus an experimental [pg-boss](https://github.com/timgit/pg-boss) engine, with **Basic and Keycloak auth built in**. Plug it into your server, see your queues.
+A modern dashboard for [BullMQ](https://github.com/taskforcesh/bullmq) and [Bull](https://github.com/OptimalBits/bull) job queues, on **Redis or PostgreSQL**, plus an experimental [pg-boss](https://github.com/timgit/pg-boss) engine, with **authentication built in**. Mount it in your NestJS, Express, Fastify or Next.js app, or run it standalone from the CLI or Docker.
 
 > Worker Manager is a fork of the open-source bull-board project (MIT), rebuilt with a shadcn/ui + Tailwind CSS interface, first-class authentication and a richer NestJS module. Migrating means a scope rename, `@bull-board/*` → `@worker-manager/*`, plus the v2.0 product rename (`createBullBoard` → `createWorkerManagerBoard`, `BullBoardModule` → `WorkerManagerModule`, the `worker-manager` CLI binary and `WORKER_MANAGER_*` env vars); see the [v2.0.0 changelog](./CHANGELOG.md) for the full list.
 
@@ -31,16 +31,41 @@ A modern dashboard for [BullMQ](https://github.com/taskforcesh/bullmq) and [Bull
 
 <sub>Light and dark ship together, and this picks whichever you are reading in.</sub>
 
-[Highlights](#highlights) · [Try it](#try-it) · [NestJS](#nestjs-in-one-import) · [Authentication](#authentication) · [PostgreSQL](#postgresql) · [pg-boss](#pg-boss-experimental) · [Playground](#playground) · [Packages](#packages) · [Contributing](#contributing)
+[What it does](#what-it-does) · [Try it](#try-it) · [Quick start](#quick-start) · [AI agents](#use-it-with-an-ai-agent) · [Authentication](#authentication) · [PostgreSQL](#postgresql) · [pg-boss](#pg-boss-experimental) · [Packages](#packages) · [Contributing](#contributing)
 
-## Highlights
+## What it does
 
-- **A new interface**: shadcn/ui components on Tailwind CSS v4, a collapsible sidebar, a `Ctrl/⌘ K` command palette, KPI tiles, animated status bars and transitions (reduced motion respected), light, dark and system themes, and whitelabel design tokens.
-- **Authentication built in**: `@worker-manager/auth` protects any adapter with HTTP Basic, Keycloak (OpenID Connect with PKCE, encrypted session cookie, bearer tokens, required roles), static tokens with a browser login form, or your own `authenticate(req)`. The signed-in user shows up in the header.
-- **Redis and PostgreSQL**: BullMQ `>= 5.56` and all of v6, including v6 queues stored in PostgreSQL, from the libraries, the NestJS module and the CLI.
-- **pg-boss, experimental**: a board over a pg-boss schema with pages of its own (six job states, schedules, dead letters), on the same shell, auth, server adapters, NestJS module and CLI. It never migrates or alters your database.
-- **A NestJS module that does more for you**: adapter auto-detection, `auth`, `readOnly`, `enabled`, root-level `queues`, `title`/`logo`/`theme` shortcuts and `forRootAsync` with `useFactory`, `useClass` or `useExisting`.
-- **Validated end to end**: a playground app with Redis, PostgreSQL and Keycloak in Docker, synthetic traffic and a smoke test for every auth mode.
+Worker Manager shows your queues, jobs, schedulers and history in the browser, and lets you act on them: retry, promote, clean, pause, reschedule, send. It is a viewer that runs inside your server (or next to it), not a separate service.
+
+**Engines and datastores.** A board runs one engine; mount two boards to see both.
+
+| Engine | Datastore | Status |
+|---|---|---|
+| BullMQ `>= 5.56` and v6 | Redis (standalone, Sentinel, Cluster) | Stable |
+| BullMQ v6 | PostgreSQL (`createPostgresBackend`) | Stable |
+| Bull (and BullMQ Pro) | Redis | Stable |
+| pg-boss `>= 12.24` (Node.js `>= 22.12`) | PostgreSQL | **Experimental**: screens and `/api/pg-boss` may change in a minor |
+
+**Authentication.** `@worker-manager/auth` protects the page, the API and the assets on every adapter, the NestJS module and the CLI:
+
+- **Basic**: static users or a `validate(username, password)` callback, constant-time checks.
+- **Keycloak / OpenID Connect**: authorization code flow with PKCE, AES-GCM encrypted session cookie with silent refresh, bearer tokens for scripts, `requiredRoles`.
+- **Static token**: `Authorization: Bearer` or a header of your choice for scripts and agents, plus a built-in browser login form that trades the token for a `SameSite=Strict` session.
+- **Custom**: your own `authenticate(req)`, for example a verified Cloudflare Access JWT or your app's API-key check.
+
+**The dashboard.**
+
+- KPI tiles, a status-filtered overview grouped by queue category, a collapsible sidebar and a `Ctrl/⌘ K` command palette.
+- Job pages with data, logs, options, timeline and errors, plus hints for stalled, deduplicated and doomed jobs; reschedule delayed jobs and change priorities.
+- Parent and child jobs as a pannable **flows graph**, across queues.
+- **Schedulers** in a table and a day/week/month timeline, editable in place.
+- **Metrics history** (opt-in `@worker-manager/metrics`, stored in Redis or PostgreSQL): 7/30/90 day throughput, a daily activity calendar, wait and run-time latency percentiles, queue age, and a storage panel.
+- **Read-only mode**, per-request **visibility guard**, and access-control hooks per API call.
+- **Whitelabel** theme tokens (shadcn contract), title, logo and environment badge; **12 languages**; light, dark and system themes; a phone layout.
+
+**The pg-boss board (experimental).** Jobs in all six pg-boss states, cron and RRULE schedules, dead-letter origins, pg-boss's persisted warnings, a queue depth chart, bulk retry/cancel/resume/delete, job lookup by id from the command palette, and schema tolerance: a newer pg-boss schema is probed, not refused, and whatever it lacks is switched off and named. It never migrates, supervises or creates anything in your database.
+
+**Integrations.** Nine server adapters (Express, Fastify, Koa, Hapi, NestJS, Hono, H3, Elysia, Bun), a NestJS module with platform auto-detection, async config and named boards, a Next.js recipe, the `worker-manager` CLI and the `ghcr.io/naldomadeira/worker-manager` Docker image.
 
 ## Try it
 
@@ -56,33 +81,118 @@ Or as a container, no Node needed ([docs](https://naldomadeira.github.io/worker-
 docker run --rm -p 127.0.0.1:3000:3000 ghcr.io/naldomadeira/worker-manager --redis redis://host.docker.internal:6379
 ```
 
-No install and no code. To embed it in your own app instead, read on.
+`--postgres <url>` serves BullMQ v6 queues from PostgreSQL and `--pg-boss <url>` a pg-boss board. There's also a [live demo](https://naldomadeira.github.io/worker-manager/demo/), and a [pg-boss demo](https://naldomadeira.github.io/worker-manager/demo/pg-boss/).
 
-## Documentation
+## Quick start
 
-The [docs](https://naldomadeira.github.io/worker-manager/) have guides, recipes, the UIConfig reference, and per-adapter setup. There's also a [live demo](https://naldomadeira.github.io/worker-manager/demo/) covering every view below.
-
-## What you get
-
-|   |   |
-|---|---|
-| [<img alt="Schedulers" src="https://raw.githubusercontent.com/naldomadeira/worker-manager/main/website/docs/public/screenshots/schedulers-page.png" width="420" />](https://naldomadeira.github.io/worker-manager/guide/exploring-the-dashboard)<br/>Every repeatable job across every queue, with its pattern or interval, when it next fires and when it last ran. Edit or remove one in place. | [<img alt="Historical metrics" src="https://raw.githubusercontent.com/naldomadeira/worker-manager/main/website/docs/public/screenshots/historical-metrics-page.png" width="420" />](https://naldomadeira.github.io/worker-manager/recipes/historical-metrics)<br/>Opt-in throughput and latency history over 90 days, per queue and board-wide. The storage panel tells you what keeping it costs. |
-| [<img alt="Job flows" src="https://raw.githubusercontent.com/naldomadeira/worker-manager/main/website/docs/public/screenshots/flow-tree.png" width="420" />](https://naldomadeira.github.io/worker-manager/recipes/job-logs-and-flows)<br/>Parent and child jobs as one pannable graph, even when the children live in other queues, each with its own state and progress. Click a node to inspect it without leaving the page. Per-job logs alongside. | [<img alt="Whitelabel theming" src="https://raw.githubusercontent.com/naldomadeira/worker-manager/main/website/docs/public/screenshots/whitelabel-violet-dark.png" width="420" />](https://naldomadeira.github.io/worker-manager/recipes/whitelabel-theming)<br/>Design tokens named after the shadcn contract. Set `primary` and the focus ring, the sidebar and the selection states all follow it. |
-
-## Install
-
-Pick the adapter for your framework:
+### NestJS + BullMQ (Redis)
 
 ```sh
-npm install @worker-manager/api @worker-manager/express
-# or @worker-manager/fastify, @worker-manager/koa, @worker-manager/hapi,
-# @worker-manager/nestjs, @worker-manager/hono, @worker-manager/h3,
-# @worker-manager/elysia, @worker-manager/bun
+npm install @worker-manager/api @worker-manager/nestjs @worker-manager/express   # or @worker-manager/fastify
 ```
 
-Just want to look at a queue without wiring anything into your app? See the [CLI guide](https://naldomadeira.github.io/worker-manager/guide/cli).
+```ts
+import { BullModule } from '@nestjs/bullmq';
+import { Module } from '@nestjs/common';
+import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
+import { WorkerManagerModule } from '@worker-manager/nestjs';
 
-## Minimal Express example
+@Module({
+  imports: [
+    BullModule.forRoot({ connection: { host: 'localhost', port: 6379 } }),
+    BullModule.registerQueue({ name: 'emails' }),
+    WorkerManagerModule.forRoot({
+      route: '/queues', // Express or Fastify is detected, no adapter needed
+      auth: {
+        strategy: 'basic',
+        users: [{ username: 'admin', password: process.env.BOARD_PASSWORD! }],
+      },
+    }),
+    // Next to the queue's registerQueue; the queue is resolved from DI by name.
+    WorkerManagerModule.forFeature({ name: 'emails', adapter: BullMQAdapter }),
+  ],
+})
+export class AppModule {}
+```
+
+Open `http://localhost:3000/queues`. `forRootAsync` (with `useFactory`, `useClass` or `useExisting`), `readOnly`, `enabled`, `title`/`logo`/`theme`, Keycloak and token auth, named boards and PostgreSQL queues are in the [NestJS guide](https://naldomadeira.github.io/worker-manager/server-adapters/nestjs).
+
+### NestJS + pg-boss (experimental)
+
+Needs Node.js 22.12+ and pg-boss 12.24+. Your app keeps starting pg-boss; the board reuses that instance.
+
+```sh
+npm install @worker-manager/api @worker-manager/nestjs @worker-manager/express @worker-manager/pg-boss
+```
+
+```ts
+// boss.ts
+import { PgBoss } from 'pg-boss';
+export const boss = new PgBoss(process.env.DATABASE_URL!);
+
+// main.ts
+await boss.start();
+const app = await NestFactory.create(AppModule);
+await app.listen(3000); // http://localhost:3000/pg-boss
+
+// app.module.ts
+@Module({
+  imports: [
+    WorkerManagerModule.forRoot({
+      route: '/pg-boss',
+      engine: 'pg-boss',
+      auth: { strategy: 'basic', users: [{ username: 'admin', password: process.env.BOARD_PASSWORD! }] },
+      pgBoss: {
+        instance: boss, // writes go through your instance
+        connection: process.env.DATABASE_URL, // reads use a small pool with a real query timeout
+      },
+    }),
+  ],
+})
+export class AppModule {}
+```
+
+Already have a BullMQ board? Keep it and give this one a `name: 'pgboss'`: two boards, two routes, one app. `pgBoss.useExisting` takes a provider token instead of `instance`. See the [NestJS pg-boss board](https://naldomadeira.github.io/worker-manager/server-adapters/nestjs#pg-boss-board-experimental) and the runnable [`examples/nestjs/pg-boss`](./examples/nestjs/pg-boss).
+
+### Next.js (App Router)
+
+There is no Next.js adapter; the Hono one runs in an optional catch-all Route Handler, `app/api/queues/[[...path]]/route.ts`:
+
+```sh
+npm install @worker-manager/api @worker-manager/hono hono @hono/node-server bullmq
+```
+
+```ts
+import { serveStatic } from '@hono/node-server/serve-static';
+import { createWorkerManagerBoard } from '@worker-manager/api';
+import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
+import { HonoAdapter } from '@worker-manager/hono';
+import { Hono } from 'hono';
+import { handle } from 'hono/vercel';
+import { queue } from '@/lib/queue';
+
+export const runtime = 'nodejs'; // the UI is read from disk, so no edge runtime
+export const dynamic = 'force-dynamic';
+
+const basePath = '/api/queues';
+const serverAdapter = new HonoAdapter(serveStatic);
+serverAdapter.setBasePath(basePath);
+
+createWorkerManagerBoard({ queues: [new BullMQAdapter(queue)], serverAdapter });
+
+const app = new Hono();
+app.route(basePath, serverAdapter.registerPlugin());
+
+export const GET = handle(app);
+export const POST = handle(app);
+export const PUT = handle(app);
+export const PATCH = handle(app);
+export const DELETE = handle(app);
+```
+
+On Vercel, add `serverExternalPackages` and `outputFileTracingIncludes` for `@worker-manager/ui` to `next.config.js`, and run workers as a separate process. For pg-boss, swap `createWorkerManagerBoard` for `createPgBossBoard({ serverAdapter, pgBoss: { connection: process.env.DATABASE_URL } })` from `@worker-manager/pg-boss` (that variation is not one of the runnable examples). Put auth in front before deploying. See the [Next.js & Vercel recipe](https://naldomadeira.github.io/worker-manager/recipes/nextjs) and [`examples/nextjs/app-router`](./examples/nextjs/app-router).
+
+### Express
 
 ```js
 const express = require('express');
@@ -94,66 +204,40 @@ const { ExpressAdapter } = require('@worker-manager/express');
 const emailQueue = new Queue('emails', { connection: { host: 'localhost', port: 6379 } });
 
 const serverAdapter = new ExpressAdapter();
-serverAdapter.setBasePath('/admin/queues');
+serverAdapter.setBasePath('/admin/queues'); // must equal the mount path below
 
-createWorkerManagerBoard({
-  queues: [new BullMQAdapter(emailQueue)],
-  serverAdapter,
-});
+createWorkerManagerBoard({ queues: [new BullMQAdapter(emailQueue)], serverAdapter });
 
 const app = express();
-
-app.use('/admin/queues', serverAdapter.getRouter());
-
-// other configurations of your server
-
-app.listen(3000, () => {
-  console.log('Running on 3000...');
-  console.log('For the UI, open http://localhost:3000/admin/queues');
-  console.log('Make sure Redis is running on port 6379 by default');
-});
+app.use('/admin/queues', serverAdapter.getRouter()); // add auth in front, see below
+app.listen(3000);
 ```
 
-That's it! Now you can access the `/admin/queues` route, and you will be able to monitor everything that is happening in your queues 😁
+Every other framework follows the same shape; see the [server adapters](https://naldomadeira.github.io/worker-manager/server-adapters/) and the [docs](https://naldomadeira.github.io/worker-manager/) for queue adapter options (read-only, retries, formatters, visibility guard), BullMQ Pro and UIConfig. See [supported versions](https://naldomadeira.github.io/worker-manager/queue-adapters/bullmq#supported-versions) for what CI tests.
 
-See the [docs](https://naldomadeira.github.io/worker-manager/) for queue adapter options (read-only, retries, formatters, visibility guard), BullMQ Pro setup, board UI config, and more.
+## Use it with an AI agent
 
-BullMQ `>= 5.56.0` and all of v6 are supported, including [v6 queues stored in PostgreSQL](https://naldomadeira.github.io/worker-manager/recipes/postgres-backend). The adapter detects which it has, so there is nothing to configure. See [supported versions](https://naldomadeira.github.io/worker-manager/queue-adapters/bullmq#supported-versions) for what CI tests and when the floor moves.
+The **Worker Manager agent skill** teaches a coding agent the choices above (engine, server adapter, auth strategy) and the rules people get wrong by hand, with ready setups for NestJS, Express, Fastify and pg-boss. Install it any of three ways:
 
-## NestJS in one import
+- **Claude Code plugin**: `/plugin marketplace add naldomadeira/worker-manager`, then `/plugin install worker-manager@worker-manager`.
+- **Zip**: download [`worker-manager-skill.zip`](https://naldomadeira.github.io/worker-manager/worker-manager-skill.zip) and unzip it into your agent's skills folder.
+- **One line**:
 
-```ts
-import { WorkerManagerModule } from '@worker-manager/nestjs';
-import { BullMQAdapter } from '@worker-manager/api/bullMQAdapter';
+  ```sh
+  curl -fsSL https://naldomadeira.github.io/worker-manager/worker-manager-skill.zip -o /tmp/wm-skill.zip && unzip -o /tmp/wm-skill.zip -d ~/.claude/skills/
+  ```
 
-@Module({
-  imports: [
-    WorkerManagerModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (config: ConfigService) => ({
-        route: '/queues', // Express or Fastify is detected, no adapter needed
-        enabled: config.get('NODE_ENV') !== 'test',
-        readOnly: config.get('BOARD_READ_ONLY') === 'true',
-        title: 'Acme workers',
-        auth: {
-          strategy: 'keycloak',
-          url: config.getOrThrow('KEYCLOAK_URL'),
-          realm: config.getOrThrow('KEYCLOAK_REALM'),
-          clientId: config.getOrThrow('KEYCLOAK_CLIENT_ID'),
-          clientSecret: config.getOrThrow('KEYCLOAK_CLIENT_SECRET'),
-          requiredRoles: ['ops'],
-          cookie: { secret: config.getOrThrow('BOARD_COOKIE_SECRET') },
-        },
-      }),
-    }),
-    WorkerManagerModule.forFeature({ name: 'emails', adapter: BullMQAdapter }),
-  ],
-})
-export class AppModule {}
-```
+  Use `-d .claude/skills/` instead to add it to one project. Other agents that read skill folders can use the same `worker-manager/` folder.
 
-Every option is documented in the [NestJS guide](https://naldomadeira.github.io/worker-manager/server-adapters/nestjs).
+Then ask for it in plain words ("add a queue dashboard behind Keycloak to this NestJS app"). The skill lives in [`skills/worker-manager`](./skills/worker-manager); the [AI agent guide](https://naldomadeira.github.io/worker-manager/guide/ai-agent-setup) also has a copy-paste prompt and the `llms.txt` / OpenAPI files for agents.
+
+## What you get
+
+|   |   |
+|---|---|
+| [<img alt="Schedulers" src="https://raw.githubusercontent.com/naldomadeira/worker-manager/main/website/docs/public/screenshots/schedulers-page.png" width="420" />](https://naldomadeira.github.io/worker-manager/guide/exploring-the-dashboard)<br/>Every repeatable job across every queue, with its pattern or interval, when it next fires and when it last ran. Edit or remove one in place. | [<img alt="Historical metrics" src="https://raw.githubusercontent.com/naldomadeira/worker-manager/main/website/docs/public/screenshots/historical-metrics-page.png" width="420" />](https://naldomadeira.github.io/worker-manager/recipes/historical-metrics)<br/>Opt-in throughput and latency history over 90 days, per queue and board-wide. The storage panel tells you what keeping it costs. |
+| [<img alt="Job flows" src="https://raw.githubusercontent.com/naldomadeira/worker-manager/main/website/docs/public/screenshots/flow-tree.png" width="420" />](https://naldomadeira.github.io/worker-manager/recipes/job-logs-and-flows)<br/>Parent and child jobs as one pannable graph, even when the children live in other queues, each with its own state and progress. Click a node to inspect it without leaving the page. Per-job logs alongside. | [<img alt="Whitelabel theming" src="https://raw.githubusercontent.com/naldomadeira/worker-manager/main/website/docs/public/screenshots/whitelabel-violet-dark.png" width="420" />](https://naldomadeira.github.io/worker-manager/recipes/whitelabel-theming)<br/>Design tokens named after the shadcn contract. Set `primary` and the focus ring, the sidebar and the selection states all follow it. |
+| [<img alt="pg-boss overview" src="https://raw.githubusercontent.com/naldomadeira/worker-manager/main/website/docs/public/screenshots/pgboss-overview.png" width="420" />](https://naldomadeira.github.io/worker-manager/queue-adapters/pg-boss)<br/>The experimental pg-boss board: pg-boss's cached counters as KPI tiles and one card per queue with its policy. | [<img alt="Daily activity" src="https://raw.githubusercontent.com/naldomadeira/worker-manager/main/website/docs/public/screenshots/metrics-activity.png" width="420" />](https://naldomadeira.github.io/worker-manager/guide/exploring-the-dashboard#metrics-history)<br/>Daily activity: completed jobs, failures or the failure rate as a calendar, with the peak day and the average per weekday. |
 
 ## Authentication
 
@@ -241,7 +325,7 @@ Switch `WM_AUTH` between `none`, `basic` and `keycloak` in `playground/.env`. Se
 
 ## Historical metrics
 
-BullMQ keeps only a short ring buffer of per-minute metrics, so the throughput chart can't look back further than an hour or so. The optional `@worker-manager/metrics` package (beta) snapshots those metrics into long-retention Redis buckets and feeds them back to the board, which adds a Metrics history page and 7/30/90 day ranges on every queue chart. It is entirely opt-in: without it the core stays stateless and writes nothing.
+BullMQ keeps only a short ring buffer of per-minute metrics, so the throughput chart can't look back further than an hour or so. The optional `@worker-manager/metrics` package (beta) snapshots those metrics into long-retention buckets in Redis or PostgreSQL and feeds them back to the board, which adds a Metrics history page (throughput, daily activity, latency, storage) and 7/30/90 day ranges on every queue chart. It is entirely opt-in: without it the core stays stateless and writes nothing.
 
 ```sh
 npm install @worker-manager/metrics
@@ -262,6 +346,7 @@ See the [historical metrics recipe](https://naldomadeira.github.io/worker-manage
 | [@worker-manager/api](https://www.npmjs.com/package/@worker-manager/api)         | ![npm](https://img.shields.io/npm/v/@worker-manager/api)     | <img alt="npm downloads" src="https://img.shields.io/npm/dw/@worker-manager/api">     |
 | [@worker-manager/ui](https://www.npmjs.com/package/@worker-manager/ui)           | ![npm](https://img.shields.io/npm/v/@worker-manager/ui)      | <img alt="npm downloads" src="https://img.shields.io/npm/dw/@worker-manager/ui">      |
 | [@worker-manager/auth](https://www.npmjs.com/package/@worker-manager/auth)           | ![npm](https://img.shields.io/npm/v/@worker-manager/auth)      | <img alt="npm downloads" src="https://img.shields.io/npm/dw/@worker-manager/auth">      |
+| [@worker-manager/pg-boss](https://www.npmjs.com/package/@worker-manager/pg-boss) | ![npm](https://img.shields.io/npm/v/@worker-manager/pg-boss) | <img alt="npm downloads" src="https://img.shields.io/npm/dw/@worker-manager/pg-boss"> |
 | [@worker-manager/metrics](https://www.npmjs.com/package/@worker-manager/metrics) | ![npm](https://img.shields.io/npm/v/@worker-manager/metrics) | <img alt="npm downloads" src="https://img.shields.io/npm/dw/@worker-manager/metrics"> |
 | [@worker-manager/cli](https://www.npmjs.com/package/@worker-manager/cli)         | ![npm](https://img.shields.io/npm/v/@worker-manager/cli)     | <img alt="npm downloads" src="https://img.shields.io/npm/dw/@worker-manager/cli">     |
 | [@worker-manager/express](https://www.npmjs.com/package/@worker-manager/express) | ![npm](https://img.shields.io/npm/v/@worker-manager/express) | <img alt="npm downloads" src="https://img.shields.io/npm/dw/@worker-manager/express"> |

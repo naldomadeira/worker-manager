@@ -5,7 +5,7 @@
   "description": "Documentation site for Worker Manager (Rspress).",
   "type": "module",
   "scripts": {
-    "prepare:assets": "node scripts/prepare.mjs",
+    "prepare:assets": "node scripts/prepare.mjs && node scripts/build-skill-zip.mjs",
     "docs:dev": "yarn prepare:assets && rspress dev docs",
     "docs:build": "yarn prepare:assets && rspress build docs",
     "docs:preview": "rspress preview docs",
