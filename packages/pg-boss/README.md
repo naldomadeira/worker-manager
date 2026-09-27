@@ -1,12 +1,14 @@
 # @worker-manager/pg-boss
 
-**Experimental.** A [pg-boss](https://github.com/timgit/pg-boss) engine for Worker Manager. It
+A [pg-boss](https://github.com/timgit/pg-boss) engine for Worker Manager. It
 mounts a whole board over one pg-boss schema, on any Worker Manager server adapter: its own
 `/api/pg-boss/*` routes, the metrics history routes when a `historyProvider` is set, and the
 dashboard entry page. A board runs one engine; it never mixes BullMQ and pg-boss queues.
 
-The engine is experimental: its screens and the `/api/pg-boss` HTTP contract may still change in
-a minor release, until it is declared stable. Full documentation:
+The engine is stable since 2.4.0 and follows semver like the BullMQ engine: a breaking change to
+its screens' behaviour or to the `/api/pg-boss` HTTP contract only ships in a major release. That
+covers `pg-boss ^12.24.0` on schemas 35 to 42; a newer schema is probed and read, with only what
+it lacks switched off. Full documentation:
 <https://naldomadeira.github.io/worker-manager/queue-adapters/pg-boss>.
 
 ## Requirements

@@ -53,7 +53,7 @@ export type WorkerManagerModuleOptions = {
   /**
    * `bullmq` (the default) serves Bull and BullMQ queues registered through `queues` or
    * `forFeature`. `pg-boss` serves a pg-boss schema configured by `pgBoss`, and needs
-   * `@worker-manager/pg-boss` installed. Experimental.
+   * `@worker-manager/pg-boss` installed.
    */
   engine?: WorkerManagerEngine;
   /** Where the pg-boss board reads and writes. Required with `engine: 'pg-boss'`. */

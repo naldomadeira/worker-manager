@@ -571,7 +571,7 @@ Responds `200` with [`GetMetricsLatencyResponse`](#getmetricslatencyresponse).
 
 ## pg-boss
 
-Every route of a board created with engine 'pg-boss' (`createPgBossBoard` from `@worker-manager/pg-boss`). Such a board registers these, the metrics history routes and the entry page, and none of the BullMQ routes; a BullMQ board registers none of these. Reads are SQL against the pg-boss schema, writes go through the pg-boss API. Mutations are not registered on a read-only board, and answer **409** `ERRORS.PGBOSS_WRITES_DISABLED` while the schema guard keeps writes off. Experimental: this part of the contract may change in a minor release.
+Every route of a board created with engine 'pg-boss' (`createPgBossBoard` from `@worker-manager/pg-boss`). Such a board registers these, the metrics history routes and the entry page, and none of the BullMQ routes; a BullMQ board registers none of these. Reads are SQL against the pg-boss schema, writes go through the pg-boss API. Mutations are not registered on a read-only board, and answer **409** `ERRORS.PGBOSS_WRITES_DISABLED` while the schema guard keeps writes off. Stable since 2.4.0: this part of the contract follows semver, so a breaking change only ships in a major.
 
 ### `GET /api/pg-boss/info`
 

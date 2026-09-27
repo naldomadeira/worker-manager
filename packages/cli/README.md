@@ -73,7 +73,7 @@ Options:
                           (postgres://user:pass@host:5432/db)
       --postgres-schema <name>
                           Schema the BullMQ tables live in       [bullmq]
-      --pg-boss <url>     Serve a pg-boss board (experimental, Node >= 22.12)
+      --pg-boss <url>     Serve a pg-boss board (Node >= 22.12)
                           (postgres://user:pass@host:5432/db)
       --pg-boss-schema <name>
                           Schema pg-boss was installed in        [pgboss]
@@ -186,7 +186,7 @@ module.exports = {
 };
 ```
 
-## pg-boss (experimental)
+## pg-boss
 
 `--pg-boss` (or `WORKER_MANAGER_PGBOSS_URL`) serves a board over a pg-boss schema. It needs Node.js 22.12 or newer; every other mode still runs on Node.js 20.
 
