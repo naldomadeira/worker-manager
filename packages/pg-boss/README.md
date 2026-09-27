@@ -12,8 +12,10 @@ a minor release, until it is declared stable. Full documentation:
 ## Requirements
 
 - Node.js 22.12 or later (pg-boss's own floor).
-- pg-boss `^12.24.0`, on a database whose pg-boss schema version is between 35 (12.24.0) and 42
-  (12.33.0 and 12.34.0). Schedule previews and RRULE schedules need pg-boss 12.31 or later.
+- pg-boss `^12.24.0`, on a database whose pg-boss schema version is 35 (12.24.0) or later. 35 to
+  42 (12.33.0 and 12.34.0) are tested. A newer schema is still read, by probing its tables and
+  columns: whatever it lacks is switched off and named in a banner, and writes stay off unless
+  `allowUntestedSchema` is set. Schedule previews and RRULE schedules need pg-boss 12.31 or later.
 
 ## Install
 
@@ -59,6 +61,7 @@ app.use('/pg-boss', serverAdapter.getRouter());
 | `queryTimeoutMs` | `5000` | `statement_timeout` of every read. |
 | `countCap` | `10000` | Per-state counts stop here and report `capped`. |
 | `visibilityGuard` | | `(request, queueName) => boolean` per request. A hidden queue answers 404. |
+| `allowUntestedSchema` | `false` | Write to a schema newer than `SCHEMA_MAX`, the newest this release is tested with. It is read either way. |
 
 Pass `connection` with or without `instance`:
 
@@ -79,6 +82,11 @@ It never calls `start()`, `stop()`, `supervise()` or a migration on your databas
 never creates a schema, table or index. The one pg-boss instance it builds itself is never
 started. Reads are plain `SELECT`s, so a role with `USAGE` on the schema and `SELECT` on its
 tables is enough for a read-only board.
+
+The schema is probed once, in `information_schema`, when the board starts and again only when its
+version changes. Every read is built from what the probe found, so a newer pg-boss that drops a
+column or a table turns that one feature off (reported as `features` and `disabledFeatures` in
+`GET /api/pg-boss/info`) instead of failing every query.
 
 The counters on the queue list are pg-boss's cached ones, only as fresh as the last `supervise`
 run by any instance of your app. The queue page counts each state live, capped.
@@ -111,8 +119,19 @@ CREATE INDEX wm_job_completed_on ON pgboss.job (name, completed_on);
 ```
 
 `readPgBossQueueDepth(engine, queue, { from, to, bucketSeconds, aggregate })` folds pg-boss's
-own `queue_stats` snapshots into buckets, for queues with `persistQueueStats`. See the
+own `queue_stats` snapshots into buckets, for queues with `persistQueueStats`; the board draws the
+same series as the queue depth chart (`GET /api/pg-boss/queues/:queueName/depth`). See the
 historical metrics recipe in the docs for the recorder setup and the non-blocking index variant.
+
+## Also on the board
+
+- **Find a job by id** in every visible queue: `GET /api/pg-boss/jobs/:jobId`, the command
+  palette and the overview's search box. The lookup names the queues, so it stays on pg-boss's
+  `(name, id)` primary key.
+- **Bulk actions** on the selected jobs of a page: retry, cancel, resume and delete, whichever the
+  state tab allows.
+- **Warnings**: pg-boss's persisted warnings (`persistWarnings: true`), paged by date, with any
+  warning that names a hidden queue left out. `GET /api/pg-boss/warnings`.
 
 ## License
 

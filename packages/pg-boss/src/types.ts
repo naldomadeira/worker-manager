@@ -52,6 +52,13 @@ export interface PgBossBoardOptions {
   queryTimeoutMs?: number;
   /** Per-state counts stop at this many jobs and report `capped`. Default 10000. */
   countCap?: number;
+  /**
+   * Write to a pg-boss schema newer than the newest this release is tested with
+   * (`SCHEMA_MAX`). Such a schema is always read, by probing its tables and columns, but writes
+   * stay off unless this is true. With only a `connection`, the writer must also be on that
+   * exact schema version. Default false.
+   */
+  allowUntestedSchema?: boolean;
   /** Decides per request whether a queue exists for the caller. */
   visibilityGuard?: (
     request: WorkerManagerRequest,

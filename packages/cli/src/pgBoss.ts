@@ -59,6 +59,11 @@ const REASONS: Record<string, (options: Record<string, unknown>) => string> = {
     `the database is on pg-boss schema version ${o.found}, but the pg-boss bundled with ` +
     `this CLI writes version ${o.expected}`,
   'ERRORS.PGBOSS_WRITER_UNAVAILABLE': () => 'pg-boss could not be loaded to write with',
+  'ERRORS.PGBOSS_SCHEMA_UNTESTED': (o) =>
+    `pg-boss schema version ${o.found} is newer than this release is tested with (${o.max}); ` +
+    'it is read, but not written',
+  'ERRORS.PGBOSS_SCHEMA_INCOMPATIBLE': (o) =>
+    `pg-boss schema version ${o.found} lacks columns the board needs: ${o.missing}`,
 };
 
 export function describeReason({ key, options = {} }: TranslatableMessage): string {

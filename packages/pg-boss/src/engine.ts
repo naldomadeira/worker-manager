@@ -1,12 +1,16 @@
 import {
   decodePgBossCursor,
   encodePgBossCursor,
+  mentionsQueue,
+  pageWarnings,
   PgBossEngineError,
+  warningQueueName,
   type PgBossEngine,
   type PgBossJobAction,
 } from '@worker-manager/api/engine';
 import type {
   PgBossDependencyRef,
+  PgBossFeature,
   PgBossInfo,
   PgBossJob,
   PgBossJobState,
@@ -29,7 +33,13 @@ import {
   unstartedWriter,
 } from './connection';
 import { registerEngine } from './internals';
-import { INTERNAL_QUEUE_PREFIX, quoteSchema, sql } from './sql';
+import {
+  INTERNAL_QUEUE_PREFIX,
+  quoteSchema,
+  type SchemaColumns,
+  sql,
+  type Statements,
+} from './sql';
 import type { PgBossBoardOptions, PgBossLike } from './types';
 import {
   probeSchema,
@@ -38,6 +48,16 @@ import {
   type SchemaState,
   writeRefusal,
 } from './versionGuard';
+
+/** The pg-boss method each write needs; one a newer pg-boss renamed turns that action off. */
+const WRITER_METHODS = {
+  send: ['send'],
+  retry: ['retry'],
+  cancel: ['cancel'],
+  resume: ['resume'],
+  delete: ['deleteJob', 'deleteQueuedJobs', 'deleteStoredJobs'],
+  scheduleWrite: ['schedule', 'unschedule'],
+} as const satisfies Record<string, readonly (keyof PgBossLike)[]>;
 
 const JOB_STATES: readonly PgBossJobState[] = [
   'created',
@@ -59,6 +79,18 @@ const iso = (value: unknown): string | null =>
 
 const numberOrNull = (value: unknown): number | null =>
   value === null || value === undefined ? null : Number(value);
+
+function toWarning(row: Row, known: ReadonlySet<string>) {
+  return {
+    id: String(row.id),
+    type: String(row.type),
+    message: String(row.message ?? ''),
+    data: row.data ?? null,
+    queueName: warningQueueName(row.data, known),
+    createdOn: iso(row.created_on)!,
+    cursorKey: row.cursor_key as string,
+  };
+}
 
 function toQueue(row: Row): PgBossQueueSummary {
   const warningQueueSize = Number(row.warning_queued ?? 0);
@@ -172,17 +204,23 @@ export function createPgBossEngine(
   { readOnly = false }: { readOnly?: boolean } = {}
 ): PgBossEngine {
   const schema = options.schema ?? 'pgboss';
-  const statements = sql(quoteSchema(schema));
+  const quoted = quoteSchema(schema);
+  const statements = sql(quoted);
   const timeoutMs = options.queryTimeoutMs ?? 5000;
   const countCap = options.countCap ?? 10_000;
   const reader = createReader(options, timeoutMs);
   const writes =
     !options.instance && options.connection ? createWriteExecutor(options.connection) : null;
 
+  // The version is read again every GUARD_TTL_MS; the columns only when it changes.
+  let columnCache: { version: number | null; columns: SchemaColumns } | null = null;
   let guard: { at: number; state: Promise<SchemaState> } | null = null;
   const schemaState = (): Promise<SchemaState> => {
     if (!guard || Date.now() - guard.at > GUARD_TTL_MS) {
-      const state = probeSchema(reader, statements, schema);
+      const state = probeSchema(reader, statements, schema, columnCache).then((probed) => {
+        columnCache = probed.cache;
+        return probed.state;
+      });
       guard = { at: Date.now(), state };
       state.catch(() => {
         guard = null;
@@ -190,6 +228,18 @@ export function createPgBossEngine(
     }
     return guard.state;
   };
+
+  const built = new WeakMap<SchemaColumns, Statements>();
+  /** The column-dependent statements for the schema as last probed. */
+  const reads = async (): Promise<{ state: SchemaState; q: Statements }> => {
+    const state = await schemaState();
+    let q = built.get(state.columns);
+    if (!q) built.set(state.columns, (q = sql(quoted, state.columns)));
+    return { state, q };
+  };
+
+  const unavailable = (feature: PgBossFeature) =>
+    new PgBossEngineError(409, 'ERRORS.PGBOSS_FEATURE_UNAVAILABLE', { feature });
 
   const writer = async (): Promise<PgBossLike | null> => {
     if (options.instance) return options.instance;
@@ -219,7 +269,11 @@ export function createPgBossEngine(
 
   const writeReason = async (): Promise<TranslatableMessage | null> => {
     if (readOnly) return { key: 'ERRORS.QUEUE_READ_ONLY' };
-    return writeRefusal(await schemaState(), await writerVersion());
+    return writeRefusal(
+      await schemaState(),
+      await writerVersion(),
+      options.allowUntestedSchema === true
+    );
   };
 
   const allowed = (name: string) => {
@@ -269,8 +323,9 @@ export function createPgBossEngine(
   };
 
   const readSchedule = async (name: string, key: string) => {
-    const { scheduleKindColumns } = await schemaState();
-    const [row] = await reader.query(statements.schedule(scheduleKindColumns), [name, key]);
+    const { state, q } = await reads();
+    if (!state.features.schedules) return null;
+    const [row] = await reader.query(q.schedule, [name, key]);
     return row ? toSchedule(row) : null;
   };
 
@@ -285,10 +340,19 @@ export function createPgBossEngine(
       const writesDisabledReason = await writeReason();
       const writable = !writesDisabledReason;
       const preview = state.readable ? await previewer() : null;
-      const persistQueueStats = state.readable
-        ? !!(await reader.query(statements.persistsQueueStats))[0]?.persists
-        : false;
+      const persists = async (feature: PgBossFeature, text: string) =>
+        state.readable && state.features[feature]
+          ? !!(await reader.query(text))[0]?.persists
+          : false;
+      const persistQueueStats = await persists('queueDepth', statements.persistsQueueStats);
+      const persistWarnings = await persists('warnings', statements.persistsWarnings);
       const [stats] = await reader.query(statements.postgresStats).catch(() => []);
+      const methods = writable ? await writer().catch(() => null) : null;
+      const can = (action: keyof typeof WRITER_METHODS) =>
+        writable &&
+        !!methods &&
+        WRITER_METHODS[action].every((method) => typeof methods[method] === 'function') &&
+        (action !== 'scheduleWrite' || state.features.schedules);
 
       return {
         schema,
@@ -301,7 +365,11 @@ export function createPgBossEngine(
         readOnly,
         unavailableReason: state.unavailableReason,
         writesDisabledReason,
+        untested: state.untested,
+        features: state.features,
+        disabledFeatures: state.disabledFeatures,
         persistQueueStats,
+        persistWarnings,
         datastore: stats
           ? {
               backend: 'postgres',
@@ -312,14 +380,14 @@ export function createPgBossEngine(
             }
           : null,
         capabilities: {
-          send: writable,
-          retry: writable,
-          cancel: writable,
-          resume: writable,
-          delete: writable,
-          scheduleWrite: writable,
+          send: can('send'),
+          retry: can('retry'),
+          cancel: can('cancel'),
+          resume: can('resume'),
+          delete: can('delete'),
+          scheduleWrite: can('scheduleWrite'),
           schedulePreview: !!preview,
-          bulk: writable,
+          bulk: can('retry') || can('cancel') || can('resume') || can('delete'),
         },
       };
     },
@@ -331,13 +399,15 @@ export function createPgBossEngine(
     writeGate: writeReason,
 
     async listQueues() {
-      const rows = await reader.query(statements.queues(false));
+      const { q } = await reads();
+      const rows = await reader.query(q.queues(false));
       return rows.filter((row) => allowed(row.name)).map(toQueue);
     },
 
     async getQueue(name) {
       if (!allowed(name)) return null;
-      const [row] = await reader.query(statements.queues(true), [name]);
+      const { q } = await reads();
+      const [row] = await reader.query(q.queues(true), [name]);
       return row ? toQueue(row) : null;
     },
 
@@ -374,8 +444,9 @@ export function createPgBossEngine(
       if (cursor) values.push(cursor.createdOn, cursor.id);
       values.push(limit + 1);
 
+      const { q } = await reads();
       const rows = await reader.query(
-        statements.jobs({
+        q.jobs({
           state: !!query.state,
           id: !!query.id,
           singletonKey: query.singletonKey !== undefined,
@@ -402,11 +473,72 @@ export function createPgBossEngine(
     },
 
     async getJob(name, id) {
-      const [row] = await reader.query(statements.job, [name, id]);
+      const { q } = await reads();
+      const [row] = await reader.query(q.job, [name, id]);
       return row ? toJob(row) : null;
     },
 
+    async findJob(id, queueNames) {
+      const names = queueNames.filter(allowed);
+      if (names.length === 0) return null;
+      const { q } = await reads();
+      const [row] = await reader.query(q.findJob, [names, id]);
+      return row ? toJobSummary(row) : null;
+    },
+
+    async queueDepth(name, { from, to, bucketSeconds, aggregate }) {
+      const { state, q } = await reads();
+      if (!state.features.queueDepth) throw unavailable('queueDepth');
+      if (!allowed(name)) return [];
+      const rows = await reader.query(q.depth(aggregate === 'avg' ? 'avg' : 'max'), [
+        name,
+        Math.floor(from),
+        Math.floor(to),
+        Math.max(1, Math.floor(bucketSeconds)),
+      ]);
+      return rows.map((row) => ({
+        ts: Number(row.ts),
+        deferred: Number(row.deferred),
+        queued: Number(row.queued),
+        ready: Number(row.ready),
+        active: Number(row.active),
+        failed: Number(row.failed),
+        total: Number(row.total),
+      }));
+    },
+
+    async listWarnings(query, isVisible) {
+      const { state, q } = await reads();
+      if (!state.features.warnings) throw unavailable('warnings');
+      // Every queue in the schema, the allowlisted-out ones included: those are exactly the
+      // names a warning must not reveal.
+      const names = (await reader.query(q.queueNames)).map((row) => String(row.name));
+      const shown = new Set<string>();
+      for (const name of names) {
+        if (allowed(name) && (await isVisible(name))) shown.add(name);
+      }
+      const concealed = names.filter((name) => !shown.has(name));
+
+      return pageWarnings(
+        async (after, descending, limit) => {
+          const values: unknown[] = [];
+          if (query.type) values.push(query.type);
+          if (after) values.push(after.createdOn, after.id);
+          values.push(limit);
+          const rows = await reader.query(
+            q.warnings({ type: !!query.type, cursor: !!after, descending }),
+            values
+          );
+          return rows.map((row) => toWarning(row, shown));
+        },
+        query,
+        async (warning) => !concealed.some((name) => mentionsQueue(warning, name))
+      );
+    },
+
     async getDependencies(name, id) {
+      const { state } = await reads();
+      if (!state.features.dependencies) return { dependencies: [], dependents: [] };
       const [dependencies, dependents] = await Promise.all([
         reader.query(statements.dependencies, [name, id]),
         reader.query(statements.dependents, [name, id]),
@@ -415,9 +547,10 @@ export function createPgBossEngine(
     },
 
     async listSchedules(queueName) {
-      const { scheduleKindColumns } = await schemaState();
+      const { state, q } = await reads();
+      if (!state.features.schedules) return [];
       const rows = await reader.query(
-        statements.schedules(queueName !== undefined, scheduleKindColumns),
+        q.schedules(queueName !== undefined),
         queueName !== undefined ? [queueName] : []
       );
       return Promise.all(rows.filter((row) => allowed(row.name)).map(toSchedule));
@@ -502,6 +635,7 @@ export function createPgBossEngine(
       name,
       { key, cron, tz, data, options: sendOptions, missed }: UpsertPgBossScheduleBody
     ) {
+      if (!(await reads()).state.features.schedules) throw unavailable('schedules');
       const boss = await requireWriter();
       try {
         await boss.schedule(name, cron, data ?? null, {
